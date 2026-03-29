@@ -266,7 +266,7 @@ export default function Navbar() {
 
       <div
         ref={menuRef}
-        className="fixed inset-0 opacity-0 pointer-events-none backdrop-blur-2xl bg-white/20 flex items-center justify-center z-40"
+        className="fixed inset-0 opacity-0 pointer-events-none backdrop-blur-2xl bg-black flex items-center justify-center z-40"
       >
         <div className="h-150 relative w-full">
           <FlowingMenu
