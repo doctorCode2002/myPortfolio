@@ -1,4 +1,3 @@
-import React from "react";
 import bg from "/bg.png";
 import Container from "./Container";
 
