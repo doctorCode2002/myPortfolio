@@ -1,13 +1,18 @@
-import React from 'react'
-import Navbar from './components/Navbar'
-import bg from '/bg.png'
+import React from "react";
+import Navbar from "./components/Navbar";
+import ScrollSmootherLayout from "./components/ScrollSmootherLayout.jsx";
+import Hero from "./components/Hero.jsx";
+import Spacer from "./components/Spacer.jsx";
+
 export default function App() {
   return (
-    <div className='bg-black h-1250 relative'>
-      <div className='absolute inset-0'>
-        <img src={bg} alt="" className=' w-full object-cover'/>
-      </div>
+    <div className="bg-black relative flex justify-center">
       <Navbar />
+      <ScrollSmootherLayout>
+        <Hero />
+        <Spacer />
+        <Spacer />
+      </ScrollSmootherLayout>
     </div>
-  )
+  );
 }
