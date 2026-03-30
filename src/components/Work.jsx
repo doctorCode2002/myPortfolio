@@ -2,6 +2,7 @@ import { projects } from "../constants";
 import { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import Section from "./Section";
 
 export default function Work() {
   const overlayRefs = useRef([]);
@@ -101,7 +102,7 @@ export default function Work() {
   };
 
   return (
-    <section id="work" className="flex flex-col min-h-screen">
+    <Section id="work" className="flex flex-col min-h-screen">
       <h2>my work</h2>
       <div
         className="relative flex flex-col font-light"
@@ -171,6 +172,6 @@ export default function Work() {
           )}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

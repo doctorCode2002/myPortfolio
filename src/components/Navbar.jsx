@@ -273,11 +273,11 @@ export default function Navbar() {
             items={navLinks}
             onNavigate={handleScroll}
             speed={15}
-            textColor="#ffffff"
+            textColor="#e5e5e0"
             bgColor="#000000"
-            marqueeBgColor="#ffffff"
+            marqueeBgColor="#e5e5e0"
             marqueeTextColor="#000000"
-            borderColor="#ffffff"
+            borderColor="#e5e5e0"
           />
         </div>
       </div>
