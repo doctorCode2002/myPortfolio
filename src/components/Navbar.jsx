@@ -247,7 +247,7 @@ export default function Navbar() {
       <nav className="flex top-0 left-0 w-full items-center justify-between py-4 bg-transparent z-60 relative">
         <button
           onClick={() => handleScroll("#home")}
-          className="text-white/70 outline-none  hover:text-white transition duration-300 cursor-pointer text-lg font-semibold"
+          className="outline-none cursor-pointer text-lg font-semibold text-white"
         >
           Mohammed Ashraf
         </button>

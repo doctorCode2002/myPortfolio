@@ -2,10 +2,10 @@ import React from "react";
 import Navbar from "./components/Navbar";
 import ScrollSmootherLayout from "./components/ScrollSmootherLayout.jsx";
 import Hero from "./components/Hero.jsx";
-import Spacer from "./components/Spacer.jsx";
 import About from "./components/About.jsx";
 import Services from "./components/Services.jsx";
 import Contact from "./components/Contact.jsx";
+import Work from "./components/Work.jsx";
 
 export default function App() {
   return (
@@ -13,11 +13,10 @@ export default function App() {
       <Navbar />
       <ScrollSmootherLayout>
         <Hero />
-        <Spacer />
-        <About />
         <Services />
+        <Work/>
+        <About />
         <Contact />
-        <Spacer />
       </ScrollSmootherLayout>
     </div>
   );
