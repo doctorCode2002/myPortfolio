@@ -1,6 +1,5 @@
-import img1 from "/assets/projects/img1.png"
-import img2 from "/assets/projects/img2.png"
-import img3 from "/assets/projects/img3.png"
+import civicMind from "/assets/projects/civicMind.png";
+import eyadDesinger from "/assets/projects/eyadDesinger.png";
 export const navLinks = [
   {
     text: "Home",
@@ -32,63 +31,32 @@ export const navLinks = [
 export const projects = [
   {
     id: 1,
-    name: "Mobile Accessories E-commerce",
+    name: "Eyad Portfolio",
     description:
-      "An online store specializing in phone accessories including cases, chargers, cables, and power banks with MagSafe compatibility.",
-    href: "",
-    image: img1,
-    bgImage: img2,
+      "A portfolio website for a professional designer showcasing their work and services.",
+    href: "https://olive-weasel-365141.hostingersite.com/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAb21jcAQPtgZleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA81NjcwNjczNDMzNTI0MjcAAacLliCrRBSkvCsIXXcFAUuzu4SSJKREPMkB9hV_0ZGWKz2cwCXH_5WLjdumkg_aem_ukSeECOSOr11qozmYtpIwg",
+    image: eyadDesinger,
+    bgImage: "https://picsum.photos/1900/1080?random=12",
     frameworks: [
       { id: 1, name: "React" },
-      { id: 2, name: "Next.js" },
-      { id: 3, name: "Node.js" },
-      { id: 4, name: "MongoDB" },
-      { id: 5, name: "Tailwind CSS" },
+      { id: 2, name: "Tailwind CSS" },
+      { id: 3, name: "GSAP" },
     ],
   },
   {
     id: 2,
-    name: "Plant Shop E-commerce",
+    name: "CivicMind",
     description:
-      "An online store specializing in rare and decorative plants with a clean, user-friendly interface.",
-    href: "",
-    image: "https://picsum.photos/600/400?random=2",
+      "A web application for civic engagement and advocacy, connecting citizens with government officials.",
+    href: "https://municipal-ai-system2.vercel.app/",
+    image: civicMind,
     bgImage: "https://picsum.photos/1900/1080?random=12",
     frameworks: [
       { id: 1, name: "React" },
-      { id: 2, name: "Next.js" },
-      { id: 3, name: "Stripe API" },
-      { id: 4, name: "Tailwind CSS" },
-    ],
-  },
-  {
-    id: 3,
-    name: "Apple Tech Marketplace",
-    description:
-      "An e-commerce platform for Apple products and accessories with deals and category filtering.",
-    href: "",
-    image: "https://picsum.photos/600/400?random=3",
-    bgImage: "https://picsum.photos/1900/1080?random=13",
-    frameworks: [
-      { id: 1, name: "Blazor" },
-      { id: 2, name: "ASP.NET Core" },
-      { id: 3, name: "SQL Server" },
-      { id: 4, name: "Bootstrap" },
-    ],
-  },
-  {
-    id: 4,
-    name: "Electronics & Gadgets Store",
-    description:
-      "A multi-category online shop featuring electronics, home appliances, and gaming gear with special offers.",
-    href: "",
-    image: "https://picsum.photos/600/400?random=4",
-    bgImage: "https://picsum.photos/1900/1080?random=14",
-    frameworks: [
-      { id: 1, name: "Vue.js" },
-      { id: 2, name: "Laravel" },
-      { id: 3, name: "MySQL" },
-      { id: 4, name: "SCSS" },
+      { id: 2, name: "Tailwind CSS" },
+      { id: 3, name: "GSAP" },
+      { id: 4, name: "Fast API" },
+      { id: 5, name: "Python" },
     ],
   },
 ];

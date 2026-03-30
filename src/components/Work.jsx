@@ -113,7 +113,7 @@ export default function Work() {
   };
 
   return (
-    <Section id="work" className="flex flex-col min-h-screen">
+    <Section id="work" className="flex flex-col">
       <h2
         id="work-title"
         className="text-4xl sm:text-5xl lg:text-7xl font-serif mb-8 capitalize pl-10"
@@ -126,7 +126,9 @@ export default function Work() {
         onMouseMove={handleMouseMove}
       >
         {projects.map((project, index) => (
-          <div
+          <a
+            href={project.href}
+            target="_blank"
             key={project.id}
             id="project"
             className="relative flex flex-col gap-1 py-5 cursor-pointer group md:gap-0"
@@ -173,12 +175,12 @@ export default function Work() {
                 className="absolute bg-center px-14 rounded-xl"
               />
             </div>
-          </div>
+          </a>
         ))}
         {/* desktop Floating preview image */}
         <div
           ref={previewRef}
-          className="absolute hidden -top-1/2 -translate-y-1/2 left-0 z-50 overflow-hidden border-8 border-black pointer-events-none w-150 md:block opacity-0"
+          className="absolute hidden -top-100 -translate-y-1/2 left-0 z-50 overflow-hidden border-8 border-black pointer-events-none w-175 md:block opacity-0"
         >
           {currentIndex !== null && (
             <img
