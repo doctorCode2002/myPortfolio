@@ -15,6 +15,11 @@ export const navLinks = [
     image: "https://picsum.photos/600/400?random=2",
   },
   {
+    text: "Work",
+    link: "#work",
+    image: "https://picsum.photos/600/400?random=5",
+  },
+  {
     text: "Contact",
     link: "#contact",
     image: "https://picsum.photos/600/400?random=4",

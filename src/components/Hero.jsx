@@ -69,7 +69,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-linear-to-b from-transparent from-40% to-black h-full w-full" />
       <Container className="h-screen flex justify-start items-end relative">
         <main>
-          <h1 className="text-5xl font-serif leading-relaxed pb-40 capitalize text-white">
+          <h1 className="text-[clamp(2.2rem,4vw,3.5rem)] font-serif leading-tight md:leading-relaxed pb-16 md:pb-32 capitalize text-white">
             {lines.map((line, i) => (
               <span
                 key={i}
