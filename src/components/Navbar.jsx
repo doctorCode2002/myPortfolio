@@ -121,7 +121,7 @@ function MenuItem({
       style={{ borderTop: isFirst ? "none" : `1px solid ${borderColor}` }}
     >
       <button
-        className="flex items-center justify-center w-full h-full relative cursor-pointer uppercase no-underline font-semibold text-[4vh] bg-transparent border-none"
+        className="flex items-center outline-none justify-center w-full h-full relative cursor-pointer uppercase no-underline font-semibold text-[4vh] bg-transparent border-none"
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -247,14 +247,14 @@ export default function Navbar() {
       <nav className="flex top-0 left-0 w-full items-center justify-between py-4 bg-transparent z-60 relative">
         <button
           onClick={() => handleScroll("#home")}
-          className="text-white/70 hover:text-white transition duration-300 cursor-pointer text-lg font-semibold"
+          className="text-white/70 outline-none  hover:text-white transition duration-300 cursor-pointer text-lg font-semibold"
         >
           Mohammed Ashraf
         </button>
 
         <button
           onClick={() => setOpen(!open)}
-          className="w-12 aspect-square rounded-full border border-white/30 flex items-center justify-center cursor-pointer backdrop-blur-md z-60"
+          className="w-12 aspect-square outline-none rounded-full border border-white/30 flex items-center justify-center cursor-pointer backdrop-blur-md z-60"
         >
           <div className="flex flex-col gap-1">
             <span ref={topRef} className="block w-5 h-0.5 bg-white/70" />
@@ -276,7 +276,7 @@ export default function Navbar() {
             textColor="#ffffff"
             bgColor="#000000"
             marqueeBgColor="#ffffff"
-            marqueeTextColor="#ffffff"
+            marqueeTextColor="#000000"
             borderColor="#ffffff"
           />
         </div>

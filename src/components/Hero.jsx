@@ -44,7 +44,7 @@ export default function Hero() {
         {/* First video */}
         <video
           ref={video1Ref}
-          className="absolute inset-0 w-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-top"
           autoPlay
           muted
           playsInline
@@ -56,7 +56,7 @@ export default function Hero() {
         {/* Second video — hidden until first ends */}
         <video
           ref={video2Ref}
-          className="absolute inset-0 w-full object-cover opacity-0"
+          className="absolute inset-0 w-full h-full object-cover object-top opacity-0"
           muted
           playsInline
           preload="auto"
