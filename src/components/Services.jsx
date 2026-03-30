@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Section from "./Section";
 import Container from "./Container";
-
+import servicesImg from "/assets/servicesImg.webp";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -21,15 +21,14 @@ export default function Services() {
         end: "bottom top",
         scrub: true,
         pin: true,
-        markers: true,
       },
     });
 
     // Image scale + parallax
     tl.fromTo(
       imageRef.current,
-      { scale: 1.2 },
-      { scale: 1, ease: "power1.out" },
+      { scale: 1},
+      { scale: 1.1, ease: "power1.out" },
     );
 
     // Text fade in + slide
@@ -51,13 +50,13 @@ export default function Services() {
       <Container>
         <div
           ref={sectionRef}
-          className="relative grid items-center grid-cols-1 gap-20 md:grid-cols-2 h-screen"
+          className="relative grid items-center grid-cols-1 gap-0 md:gap-20 md:grid-cols-2 h-screen"
         >
           {/* IMAGE */}
           <div className="relative md:col-span-1 overflow-hidden rounded-lg">
             <img
               ref={imageRef}
-              src="https://picsum.photos/1000/1000?grayscale"
+              src={servicesImg}
               alt="services"
               className="object-cover w-full"
             />
@@ -67,7 +66,7 @@ export default function Services() {
           {/* TEXT */}
           <div
             ref={textRef}
-            className="md:col-span-1 flex flex-col gap-6 text-white md:-ml-16 z-10"
+            className="md:col-span-1 flex flex-col justify-start gap-6 text-white md:-ml-16 z-10"
           >
             <h2 className="text-3xl md:text-5xl font-serif leading-tight w-fit">
               Crafting digital experiences that feel effortless

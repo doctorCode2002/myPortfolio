@@ -1,5 +1,5 @@
-import bgvideo1 from "/bgvideo1.mp4";
-import bgvideo2 from "/bgvideo2.mp4";
+import bgvideo1 from "/assets/bgvideo1.mp4";
+import bgvideo2 from "/assets/bgvideo2.mp4";
 import Container from "./Container";
 import { useGSAP } from "@gsap/react";
 import { useRef, useEffect } from "react";
@@ -39,7 +39,7 @@ export default function Hero() {
   const lines = ["Building the web", "one pixel at a time."];
 
   return (
-    <div className="relative h-screen" id="home">
+    <d iv className="relative h-screen bg-black" id="home">
       <div className="absolute inset-0 -z-5 pointer-events-none">
         {/* First video */}
         <video
@@ -82,6 +82,6 @@ export default function Hero() {
           </h1>
         </main>
       </Container>
-    </div>
+    </d>
   );
 }
