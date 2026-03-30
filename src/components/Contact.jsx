@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Container from "./Container";
-import { CONTACT_DATA } from "../constants";
+import {CONTACT_DATA }from "../constants"; 
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -82,6 +82,7 @@ export default function Contact() {
                 {item.text}
               </a>
             ))}
+           
 
             <span className="text-white/40 pt-6 text-xs normal-case">
               © {new Date().getFullYear()} — All rights reserved

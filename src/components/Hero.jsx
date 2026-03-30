@@ -4,7 +4,7 @@ import Container from "./Container";
 import { useGSAP } from "@gsap/react";
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
-
+import CV from "/assets/CV.pdf";
 export default function Hero() {
   const lineRefs = useRef([]);
   const video1Ref = useRef(null);
@@ -68,8 +68,8 @@ export default function Hero() {
 
       <div className="absolute inset-0 bg-linear-to-b from-transparent from-40% to-black h-full w-full" />
       <Container className="h-screen flex justify-start items-end relative">
-        <main>
-          <h1 className="text-[clamp(2.2rem,4vw,3.5rem)] font-serif leading-tight md:leading-relaxed pb-16 md:pb-32 capitalize text-white">
+        <main className="w-full flex justify-between items-end pb-16 md:pb-32 font-serif leading-tight md:leading-relaxed  capitalize text-white">
+          <h1 className="text-[clamp(2.2rem,4vw,3.5rem)] ">
             {lines.map((line, i) => (
               <span
                 key={i}
@@ -80,6 +80,13 @@ export default function Hero() {
               </span>
             ))}
           </h1>
+          <a
+            href={CV}
+            download
+            className="inline-block cursor-pointer capitalize text-sm pb-2 "
+          >
+            download CV
+          </a>
         </main>
       </Container>
     </d>
