@@ -1,3 +1,6 @@
+import img1 from "/assets/projects/img1.png"
+import img2 from "/assets/projects/img2.png"
+import img3 from "/assets/projects/img3.png"
 export const navLinks = [
   {
     text: "Home",
@@ -7,22 +10,22 @@ export const navLinks = [
   {
     text: "Services",
     link: "#services",
-    image: "https://picsum.photos/600/400?random=3",
+    image: "https://picsum.photos/600/400?random=2",
   },
   {
     text: "About",
     link: "#about",
-    image: "https://picsum.photos/600/400?random=2",
+    image: "https://picsum.photos/600/400?random=3",
   },
   {
     text: "Work",
     link: "#work",
-    image: "https://picsum.photos/600/400?random=5",
+    image: "https://picsum.photos/600/400?random=4",
   },
   {
     text: "Contact",
     link: "#contact",
-    image: "https://picsum.photos/600/400?random=4",
+    image: "https://picsum.photos/600/400?random=5",
   },
 ];
 
@@ -33,8 +36,8 @@ export const projects = [
     description:
       "An online store specializing in phone accessories including cases, chargers, cables, and power banks with MagSafe compatibility.",
     href: "",
-    image: "https://picsum.photos/600/400?random=1",
-    bgImage: "https://picsum.photos/1900/1080?random=11",
+    image: img1,
+    bgImage: img2,
     frameworks: [
       { id: 1, name: "React" },
       { id: 2, name: "Next.js" },
@@ -88,34 +91,4 @@ export const projects = [
       { id: 4, name: "SCSS" },
     ],
   },
-  // {
-  //   id: 5,
-  //   name: "Home Decor Marketplace",
-  //   description:
-  //     "A curated collection of designer home decor items, including furniture and artisan vases.",
-  //   href: "",
-  //   image: "/assets/projects/home-decor-store.jpg",
-  //   bgImage: "/assets/backgrounds/table.jpg",
-  //   frameworks: [
-  //     { id: 1, name: "Angular" },
-  //     { id: 2, name: "Firebase" },
-  //     { id: 3, name: "GraphQL" },
-  //     { id: 4, name: "Material UI" },
-  //   ],
-  // },
-  // {
-  //   id: 6,
-  //   name: "Digital Game Store",
-  //   description:
-  //     "A gaming platform featuring discounted titles, top sellers, and genre-based browsing.",
-  //   href: "",
-  //   image: "/assets/projects/game-store.jpg",
-  //   bgImage: "/assets/backgrounds/curtains.jpg",
-  //   frameworks: [
-  //     { id: 1, name: "Svelte" },
-  //     { id: 2, name: "Node.js" },
-  //     { id: 3, name: "MongoDB" },
-  //     { id: 4, name: "Chakra UI" },
-  //   ],
-  // },
 ];

@@ -18,6 +18,19 @@ export default function Work() {
     gsap.set(overlayRefs.current, {
       clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)",
     });
+
+    // h2 scroll animation
+    gsap.from("h2#work-title", {
+      y: 60,
+      opacity: 0,
+      duration: 1,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: "h2#work-title",
+        start: "top 85%",
+      },
+    });
+
     moveX.current = gsap.quickTo(previewRef.current, "x", {
       duration: 1.5,
       ease: "power3.out",
@@ -78,7 +91,6 @@ export default function Work() {
 
     gsap.killTweensOf(el);
 
-
     gsap.to(el, {
       clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)",
       duration: 0.2,
@@ -89,7 +101,6 @@ export default function Work() {
       opacity: 0,
       scale: 0.95,
       duration: 0.3,
-      ease: "power2.out",
     });
   };
 
@@ -103,7 +114,13 @@ export default function Work() {
 
   return (
     <Section id="work" className="flex flex-col min-h-screen">
-      <h2>my work</h2>
+      <h2
+        id="work-title"
+        className="text-4xl sm:text-5xl lg:text-7xl font-serif mb-8 capitalize pl-10"
+      >
+        my work
+      </h2>
+
       <div
         className="relative flex flex-col font-light"
         onMouseMove={handleMouseMove}
@@ -161,7 +178,7 @@ export default function Work() {
         {/* desktop Floating preview image */}
         <div
           ref={previewRef}
-          className="fixed top-1/6 left-0 z-50 overflow-hidden border-8 border-black pointer-events-none w-240 md:block hidden opacity-0"
+          className="absolute hidden -top-1/2 -translate-y-1/2 left-0 z-50 overflow-hidden border-8 border-black pointer-events-none w-150 md:block opacity-0"
         >
           {currentIndex !== null && (
             <img

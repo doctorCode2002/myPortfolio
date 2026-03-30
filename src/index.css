@@ -9,6 +9,23 @@
   --color-white: #e5e5e0;
 }
 
+::selection {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-white);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-black);
+}
 
 body {
   font-family: var(--font-sans);
