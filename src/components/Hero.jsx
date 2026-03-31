@@ -1,31 +1,12 @@
-import bgvideo1 from "/assets/bgvideo1.mp4";
-import bgvideo2 from "/assets/bgvideo2.mp4";
+import bgvideo from "/assets/bgvideo.mp4";
 import Container from "./Container";
 import { useGSAP } from "@gsap/react";
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import CV from "/assets/CV.pdf";
+import { FaArrowRight } from "react-icons/fa";
 export default function Hero() {
   const lineRefs = useRef([]);
-  const video1Ref = useRef(null);
-  const video2Ref = useRef(null);
-
-  useEffect(() => {
-    const v1 = video1Ref.current;
-    const v2 = video2Ref.current;
-
-    // Pre-load and pause the second video so it's ready
-    v2.load();
-
-    const handleVideo1End = () => {
-      video1Ref.current.style.opacity = 0;
-      video2Ref.current.style.opacity = 1;
-      video2Ref.current.play();
-    };
-
-    v1.addEventListener("ended", handleVideo1End);
-    return () => v1.removeEventListener("ended", handleVideo1End);
-  }, []);
 
   useGSAP(() => {
     gsap.from(lineRefs.current, {
@@ -39,36 +20,22 @@ export default function Hero() {
   const lines = ["Building the web", "one pixel at a time."];
 
   return (
-    <d iv className="relative h-screen bg-black" id="home">
+    <div className="relative h-screen " id="home">
       <div className="absolute inset-0 -z-5 pointer-events-none">
-        {/* First video */}
         <video
-          ref={video1Ref}
           className="absolute inset-0 w-full h-full object-cover object-top"
           autoPlay
           muted
           playsInline
           preload="auto"
         >
-          <source src={bgvideo1} type="video/mp4" />
-        </video>
-
-        {/* Second video — hidden until first ends */}
-        <video
-          ref={video2Ref}
-          className="absolute inset-0 w-full h-full object-cover object-top opacity-0"
-          muted
-          playsInline
-          preload="auto"
-          loop
-        >
-          <source src={bgvideo2} type="video/mp4" />
+          <source src={bgvideo} type="video/mp4" />
         </video>
       </div>
 
       <div className="absolute inset-0 bg-linear-to-b from-transparent from-40% to-black h-full w-full" />
       <Container className="h-screen flex justify-start items-end relative">
-        <main className="w-full flex justify-between items-end pb-16 md:pb-32 font-serif leading-tight md:leading-relaxed  capitalize text-white">
+        <main className="w-full flex justify-between items-end pb-16 md:pb-32 font-sans leading-tight md:leading-relaxed  capitalize text-white">
           <h1 className="text-[clamp(2.2rem,4vw,3.5rem)] ">
             {lines.map((line, i) => (
               <span
@@ -83,12 +50,13 @@ export default function Hero() {
           <a
             href={CV}
             download
-            className="inline-block cursor-pointer capitalize text-sm pb-2 "
+            className="inline-flex items-center gap-2 text-sm pb-2 relative cursor-pointer capitalize transition- duration-300 group before:content-[''] before:absolute before:left-1/2 before:-translate-x-1/2 before:bottom-0 before:w-0 before:h-0.5 before:bg-white before:transition-all before:duration-300 before:origin-center hover:gap-4 hover:before:w-full"
           >
             download CV
+            <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
           </a>
         </main>
       </Container>
-    </d>
+    </div>
   );
 }

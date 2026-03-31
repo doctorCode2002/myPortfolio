@@ -6,6 +6,7 @@ import About from "./components/About.jsx";
 import Services from "./components/Services.jsx";
 import Contact from "./components/Contact.jsx";
 import Work from "./components/Work.jsx";
+import BentoGallery from "./components/BentoGallery.jsx";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
       <ScrollSmootherLayout>
         <Hero />
         <Services />
+        <BentoGallery/>
         <Work/>
         <About />
         <Contact />
