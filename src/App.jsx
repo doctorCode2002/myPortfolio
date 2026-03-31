@@ -15,9 +15,8 @@ export default function App() {
       <ScrollSmootherLayout>
         <Hero />
         <Services />
-        <BentoGallery/>
-        <Work/>
         <About />
+        <Work/>
         <Contact />
       </ScrollSmootherLayout>
     </div>

@@ -1,5 +1,5 @@
-import civicMind from "/assets/projects/civicMind.png";
-import eyadDesinger from "/assets/projects/eyadDesinger.png";
+import civicMind from "/assets/projects/civicMind.webp";
+import eyadDesinger from "/assets/projects/eyadDesinger.webp";
 export const navLinks = [
   {
     text: "Home",

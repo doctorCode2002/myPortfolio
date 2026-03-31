@@ -27,6 +27,7 @@ export default function Hero() {
           autoPlay
           muted
           playsInline
+          loop
           preload="auto"
         >
           <source src={bgvideo} type="video/mp4" />

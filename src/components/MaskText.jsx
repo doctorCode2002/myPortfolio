@@ -4,10 +4,15 @@ import gsap from "gsap";
 
 export default function MaskText({
   ogText = "Writing beautiful code means thinking like an artist and debugging like a detective. Every function is a story, every variable a character. Master your craft through practice, patience, and endless curiosity.",
+  ogTextColor = "#000000",
   ogSpan = "beautiful code",
+  ogSpanTextColor = "#c0562a",
   maskText = "Building great software requires seeing beyond syntax into architecture and design. Test early, refactor often, document clearly. Success comes from collaboration and caring deeply about user experience.",
   maskSpan = "great software",
-  bgColor= "#000000",
+  maskTextColor = "#000000",
+  maskSpanTextColor = "#c0562a",
+  maskColor = "#ffffff",
+  bgColor = "#000000",
 }) {
   const containerRef = useRef(null);
   const maskRef = useRef(null);
@@ -16,8 +21,8 @@ export default function MaskText({
   const pos = useRef({ x: -300, y: -300 });
   const size = useRef({ v: 0 });
 
-  const small = 40;
-  const large = 200;
+  const small = 20;
+  const large = 100;
 
   useGSAP(() => {
     const container = containerRef.current;
@@ -106,12 +111,12 @@ export default function MaskText({
     };
   }, []);
 
-  const highlightText = (text, span) => {
+  const highlightText = (text, span, color) => {
     const parts = text.split(span);
     return (
       <>
         {parts[0]}
-        <span>{span}</span>
+        <span style={{ color }}>{span}</span>
         {parts[1]}
       </>
     );
@@ -120,20 +125,25 @@ export default function MaskText({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full py-24 ${bgColor} flex justify-center items-center overflow-hidden cursor-none font-[Archivo]`}
+      className={`relative w-full py-12 flex justify-center items-center overflow-hidden md:cursor-none font-[Archivo]`}
+      style={{ backgroundColor: bgColor }}
     >
-      {/* original */}
+      {/* Original text */}
       <div ref={ogRef} className="flex justify-center items-center">
-        <p className="w-150 text-2xl font-medium leading-snug text-white/35 [&>span]:text-[#7ecfb3]">
-          {highlightText(ogText, ogSpan)}
+        <p
+          className="w-fit max-w-4xl text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-snug m-0  md:m-8"
+          style={{ color: ogTextColor }}
+        >
+          {highlightText(ogText, ogSpan, ogSpanTextColor)}
         </p>
       </div>
 
-      {/* mask */}
+      {/* Masked text */}
       <div
         ref={maskRef}
-        className={`absolute inset-0 flex justify-center items-center bg-[#e8f4f0] opacity-0 pointer-events-none`}
+        className="absolute hidden md:flex w-full h-full top-1/2 left-1/2 -translate-1/2  justify-center items-center pointer-events-none opacity-0"
         style={{
+          backgroundColor: maskColor,
           WebkitMaskImage: "url(/assets/circle.png)",
           maskImage: "url(/assets/circle.png)",
           WebkitMaskRepeat: "no-repeat",
@@ -144,8 +154,11 @@ export default function MaskText({
           maskPosition: "-300px -300px",
         }}
       >
-        <p className="w-150 text-2xl font-medium leading-snug text-[#1a3550] [&>span]:text-[#c0562a]">
-          {highlightText(maskText, maskSpan)}
+        <p
+          className="w-fit max-w-4xl text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-snug m-8"
+          style={{ color: maskTextColor }}
+        >
+          {highlightText(maskText, maskSpan, maskSpanTextColor)}
         </p>
       </div>
     </div>

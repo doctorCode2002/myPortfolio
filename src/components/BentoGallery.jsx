@@ -10,7 +10,7 @@ const IMAGES = [
   "https://assets.codepen.io/16327/portrait-pattern-1.jpg",
   "https://assets.codepen.io/16327/portrait-image-12.jpg",
   "https://assets.codepen.io/16327/portrait-image-8.jpg",
-  "https://assets.codepen.io/16327/portrait-pattern-2.jpg",
+  "/assets/bentoGrid/top-right.png",
   "https://assets.codepen.io/16327/portrait-image-4.jpg",
   "https://assets.codepen.io/16327/portrait-image-3.jpg",
   "https://assets.codepen.io/16327/portrait-pattern-3.jpg",
@@ -152,8 +152,19 @@ export default function BentoGallery() {
       </div>
 
       <div className="px-20 py-8 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-bold mb-6">Here is some content</h2>
-        <MaskText />
+        <h2 className="text-3xl font-bold font-serif -mb-8">About Me</h2>
+        <MaskText
+          ogText="Studying medicine taught me how to diagnose intricate biological systems and heal the human body. Every symptom is a clue, and every treatment requires deep empathy and precision."
+          ogTextColor="black" 
+          ogSpan="deep empathy"
+          ogSpanTextColor="#0ea5e9" 
+          maskText="Crafting software taught me how to engineer intricate full-stack systems and code the frontend page. Every failure is a clue, and every component requires deep insight and precision."
+          maskSpan="deep insight"
+          maskColor="black" 
+          maskTextColor="white" 
+          maskSpanTextColor="#f59e0b" 
+          bgColor="transparent"
+        />
       </div>
     </>
   );

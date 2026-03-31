@@ -247,14 +247,14 @@ export default function Navbar() {
       <nav className="flex top-0 left-0 w-full items-center justify-between py-4 bg-transparent z-60 relative">
         <button
           onClick={() => handleScroll("#home")}
-          className="outline-none cursor-pointer text-lg font-semibold text-white"
+          className="outline-none cursor-pointer text-lg font-semibold text-white "
         >
           Mohammed Ashraf
         </button>
 
         <button
           onClick={() => setOpen(!open)}
-          className="w-12 aspect-square outline-none rounded-full border border-white/30 flex items-center justify-center cursor-pointer backdrop-blur-md z-60"
+          className="w-12  aspect-square outline-none rounded-full border border-white/30 flex items-center justify-center cursor-pointer backdrop-blur-md z-60 bg-blend-difference"
         >
           <div className="flex flex-col gap-1">
             <span ref={topRef} className="block w-5 h-0.5 bg-white/70" />
