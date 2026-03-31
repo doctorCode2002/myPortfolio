@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Flip } from "gsap/flip";
+import { Flip } from "gsap/Flip";
 import MaskText from "./MaskText";
 
 gsap.registerPlugin(ScrollTrigger, Flip);
