@@ -8,11 +8,11 @@ import MaskText from "./MaskText";
 gsap.registerPlugin(ScrollTrigger, Flip);
 
 const IMAGES = [
-  "https://assets.codepen.io/16327/portrait-pattern-1.jpg",
-  "https://assets.codepen.io/16327/portrait-image-12.jpg",
+  "/assets/bentoGrid/top-left.webp",
+  "/assets/bentoGrid/top-center.webp",
   "/assets/bentoGrid/center.webp",
   "/assets/bentoGrid/top-right.webp",
-  "https://assets.codepen.io/16327/portrait-image-4.jpg",
+  "/assets/bentoGrid/left-center.webp",
   "https://assets.codepen.io/16327/portrait-image-3.jpg",
   "https://assets.codepen.io/16327/portrait-pattern-3.jpg",
   "https://assets.codepen.io/16327/portrait-image-1.jpg",
@@ -231,7 +231,7 @@ export default function BentoGallery() {
       </div>
 
       <div className="px-3 py-8 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-bold font-serif -mb-8">About Me</h2>
+        {/* <h2 className="text-3xl font-bold font-serif -mb-8">About Me</h2> */}
         <MaskText
           ogText="Crafting software taught me how to engineer intricate full-stack systems and code the frontend page. Every failure is a clue, and every component requires deep insight and precision."
           ogTextColor="black"
