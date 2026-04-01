@@ -1,30 +1,35 @@
 import civicMind from "/assets/projects/civicMind.webp";
 import eyadDesinger from "/assets/projects/eyadDesinger.webp";
+import homeNav from "/assets/navImages/homeNav.webp";
+import servicesNav from "/assets/navImages/servicesNav.webp";
+import aboutNav from "/assets/navImages/aboutNav.webp";
+import workNav from "/assets/navImages/workNav.webp";
+import contactNav from "/assets/navImages/contactNav.webp";
 export const navLinks = [
   {
     text: "Home",
     link: "#home",
-    image: "https://picsum.photos/600/400?random=1",
+    image: homeNav,
   },
   {
     text: "Services",
     link: "#services",
-    image: "https://picsum.photos/600/400?random=2",
+    image: servicesNav,
   },
   {
     text: "About",
     link: "#about",
-    image: "https://picsum.photos/600/400?random=3",
+    image: aboutNav,
   },
   {
     text: "Work",
     link: "#work",
-    image: "https://picsum.photos/600/400?random=4",
+    image: workNav,
   },
   {
     text: "Contact",
     link: "#contact",
-    image: "https://picsum.photos/600/400?random=5",
+    image: contactNav,
   },
 ];
 

@@ -145,7 +145,7 @@ function MenuItem({
                 {text}
               </span>
               <div
-                className="w-50 h-[7vh] my-[2em] mx-[2vw] py-[1em] rounded-[50px] bg-cover bg-center"
+                className="w-30 h-20  my-[2em] mx-[2vw] py-[1em] rounded-[50px] bg-cover bg-top"
                 style={{ backgroundImage: `url(${image})` }}
               />
             </div>
