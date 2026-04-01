@@ -170,11 +170,6 @@
 //   );
 // }
 
-
-
-
-
-
 import { useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -342,69 +337,48 @@ export default function BentoGallery() {
 
         /* ----------------------------------------------------------------
            Bento grid — compact initial state
-           Mobile  (<640 px)  : 2 columns so images aren't stamp-sized
-           Desktop (≥640 px)  : original 3-column layout
+           3 columns on all screen sizes so nth-child(3) always sits in
+           the center column and becomes the focal zoom image on scroll.
+           32.5vw × 3 = 97.5vw — fits portrait mobile without overflow.
         ---------------------------------------------------------------- */
         .gallery--bento {
           display: grid;
           gap: 1vh;
-          /* Mobile-first: 2 equal columns */
-          grid-template-columns: repeat(2, 48.5vw);
+          grid-template-columns: repeat(3, 32.5vw);
           grid-template-rows: repeat(4, calc(var(--vh, 1vh) * 23));
           justify-content: center;
           align-content: center;
         }
 
-        @media (min-width: 640px) {
-          .gallery--bento {
-            grid-template-columns: repeat(3, 32.5vw);
-            grid-template-rows: repeat(4, calc(var(--vh, 1vh) * 23));
-          }
-        }
-
         /* ----------------------------------------------------------------
            Bento grid — expanded final state (post-animation)
-           Mobile  : 2-column full-width expansion
-           Desktop : original 3-column full-width expansion
+           3 full-viewport-width columns so each image fills the screen
+           as the FLIP animation completes.
         ---------------------------------------------------------------- */
         .gallery--final.gallery--bento {
           gap: 1vh;
-          grid-template-columns: repeat(2, 100vw);
+          grid-template-columns: repeat(3, 100vw);
           grid-template-rows: repeat(4, calc(var(--vh, 1vh) * 49.5));
         }
 
-        @media (min-width: 640px) {
-          .gallery--final.gallery--bento {
-            grid-template-columns: repeat(3, 100vw);
-            grid-template-rows: repeat(4, calc(var(--vh, 1vh) * 49.5));
-          }
-        }
-
         /* ----------------------------------------------------------------
-           Grid item placement (compact state)
-           Fixed: items 4 and 5 had zero-size grid areas in the original
-           (1/3/3/3 → col 3→3 = 0 width; 3/1/3/2 → row 3→3 = 0 height).
+           Grid item placement — both compact and final states inherit
+           the same areas; only the column/row sizes change above.
+
+           Bugs fixed from original:
+             nth-child(4) was 1/3/3/3  → col-end = col-start = 0 width
+             nth-child(5) was 3/1/3/2  → row-end = row-start = 0 height
+             nth-child(5) new area must end at row 4 (not 5) so it
+             doesn't overlap nth-child(7) which occupies row 4/1/5/2.
         ---------------------------------------------------------------- */
         .gallery--bento .gallery__item:nth-child(1) { grid-area: 1 / 1 / 3 / 2; }
         .gallery--bento .gallery__item:nth-child(2) { grid-area: 1 / 2 / 2 / 3; }
         .gallery--bento .gallery__item:nth-child(3) { grid-area: 2 / 2 / 4 / 3; }
-        .gallery--bento .gallery__item:nth-child(4) { grid-area: 1 / 3 / 3 / 4; } /* was 1/3/3/3 */
-        .gallery--bento .gallery__item:nth-child(5) { grid-area: 3 / 1 / 5 / 2; } /* was 3/1/3/2 */
+        .gallery--bento .gallery__item:nth-child(4) { grid-area: 1 / 3 / 3 / 4; }
+        .gallery--bento .gallery__item:nth-child(5) { grid-area: 3 / 1 / 4 / 2; }
         .gallery--bento .gallery__item:nth-child(6) { grid-area: 3 / 3 / 5 / 4; }
         .gallery--bento .gallery__item:nth-child(7) { grid-area: 4 / 1 / 5 / 2; }
         .gallery--bento .gallery__item:nth-child(8) { grid-area: 4 / 2 / 5 / 3; }
-
-        /* ----------------------------------------------------------------
-           On mobile, items 4–8 that reference column 3 fall back to a
-           two-column layout so nothing is orphaned off-screen.
-        ---------------------------------------------------------------- */
-        @media (max-width: 639px) {
-          .gallery--bento .gallery__item:nth-child(4) { grid-area: 3 / 2 / 5 / 3; }
-          .gallery--bento .gallery__item:nth-child(5) { grid-area: 3 / 1 / 5 / 2; }
-          .gallery--bento .gallery__item:nth-child(6) { display: none; } /* col 3 doesn't exist on mobile */
-          .gallery--bento .gallery__item:nth-child(7) { display: none; } /* overlaps item 5 */
-          .gallery--bento .gallery__item:nth-child(8) { display: none; } /* overlaps item 4 */
-        }
       `}</style>
 
       <div className="gallery-wrap" ref={wrapRef}>
