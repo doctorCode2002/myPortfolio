@@ -6,19 +6,25 @@ import ScrollSmoother from "gsap/ScrollSmoother";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-export default function ScrollSmootherLayout({ children }) {
+export default function ScrollSmootherLayout({ children, enabled = true }) {
   const wrapperRef = useRef(null);
   const contentRef = useRef(null);
 
   useGSAP(() => {
-    ScrollSmoother.create({
+    if (!enabled || !wrapperRef.current || !contentRef.current) return;
+
+    const smoother = ScrollSmoother.create({
       wrapper: wrapperRef.current,
       content: contentRef.current,
       smooth: 1,
       effects: true,
       smoothTouch: 0.1,
     });
-  }, []);
+
+    return () => {
+      smoother.kill();
+    };
+  }, { dependencies: [enabled], revertOnUpdate: true });
 
   return (
     <div ref={wrapperRef} id="smooth-wrapper">
