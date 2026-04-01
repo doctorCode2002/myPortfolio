@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Container from "./Container";
-import {CONTACT_DATA }from "../constants"; 
+import { CONTACT_DATA } from "../constants";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -70,19 +70,18 @@ export default function Contact() {
           {/* RIGHT */}
           <div
             ref={infoRef}
-            className="flex flex-col gap-6 text-sm md:text-base uppercase"
+            className="flex flex-col gap-6 text-sm md:text-base uppercase text-white"
           >
             {CONTACT_DATA.map((item, idx) => (
               <a
                 key={idx}
                 href={item.link}
                 target="_blank"
-                className="border-b text-white border-white/20 pb-2 hover:text-white/70 transition cursor-pointer"
+                className="border-b  border-white/20 pb-2 hover:text-white/70  cursor-pointer"
               >
                 {item.text}
               </a>
             ))}
-           
 
             <span className="text-white/40 pt-6 text-xs normal-case">
               © {new Date().getFullYear()} — All rights reserved
