@@ -136,7 +136,7 @@ export default function App() {
         </div>
       )}
 
-      <div className={isReady ? "w-full" : "w-full invisible"}>
+      <div className={isReady ? "w-full flex flex-col items-center justify-center" : "w-full invisible"}>
         <Navbar />
         <ScrollSmootherLayout enabled={isReady}>
           <Hero />

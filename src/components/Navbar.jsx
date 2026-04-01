@@ -244,7 +244,7 @@ export default function Navbar() {
 
   return (
     <Container className="fixed z-50">
-      <nav className="flex top-0 left-0 w-full items-center justify-between py-4 bg-transparent z-60 relative">
+      <nav className="flex top-10 left-0 w-full items-center justify-between py-4 bg-transparent z-60 relative">
         <button
           onClick={() => handleScroll("#home")}
           className="outline-none cursor-pointer text-lg font-semibold text-white "
