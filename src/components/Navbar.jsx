@@ -249,7 +249,7 @@ export default function Navbar() {
           onClick={() => handleScroll("#home")}
           className="outline-none cursor-pointer text-lg font-semibold text-white "
         >
-          Mohammed Ashraf
+          MA
         </button>
 
         <button

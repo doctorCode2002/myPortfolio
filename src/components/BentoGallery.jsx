@@ -13,7 +13,7 @@ const IMAGES = [
   "/assets/bentoGrid/center.webp",
   "/assets/bentoGrid/top-right.webp",
   "/assets/bentoGrid/left-center.webp",
-  "https://assets.codepen.io/16327/portrait-image-3.jpg",
+  "/assets/bentoGrid/right-bottom.webp",
   "https://assets.codepen.io/16327/portrait-pattern-3.jpg",
   "https://assets.codepen.io/16327/portrait-image-1.jpg",
 ];
