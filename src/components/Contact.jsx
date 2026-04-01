@@ -77,7 +77,7 @@ export default function Contact() {
                 key={idx}
                 href={item.link}
                 target="_blank"
-                className="border-b border-white/20 pb-2 hover:text-white/70 transition cursor-pointer"
+                className="border-b text-white border-white/20 pb-2 hover:text-white/70 transition cursor-pointer"
               >
                 {item.text}
               </a>
