@@ -125,13 +125,13 @@ export default function MaskText({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full py-12 flex justify-center items-center overflow-hidden md:cursor-none font-[Archivo]`}
+      className={`relative w-full p-12 flex justify-center items-center  md:cursor-none`}
       style={{ backgroundColor: bgColor }}
     >
       {/* Original text */}
       <div ref={ogRef} className="flex justify-center items-center">
         <p
-          className="w-fit max-w-4xl text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-snug m-0  md:m-8"
+          className="w-fit md:w-150 max-w-4xl text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-snug m-0 md:m-8"
           style={{ color: ogTextColor }}
         >
           {highlightText(ogText, ogSpan, ogSpanTextColor)}
@@ -155,7 +155,7 @@ export default function MaskText({
         }}
       >
         <p
-          className="w-fit max-w-4xl text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-snug m-8"
+          className="w-150 max-w-4xl text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-snug m-8"
           style={{ color: maskTextColor }}
         >
           {highlightText(maskText, maskSpan, maskSpanTextColor)}
