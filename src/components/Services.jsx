@@ -27,7 +27,7 @@ export default function Services() {
     // Image scale + parallax
     tl.fromTo(
       imageRef.current,
-      { scale: 1},
+      { scale: 1 },
       { scale: 1.1, ease: "power1.out" },
     );
 
@@ -38,7 +38,6 @@ export default function Services() {
         y: 80,
         opacity: 0,
         stagger: 0.15,
-        duration: 1,
         ease: "power3.out",
       },
       0,
@@ -50,15 +49,15 @@ export default function Services() {
       <Container>
         <div
           ref={sectionRef}
-          className="relative grid items-center grid-cols-1 gap-0 md:gap-20 md:grid-cols-2 h-screen"
+          className="relative flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20 h-screen "
         >
           {/* IMAGE */}
-          <div className="relative md:col-span-1 overflow-hidden rounded-lg">
+          <div className="overflow-hidden  rounded-lg">
             <img
               ref={imageRef}
               src={servicesImg}
               alt="services"
-              className="object-cover w-full"
+              className="object-cover w-full max-w-lg"
             />
             <div className="absolute inset-0 bg-black/30" />
           </div>
@@ -66,7 +65,7 @@ export default function Services() {
           {/* TEXT */}
           <div
             ref={textRef}
-            className="md:col-span-1 flex flex-col justify-start gap-6 text-white md:-ml-16 z-10"
+            className=" flex flex-col justify-start gap-2 w-full md:max-w-1/2 text-white  z-10"
           >
             <h2 className="text-3xl md:text-5xl font-serif leading-tight w-fit">
               Crafting digital experiences that feel effortless

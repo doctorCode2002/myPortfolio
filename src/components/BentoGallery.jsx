@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -18,11 +17,6 @@ const IMAGES = [
   "https://assets.codepen.io/16327/portrait-image-1.jpg",
 ];
 
-// ------------------------------------------------------------------
-// Sets a CSS custom property --vh to the *actual* visible viewport
-// height. This compensates for mobile browsers that include their
-// chrome in the standard `vh` unit, causing layout jumps.
-// ------------------------------------------------------------------
 function setVhProperty() {
   const vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -34,10 +28,6 @@ export default function BentoGallery() {
   const flipCtxRef = useRef(null);
   const resizeTimerRef = useRef(null);
 
-  // ------------------------------------------------------------------
-  // Build (or rebuild) the ScrollTrigger + FLIP animation.
-  // Isolated so it can be called on mount and after debounced resize.
-  // ------------------------------------------------------------------
   const createTween = useCallback(() => {
     const galleryEl = galleryRef.current;
     if (!galleryEl) return;
@@ -68,13 +58,8 @@ export default function BentoGallery() {
           start: "center center",
           end: "+=100%",
           scrub: true,
-          // `pin` needs the wrapper, not the gallery itself, so the
-          // page continues scrolling while the gallery stays fixed.
           pin: galleryEl.parentNode,
-          // Prevents the subtle jump that occurs on mobile when the
-          // browser toolbar appears / disappears mid-scroll.
           anticipatePin: 1,
-          // Smooth out momentum-based over-scrolling on iOS.
           preventOverlaps: true,
         },
       });
@@ -86,18 +71,12 @@ export default function BentoGallery() {
   }, []);
 
   useEffect(() => {
-    // Sync the --vh variable on first render
     setVhProperty();
 
-    // On mobile, normalizeScroll smooths out the scroll experience and
-    // prevents ScrollTrigger from misfiring when the browser toolbar
-    // animates in/out.
     ScrollTrigger.normalizeScroll(true);
 
     createTween();
 
-    // Debounce resize to avoid destroying/rebuilding the GSAP context
-    // dozens of times during a drag-resize or orientation animation.
     const handleResize = () => {
       setVhProperty();
       clearTimeout(resizeTimerRef.current);
@@ -112,7 +91,6 @@ export default function BentoGallery() {
       if (flipCtxRef.current) {
         flipCtxRef.current.revert();
       }
-      // Clean up normalizeScroll so it doesn't affect other pages
       ScrollTrigger.normalizeScroll(false);
     };
   }, [createTween]);
