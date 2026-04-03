@@ -84,3 +84,37 @@ export const CONTACT_DATA = [
     link: "https://github.com/doctorCode2002",
   },
 ];
+export const TESTIMONIALS = [
+  {
+    quote:
+      "Mohammed delivered exceptional work on our startup project. Communication was smooth and deadlines were always met every time.",
+    name: "Ahmad Khalil",
+    role: "Product Manager",
+    company: "TechFlow",
+    rating: 5,
+  },
+  {
+    quote:
+      "Very professional and detail oriented. The UI quality exceeded expectations and the process was smooth from start to finish always.",
+    name: "Sara Ali",
+    role: "UI/UX Designer",
+    company: "Creative Studio",
+    rating: 4,
+  },
+  {
+    quote:
+      "Fast reliable and highly skilled in front end development. Delivered clean code and great performance. Would definitely work again.",
+    name: "Omar Hassan",
+    role: "CTO",
+    company: "Startup Inc.",
+    rating: 5,
+  },
+  {
+    quote:
+      "Mohammed built my portfolio with a clean modern style that reflects my work perfectly. Smooth process and great attention to detail.",
+    name: "Eyad Alzayan",
+    role: "Graphic Designer",
+    company: "Freelance",
+    rating: 5,
+  },
+];

@@ -2,6 +2,7 @@ import React from "react";
 import MyMarquee from "./MyMarquee";
 import TestimonialCard from "./TestimonialCard";
 import Section from "./Section";
+import { TESTIMONIALS } from "../constants";
 export default function Feedback() {
   return (
     <Section className="flex flex-col ">
@@ -9,10 +10,9 @@ export default function Feedback() {
         Testimonials
       </h2>
       <MyMarquee>
-        <TestimonialCard index="01" />
-        <TestimonialCard index="02" />
-        <TestimonialCard index="03" />
-        <TestimonialCard index="04" />
+        {TESTIMONIALS.map((testimonial, index) => (
+          <TestimonialCard key={index} {...testimonial} />
+        ))}
       </MyMarquee>
     </Section>
   );
