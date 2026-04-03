@@ -28,13 +28,54 @@ export default function BentoGallery() {
   const flipCtxRef = useRef(null);
   const resizeTimerRef = useRef(null);
 
+  // const createTween = useCallback(() => {
+  //   const galleryEl = galleryRef.current;
+  //   if (!galleryEl) return;
+
+  //   const galleryItems = galleryEl.querySelectorAll(".gallery__item");
+
+  //   // Tear down any previous instance cleanly
+  //   if (flipCtxRef.current) {
+  //     flipCtxRef.current.revert();
+  //     flipCtxRef.current = null;
+  //   }
+  //   galleryEl.classList.remove("gallery--final");
+
+  //   flipCtxRef.current = gsap.context(() => {
+  //     // Snapshot the expanded (final) state while the class is applied
+  //     galleryEl.classList.add("gallery--final");
+  //     const flipState = Flip.getState(galleryItems);
+  //     galleryEl.classList.remove("gallery--final");
+
+  //     const flip = Flip.to(flipState, {
+  //       simple: true,
+  //       ease: "expoScale(1, 5)",
+  //     });
+
+  //     const tl = gsap.timeline({
+  //       scrollTrigger: {
+  //         trigger: galleryEl,
+  //         start: "center center",
+  //         end: "+=100%",
+  //         scrub: true,
+  //         pin: galleryEl.parentNode,
+  //         anticipatePin: 1,
+  //         preventOverlaps: true,
+  //       },
+  //     });
+
+  //     tl.add(flip);
+
+  //     return () => gsap.set(galleryItems, { clearProps: "all" });
+  //   });
+  // }, []);
+
   const createTween = useCallback(() => {
     const galleryEl = galleryRef.current;
     if (!galleryEl) return;
 
     const galleryItems = galleryEl.querySelectorAll(".gallery__item");
 
-    // Tear down any previous instance cleanly
     if (flipCtxRef.current) {
       flipCtxRef.current.revert();
       flipCtxRef.current = null;
@@ -42,14 +83,15 @@ export default function BentoGallery() {
     galleryEl.classList.remove("gallery--final");
 
     flipCtxRef.current = gsap.context(() => {
-      // Snapshot the expanded (final) state while the class is applied
       galleryEl.classList.add("gallery--final");
       const flipState = Flip.getState(galleryItems);
       galleryEl.classList.remove("gallery--final");
 
       const flip = Flip.to(flipState, {
-        simple: true,
+        // Removed simple:true — lets GSAP track each element independently
         ease: "expoScale(1, 5)",
+        invalidateOnRefresh: true, // Re-measures on ScrollTrigger.refresh()
+        immediateRender: false, // Don't snap to end-state before scroll starts
       });
 
       const tl = gsap.timeline({
@@ -57,10 +99,18 @@ export default function BentoGallery() {
           trigger: galleryEl,
           start: "center center",
           end: "+=100%",
-          scrub: true,
+          scrub: 1, // Smoothed scrub (was true/instant) reduces jank
           pin: galleryEl.parentNode,
           anticipatePin: 1,
           preventOverlaps: true,
+          fastScrollEnd: true, // Snaps tween to end if user scrolls past fast
+          invalidateOnRefresh: true, // Recalculates pin/trigger on refresh
+
+          // Force correct visual state when blown past in either direction
+          onEnter: () => tl.progress(0),
+          onLeave: () => tl.progress(1),
+          onEnterBack: () => tl.progress(1),
+          onLeaveBack: () => tl.progress(0),
         },
       });
 
@@ -70,6 +120,33 @@ export default function BentoGallery() {
     });
   }, []);
 
+  useEffect(() => {
+    setVhProperty();
+
+    // Only normalize scroll momentum on iOS — avoids desyncing on Android fast flings
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if (isIos) ScrollTrigger.normalizeScroll({ momentum: 0.1 });
+
+    createTween();
+
+    const handleResize = () => {
+      setVhProperty();
+      clearTimeout(resizeTimerRef.current);
+      resizeTimerRef.current = setTimeout(() => {
+        ScrollTrigger.refresh(true); // true = forces immediate recalc
+        createTween();
+      }, 250);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimerRef.current);
+      if (flipCtxRef.current) flipCtxRef.current.revert();
+      ScrollTrigger.normalizeScroll(false);
+    };
+  }, [createTween]);
   useEffect(() => {
     setVhProperty();
 
