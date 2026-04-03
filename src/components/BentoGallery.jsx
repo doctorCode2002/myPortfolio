@@ -9,13 +9,18 @@ gsap.registerPlugin(ScrollTrigger, Flip);
 const IMAGES = [
   "/assets/bentoGrid/top-left.webp",
   "/assets/bentoGrid/top-center.webp",
-  "/assets/bentoGrid/center.webp",
+  "/assets/bentoGrid/center.webp", // index 2 — swapped on mobile
   "/assets/bentoGrid/top-right.webp",
   "/assets/bentoGrid/left-center.webp",
   "/assets/bentoGrid/right-bottom.webp",
   "https://assets.codepen.io/16327/portrait-pattern-3.jpg",
   "https://assets.codepen.io/16327/portrait-image-1.jpg",
 ];
+
+const MOBILE_BREAKPOINT = 768;
+const CENTER_INDEX = 2;
+const CENTER_DESKTOP = "/assets/bentoGrid/center.webp";
+const CENTER_MOBILE = "/assets/bentoGrid/centerm.webp";
 
 function setVhProperty() {
   const vh = window.innerHeight * 0.01;
@@ -28,6 +33,21 @@ export default function BentoGallery() {
   const flipCtxRef = useRef(null);
   const resizeTimerRef = useRef(null);
 
+  const imgRefs = useRef([]);
+
+  const updateCenterImage = useCallback(() => {
+    const img = imgRefs.current[CENTER_INDEX];
+    if (!img) return;
+    const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+    const next = isMobile ? CENTER_MOBILE : CENTER_DESKTOP;
+    if (img.src !== next) img.src = next; // avoid unnecessary repaints
+  }, []);
+
+  useEffect(() => {
+    updateCenterImage();
+    window.addEventListener("resize", updateCenterImage);
+    return () => window.removeEventListener("resize", updateCenterImage);
+  }, [updateCenterImage]);
   // const createTween = useCallback(() => {
   //   const galleryEl = galleryRef.current;
   //   if (!galleryEl) return;
@@ -274,9 +294,9 @@ export default function BentoGallery() {
           {IMAGES.map((src, i) => (
             <div className="gallery__item" key={i}>
               <img
+                ref={(el) => (imgRefs.current[i] = el)}
                 src={src}
                 alt={`Gallery item ${i + 1}`}
-                // Prevent lazy-load stutter during the FLIP animation
                 loading={i < 4 ? "eager" : "lazy"}
                 decoding="async"
               />
