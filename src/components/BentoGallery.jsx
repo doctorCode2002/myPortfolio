@@ -9,12 +9,12 @@ gsap.registerPlugin(ScrollTrigger, Flip);
 const IMAGES = [
   "/assets/bentoGrid/top-left.webp",
   "/assets/bentoGrid/top-center.webp",
-  "/assets/bentoGrid/center.webp", // index 2 — swapped on mobile
+  "/assets/bentoGrid/center.webp",
   "/assets/bentoGrid/top-right.webp",
   "/assets/bentoGrid/left-center.webp",
   "/assets/bentoGrid/right-bottom.webp",
-  "https://assets.codepen.io/16327/portrait-pattern-3.jpg",
-  "https://assets.codepen.io/16327/portrait-image-1.jpg",
+  "/assets/bentoGrid/left-bottom.webp",
+  "/assets/bentoGrid/bottom-center.webp",
 ];
 
 const MOBILE_BREAKPOINT = 768;
