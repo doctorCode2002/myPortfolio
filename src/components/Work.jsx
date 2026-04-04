@@ -118,7 +118,7 @@ export default function Work() {
         id="work-title"
         className="text-4xl sm:text-5xl lg:text-7xl font-serif mb-8 capitalize pl-10"
       >
-        my work
+        selected projects
       </h2>
 
       <div

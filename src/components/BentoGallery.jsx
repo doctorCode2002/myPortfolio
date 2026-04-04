@@ -307,12 +307,24 @@ export default function BentoGallery() {
 
       <div className="px-3 py-8 max-w-5xl mx-auto">
         {/* <h2 className="text-3xl font-bold font-serif -mb-8">About Me</h2> */}
-        <MaskText
+        {/* <MaskText
           ogText="Crafting software taught me how to engineer intricate full-stack systems and code the frontend page. Every failure is a clue, and every component requires deep insight and precision."
           ogTextColor="black"
           ogSpan="deep insight"
           ogSpanTextColor="#0ea5e9"
           maskText="Studying medicine taught me how to diagnose intricate biological systems and heal the human body. Every symptom is a clue, and every treatment requires deep empathy and precision."
+          maskSpan="deep empathy"
+          maskColor="black"
+          maskTextColor="white"
+          maskSpanTextColor="#f59e0b"
+          bgColor="transparent"
+        /> */}
+        <MaskText
+          ogText="Building software taught me how to design complex full stack systems and deliver reliable user experiences at scale. I work across frontend and backend, integrating APIs and structuring clean architectures that remain efficient over time. Every bug is a signal that reveals deeper patterns, and every solution requires careful thinking and execution. From deploying production systems to mentoring developers, I approach development as a technical and creative journey that pushes me to grow with deep insight and precision."
+          ogTextColor="black"
+          ogSpan="deep insight"
+          ogSpanTextColor="#0ea5e9"
+          maskText="Studying medicine taught me how to understand complex human body systems and deliver reliable patient care at scale. I work through symptoms and diagnosis, integrating knowledge and structuring clear reasoning that remains effective over time. Every symptom is a signal that reveals deeper patterns, and every treatment requires careful thinking and execution. From learning clinical practice to supporting patients, I approach medicine as a scientific and human journey that pushes me to grow with deep empathy and precision."
           maskSpan="deep empathy"
           maskColor="black"
           maskTextColor="white"

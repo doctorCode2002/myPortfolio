@@ -125,13 +125,13 @@ export default function MaskText({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full p-12 flex justify-center items-center  md:cursor-none`}
+      className={`relative w-full p-12 flex justify-center items-center md:cursor-none`}
       style={{ backgroundColor: bgColor }}
     >
       {/* Original text */}
       <div ref={ogRef} className="flex justify-center items-center">
         <p
-          className="w-fit md:w-150 max-w-4xl text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-snug m-0 md:m-8"
+          className="w-fit md:w-200 max-w-4xl text-md sm:text-lg md:text-xl lg:text-2xl font-medium leading-snug"
           style={{ color: ogTextColor }}
         >
           {highlightText(ogText, ogSpan, ogSpanTextColor)}
@@ -141,7 +141,7 @@ export default function MaskText({
       {/* Masked text */}
       <div
         ref={maskRef}
-        className="absolute hidden md:flex w-full h-full top-1/2 left-1/2 -translate-1/2  justify-center items-center pointer-events-none opacity-0"
+        className="absolute hidden md:flex w-full h-full top-0 left-1/2 -translate-x-1/2  justify-center items-center pointer-events-none opacity-0"
         style={{
           backgroundColor: maskColor,
           WebkitMaskImage: "url(/assets/circle.png)",
@@ -155,7 +155,7 @@ export default function MaskText({
         }}
       >
         <p
-          className="w-150 max-w-4xl text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-snug m-8"
+          className="md:w-200 text-md sm:text-lg md:text-xl lg:text-2xl font-medium leading-snug"
           style={{ color: maskTextColor }}
         >
           {highlightText(maskText, maskSpan, maskSpanTextColor)}
