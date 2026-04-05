@@ -10,6 +10,7 @@ import Feedback from "./components/Feedback.jsx";
 
 const ASSET_TIMEOUT_MS = 8000;
 const MIN_LOADER_MS = 450;
+const HARD_LOADER_TIMEOUT_MS = 12000;
 
 export default function App() {
   const [targetProgress, setTargetProgress] = useState(0);
@@ -25,12 +26,14 @@ export default function App() {
     let isCancelled = false;
     const cleanupFns = [];
     const timeoutIds = [];
+    const isTouchDevice =
+      window.matchMedia("(hover: none), (pointer: coarse)").matches;
     const criticalImages = Array.from(
       document.querySelectorAll('img[data-preload="critical"]'),
     );
-    const criticalVideos = Array.from(
-      document.querySelectorAll('video[data-preload="critical"]'),
-    );
+    const criticalVideos = isTouchDevice
+      ? []
+      : Array.from(document.querySelectorAll('video[data-preload="critical"]'));
     const includesFonts = Boolean(document.fonts?.ready);
     const totalAssets =
       criticalImages.length + criticalVideos.length + (includesFonts ? 1 : 0) + 1; // +1 for window load
@@ -130,11 +133,20 @@ export default function App() {
     }
 
     const onWindowLoaded = createOnceDone();
+    const hardFallback = window.setTimeout(() => {
+      if (isCancelled) return;
+      setTargetProgress(100);
+      setDisplayProgress(100);
+      setIsReady(true);
+    }, HARD_LOADER_TIMEOUT_MS);
+    timeoutIds.push(hardFallback);
 
     if (document.readyState === "complete") {
       onWindowLoaded();
     } else {
       window.addEventListener("load", onWindowLoaded, { once: true });
+      const loadFallback = window.setTimeout(onWindowLoaded, ASSET_TIMEOUT_MS);
+      timeoutIds.push(loadFallback);
       cleanupFns.push(() =>
         window.removeEventListener("load", onWindowLoaded),
       );
