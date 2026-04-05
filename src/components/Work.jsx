@@ -172,6 +172,8 @@ export default function Work() {
               <img
                 src={project.image}
                 alt={`${project.name}-image`}
+                loading="lazy"
+                decoding="async"
                 className="absolute bg-center px-14 rounded-xl"
               />
             </div>
@@ -186,6 +188,8 @@ export default function Work() {
             <img
               src={projects[currentIndex].image}
               alt="preview"
+              loading="lazy"
+              decoding="async"
               className="object-cover w-full h-full"
             />
           )}
