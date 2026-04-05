@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import ScrollSmootherLayout from "./components/ScrollSmootherLayout.jsx";
 import Hero from "./components/Hero.jsx";
@@ -6,231 +6,116 @@ import About from "./components/About.jsx";
 import Services from "./components/Services.jsx";
 import Contact from "./components/Contact.jsx";
 import Work from "./components/Work.jsx";
+import BentoGallery from "./components/BentoGallery.jsx";
 import Feedback from "./components/Feedback.jsx";
 
-const ASSET_TIMEOUT_MS = 8000;
-const MIN_LOADER_MS = 450;
-const HARD_LOADER_TIMEOUT_MS = 12000;
-
 export default function App() {
-  const shouldBypassLoader =
-    typeof window !== "undefined" &&
-    (window.matchMedia("(hover: none), (pointer: coarse)").matches ||
-      window.innerWidth < 768);
-  const [targetProgress, setTargetProgress] = useState(() =>
-    shouldBypassLoader ? 100 : 0,
-  );
-  const [displayProgress, setDisplayProgress] = useState(() =>
-    shouldBypassLoader ? 100 : 0,
-  );
-  const [isReady, setIsReady] = useState(() => shouldBypassLoader);
-  const loaderStartRef = useRef(0);
-  const roundedDisplayProgress = Math.round(displayProgress);
+  const [targetProgress, setTargetProgress] = useState(0);
+  const [displayProgress, setDisplayProgress] = useState(0);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    loaderStartRef.current = performance.now();
-    if (shouldBypassLoader) return;
-
     let loadedCount = 0;
-    let isCancelled = false;
+    let isWindowLoadedCounted = false;
     const cleanupFns = [];
-    const timeoutIds = [];
-    const criticalImages = Array.from(
-      document.querySelectorAll('img[data-preload="critical"]'),
-    );
-    const criticalVideos = Array.from(
-      document.querySelectorAll('video[data-preload="critical"]'),
-    );
-    const includesFonts = Boolean(document.fonts?.ready);
-    const totalAssets =
-      criticalImages.length + criticalVideos.length + (includesFonts ? 1 : 0) + 1; // +1 for window load
+
+    const images = Array.from(document.images);
+    const videos = Array.from(document.querySelectorAll("video"));
+    const totalAssets = images.length + videos.length + 1; // +1 for full window load
 
     const updateProgress = () => {
-      if (isCancelled) return;
       const next = Math.round((loadedCount / totalAssets) * 100);
       setTargetProgress((prev) => Math.max(prev, next));
     };
 
-    const markLoaded = (teardown) => {
-      if (teardown) teardown();
-      if (isCancelled) return;
+    const markLoaded = () => {
       loadedCount += 1;
       updateProgress();
     };
 
-    const createOnceDone = (teardown) => {
-      let done = false;
-
-      return () => {
-        if (done) return;
-        done = true;
-        markLoaded(teardown);
-      };
-    };
-
-    criticalImages.forEach((image) => {
+    images.forEach((image) => {
       if (image.complete) {
         markLoaded();
         return;
       }
 
-      let assetTimeout = 0;
-      let onLoad = null;
-      let onError = null;
-      const onDone = createOnceDone(() => {
-        if (onLoad) image.removeEventListener("load", onLoad);
-        if (onError) image.removeEventListener("error", onError);
-        window.clearTimeout(assetTimeout);
-      });
-
-      assetTimeout = window.setTimeout(onDone, ASSET_TIMEOUT_MS);
-      timeoutIds.push(assetTimeout);
-
-      onLoad = () => onDone();
-      onError = () => onDone();
+      const onLoad = () => markLoaded();
+      const onError = () => markLoaded();
       image.addEventListener("load", onLoad, { once: true });
       image.addEventListener("error", onError, { once: true });
       cleanupFns.push(() => {
         image.removeEventListener("load", onLoad);
         image.removeEventListener("error", onError);
-        window.clearTimeout(assetTimeout);
       });
     });
 
-    criticalVideos.forEach((video) => {
-      if (video.readyState >= 2) {
+    videos.forEach((video) => {
+      if (video.readyState >= 3) {
         markLoaded();
         return;
       }
 
-      let assetTimeout = 0;
-      let onLoadedData = null;
-      let onError = null;
-      const onDone = createOnceDone(() => {
-        if (onLoadedData) video.removeEventListener("loadeddata", onLoadedData);
-        if (onError) video.removeEventListener("error", onError);
-        window.clearTimeout(assetTimeout);
-      });
-
-      assetTimeout = window.setTimeout(onDone, ASSET_TIMEOUT_MS);
-      timeoutIds.push(assetTimeout);
-
-      onLoadedData = () => onDone();
-      onError = () => onDone();
+      const onLoadedData = () => markLoaded();
+      const onError = () => markLoaded();
       video.addEventListener("loadeddata", onLoadedData, { once: true });
       video.addEventListener("error", onError, { once: true });
       cleanupFns.push(() => {
         video.removeEventListener("loadeddata", onLoadedData);
         video.removeEventListener("error", onError);
-        window.clearTimeout(assetTimeout);
       });
     });
 
-    const onFontsDone = createOnceDone();
-    if (includesFonts) {
-      let fontTimeout = 0;
-      fontTimeout = window.setTimeout(onFontsDone, ASSET_TIMEOUT_MS);
-      timeoutIds.push(fontTimeout);
-      document.fonts.ready.finally(() => {
-        window.clearTimeout(fontTimeout);
-        onFontsDone();
-      });
-    } else {
-      onFontsDone();
-    }
-
-    const onWindowLoaded = createOnceDone();
-    const hardFallback = window.setTimeout(() => {
-      if (isCancelled) return;
+    const onWindowLoaded = () => {
+      if (isWindowLoadedCounted) return;
+      isWindowLoadedCounted = true;
+      markLoaded();
       setTargetProgress(100);
-      setDisplayProgress(100);
-      setIsReady(true);
-    }, HARD_LOADER_TIMEOUT_MS);
-    timeoutIds.push(hardFallback);
+    };
 
     if (document.readyState === "complete") {
       onWindowLoaded();
     } else {
       window.addEventListener("load", onWindowLoaded, { once: true });
-      const loadFallback = window.setTimeout(onWindowLoaded, ASSET_TIMEOUT_MS);
-      timeoutIds.push(loadFallback);
       cleanupFns.push(() =>
         window.removeEventListener("load", onWindowLoaded),
       );
     }
 
     return () => {
-      isCancelled = true;
       cleanupFns.forEach((fn) => fn());
-      timeoutIds.forEach((id) => window.clearTimeout(id));
     };
-  }, [shouldBypassLoader]);
+  }, []);
 
   useEffect(() => {
-    let rafId = 0;
+    if (displayProgress >= targetProgress) return;
 
-    const animate = () => {
+    const timer = window.setInterval(() => {
       setDisplayProgress((current) => {
-        if (current >= targetProgress || targetProgress <= 0) {
-          return current;
-        }
-
+        if (current >= targetProgress) return current;
         const diff = targetProgress - current;
-        const step = diff > 20 ? 3.2 : diff > 8 ? 1.8 : 0.8;
-        const next = Math.min(current + step, targetProgress);
-
-        if (next < targetProgress) {
-          rafId = window.requestAnimationFrame(animate);
-        }
-
-        return next;
+        const step = diff > 12 ? 4 : 1;
+        return Math.min(current + step, targetProgress);
       });
-    };
+    }, 16);
 
-    rafId = window.requestAnimationFrame(animate);
-
-    return () => window.cancelAnimationFrame(rafId);
-  }, [targetProgress]);
+    return () => window.clearInterval(timer);
+  }, [targetProgress, displayProgress]);
 
   useEffect(() => {
-    if (targetProgress !== 100 || roundedDisplayProgress !== 100) return;
-
-    const elapsed = performance.now() - loaderStartRef.current;
-    const delay = Math.max(0, MIN_LOADER_MS - elapsed);
+    if (targetProgress !== 100 || displayProgress !== 100) return;
 
     const doneTimer = window.setTimeout(() => {
       setIsReady(true);
-    }, delay);
+    }, 200);
 
     return () => window.clearTimeout(doneTimer);
-  }, [targetProgress, roundedDisplayProgress]);
+  }, [targetProgress, displayProgress]);
 
   useEffect(() => {
-    if (isReady) return;
-
-    const scrollY = window.scrollY;
-    const previousStyles = {
-      overflow: document.body.style.overflow,
-      position: document.body.style.position,
-      width: document.body.style.width,
-      top: document.body.style.top,
-      overscrollBehaviorY: document.documentElement.style.overscrollBehaviorY,
-    };
-
-    document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.width = "100%";
-    document.body.style.top = `-${scrollY}px`;
-    document.documentElement.style.overscrollBehaviorY = "none";
+    document.body.style.overflow = isReady ? "" : "hidden";
 
     return () => {
-      document.body.style.overflow = previousStyles.overflow;
-      document.body.style.position = previousStyles.position;
-      document.body.style.width = previousStyles.width;
-      document.body.style.top = previousStyles.top;
-      document.documentElement.style.overscrollBehaviorY =
-        previousStyles.overscrollBehaviorY;
-      window.scrollTo(0, scrollY);
+      document.body.style.overflow = "";
     };
   }, [isReady]);
 
@@ -239,21 +124,14 @@ export default function App() {
       {!isReady && (
         <div className="fixed inset-0 z-9999 bg-black flex items-center justify-center">
           <div className="w-[min(440px,80vw)]">
-            <div
-              className="h-1 w-full bg-white/20 overflow-hidden"
-              role="progressbar"
-              aria-label="Page loading progress"
-              aria-valuenow={roundedDisplayProgress}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
+            <div className="h-1 w-full bg-white/20 overflow-hidden">
               <div
                 className="h-full bg-white transition-[width] duration-150 ease-out"
-                style={{ width: `${roundedDisplayProgress}%` }}
+                style={{ width: `${displayProgress}%` }}
               />
             </div>
-            <p className="mt-4 text-center text-white text-sm tabular-nums" aria-live="polite">
-              {roundedDisplayProgress}%
+            <p className="mt-4 text-center text-white text-sm tabular-nums">
+              {displayProgress}%
             </p>
           </div>
         </div>

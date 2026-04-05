@@ -57,8 +57,6 @@ export default function Services() {
               ref={imageRef}
               src={servicesImg}
               alt="services"
-              loading="lazy"
-              decoding="async"
               className="object-cover w-full max-w-lg"
             />
             <div className="absolute inset-0 bg-black/30" />

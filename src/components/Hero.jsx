@@ -101,12 +101,11 @@ export default function Hero() {
       <div className="absolute inset-0 -z-5 pointer-events-none">
         <video
           className="absolute inset-0 w-full h-full object-cover object-top"
-          data-preload="critical"
           autoPlay
           muted
           playsInline
           loop
-          preload="metadata"
+          preload="auto"
         >
           <source src={bgvideo} type="video/mp4" />
         </video>

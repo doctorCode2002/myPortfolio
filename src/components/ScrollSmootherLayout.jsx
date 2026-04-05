@@ -12,20 +12,13 @@ export default function ScrollSmootherLayout({ children, enabled = true }) {
 
   useGSAP(() => {
     if (!enabled || !wrapperRef.current || !contentRef.current) return;
-    const isTouchDevice =
-      window.matchMedia("(hover: none), (pointer: coarse)").matches;
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    if (isTouchDevice || prefersReducedMotion) return;
 
     const smoother = ScrollSmoother.create({
       wrapper: wrapperRef.current,
       content: contentRef.current,
       smooth: 1,
       effects: true,
-      smoothTouch: 0,
+      smoothTouch: 0.1,
     });
 
     return () => {
