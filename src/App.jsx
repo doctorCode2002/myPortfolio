@@ -13,27 +13,34 @@ const MIN_LOADER_MS = 450;
 const HARD_LOADER_TIMEOUT_MS = 12000;
 
 export default function App() {
-  const [targetProgress, setTargetProgress] = useState(0);
-  const [displayProgress, setDisplayProgress] = useState(0);
-  const [isReady, setIsReady] = useState(false);
+  const shouldBypassLoader =
+    typeof window !== "undefined" &&
+    (window.matchMedia("(hover: none), (pointer: coarse)").matches ||
+      window.innerWidth < 768);
+  const [targetProgress, setTargetProgress] = useState(() =>
+    shouldBypassLoader ? 100 : 0,
+  );
+  const [displayProgress, setDisplayProgress] = useState(() =>
+    shouldBypassLoader ? 100 : 0,
+  );
+  const [isReady, setIsReady] = useState(() => shouldBypassLoader);
   const loaderStartRef = useRef(0);
   const roundedDisplayProgress = Math.round(displayProgress);
 
   useEffect(() => {
     loaderStartRef.current = performance.now();
+    if (shouldBypassLoader) return;
 
     let loadedCount = 0;
     let isCancelled = false;
     const cleanupFns = [];
     const timeoutIds = [];
-    const isTouchDevice =
-      window.matchMedia("(hover: none), (pointer: coarse)").matches;
     const criticalImages = Array.from(
       document.querySelectorAll('img[data-preload="critical"]'),
     );
-    const criticalVideos = isTouchDevice
-      ? []
-      : Array.from(document.querySelectorAll('video[data-preload="critical"]'));
+    const criticalVideos = Array.from(
+      document.querySelectorAll('video[data-preload="critical"]'),
+    );
     const includesFonts = Boolean(document.fonts?.ready);
     const totalAssets =
       criticalImages.length + criticalVideos.length + (includesFonts ? 1 : 0) + 1; // +1 for window load
@@ -157,7 +164,7 @@ export default function App() {
       cleanupFns.forEach((fn) => fn());
       timeoutIds.forEach((id) => window.clearTimeout(id));
     };
-  }, []);
+  }, [shouldBypassLoader]);
 
   useEffect(() => {
     let rafId = 0;
