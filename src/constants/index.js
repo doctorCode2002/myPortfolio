@@ -1,5 +1,6 @@
 import civicMind from "/assets/projects/civicMind.webp";
 import eyadDesinger from "/assets/projects/eyadDesinger.webp";
+import salehWebsitePreview from "/assets/projects/saleh-website-previeew.webp";
 import homeNav from "/assets/navImages/homeNav.webp";
 import servicesNav from "/assets/navImages/servicesNav.webp";
 import aboutNav from "/assets/navImages/aboutNav.webp";
@@ -61,6 +62,19 @@ export const projects = [
       { id: 2, name: "Tailwind CSS" },
       { id: 3, name: "GSAP" },
       { id: 4, name: "Python" },
+    ],
+  },
+  {
+    id: 3,
+    name: "Saleh Portfolio",
+    description:
+      "A modern portfolio for a graphic designer showcasing their work and services.",
+    href: "#",
+    image: salehWebsitePreview,
+    frameworks: [
+      { id: 1, name: "React" },
+      { id: 2, name: "Tailwind CSS" },
+      { id: 3, name: "GSAP" },
     ],
   },
 ];
