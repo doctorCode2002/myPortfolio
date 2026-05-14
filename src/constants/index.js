@@ -69,7 +69,7 @@ export const projects = [
     name: "Saleh Portfolio",
     description:
       "A modern portfolio for a graphic designer showcasing their work and services.",
-    href: "#",
+    href: "https://saleh-portfolio-gamma.vercel.app/",
     image: salehWebsitePreview,
     frameworks: [
       { id: 1, name: "React" },
@@ -114,6 +114,14 @@ export const TESTIMONIALS = [
     role: "UI/UX Designer",
     company: "Creative Studio",
     rating: 4,
+  },
+  {
+    quote:
+      "Very professional and detail oriented. The website quality exceeded expectations, and the whole process was smooth, efficient, and easy from beginning to end.",
+    name: "Saleh Abu Rayya",
+    role: "Graphic Designer",
+    company: "Freelance",
+    rating: 5,
   },
   {
     quote:
