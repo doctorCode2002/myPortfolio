@@ -69,7 +69,7 @@ export const projects = [
     name: "Saleh Portfolio",
     description:
       "A modern portfolio for a graphic designer showcasing their work and services.",
-    href: "https://saleh-portfolio-gamma.vercel.app/",
+    href: "https://salehaburayya.com",
     image: salehWebsitePreview,
     frameworks: [
       { id: 1, name: "React" },
