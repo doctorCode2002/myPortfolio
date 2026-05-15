@@ -1,6 +1,7 @@
 import civicMind from "/assets/projects/civicMind.webp";
 import eyadDesinger from "/assets/projects/eyadDesinger.webp";
 import salehWebsitePreview from "/assets/projects/saleh-website-previeew.webp";
+import onyx from "/assets/projects/onyx.webp";
 import homeNav from "/assets/navImages/homeNav.webp";
 import servicesNav from "/assets/navImages/servicesNav.webp";
 import aboutNav from "/assets/navImages/aboutNav.webp";
@@ -75,6 +76,20 @@ export const projects = [
       { id: 1, name: "React" },
       { id: 2, name: "Tailwind CSS" },
       { id: 3, name: "GSAP" },
+    ],
+  },
+  {
+    id: 4,
+    name: "ONYX E-commerce",
+    description:
+      "A modern e-commerce platform for a store showcasing their products.",
+    href: "https://e-commerce-pink-iota.vercel.app/",
+    image: onyx,
+    frameworks: [
+      { id: 1, name: "React" },
+      { id: 2, name: "Tailwind CSS" },
+      { id: 3, name: "GSAP" },
+      { id: 4, name: "Motion" },
     ],
   },
 ];
