@@ -87,9 +87,8 @@ export const projects = [
     image: onyx,
     frameworks: [
       { id: 1, name: "React" },
-      { id: 2, name: "Tailwind CSS" },
-      { id: 3, name: "GSAP" },
-      { id: 4, name: "Motion" },
+      { id: 2, name: "GSAP" },
+      { id: 3, name: "Motion" },
     ],
   },
 ];
