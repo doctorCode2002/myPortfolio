@@ -8,6 +8,7 @@ import Contact from "./components/Contact.jsx";
 import Work from "./components/Work.jsx";
 import BentoGallery from "./components/BentoGallery.jsx";
 import Feedback from "./components/Feedback.jsx";
+import StudentReviews from "./components/StudentReviews.jsx";
 
 export default function App() {
   const [targetProgress, setTargetProgress] = useState(0);
@@ -145,6 +146,7 @@ export default function App() {
           <About />
           <Work />
           <Feedback />
+          <StudentReviews />
           <Contact />
         </ScrollSmootherLayout>
       </div>

@@ -154,3 +154,62 @@ export const TESTIMONIALS = [
     rating: 5,
   },
 ];
+
+export const STUDENT_REVIEWS = [
+  {
+    quote:
+      "The lessons made React feel clear for the first time. Mohammed explained the idea, then helped me build until it really clicked.",
+    name: "Ahmad Khalil",
+    role: "React Student",
+    company: "Frontend Mentoring",
+    rating: 5,
+  },
+  {
+    quote:
+      "He was patient, practical, and always connected each concept to a real project. I became much more confident writing components.",
+    name: "Sara Ali",
+    role: "Web Development Student",
+    company: "Private Course",
+    rating: 5,
+  },
+  {
+    quote:
+      "The best part was learning how to think through bugs. Mohammed did not just give answers, he taught me how to debug properly.",
+    name: "Saleh Abu Rayya",
+    role: "JavaScript Student",
+    company: "Mentorship",
+    rating: 5,
+  },
+  {
+    quote:
+      "Every session had useful examples and clear feedback. My portfolio improved a lot, especially the layout and animation details.",
+    name: "Omar Hassan",
+    role: "Portfolio Student",
+    company: "Frontend Coaching",
+    rating: 5,
+  },
+  {
+    quote:
+      "I started with almost no confidence in CSS. After the course I could build responsive pages and understand what I was doing.",
+    name: "Lina Mansour",
+    role: "CSS Student",
+    company: "Private Lessons",
+    rating: 5,
+  },
+  {
+    quote:
+      "Mohammed explains difficult topics in simple steps. The homework reviews were detailed and helped me avoid repeating mistakes.",
+    name: "Yousef Nasser",
+    role: "Frontend Student",
+    company: "Mentorship",
+    rating: 5,
+  },
+  {
+    quote:
+      "The lessons were focused and practical. I learned how to structure projects, use Git, and make cleaner decisions in React.",
+    name: "Maya Darwish",
+    role: "React Student",
+    company: "Private Course",
+    rating: 5,
+  },
+];
