@@ -8,6 +8,7 @@ import Contact from "./components/Contact.jsx";
 import Work from "./components/Work.jsx";
 import BentoGallery from "./components/BentoGallery.jsx";
 import Feedback from "./components/Feedback.jsx";
+import MentorProfile from "./components/MentorProfile.jsx";
 import StudentReviews from "./components/StudentReviews.jsx";
 
 export default function App() {
@@ -146,6 +147,7 @@ export default function App() {
           <About />
           <Work />
           <Feedback />
+          <MentorProfile />
           <StudentReviews />
           <Contact />
         </ScrollSmootherLayout>

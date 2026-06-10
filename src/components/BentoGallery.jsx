@@ -305,7 +305,7 @@ export default function BentoGallery() {
         </div>
       </div>
 
-      <div className="px-3 py-8 max-w-5xl mx-auto">
+      <div className="bg-[#f5f2e9] px-3 py-8 max-w-5xl mx-auto">
         {/* <h2 className="text-3xl font-bold font-serif -mb-8">About Me</h2> */}
         {/* <MaskText
           ogText="Crafting software taught me how to engineer intricate full-stack systems and code the frontend page. Every failure is a clue, and every component requires deep insight and precision."

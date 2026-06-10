@@ -113,7 +113,7 @@ export default function Work() {
   };
 
   return (
-    <Section id="work" className="flex flex-col">
+    <Section id="work" className="flex flex-col bg-[#f5f2e9]">
       <h2
         id="work-title"
         className="text-4xl sm:text-5xl lg:text-7xl font-serif mb-8 capitalize pl-10"

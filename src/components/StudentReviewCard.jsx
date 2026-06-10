@@ -65,24 +65,24 @@ export default function StudentReviewCard({
       ref={cardRef}
       onMouseEnter={swingCard}
       onMouseLeave={resetCard}
-      className="relative w-[82vw] max-w-[360px] shrink-0 select-none rounded-[28px] border border-black/5 bg-[#f5f2e9] p-4 shadow-[0_24px_45px_rgba(0,0,0,0.16)] sm:w-[360px] sm:p-5 lg:w-[410px] lg:max-w-[410px] lg:p-6"
+      className="relative h-[360px] w-[72vw] max-w-[290px] shrink-0 select-none rounded-[24px] border border-black/5 bg-[#f5f2e9] p-3.5 shadow-[0_20px_36px_rgba(0,0,0,0.14)] sm:h-[430px] sm:w-[330px] sm:max-w-none sm:rounded-[28px] sm:p-5 md:w-[350px] lg:h-[440px] lg:w-[410px] lg:p-6 lg:shadow-[0_24px_45px_rgba(0,0,0,0.16)]"
     >
       <div
-        className="absolute left-1/2 top-0 z-10 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600 shadow-[0_12px_18px_rgba(220,38,38,0.35)]"
+        className="absolute left-1/2 top-0 z-10 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600 shadow-[0_12px_18px_rgba(220,38,38,0.35)] sm:h-12 sm:w-12"
         aria-hidden="true"
       >
-        <span className="absolute left-1/2 top-1 h-8 w-8 -translate-x-1/2 rounded-full bg-red-500" />
-        <span className="absolute bottom-1 left-1/2 h-3 w-7 -translate-x-1/2 rounded-full bg-red-800/60" />
+        <span className="absolute left-1/2 top-1 h-7 w-7 -translate-x-1/2 rounded-full bg-red-500 sm:h-8 sm:w-8" />
+        <span className="absolute bottom-1 left-1/2 h-2.5 w-6 -translate-x-1/2 rounded-full bg-red-800/60 sm:h-3 sm:w-7" />
       </div>
 
       <div className="absolute inset-x-8 bottom-0 h-8 translate-y-4 rounded-full bg-black/10 blur-xl" />
 
       <div
-        className={`relative flex min-h-[260px] flex-col justify-between rounded-[18px] border bg-gradient-to-br p-6 ${color.panel} ${color.border} sm:min-h-[290px] lg:min-h-[315px] lg:p-7`}
+        className={`relative flex h-full flex-col justify-between rounded-[16px] border bg-gradient-to-br p-4 ${color.panel} ${color.border} sm:rounded-[18px] sm:p-5 lg:p-7`}
       >
-        <div>
-          <div className="mb-7 flex items-start justify-between gap-4">
-            <span className={`font-serif text-5xl leading-none ${color.number}`}>
+        <div className="min-h-0">
+          <div className="mb-3 flex items-start justify-between gap-4 sm:mb-6">
+            <span className={`font-serif text-3xl leading-none sm:text-4xl lg:text-5xl ${color.number}`}>
               {displayIndex}
             </span>
 
@@ -98,14 +98,14 @@ export default function StudentReviewCard({
             </div>
           </div>
 
-          <p className="font-serif text-2xl leading-tight text-black sm:text-3xl">
+          <p className="font-serif text-[13px] leading-6 text-black sm:text-base lg:text-lg">
             "{quote}"
           </p>
         </div>
 
-        <div className="mt-8 border-t border-black/15 pt-4">
-          <p className="text-base font-semibold leading-tight text-black">{name}</p>
-          <p className="mt-1 text-sm text-black/55">
+        <div className="mt-4 border-t border-black/15 pt-3 sm:mt-7 sm:pt-4">
+          <p className="text-sm font-semibold leading-tight text-black sm:text-base">{name}</p>
+          <p className="mt-1 text-xs text-black/55 sm:text-sm">
             {role}
             {company ? <span> / {company}</span> : null}
           </p>

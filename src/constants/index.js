@@ -155,61 +155,83 @@ export const TESTIMONIALS = [
   },
 ];
 
+export const MENTOR_STATS = [
+  {
+    value: "40h",
+    label: "Frontend training program",
+  },
+  {
+    value: "1:1",
+    label: "Code reviews and feedback",
+  },
+  {
+    value: "AI",
+    label: "Assisted development workflows",
+  },
+];
+
+export const MENTOR_POINTS = [
+  "Frontend Instructor covering HTML, CSS, JavaScript, React, responsive design, Git, and project workflows.",
+  "Mentors students through hands-on projects, assignments, and real-world coding challenges.",
+  "Provides practical code reviews, debugging support, and personalized feedback to improve student performance.",
+  "Introduces AI tools and prompt engineering practices to help learners debug faster and build with more confidence.",
+];
+
 export const STUDENT_REVIEWS = [
   {
     quote:
-      "The lessons made React feel clear for the first time. Mohammed explained the idea, then helped me build until it really clicked.",
-    name: "Ahmad Khalil",
-    role: "React Student",
-    company: "Frontend Mentoring",
+      "I completed the Front-End course with Engineer Mohammed Abu Taleb. His explanations were very clear and easy to follow, and he always made complex ideas simple and understandable. It was a highly valuable learning experience.",
+    name: "Nour Maghari",
+    role: "Front-End Student",
+    company: "Frontend Course",
     rating: 5,
   },
   {
     quote:
-      "He was patient, practical, and always connected each concept to a real project. I became much more confident writing components.",
-    name: "Sara Ali",
-    role: "Web Development Student",
-    company: "Private Course",
+      "I completed the Front-End course with Engineer Mohammed Abu Taleb. His teaching style was clear, practical, and focused on real application. He was always supportive and available for questions throughout the course.",
+    name: "Shahd Washah",
+    role: "Front-End Student",
+    company: "Frontend Course",
     rating: 5,
   },
   {
     quote:
-      "The best part was learning how to think through bugs. Mohammed did not just give answers, he taught me how to debug properly.",
-    name: "Saleh Abu Rayya",
-    role: "JavaScript Student",
-    company: "Mentorship",
+      "This course was a real turning point in my journey. I gained valuable knowledge and practical skills that I didn’t have before, and everything was explained in a very clear and structured way.",
+    name: "Tayma Idris",
+    role: "Front-End Student",
+    company: "Frontend Course",
     rating: 5,
   },
   {
     quote:
-      "Every session had useful examples and clear feedback. My portfolio improved a lot, especially the layout and animation details.",
-    name: "Omar Hassan",
-    role: "Portfolio Student",
-    company: "Frontend Coaching",
+      "This was one of the best learning experiences I’ve had. The explanations were simple and clear, and the instructor was always supportive and ready to help with any question.",
+    name: "Saja Abu Mandeel",
+    role: "Front-End Student",
+    company: "Frontend Course",
     rating: 5,
   },
   {
     quote:
-      "I started with almost no confidence in CSS. After the course I could build responsive pages and understand what I was doing.",
-    name: "Lina Mansour",
-    role: "CSS Student",
-    company: "Private Lessons",
+      "This was an excellent experience. The explanations were clear and the additional insights made the course stand out. I truly appreciated the effort and support throughout the journey.",
+    name: "Tasneem Musleh",
+    role: "Front-End Student",
+    company: "Frontend Course",
     rating: 5,
   },
   {
     quote:
-      "Mohammed explains difficult topics in simple steps. The homework reviews were detailed and helped me avoid repeating mistakes.",
-    name: "Yousef Nasser",
-    role: "Frontend Student",
-    company: "Mentorship",
+      "I started with no background in Front-End, but the teaching approach made everything easy to understand. Questions were always welcome, and the support helped me grow a lot.",
+    name: "Tasneem Abu Btihan",
+    role: "Front-End Student",
+    company: "Frontend Course",
     rating: 5,
   },
   {
     quote:
-      "The lessons were focused and practical. I learned how to structure projects, use Git, and make cleaner decisions in React.",
-    name: "Maya Darwish",
-    role: "React Student",
-    company: "Private Course",
+      "The course was very clear and well-structured. I learned HTML, CSS, JavaScript, Git, and GitHub in a practical way. The feedback and support helped me improve my skills significantly.",
+    name: "Nour Al-Din Al-Assar",
+    role: "Front-End Developer Student",
+    company: "Frontend Development Course",
     rating: 5,
   },
 ];

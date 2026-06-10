@@ -5,7 +5,7 @@ import Section from "./Section";
 import { TESTIMONIALS } from "../constants";
 export default function Feedback() {
   return (
-    <Section className="flex flex-col ">
+    <Section className="flex flex-col bg-[#f5f2e9]">
       <h2 className=" font-serif text-center mb-8 text-3xl sm:text-3xl lg:text-4xl  capitalize">
         Testimonials
       </h2>
