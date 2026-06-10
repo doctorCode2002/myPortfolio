@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import Navbar from "./components/Navbar";
 import ScrollSmootherLayout from "./components/ScrollSmootherLayout.jsx";
 import Hero from "./components/Hero.jsx";
@@ -123,6 +124,7 @@ export default function App() {
 
   return (
     <div className="bg-black relative flex justify-center">
+      <Analytics />
       {!isReady && (
         <div className="fixed inset-0 z-9999 bg-black flex items-center justify-center">
           <div className="w-[min(440px,80vw)]">
