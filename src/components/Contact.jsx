@@ -5,6 +5,7 @@ import gsap from "../lib/gsap";
 import { useGSAP } from "@gsap/react";
 import Container from "./Container";
 import { CONTACT_DATA } from "../constants";
+import { CURRENT_YEAR } from "../lib/site";
 
 export default function Contact() {
   const sectionRef = useRef(null);
@@ -82,7 +83,7 @@ export default function Contact() {
             ))}
 
             <span className="text-white/40 pt-6 text-xs normal-case">
-              © {new Date().getFullYear()} — All rights reserved
+              © {CURRENT_YEAR} — All rights reserved
             </span>
           </div>
         </div>
