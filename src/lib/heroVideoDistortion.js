@@ -204,12 +204,34 @@ export function mountHeroVideoDistortion(pointerRoot, canvasContainer, video) {
     dataTexture.needsUpdate = true;
   }
 
-  renderer.setAnimationLoop(() => {
+  function renderFrame() {
     updateDataTexture();
     renderer.render(scene, camera);
-  });
+  }
+
+  // Only render while the hero is actually on screen - without this the
+  // animation loop (and its per-frame GPU work) runs for the entire page
+  // lifetime regardless of scroll position, which competes with the
+  // compositor for the whole rest of the page and can show up as scroll
+  // jank/visual glitches far from the hero itself.
+  const visibilityObserver = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        // Drop any velocity accrued right before scrolling away, so coming
+        // back doesn't replay it as a sudden burst of distortion.
+        mouse.vX = 0;
+        mouse.vY = 0;
+        renderer.setAnimationLoop(renderFrame);
+      } else {
+        renderer.setAnimationLoop(null);
+      }
+    },
+    { threshold: 0 },
+  );
+  visibilityObserver.observe(pointerRoot);
 
   return function destroy() {
+    visibilityObserver.disconnect();
     renderer.setAnimationLoop(null);
     pointerRoot.removeEventListener("pointermove", handlePointerMove);
     window.removeEventListener("resize", handleResize);
