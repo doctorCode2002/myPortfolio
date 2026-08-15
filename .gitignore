@@ -10,7 +10,16 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.next
+out
+next-env.d.ts
 *.local
+
+# AI tooling — never reaches the remote
+.claude/
+.specify/
+specs/
+graphify-out/
 
 # Editor directories and files
 .vscode/*

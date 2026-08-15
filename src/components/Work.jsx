@@ -1,6 +1,8 @@
+"use client";
+
 import { projects } from "../constants";
 import { useRef, useState } from "react";
-import gsap from "gsap";
+import gsap from "../lib/gsap";
 import { useGSAP } from "@gsap/react";
 import Section from "./Section";
 
@@ -40,7 +42,7 @@ export default function Work() {
       ease: "power3.out",
     });
 
-    gsap.from("#project", {
+    gsap.from(".project-item", {
       y: 100,
       opacity: 0,
       delay: 0.5,
@@ -48,7 +50,7 @@ export default function Work() {
       stagger: 0.3,
       ease: "back.out",
       scrollTrigger: {
-        trigger: "#project",
+        trigger: ".project-item",
       },
     });
   }, []);
@@ -129,9 +131,9 @@ export default function Work() {
           <a
             href={project.href}
             target="_blank"
+            rel="noopener noreferrer"
             key={project.id}
-            id="project"
-            className="relative flex flex-col gap-1 py-5 cursor-pointer group md:gap-0"
+            className="project-item relative flex flex-col gap-1 py-5 cursor-pointer group md:gap-0 isolate"
             onMouseEnter={() => handleMouseEnter(index)}
             onMouseLeave={() => handleMouseLeave(index)}
           >

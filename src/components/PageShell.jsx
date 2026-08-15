@@ -1,21 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { Analytics } from "@vercel/analytics/react";
-import Navbar from "./components/Navbar";
-import ScrollSmootherLayout from "./components/ScrollSmootherLayout.jsx";
-import Hero from "./components/Hero.jsx";
-import About from "./components/About.jsx";
-import Services from "./components/Services.jsx";
-import Contact from "./components/Contact.jsx";
-import Work from "./components/Work.jsx";
-import BentoGallery from "./components/BentoGallery.jsx";
-import Feedback from "./components/Feedback.jsx";
-import MentorProfile from "./components/MentorProfile.jsx";
-import StudentReviews from "./components/StudentReviews.jsx";
+"use client";
 
-export default function App() {
+import { useEffect, useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
+import { ScrollTrigger } from "../lib/gsap";
+import { LenisProvider } from "../context/LenisContext.jsx";
+
+export default function PageShell({ children }) {
   const [targetProgress, setTargetProgress] = useState(0);
   const [displayProgress, setDisplayProgress] = useState(0);
   const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const setVh = () => {
+      document.documentElement.style.setProperty(
+        "--vh",
+        `${window.innerHeight * 0.01}px`,
+      );
+    };
+    setVh();
+    window.addEventListener("resize", setVh);
+    return () => window.removeEventListener("resize", setVh);
+  }, []);
 
   useEffect(() => {
     let loadedCount = 0;
@@ -122,6 +127,15 @@ export default function App() {
     };
   }, [isReady]);
 
+  useEffect(() => {
+    if (isReady) {
+      const timer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isReady]);
+
   return (
     <div className="bg-black relative flex justify-center">
       <Analytics />
@@ -141,18 +155,8 @@ export default function App() {
         </div>
       )}
 
-      <div className={isReady ? "w-full flex flex-col items-center justify-center" : "w-full invisible"}>
-        <Navbar />
-        <ScrollSmootherLayout enabled={isReady}>
-          <Hero />
-          <Services />
-          <About />
-          <Work />
-          <Feedback />
-          <MentorProfile />
-          <StudentReviews />
-          <Contact />
-        </ScrollSmootherLayout>
+      <div className={isReady ? "w-full flex flex-col" : "w-full invisible"}>
+        <LenisProvider>{children}</LenisProvider>
       </div>
     </div>
   );

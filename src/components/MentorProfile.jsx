@@ -1,11 +1,10 @@
+"use client";
+
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import gsap from "../lib/gsap";
 import Section from "./Section";
 import { MENTOR_POINTS, MENTOR_STATS } from "../constants";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function MentorProfile() {
   const sectionRef = useRef(null);

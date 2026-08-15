@@ -1,53 +1,84 @@
-import { useRef } from "react";
+"use client";
+
+import { useRef, useState, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Section from "./Section";
+import gsap, { ScrollTrigger } from "../lib/gsap";
 import StudentReviewCard from "./StudentReviewCard";
 import { STUDENT_REVIEWS } from "../constants";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function StudentReviews() {
+  // outerRef = the <section> that gets pinned.
+  // sectionRef = inner content div (NOT the pin target — scope and pin must be different elements).
+  const outerRef = useRef(null);
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
 
+  // Starts false to match the server-rendered markup (no `window` on the server);
+  // corrected to the real viewport width immediately after mount below. Reading
+  // `window.innerWidth` directly in the initializer would make the client's first
+  // render diverge from the SSR output on mobile viewports — a hydration mismatch.
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      ScrollTrigger.refresh();
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile && trackRef.current?.parentElement) {
+      trackRef.current.parentElement.scrollLeft = 0;
+    }
+  }, [isMobile]);
+
   useGSAP(
     () => {
-      const section = sectionRef.current;
+      if (isMobile) return;
+
+      const outer = outerRef.current;
       const track = trackRef.current;
-      if (!section || !track) return;
+      const container = track?.parentElement;
 
-      const getDistance = () => {
-        return Math.max(0, track.scrollWidth - window.innerWidth);
-      };
+      if (!outer || !track || !container) return;
 
-      const tween = gsap.to(track, {
+      const navH = parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue("--nav-h") || "80",
+        10,
+      );
+
+      const getDistance = () =>
+        Math.max(0, track.scrollWidth - container.clientWidth);
+
+      gsap.to(track, {
         x: () => -getDistance(),
         ease: "none",
         scrollTrigger: {
-          trigger: section,
-          start: "top top",
+          trigger: outer,
+          start: `top ${navH}px`,
           end: () => `+=${getDistance()}`,
-          scrub: 1,
+          // scrub: true instead of scrub: 1 — no lerp lag so the animation
+          // always matches the scroll position exactly when the pin releases.
+          scrub: true,
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
-
-      return () => {
-        tween.scrollTrigger?.kill();
-        tween.kill();
-      };
     },
-    { scope: sectionRef },
+    // scope must NOT be the pinned element (outerRef). Use sectionRef (inner div).
+    { scope: sectionRef, dependencies: [isMobile] },
   );
 
   return (
-    <Section
+    // Plain <section> so outerRef can reference it directly for pinning.
+    <section
+      ref={outerRef}
       id="student-reviews"
-      className="overflow-x-hidden bg-[#f5f2e9] py-0 text-black"
+      className="bg-[#f5f2e9] text-black w-full"
     >
       <div
         ref={sectionRef}
@@ -57,22 +88,35 @@ export default function StudentReviews() {
           <p className="text-xs uppercase tracking-[0.24em] text-black/45 sm:text-sm sm:tracking-[0.28em]">
             Student reviews
           </p>
+
           <h2 className="max-w-4xl font-serif text-4xl leading-[1.05] sm:text-5xl sm:leading-none lg:text-7xl">
             Notes from students I have taught
           </h2>
         </div>
 
-        <div className="relative left-1/2 w-screen -translate-x-1/2 overflow-visible py-8 sm:py-10">
+        {/*
+          overflow-x-hidden on desktop: clips cards that extend beyond the
+          viewport so they don't bleed over adjacent sections.
+          snap-x only on mobile; desktop scroll position is driven by GSAP.
+        */}
+        <div
+          data-lenis-prevent={isMobile ? true : undefined}
+          className="relative left-1/2 w-screen -translate-x-1/2 overflow-x-auto md:overflow-x-hidden py-8 sm:py-10 scrollbar-none snap-x snap-mandatory md:snap-none"
+        >
           <div
             ref={trackRef}
             className="flex w-max gap-5 pl-5 pr-5 sm:gap-7 sm:pl-10 sm:pr-10 lg:gap-14 lg:pl-16 lg:pr-16"
           >
             {STUDENT_REVIEWS.map((review, index) => (
-              <StudentReviewCard key={review.name} index={index} {...review} />
+              <StudentReviewCard
+                key={`${review.name}-${index}`}
+                index={index}
+                {...review}
+              />
             ))}
           </div>
         </div>
       </div>
-    </Section>
+    </section>
   );
 }

@@ -1,37 +1,28 @@
-import civicMind from "/assets/projects/civicMind.webp";
-import eyadDesinger from "/assets/projects/eyadDesinger.webp";
-import salehWebsitePreview from "/assets/projects/saleh-website-previeew.webp";
-import onyx from "/assets/projects/onyx.webp";
-import homeNav from "/assets/navImages/homeNav.webp";
-import servicesNav from "/assets/navImages/servicesNav.webp";
-import aboutNav from "/assets/navImages/aboutNav.webp";
-import workNav from "/assets/navImages/workNav.webp";
-import contactNav from "/assets/navImages/contactNav.webp";
 export const navLinks = [
   {
     text: "Home",
     link: "#home",
-    image: homeNav,
+    image: "/assets/navImages/homeNav.webp",
   },
   {
     text: "Services",
     link: "#services",
-    image: servicesNav,
+    image: "/assets/navImages/servicesNav.webp",
   },
   {
     text: "About",
     link: "#about",
-    image: aboutNav,
+    image: "/assets/navImages/aboutNav.webp",
   },
   {
     text: "Work",
     link: "#work",
-    image: workNav,
+    image: "/assets/navImages/workNav.webp",
   },
   {
     text: "Contact",
     link: "#contact",
-    image: contactNav,
+    image: "/assets/navImages/contactNav.webp",
   },
 ];
 
@@ -42,7 +33,7 @@ export const projects = [
     description:
       "A portfolio website for a professional designer showcasing their work and services.",
     href: "https://olive-weasel-365141.hostingersite.com/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAb21jcAQPtgZleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA81NjcwNjczNDMzNTI0MjcAAacLliCrRBSkvCsIXXcFAUuzu4SSJKREPMkB9hV_0ZGWKz2cwCXH_5WLjdumkg_aem_ukSeECOSOr11qozmYtpIwg",
-    image: eyadDesinger,
+    image: "/assets/projects/eyadDesinger.webp",
     // bgImage: "https://picsum.photos/1900/1080?random=12",
     frameworks: [
       { id: 1, name: "React" },
@@ -56,7 +47,7 @@ export const projects = [
     description:
       "A web application for civic engagement and advocacy, connecting citizens with government officials.",
     href: "https://municipal-ai-system2.vercel.app/",
-    image: civicMind,
+    image: "/assets/projects/civicMind.webp",
     // bgImage: "https://picsum.photos/1900/1080?random=12",
     frameworks: [
       { id: 1, name: "React" },
@@ -71,7 +62,7 @@ export const projects = [
     description:
       "A modern portfolio for a graphic designer showcasing their work and services.",
     href: "https://salehaburayya.com",
-    image: salehWebsitePreview,
+    image: "/assets/projects/saleh-website-previeew.webp",
     frameworks: [
       { id: 1, name: "React" },
       { id: 2, name: "Tailwind CSS" },
@@ -84,7 +75,7 @@ export const projects = [
     description:
       "A modern e-commerce platform for a store showcasing their products.",
     href: "https://e-commerce-pink-iota.vercel.app/",
-    image: onyx,
+    image: "/assets/projects/onyx.webp",
     frameworks: [
       { id: 1, name: "React" },
       { id: 2, name: "GSAP" },
