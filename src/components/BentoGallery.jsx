@@ -60,7 +60,6 @@ export default function BentoGallery() {
 
       const flip = Flip.to(flipState, {
         ease: "expoScale(1, 5)",
-        invalidateOnRefresh: true,
         immediateRender: false,
       });
 

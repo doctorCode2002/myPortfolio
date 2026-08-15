@@ -69,7 +69,14 @@ StudentReviews pin-scroll/mobile scroll-snap, Contact stagger), and nav/anchor n
 SSR hydration mismatch in `StudentReviews.jsx` (`isMobile` state read `window.innerWidth` in its
 `useState` initializer, diverging from the server's render) caught by Next's dev overlay on a
 mobile-viewport check. Also fixed, while touching the same files: missing
-`rel="noopener noreferrer"` on `target="_blank"` links in `Work.jsx`/`Contact.jsx`.
+`rel="noopener noreferrer"` on `target="_blank"` links in `Work.jsx`/`Contact.jsx`; a pre-existing
+GSAP `Flip.to()` warning in `BentoGallery.jsx` (invalid `invalidateOnRefresh` property, only
+valid on `scrollTrigger` config); and `src/App.jsx`/`src/index.css`, both now-dead duplicates of
+`PageShell.jsx`/`app/globals.css` that this phase's port superseded, were deleted (`CLAUDE.md`
+updated to match — it still pointed at both). Verified the production static export directly
+(`next build` + `serve out`, not just `next dev`), including a scroll check immediately after the
+loader clears and a full console check, with zero errors/warnings beyond expected dev-only
+Vercel Analytics logs.
 
 **Known issues to resolve in this phase (found during Phase 1 verification):**
 - `src/constants/index.js` imports images via root-absolute specifiers (e.g. `import civicMind
@@ -98,12 +105,19 @@ JSON-LD validates (schema.org structure); metadata matches PRD §1.2/§4.
 **Depends on:** Phase 2.
 
 ## Phase 4 — Cutover & verification
-**Goal:** Remove all Vite remnants, confirm the migration meets every PRD acceptance criterion,
-and leave the repo in a clean, deployable state.
-**Scope:** Delete `index.html`, `vite.config.js`, `src/main.jsx`, `vite`/`@vitejs/plugin-react`
-deps; update `CLAUDE.md` commands section for Next.js; full QA pass against PRD §3 functional
-requirements and the §15 acceptance criterion; confirm Vercel static-export deploy config.
-**Exit criteria:** No Vite files/deps remain; `npm run build && npm run lint` green; the `curl`
-raw-HTML acceptance check passes; site verified working in a real browser (not just build
-output).
+**Goal:** Confirm the migration meets every PRD acceptance criterion end to end and leave the repo
+in a clean, deployable state. (Vite removal itself already happened in Phase 1/2 — this phase is
+final QA, not the removal.)
+**Scope:** Full QA pass against PRD §3 functional requirements and the §15 acceptance criterion;
+confirm Vercel static-export deploy config; sweep for any remaining Vite-era references in docs
+(`CLAUDE.md`'s Git Workflow/other sections not already touched in Phase 1/2).
+**Known deferred item (found during Phase 2, low severity, not fixed there):**
+`Contact.jsx` renders `© {new Date().getFullYear()}`. Under static export this freezes to the
+build year in the server-rendered HTML; the client recomputes on hydration — same shape as the
+`StudentReviews` hydration bug Phase 2 fixed, but with a much narrower trigger (only visible across
+a New Year boundary without a redeploy). Decide in this phase whether to fix (e.g. read the year
+from a build-time constant instead of `Date.now()`) or explicitly accept as-is.
+**Exit criteria:** `npm run build && npm run lint` green; the `curl` raw-HTML acceptance check
+passes; site verified working in a real browser against the actual production static export
+(`next build` + `npm run start`, not just `next dev`).
 **Depends on:** Phase 3.
