@@ -99,7 +99,7 @@ export default function StudentReviewCard({
           </div>
 
           <p className="font-serif text-[13px] leading-6 text-black sm:text-base lg:text-lg">
-            "{quote}"
+            &quot;{quote}&quot;
           </p>
         </div>
 

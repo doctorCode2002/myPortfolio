@@ -20,7 +20,7 @@ rule, static-export/no-IA-change/no-redesign constraints from the PRD, and the "
 per-component, not blanket" rule as a binding principle so later phases can't drift from it.
 **Exit criteria:** `.specify/memory/constitution.md` exists and reflects the rules above.
 **Depends on:** nothing.
-**Status:** In progress.
+**Status:** Done — `.specify/memory/constitution.md` v1.0.0 ratified.
 
 ## Phase 1 — Next.js foundation
 **Goal:** Replace the Vite toolchain with Next.js App Router + static export, with the site's
@@ -41,6 +41,10 @@ before every section is ported.
 correct fonts/theme/colors and metadata present in the raw HTML response (`curl` check); `npm run
 lint` passes.
 **Depends on:** Phase 0.
+**Status:** Done — implemented via `specs/001-nextjs-foundation/` (spec/plan/tasks). All exit
+criteria verified: build produces a static export with real metadata and content in the raw HTML,
+dev server renders correct theme/fonts (confirmed in-browser), lint passes clean, no Vite files or
+dependencies remain.
 
 ## Phase 2 — Section migration
 **Goal:** Port every current section (Navbar, Hero, Services, About, Work, Feedback,

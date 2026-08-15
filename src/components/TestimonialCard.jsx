@@ -42,7 +42,7 @@ export default function TestimonialCard({
         style={{ fontFamily: "'DM Serif Display', serif" }}
         aria-hidden="true"
       >
-        "
+        &quot;
       </span>
 
       {/* Quote */}
@@ -51,7 +51,7 @@ export default function TestimonialCard({
                    transition-colors duration-300 mb-6 sm:mb-8 relative z-10"
         style={{ fontFamily: "'DM Serif Display', serif" }}
       >
-        "{quote}"
+        &quot;{quote}&quot;
       </p>
 
       {/* Divider */}

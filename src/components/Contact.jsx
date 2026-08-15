@@ -53,11 +53,11 @@ export default function Contact() {
           {/* LEFT */}
           <div ref={textRef} className="flex flex-col gap-6">
             <h2 className="text-4xl md:text-6xl font-serif leading-tight">
-              Let's build something meaningful
+              Let&apos;s build something meaningful
             </h2>
 
             <p className="text-white/60 max-w-md text-sm md:text-base">
-              Whether you have an idea, a project, or just want to connect — I'm
+              Whether you have an idea, a project, or just want to connect — I&apos;m
               always open to discussing new opportunities.
             </p>
           </div>
