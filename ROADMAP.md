@@ -103,6 +103,19 @@ domain confirmation per PRD §15).
 **Exit criteria:** `/sitemap.xml` and `/robots.txt` resolve correctly in the static export;
 JSON-LD validates (schema.org structure); metadata matches PRD §1.2/§4.
 **Depends on:** Phase 2.
+**Status:** Done — implemented via `specs/003-seo-surfaces/`. Added `app/sitemap.js` and
+`app/robots.js` as static metadata routes (both `dynamic = "force-static"`), backed by a shared
+`SITE_URL`/`PERSON` config in `src/lib/site.js` so the domain and person facts aren't duplicated
+across files. Restored the `ProfilePage`/`Person` JSON-LD block (carried forward from the old
+`index.html`) into `app/layout.jsx`, serialized safely (`<` escaped to prevent script-breakout).
+Completed the final metadata pass: OG image now declares explicit `width`/`height`/`type`/`alt`,
+Twitter card set to `summary_large_image`, canonical resolved via `metadataBase` + `alternates.canonical`.
+Verified independently after the implementing agent's session was interrupted mid-verification:
+`npm run build` produces the static export with `/`, `/robots.txt`, and `/sitemap.xml` all
+prerendered; `out/sitemap.xml` and `out/robots.txt` contain correct absolute-URL content;
+`out/index.html` contains the valid `ProfilePage`/`Person` JSON-LD `<script>` tag with real data;
+`npm run lint` is clean (0 errors — the only warnings are pre-existing `next/image` suggestions on
+`BentoGallery`/`Services`/`Work`, explicitly out of scope per PRD §1.3 non-goals).
 
 ## Phase 4 — Cutover & verification
 **Goal:** Confirm the migration meets every PRD acceptance criterion end to end and leave the repo
