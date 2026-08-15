@@ -134,3 +134,57 @@ from a build-time constant instead of `Date.now()`) or explicitly accept as-is.
 passes; site verified working in a real browser against the actual production static export
 (`next build` + `npm run start`, not just `next dev`).
 **Depends on:** Phase 3.
+**Status:** Done — implemented via `specs/004-cutover-verification/`. All exit criteria met.
+
+Two source corrections landed. The deferred `Contact.jsx` copyright item was **fixed, not accepted**:
+`CURRENT_YEAR` now resolves once at module scope in `src/lib/site.js` (alongside `SITE_URL`/`PERSON`,
+the established home for build-time site facts) and the footer renders that constant, so the
+prerendered HTML and the hydrated DOM cannot disagree. Rationale for fixing rather than accepting:
+same defect class as the `StudentReviews` hydration bug Phase 2 chose to fix, one line, zero visual
+change, and this was the last phase — deferring again meant never. `README.md`, still the stock
+Create-Vite template and wrong about the entire toolchain since Phase 1, was rewritten to describe
+the real stack, the four actual npm scripts (noting `start` is `serve out`, not `next start`), where
+content lives, and the deploy model. The docs sweep was deliberately scoped to `README.md` only:
+`CLAUDE.md`'s one remaining Vite mention is accurate rationale for a live rule (why root-absolute
+asset imports are forbidden) and `plans/*.md` are historical records of completed pre-migration work
+— rewriting either would replace accurate history with a misleading present tense.
+
+Verification, run against a clean `rm -rf out .next && npm run build` **after both commits landed**
+(a stale `out/` being the likeliest source of a false pass on this phase's central criterion):
+`npm run build` succeeds, prerendering `/`, `/robots.txt`, `/sitemap.xml`; `npm run lint` reports
+**0 errors** and only the 4 pre-existing `no-img-element` warning instances on
+`BentoGallery`/`Services`/`Work`, all explicitly out of scope per PRD §1.3 and none of those files
+touched. The PRD §15 acceptance criterion passed on **15/15 pinned content strings** grepped from
+`out/index.html` on disk (never the DevTools Elements panel, per constitution Principle V) —
+covering Hero, Services, Work, Feedback, MentorProfile, StudentReviews, and Contact; the strings
+were chosen to be copy that only exists if a section actually rendered server-side, deliberately
+avoiding anything a loader shell would also contain. Boundary audit clean: no `"use client"` on
+`app/layout.jsx`/`app/page.jsx`, no `ssr: false` anywhere, and no native `addEventListener("scroll")`
+anywhere (confirming animations remain ScrollTrigger-only). SEO surfaces re-confirmed in the final
+export rather than trusted from Phase 3: sitemap and robots carry correct absolute URLs, and the
+JSON-LD block was extracted and actually `JSON.parse`d — valid `ProfilePage`/`Person`. Deploy config
+confirmed correct as-is (`output: "export"`, no server-only APIs, **no `vercel.json` added** — a
+static export is zero-config on Vercel, and the scope word was "confirm," not "add").
+
+Real-browser pass ran against the served production export (`npm run start` → `serve out`), not
+`next dev`. The first attempt could not establish the "scroll works immediately after the loader
+clears" check — the automation tab reported `document.hidden: true`, which throttles the rAF loop
+Lenis depends on, producing a `scrollY` of 0 that was a measurement artifact rather than app
+behavior. Rather than record that as either a pass or a regression, it was re-run in a controlled
+Playwright headless harness (installed outside the repo; no project dependency added) with
+`visibilityState` asserted visible and rAF confirmed live at 31–32 ticks/500ms. That run **passed at
+both widths**: dispatching a real `wheel` event the instant the overlay node left the DOM produced a
+smooth Lenis-eased curve — desktop 1280x800: 50 → 232 → 408 → 534 → 601 → 667 → 708 → 753 → 800 by
+~1.1s; a **true** 390px mobile viewport: 46 → 219 → 414 → 540 → 621 → 709 → 800 — with no dead zone
+and no resize or reload needed. Sections render correctly at both widths, all nine present, nav
+anchor links scroll to target without the fixed navbar covering headings, footer reads
+`© 2026 — All rights reserved` matching the raw build exactly, and the console is free of hydration
+warnings and uncaught errors — the only message being an expected `/_vercel/insights/script.js` 404,
+since `<Analytics />` is a documented no-op off-Vercel. Qualitative performance (FR-014) observed
+only, per an explicit decision not to assert a numeric threshold: no pre-migration baseline exists
+in the tree to compare against, so any number would have been invented.
+
+Four findings recorded, **none a migration regression**: the React SSR `<!-- -->` text-node
+separators around the interpolated year (pre-existing React behavior, not introduced by the fix —
+the year is correctly present in the static HTML), the two automation-environment artifacts above,
+and the qualitative performance note. No AI attribution in either commit.
