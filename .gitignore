@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# AI tooling — never reaches the remote
+.claude/
+.specify/
+specs/
+graphify-out/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
