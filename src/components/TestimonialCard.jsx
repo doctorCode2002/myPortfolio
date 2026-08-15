@@ -73,21 +73,7 @@ export default function TestimonialCard({
             )}
           </p>
         </div>
-        {/* Arrow badge */}
-        {/* <div
-//           className="shrink-0 w-8 h-8 border border-black group-hover:border-white flex items-center justify-center
-//                      transition-colors duration-300"
-//         >
-//           <svg
-//             className="w-3 h-3 text-black group-hover:text-white transition-colors duration-300"
-//             viewBox="0 0 12 12"
-//             fill="none"
-//             stroke="currentColor"
-//             strokeWidth="1.5"
-//           >
-//             <path d="M2 10L10 2M10 2H4M10 2V8" />
-//           </svg>
-//         </div> */}
+
       </div>
     </article>
   );

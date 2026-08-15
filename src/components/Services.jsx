@@ -1,12 +1,9 @@
 import { useRef } from "react";
-import gsap from "gsap";
+import gsap from "../lib/gsap";
 import { useGSAP } from "@gsap/react";
 import Section from "./Section";
 import Container from "./Container";
 import servicesImg from "/assets/servicesImg.webp";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function Services() {
   const sectionRef = useRef(null);
@@ -14,24 +11,28 @@ export default function Services() {
   const textRef = useRef(null);
 
   useGSAP(() => {
+    const navH = parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue("--nav-h") ||
+        "80",
+      10,
+    );
+
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
-        start: "top top",
+        start: `top ${navH}px`,
         end: "bottom top",
         scrub: true,
         pin: true,
       },
     });
 
-    // Image scale + parallax
     tl.fromTo(
       imageRef.current,
       { scale: 1 },
       { scale: 1.1, ease: "power1.out" },
     );
 
-    // Text fade in + slide
     tl.from(
       textRef.current.children,
       {

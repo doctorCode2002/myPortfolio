@@ -1,11 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
+import gsap from "../lib/gsap";
 import Container from "./Container";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { navLinks } from "../constants";
-
-gsap.registerPlugin(ScrollToPlugin);
+import { useLenis } from "../context/useLenis";
 
 function MenuItem({
   text,
@@ -197,16 +195,36 @@ export default function Navbar() {
   const topRef = useRef();
   const midRef = useRef();
   const botRef = useRef();
+  const lenis = useLenis();
 
   const handleScroll = (target) => {
-    gsap.to(window, {
-      duration: 1,
-      scrollTo: target,
-      ease: "power3.inOut",
-    });
-
+    const navH = parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue("--nav-h") ||
+        "80",
+      10,
+    );
+    lenis?.start();
+    if (lenis) {
+      lenis.scrollTo(target, { offset: -navH, duration: 1.2 });
+    } else {
+      const el =
+        typeof target === "string" ? document.querySelector(target) : target;
+      el?.scrollIntoView();
+    }
     setOpen(false);
   };
+
+  // Freeze / restore Lenis when the menu opens or closes
+  useEffect(() => {
+    if (open) {
+      lenis?.stop();
+    } else {
+      lenis?.start();
+    }
+    return () => {
+      lenis?.start();
+    };
+  }, [open, lenis]);
 
   useGSAP(() => {
     if (open) {
@@ -243,26 +261,28 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <Container className="fixed z-50">
-      <nav className="flex top-10 left-0 w-full items-center justify-between py-4 bg-transparent z-60 relative">
-        <button
-          onClick={() => handleScroll("#home")}
-          className="outline-none cursor-pointer text-lg font-semibold text-white "
-        >
-          MA
-        </button>
+    <>
+      <Container className="fixed top-0 left-1/2 -translate-x-1/2 z-50">
+        <nav className="flex top-10 left-0 w-full items-center justify-between py-4 bg-transparent z-60 relative">
+          <button
+            onClick={() => handleScroll("#home")}
+            className="outline-none cursor-pointer text-lg font-semibold text-white "
+          >
+            MA
+          </button>
 
-        <button
-          onClick={() => setOpen(!open)}
-          className="w-12  aspect-square outline-none rounded-full border border-white/30 flex items-center justify-center cursor-pointer backdrop-blur-md z-60 bg-blend-difference"
-        >
-          <div className="flex flex-col gap-1">
-            <span ref={topRef} className="block w-5 h-0.5 bg-white/70" />
-            <span ref={midRef} className="block w-5 h-0.5 bg-white/70" />
-            <span ref={botRef} className="block w-5 h-0.5 bg-white/70" />
-          </div>
-        </button>
-      </nav>
+          <button
+            onClick={() => setOpen(!open)}
+            className="w-12  aspect-square outline-none rounded-full border border-white/30 flex items-center justify-center cursor-pointer backdrop-blur-md z-60 bg-blend-difference"
+          >
+            <div className="flex flex-col gap-1">
+              <span ref={topRef} className="block w-5 h-0.5 bg-white/70" />
+              <span ref={midRef} className="block w-5 h-0.5 bg-white/70" />
+              <span ref={botRef} className="block w-5 h-0.5 bg-white/70" />
+            </div>
+          </button>
+        </nav>
+      </Container>
 
       <div
         ref={menuRef}
@@ -281,6 +301,6 @@ export default function Navbar() {
           />
         </div>
       </div>
-    </Container>
+    </>
   );
 }

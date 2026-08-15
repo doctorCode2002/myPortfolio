@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Analytics } from "@vercel/analytics/react";
+import { ScrollTrigger } from "./lib/gsap";
 import Navbar from "./components/Navbar";
-import ScrollSmootherLayout from "./components/ScrollSmootherLayout.jsx";
+import { LenisProvider } from "./context/LenisContext.jsx";
 import Hero from "./components/Hero.jsx";
 import About from "./components/About.jsx";
 import Services from "./components/Services.jsx";
@@ -16,6 +17,18 @@ export default function App() {
   const [targetProgress, setTargetProgress] = useState(0);
   const [displayProgress, setDisplayProgress] = useState(0);
   const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const setVh = () => {
+      document.documentElement.style.setProperty(
+        "--vh",
+        `${window.innerHeight * 0.01}px`,
+      );
+    };
+    setVh();
+    window.addEventListener("resize", setVh);
+    return () => window.removeEventListener("resize", setVh);
+  }, []);
 
   useEffect(() => {
     let loadedCount = 0;
@@ -122,6 +135,15 @@ export default function App() {
     };
   }, [isReady]);
 
+  useEffect(() => {
+    if (isReady) {
+      const timer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isReady]);
+
   return (
     <div className="bg-black relative flex justify-center">
       <Analytics />
@@ -141,9 +163,9 @@ export default function App() {
         </div>
       )}
 
-      <div className={isReady ? "w-full flex flex-col items-center justify-center" : "w-full invisible"}>
-        <Navbar />
-        <ScrollSmootherLayout enabled={isReady}>
+      <div className={isReady ? "w-full flex flex-col" : "w-full invisible"}>
+        <LenisProvider>
+          <Navbar />
           <Hero />
           <Services />
           <About />
@@ -152,7 +174,7 @@ export default function App() {
           <MentorProfile />
           <StudentReviews />
           <Contact />
-        </ScrollSmootherLayout>
+        </LenisProvider>
       </div>
     </div>
   );

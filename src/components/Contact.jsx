@@ -1,11 +1,8 @@
 import { useRef } from "react";
-import gsap from "gsap";
+import gsap from "../lib/gsap";
 import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Container from "./Container";
 import { CONTACT_DATA } from "../constants";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function Contact() {
   const sectionRef = useRef(null);
@@ -23,7 +20,6 @@ export default function Contact() {
         },
       });
 
-      // Heading + paragraph reveal
       tl.from(textRef.current.children, {
         y: 100,
         opacity: 0,
@@ -31,7 +27,6 @@ export default function Contact() {
         ease: "power3.out",
       });
 
-      // Contact info reveal
       tl.from(
         infoRef.current.children,
         {
@@ -58,11 +53,11 @@ export default function Contact() {
           {/* LEFT */}
           <div ref={textRef} className="flex flex-col gap-6">
             <h2 className="text-4xl md:text-6xl font-serif leading-tight">
-              Let’s build something meaningful
+              Let's build something meaningful
             </h2>
 
             <p className="text-white/60 max-w-md text-sm md:text-base">
-              Whether you have an idea, a project, or just want to connect — I’m
+              Whether you have an idea, a project, or just want to connect — I'm
               always open to discussing new opportunities.
             </p>
           </div>

@@ -1,10 +1,6 @@
 import { useEffect, useRef, useCallback } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Flip } from "gsap/Flip";
+import gsap, { ScrollTrigger, Flip } from "../lib/gsap";
 import MaskText from "./MaskText";
-
-gsap.registerPlugin(ScrollTrigger, Flip);
 
 const IMAGES = [
   "/assets/bentoGrid/top-left.webp",
@@ -22,17 +18,11 @@ const CENTER_INDEX = 2;
 const CENTER_DESKTOP = "/assets/bentoGrid/center.webp";
 const CENTER_MOBILE = "/assets/bentoGrid/centerm.webp";
 
-function setVhProperty() {
-  const vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-}
-
 export default function BentoGallery() {
   const wrapRef = useRef(null);
   const galleryRef = useRef(null);
   const flipCtxRef = useRef(null);
   const resizeTimerRef = useRef(null);
-
   const imgRefs = useRef([]);
 
   const updateCenterImage = useCallback(() => {
@@ -40,7 +30,7 @@ export default function BentoGallery() {
     if (!img) return;
     const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
     const next = isMobile ? CENTER_MOBILE : CENTER_DESKTOP;
-    if (img.src !== next) img.src = next; // avoid unnecessary repaints
+    if (img.src !== next) img.src = next;
   }, []);
 
   useEffect(() => {
@@ -48,47 +38,6 @@ export default function BentoGallery() {
     window.addEventListener("resize", updateCenterImage);
     return () => window.removeEventListener("resize", updateCenterImage);
   }, [updateCenterImage]);
-  // const createTween = useCallback(() => {
-  //   const galleryEl = galleryRef.current;
-  //   if (!galleryEl) return;
-
-  //   const galleryItems = galleryEl.querySelectorAll(".gallery__item");
-
-  //   // Tear down any previous instance cleanly
-  //   if (flipCtxRef.current) {
-  //     flipCtxRef.current.revert();
-  //     flipCtxRef.current = null;
-  //   }
-  //   galleryEl.classList.remove("gallery--final");
-
-  //   flipCtxRef.current = gsap.context(() => {
-  //     // Snapshot the expanded (final) state while the class is applied
-  //     galleryEl.classList.add("gallery--final");
-  //     const flipState = Flip.getState(galleryItems);
-  //     galleryEl.classList.remove("gallery--final");
-
-  //     const flip = Flip.to(flipState, {
-  //       simple: true,
-  //       ease: "expoScale(1, 5)",
-  //     });
-
-  //     const tl = gsap.timeline({
-  //       scrollTrigger: {
-  //         trigger: galleryEl,
-  //         start: "center center",
-  //         end: "+=100%",
-  //         scrub: true,
-  //         pin: galleryEl.parentNode,
-  //         anticipatePin: 1,
-  //         preventOverlaps: true,
-  //       },
-  //     });
-
-  //     tl.add(flip);
-
-  //     return () => gsap.set(galleryItems, { clearProps: "all" });
-  //   });
-  // }, []);
 
   const createTween = useCallback(() => {
     const galleryEl = galleryRef.current;
@@ -108,10 +57,9 @@ export default function BentoGallery() {
       galleryEl.classList.remove("gallery--final");
 
       const flip = Flip.to(flipState, {
-        // Removed simple:true — lets GSAP track each element independently
         ease: "expoScale(1, 5)",
-        invalidateOnRefresh: true, // Re-measures on ScrollTrigger.refresh()
-        immediateRender: false, // Don't snap to end-state before scroll starts
+        invalidateOnRefresh: true,
+        immediateRender: false,
       });
 
       const tl = gsap.timeline({
@@ -119,14 +67,12 @@ export default function BentoGallery() {
           trigger: galleryEl,
           start: "center center",
           end: "+=100%",
-          scrub: 1, // Smoothed scrub (was true/instant) reduces jank
+          scrub: 1,
           pin: galleryEl.parentNode,
           anticipatePin: 1,
           preventOverlaps: true,
-          fastScrollEnd: true, // Snaps tween to end if user scrolls past fast
-          invalidateOnRefresh: true, // Recalculates pin/trigger on refresh
-
-          // Force correct visual state when blown past in either direction
+          fastScrollEnd: true,
+          invalidateOnRefresh: true,
           onEnter: () => tl.progress(0),
           onLeave: () => tl.progress(1),
           onEnterBack: () => tl.progress(1),
@@ -141,43 +87,14 @@ export default function BentoGallery() {
   }, []);
 
   useEffect(() => {
-    setVhProperty();
-
-    // Only normalize scroll momentum on iOS — avoids desyncing on Android fast flings
-    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    if (isIos) ScrollTrigger.normalizeScroll({ momentum: 0.1 });
-
     createTween();
 
     const handleResize = () => {
-      setVhProperty();
       clearTimeout(resizeTimerRef.current);
       resizeTimerRef.current = setTimeout(() => {
-        ScrollTrigger.refresh(true); // true = forces immediate recalc
+        ScrollTrigger.refresh(true);
         createTween();
       }, 250);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      clearTimeout(resizeTimerRef.current);
-      if (flipCtxRef.current) flipCtxRef.current.revert();
-      ScrollTrigger.normalizeScroll(false);
-    };
-  }, [createTween]);
-  useEffect(() => {
-    setVhProperty();
-
-    ScrollTrigger.normalizeScroll(true);
-
-    createTween();
-
-    const handleResize = () => {
-      setVhProperty();
-      clearTimeout(resizeTimerRef.current);
-      resizeTimerRef.current = setTimeout(createTween, 250);
     };
 
     window.addEventListener("resize", handleResize);
@@ -188,7 +105,6 @@ export default function BentoGallery() {
       if (flipCtxRef.current) {
         flipCtxRef.current.revert();
       }
-      ScrollTrigger.normalizeScroll(false);
     };
   }, [createTween]);
 
@@ -222,9 +138,7 @@ export default function BentoGallery() {
           background-size: cover;
           flex: none;
           position: relative;
-          /* GPU-composite hint: avoids repaints during the FLIP animation */
           will-change: transform;
-          /* Ensure crisp edges on retina screens during scaling */
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
         }
@@ -233,7 +147,6 @@ export default function BentoGallery() {
           object-fit: cover;
           width: 100%;
           height: 100%;
-          /* Prevent iOS long-press popup on images */
           -webkit-touch-callout: none;
           pointer-events: none;
           display: block;
@@ -241,9 +154,6 @@ export default function BentoGallery() {
 
         /* ----------------------------------------------------------------
            Bento grid — compact initial state
-           3 columns on all screen sizes so nth-child(3) always sits in
-           the center column and becomes the focal zoom image on scroll.
-           32.5vw × 3 = 97.5vw — fits portrait mobile without overflow.
         ---------------------------------------------------------------- */
         .gallery--bento {
           display: grid;
@@ -256,8 +166,6 @@ export default function BentoGallery() {
 
         /* ----------------------------------------------------------------
            Bento grid — expanded final state (post-animation)
-           3 full-viewport-width columns so each image fills the screen
-           as the FLIP animation completes.
         ---------------------------------------------------------------- */
         .gallery--final.gallery--bento {
           gap: 1vh;
@@ -265,16 +173,6 @@ export default function BentoGallery() {
           grid-template-rows: repeat(4, calc(var(--vh, 1vh) * 49.5));
         }
 
-        /* ----------------------------------------------------------------
-           Grid item placement — both compact and final states inherit
-           the same areas; only the column/row sizes change above.
-
-           Bugs fixed from original:
-             nth-child(4) was 1/3/3/3  → col-end = col-start = 0 width
-             nth-child(5) was 3/1/3/2  → row-end = row-start = 0 height
-             nth-child(5) new area must end at row 4 (not 5) so it
-             doesn't overlap nth-child(7) which occupies row 4/1/5/2.
-        ---------------------------------------------------------------- */
         .gallery--bento .gallery__item:nth-child(1) { grid-area: 1 / 1 / 3 / 2; }
         .gallery--bento .gallery__item:nth-child(2) { grid-area: 1 / 2 / 2 / 3; }
         .gallery--bento .gallery__item:nth-child(3) { grid-area: 2 / 2 / 4 / 3; }
@@ -306,19 +204,6 @@ export default function BentoGallery() {
       </div>
 
       <div className="bg-[#f5f2e9] px-3 py-8 max-w-5xl mx-auto">
-        {/* <h2 className="text-3xl font-bold font-serif -mb-8">About Me</h2> */}
-        {/* <MaskText
-          ogText="Crafting software taught me how to engineer intricate full-stack systems and code the frontend page. Every failure is a clue, and every component requires deep insight and precision."
-          ogTextColor="black"
-          ogSpan="deep insight"
-          ogSpanTextColor="#0ea5e9"
-          maskText="Studying medicine taught me how to diagnose intricate biological systems and heal the human body. Every symptom is a clue, and every treatment requires deep empathy and precision."
-          maskSpan="deep empathy"
-          maskColor="black"
-          maskTextColor="white"
-          maskSpanTextColor="#f59e0b"
-          bgColor="transparent"
-        /> */}
         <MaskText
           ogText="Building software taught me how to design complex full stack systems and deliver reliable user experiences at scale. I work across frontend and backend, integrating APIs and structuring clean architectures that remain efficient over time. Every bug is a signal that reveals deeper patterns, and every solution requires careful thinking and execution. From deploying production systems to mentoring developers, I approach development as a technical and creative journey that pushes me to grow with deep insight and precision."
           ogTextColor="black"
