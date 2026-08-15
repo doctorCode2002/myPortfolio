@@ -39,7 +39,7 @@ export const metadata = {
   formatDetection: {
     telephone: false,
   },
-  metadataBase: new URL("https://mohammedabutaleb.com"),
+  metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: "/",
   },
@@ -50,13 +50,16 @@ export const metadata = {
     type: "website",
     siteName: "Mohammed Ashraf Portfolio",
     locale: "en_US",
-    url: "https://mohammedabutaleb.com/",
+    url: "/",
     title: "Mohammed Ashraf | Full-Stack Developer",
     description:
       "Explore projects by Mohammed Ashraf, focused on modern, performant full-stack development with React.",
     images: [
       {
-        url: "https://mohammedabutaleb.com/assets/myPortfolio.webp",
+        url: "/assets/myPortfolio.webp",
+        width: 1897,
+        height: 1032,
+        type: "image/webp",
         alt: "Preview image from Mohammed Ashraf's full-stack portfolio projects.",
       },
     ],
@@ -66,7 +69,7 @@ export const metadata = {
     title: "Mohammed Ashraf | Full-Stack Developer",
     description:
       "Portfolio of Mohammed Ashraf featuring modern React full-stack projects.",
-    images: ["https://mohammedabutaleb.com/assets/myPortfolio.webp"],
+    images: ["/assets/myPortfolio.webp"],
   },
 };
 
