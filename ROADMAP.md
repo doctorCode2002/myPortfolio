@@ -60,6 +60,23 @@ mounting — PRD §3/§15).
 copy (project titles, testimonial text, mentor stats) in the raw HTML, not just a loader shell.
 **Depends on:** Phase 1.
 
+**Known issues to resolve in this phase (found during Phase 1 verification):**
+- `src/constants/index.js` imports images via root-absolute specifiers (e.g. `import civicMind
+  from "/assets/projects/civicMind.webp"`, 9 occurrences). This resolves under Vite (which maps
+  root-absolute imports to `public/`) but fails to resolve under Next/Turbopack — confirmed by a
+  throwaway test import during Phase 1 (`Module not found`). Fix: change these to plain string
+  path literals (`"/assets/projects/civicMind.webp"`) rather than JS imports — the paths already
+  work as public URLs under Next's `public/` convention, no asset needs to move.
+- `src/lib/gsap.js` calls `gsap.registerPlugin(...)` at module scope, and
+  `src/context/LenisContext.jsx` constructs `new Lenis(...)` inside `useEffect` (already SSR-safe
+  as written — the constructor doesn't run during render). Verify both explicitly under Next's
+  static-export prerendering before porting further: if module-scope GSAP registration ever turns
+  out not to be prerender-safe in practice, the fix is to guard/lazy-init it, **not** to reach for
+  `dynamic(..., { ssr: false })` — that route is explicitly forbidden by constitution Principle
+  IV. `App.jsx`'s progress loader (`document.images`, `document.querySelectorAll("video")`,
+  `window.innerHeight`) is already effect-scoped in the current code and must stay that way, per
+  FR-003 of this phase's future spec.
+
 ## Phase 3 — SEO surfaces
 **Goal:** Ship the full SEO kit beyond base metadata.
 **Scope:** `app/sitemap.js`, `app/robots.js`, `Person`/`ProfilePage` JSON-LD (extending the
