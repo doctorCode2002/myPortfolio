@@ -1,5 +1,6 @@
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { SITE_URL, PERSON } from "../src/lib/site";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -73,10 +74,31 @@ export const viewport = {
   themeColor: "#000000",
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  mainEntity: {
+    "@type": "Person",
+    name: PERSON.name,
+    jobTitle: PERSON.jobTitle,
+    url: SITE_URL,
+    sameAs: PERSON.sameAs,
+    knowsAbout: PERSON.knowsAbout,
+  },
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${playfairDisplay.variable}`}>
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
