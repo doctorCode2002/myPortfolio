@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useCallback } from "react";
 import gsap, { ScrollTrigger, Flip } from "../lib/gsap";
 import MaskText from "./MaskText";

@@ -1,3 +1,5 @@
+"use client";
+
 import * as MarqueeModule from "react-fast-marquee";
 
 const resolveMarqueeComponent = (mod) => {

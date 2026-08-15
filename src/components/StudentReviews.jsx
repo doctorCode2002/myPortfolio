@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, useState, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap, { ScrollTrigger } from "../lib/gsap";
@@ -11,16 +13,18 @@ export default function StudentReviews() {
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
 
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window !== "undefined") return window.innerWidth < 768;
-    return false;
-  });
+  // Starts false to match the server-rendered markup (no `window` on the server);
+  // corrected to the real viewport width immediately after mount below. Reading
+  // `window.innerWidth` directly in the initializer would make the client's first
+  // render diverge from the SSR output on mobile viewports — a hydration mismatch.
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
       ScrollTrigger.refresh();
     };
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);

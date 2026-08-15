@@ -1,6 +1,8 @@
+"use client";
+
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
+import gsap from "../lib/gsap";
 
 export default function MaskText({
   ogText = "Writing beautiful code means thinking like an artist and debugging like a detective. Every function is a story, every variable a character. Master your craft through practice, patience, and endless curiosity.",

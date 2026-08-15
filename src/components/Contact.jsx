@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from "react";
 import gsap from "../lib/gsap";
 import { useGSAP } from "@gsap/react";
@@ -72,6 +74,7 @@ export default function Contact() {
                 key={idx}
                 href={item.link}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="border-b  border-white/20 pb-2 hover:text-white/70  cursor-pointer"
               >
                 {item.text}

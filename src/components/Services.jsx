@@ -1,9 +1,12 @@
+"use client";
+
 import { useRef } from "react";
 import gsap from "../lib/gsap";
 import { useGSAP } from "@gsap/react";
 import Section from "./Section";
 import Container from "./Container";
-import servicesImg from "/assets/servicesImg.webp";
+
+const servicesImg = "/assets/servicesImg.webp";
 
 export default function Services() {
   const sectionRef = useRef(null);

@@ -1,11 +1,26 @@
+import PageShell from "../src/components/PageShell";
+import Navbar from "../src/components/Navbar";
+import Hero from "../src/components/Hero";
+import Services from "../src/components/Services";
+import About from "../src/components/About";
+import Work from "../src/components/Work";
+import Feedback from "../src/components/Feedback";
+import MentorProfile from "../src/components/MentorProfile";
+import StudentReviews from "../src/components/StudentReviews";
+import Contact from "../src/components/Contact";
+
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-4 px-6 text-center">
-      <h1 className="font-serif text-4xl">Mohammed Ashraf</h1>
-      <p className="font-sans max-w-prose text-base">
-        Full-stack developer building responsive, animated, user-focused web
-        experiences with React, Tailwind CSS, and GSAP.
-      </p>
-    </main>
+    <PageShell>
+      <Navbar />
+      <Hero />
+      <Services />
+      <About />
+      <Work />
+      <Feedback />
+      <MentorProfile />
+      <StudentReviews />
+      <Contact />
+    </PageShell>
   );
 }

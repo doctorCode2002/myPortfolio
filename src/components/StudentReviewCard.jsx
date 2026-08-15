@@ -1,5 +1,7 @@
+"use client";
+
 import { useRef } from "react";
-import gsap from "gsap";
+import gsap from "../lib/gsap";
 
 const CARD_COLORS = [
   {

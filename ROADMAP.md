@@ -59,6 +59,17 @@ mounting — PRD §3/§15).
 (manual side-by-side check); `curl`/View Source of the static export's `/` contains real section
 copy (project titles, testimonial text, mentor stats) in the raw HTML, not just a loader shell.
 **Depends on:** Phase 1.
+**Status:** Done — implemented via `specs/002-section-migration/`. All 9 sections ported with
+per-component `"use client"` boundaries (verified via grep audit, zero `ssr: false` anywhere);
+full raw-HTML content check passed; live browser walkthrough (desktop + mobile) confirmed no
+regression in Lenis scroll, GSAP animations (Services pin, Work hover preview, BentoGallery Flip,
+StudentReviews pin-scroll/mobile scroll-snap, Contact stagger), and nav/anchor navigation. Fixed
+7 bugs total: the 5 pre-identified ones below, plus two found live during implementation — a
+`servicesImg` instance of the same absolute-import bug missed in the original review, and a real
+SSR hydration mismatch in `StudentReviews.jsx` (`isMobile` state read `window.innerWidth` in its
+`useState` initializer, diverging from the server's render) caught by Next's dev overlay on a
+mobile-viewport check. Also fixed, while touching the same files: missing
+`rel="noopener noreferrer"` on `target="_blank"` links in `Work.jsx`/`Contact.jsx`.
 
 **Known issues to resolve in this phase (found during Phase 1 verification):**
 - `src/constants/index.js` imports images via root-absolute specifiers (e.g. `import civicMind
