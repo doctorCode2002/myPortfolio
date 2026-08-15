@@ -95,13 +95,20 @@ export default function StudentReviews() {
         </div>
 
         {/*
+          Full-bleed via negative margins matching the parent's own px-*
+          (not w-screen/100vw): 100vw includes the scrollbar's reserved
+          space while the document itself doesn't, so a vw-based breakout
+          drifts a few px past the real edges and shows as a phantom
+          horizontal scroll. Canceling the parent's own padding instead
+          keeps this exactly edge-to-edge with the section, never the
+          viewport, so it can't overflow regardless of scrollbar width.
           overflow-x-hidden on desktop: clips cards that extend beyond the
-          viewport so they don't bleed over adjacent sections.
+          section so they don't bleed over adjacent sections.
           snap-x only on mobile; desktop scroll position is driven by GSAP.
         */}
         <div
           data-lenis-prevent={isMobile ? true : undefined}
-          className="relative left-1/2 w-screen -translate-x-1/2 overflow-x-auto md:overflow-x-hidden py-8 sm:py-10 scrollbar-none snap-x snap-mandatory md:snap-none"
+          className="relative -mx-5 sm:-mx-10 lg:-mx-16 overflow-x-auto md:overflow-x-hidden py-8 sm:py-10 scrollbar-none snap-x snap-mandatory md:snap-none"
         >
           <div
             ref={trackRef}
