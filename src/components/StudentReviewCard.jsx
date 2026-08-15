@@ -67,7 +67,7 @@ export default function StudentReviewCard({
       ref={cardRef}
       onMouseEnter={swingCard}
       onMouseLeave={resetCard}
-      className="relative h-[360px] w-[72vw] max-w-[290px] shrink-0 select-none rounded-[24px] border border-black/5 bg-[#f5f2e9] p-3.5 shadow-[0_20px_36px_rgba(0,0,0,0.14)] sm:h-[430px] sm:w-[330px] sm:max-w-none sm:rounded-[28px] sm:p-5 md:w-[350px] lg:h-[440px] lg:w-[410px] lg:p-6 lg:shadow-[0_24px_45px_rgba(0,0,0,0.16)] snap-center"
+      className="relative h-[360px] w-full select-none rounded-[24px] border border-black/5 bg-[#f5f2e9] p-3.5 shadow-[0_20px_36px_rgba(0,0,0,0.14)] sm:h-[430px] sm:rounded-[28px] sm:p-5 lg:h-[440px] lg:p-6 lg:shadow-[0_24px_45px_rgba(0,0,0,0.16)]"
     >
       <div
         className="absolute left-1/2 top-0 z-10 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-600 shadow-[0_12px_18px_rgba(220,38,38,0.35)] sm:h-12 sm:w-12"

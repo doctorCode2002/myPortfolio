@@ -2,9 +2,10 @@
 
 import Container from "./Container";
 import { useGSAP } from "@gsap/react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "../lib/gsap";
 import { FaArrowRight } from "react-icons/fa";
+import { mountHeroVideoDistortion } from "../lib/heroVideoDistortion";
 
 const bgvideo = "/assets/bgvideo.mp4";
 const CV = "/assets/CV.pdf";
@@ -12,6 +13,23 @@ const CV = "/assets/CV.pdf";
 export default function Hero() {
   const lineRefs = useRef([]);
   const linkRef = useRef(null);
+  const heroRef = useRef(null);
+  const videoWrapRef = useRef(null);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (!heroRef.current || !videoWrapRef.current || !videoRef.current) return;
+
+    // mountHeroVideoDistortion owns the video's opacity itself (hides it once
+    // the canvas takes over, restores it on cleanup) - if WebGL isn't
+    // available it returns null and the plain <video> just stays visible.
+    const destroy = mountHeroVideoDistortion(
+      heroRef.current,
+      videoWrapRef.current,
+      videoRef.current,
+    );
+    return destroy ?? undefined;
+  }, []);
 
   useGSAP(() => {
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -34,10 +52,17 @@ export default function Hero() {
   const lines = ["Building the web", "one pixel at a time."];
 
   return (
-    <div className="relative h-dvh isolate" id="home">
-      {/* Background video */}
-      <div className="absolute inset-0 -z-5 pointer-events-none">
+    <div ref={heroRef} className="relative h-dvh isolate" id="home">
+      {/* Background video, rendered through a mouse-reactive WebGL warp
+          (see src/lib/heroVideoDistortion.js). The <video> stays mounted and
+          playing either way - VideoTexture reads its frames live when the
+          effect is running, and it's the visible fallback when it isn't. */}
+      <div
+        ref={videoWrapRef}
+        className="absolute inset-0 -z-5 pointer-events-none"
+      >
         <video
+          ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover object-top"
           autoPlay
           muted
