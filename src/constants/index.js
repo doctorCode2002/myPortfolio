@@ -82,6 +82,19 @@ export const projects = [
       { id: 3, name: "Motion" },
     ],
   },
+  {
+    id: 5,
+    name: "Khidmty",
+    description:
+      "A home-services marketplace connecting customers with manually verified service providers—electricians, plumbers, carpenters, painters, and more—no account required.",
+    href: "https://khidmty.com",
+    image: "/assets/projects/khidmty.webp",
+    frameworks: [
+      { id: 1, name: "Next.js" },
+      { id: 2, name: "Supabase" },
+      { id: 3, name: "shadcn/ui" },
+    ],
+  },
 ];
 
 export const CONTACT_DATA = [
