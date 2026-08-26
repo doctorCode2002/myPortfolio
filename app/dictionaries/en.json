@@ -1,0 +1,301 @@
+{
+  "meta": {
+    "siteName": "Mohammed Ashraf",
+    "role": "Full-Stack Developer & Frontend Instructor",
+    "description": "Portfolio of Mohammed Ashraf, a full-stack developer and frontend instructor building responsive, animated, user-focused web experiences with React, Next.js, Tailwind CSS, and GSAP.",
+    "home": {
+      "title": "Home",
+      "description": "Full-stack developer and frontend instructor. Selected work, services, and a way to get in touch."
+    },
+    "projects": {
+      "title": "Projects",
+      "description": "Selected work — marketplaces, e-commerce, AI tools, and portfolio sites built with React, Next.js, and GSAP."
+    },
+    "mentoring": {
+      "title": "Mentoring",
+      "description": "Frontend instruction through real projects: a 40-hour program, one-to-one code reviews, and AI-assisted development workflows."
+    },
+    "about": {
+      "title": "About",
+      "description": "Full-stack developer and frontend instructor — background, experience, education, and the tools I build with."
+    }
+  },
+
+  "nav": {
+    "label": "Primary",
+    "home": "Home",
+    "projects": "Projects",
+    "mentoring": "Mentoring",
+    "about": "About",
+    "toggleTheme": "Toggle theme",
+    "toLight": "Switch to light theme",
+    "toDark": "Switch to dark theme",
+    "switchLanguage": "التبديل إلى العربية",
+    "skipToContent": "Skip to content"
+  },
+
+  "hero": {
+    "greeting": "Hi, I'm Mohammed",
+    "headlineA": "Building the web",
+    "headlineB": "one pixel at a time.",
+    "intro": "Full-stack developer and frontend instructor. I build interfaces that stay fast, feel considered, and hold up in production.",
+    "viewWork": "View work",
+    "downloadCv": "Download CV",
+    "portraitAlt": "Mohammed Ashraf"
+  },
+
+  "services": {
+    "eyebrow": "What I do",
+    "headline": "Crafting digital experiences that feel effortless",
+    "body": "I design and develop modern web applications with a focus on performance, usability, and clean aesthetics.",
+    "imageAlt": "Working on a frontend codebase",
+    "items": {
+      "web": {
+        "title": "Web Development",
+        "body": "Production React and Next.js applications — typed, accessible, and fast on real devices."
+      },
+      "design": {
+        "title": "UI/UX Design",
+        "body": "Interfaces designed around how people actually move through them, not around the mockup."
+      },
+      "motion": {
+        "title": "Interactive Animations",
+        "body": "Motion that carries meaning — GSAP and WebGL used to clarify a transition, never to decorate it."
+      }
+    }
+  },
+
+  "projects": {
+    "eyebrow": "Selected work",
+    "headline": "Things I've shipped",
+    "sub": "Marketplaces, storefronts, and tools — built to be used, not just demoed.",
+    "headlineAll": "My recent work",
+    "subAll": "Client projects and independent builds I'm glad to have my name on.",
+    "viewAll": "View all projects",
+    "visit": "Visit site",
+    "opensInNewTab": "opens in a new tab",
+    "items": {
+      "khidmty": {
+        "title": "Khidmty",
+        "description": "A home-services marketplace connecting customers with manually verified electricians, plumbers, carpenters, and painters — bilingual Arabic/English, and no account required to book."
+      },
+      "civicmind": {
+        "title": "CivicMind",
+        "description": "A civic engagement platform built with an AI Week team: citizens file reports, and trained models judge the category, the responsible department, and how urgent it is."
+      },
+      "onyx": {
+        "title": "ONYX E-commerce",
+        "description": "A storefront built around motion — product transitions and cart interactions that keep the browsing rhythm intact."
+      },
+      "saleh": {
+        "title": "Saleh Portfolio",
+        "description": "A portfolio for a graphic designer, where the site had to get out of the way of the work it was showing."
+      },
+      "eyad": {
+        "title": "Eyad Portfolio",
+        "description": "A portfolio and services site for a professional designer, built to be updated without a developer in the loop."
+      }
+    }
+  },
+
+  "testimonials": {
+    "eyebrow": "Testimonials",
+    "headline": "What clients say",
+    "ratingLabel": "Rated {rating} out of 5",
+    "items": {
+      "ahmad": {
+        "name": "Ahmad Khalil",
+        "role": "Product Manager",
+        "company": "TechFlow",
+        "quote": "Mohammed delivered exceptional work on our startup project. Communication was smooth and deadlines were always met every time."
+      },
+      "sara": {
+        "name": "Sara Ali",
+        "role": "UI/UX Designer",
+        "company": "Creative Studio",
+        "quote": "Very professional and detail oriented. The UI quality exceeded expectations and the process was smooth from start to finish always."
+      },
+      "saleh": {
+        "name": "Saleh Abu Rayya",
+        "role": "Graphic Designer",
+        "company": "Freelance",
+        "quote": "Very professional and detail oriented. The website quality exceeded expectations, and the whole process was smooth, efficient, and easy from beginning to end."
+      },
+      "omar": {
+        "name": "Omar Hassan",
+        "role": "CTO",
+        "company": "Startup Inc.",
+        "quote": "Fast reliable and highly skilled in front end development. Delivered clean code and great performance. Would definitely work again."
+      },
+      "eyad": {
+        "name": "Eyad Alzayan",
+        "role": "Graphic Designer",
+        "company": "Freelance",
+        "quote": "Mohammed built my portfolio with a clean modern style that reflects my work perfectly. Smooth process and great attention to detail."
+      }
+    }
+  },
+
+  "mentoring": {
+    "eyebrow": "Mentor profile",
+    "headline": "I teach frontend through real projects",
+    "body": "I work as a Full Stack Developer and Frontend Instructor, helping students move from concepts to working interfaces through structured practice, code reviews, and clear technical feedback.",
+    "stats": {
+      "hours": "Frontend training program",
+      "reviews": "Code reviews and feedback",
+      "ai": "Assisted development workflows"
+    },
+    "points": {
+      "curriculum": "Frontend Instructor covering HTML, CSS, JavaScript, React, responsive design, Git, and project workflows.",
+      "projects": "Mentors students through hands-on projects, assignments, and real-world coding challenges.",
+      "reviews": "Provides practical code reviews, debugging support, and personalized feedback to improve student performance.",
+      "ai": "Introduces AI tools and prompt engineering practices to help learners debug faster and build with more confidence."
+    },
+    "reviewsHeadline": "What students say",
+    "reviewsSub": "Feedback from the frontend course, in their own words.",
+    "items": {
+      "nour": {
+        "name": "Nour Maghari",
+        "role": "Front-End Student",
+        "quote": "I completed the Front-End course with Engineer Mohammed Abu Taleb. His explanations were very clear and easy to follow, and he always made complex ideas simple and understandable. It was a highly valuable learning experience."
+      },
+      "shahd": {
+        "name": "Shahd Washah",
+        "role": "Front-End Student",
+        "quote": "I completed the Front-End course with Engineer Mohammed Abu Taleb. His teaching style was clear, practical, and focused on real application. He was always supportive and available for questions throughout the course."
+      },
+      "tayma": {
+        "name": "Tayma Idris",
+        "role": "Front-End Student",
+        "quote": "This course was a real turning point in my journey. I gained valuable knowledge and practical skills that I didn't have before, and everything was explained in a very clear and structured way."
+      },
+      "saja": {
+        "name": "Saja Abu Mandeel",
+        "role": "Front-End Student",
+        "quote": "This was one of the best learning experiences I've had. The explanations were simple and clear, and the instructor was always supportive and ready to help with any question."
+      },
+      "tasneemM": {
+        "name": "Tasneem Musleh",
+        "role": "Front-End Student",
+        "quote": "This was an excellent experience. The explanations were clear and the additional insights made the course stand out. I truly appreciated the effort and support throughout the journey."
+      },
+      "tasneemB": {
+        "name": "Tasneem Abu Btihan",
+        "role": "Front-End Student",
+        "quote": "I started with no background in Front-End, but the teaching approach made everything easy to understand. Questions were always welcome, and the support helped me grow a lot."
+      },
+      "nourAldin": {
+        "name": "Nour Al-Din Al-Assar",
+        "role": "Front-End Developer Student",
+        "quote": "The course was very clear and well-structured. I learned HTML, CSS, JavaScript, Git, and GitHub in a practical way. The feedback and support helped me improve my skills significantly."
+      }
+    }
+  },
+
+  "aboutPage": {
+    "greeting": "Hello! I'm",
+    "name": "Mohammed Ashraf",
+    "bio1": "A full-stack developer who builds and ships production web applications — e-commerce platforms, accounting and billing systems, and the interfaces sitting on top of them.",
+    "bio2": "My work runs from React, Next.js, and Tailwind on the front through Supabase, Convex, and PostgreSQL behind it. What I care about most is the unglamorous half: database schema design, authentication and access control, and the performance details users actually feel.",
+    "bio3": "I came to engineering from medicine. I studied it at the Islamic University of Gaza before switching to Computer Systems Engineering at Al-Azhar, and the habits carried over — read carefully, work from evidence, and don't guess when you can check.",
+    "bio4": "Alongside client work I teach frontend at Zero to Hero. In April 2026 I joined Palestine AI Week with Palestine TechnoPark and Gaza Sky Geeks, working across two AI product teams — CivicMind, and Bookshelf, a reading app that summarises books and recommends what to read next. I'm currently extending my backend range with Laravel.",
+
+    "experienceHeading": "Experience",
+    "educationHeading": "Education",
+    "skillsHeading": "What I work with",
+    "stackHeading": "My stack",
+    "stackHint": "Drag the chips around.",
+    "stackReset": "Reset",
+    "showMore": "Show {count} more",
+    "showLess": "Show less",
+
+    "experience": {
+      "instructor": {
+        "org": "Zero to Hero",
+        "role": "Frontend Instructor",
+        "period": "2026 – Present"
+      },
+      "freelance": {
+        "org": "Freelance",
+        "role": "Frontend Developer",
+        "period": "Jan 2023 – Present"
+      },
+      "aiWeek": {
+        "org": "Palestine AI Week",
+        "role": "Participant — two AI product teams",
+        "period": "Apr 2026"
+      },
+      "zeroToHero": {
+        "org": "Zero to Hero",
+        "role": "Full Stack Developer (Volunteer)",
+        "period": "Nov 2025 – Feb 2026"
+      }
+    },
+
+    "education": {
+      "alAzhar": {
+        "school": "Al-Azhar University",
+        "qualification": "BSc, Computer Systems Engineering",
+        "period": "Expected 2027"
+      },
+      "iug": {
+        "school": "Islamic University of Gaza",
+        "qualification": "Medicine",
+        "period": "Previous academic background"
+      },
+      "aiPython": {
+        "school": "Gaza Sky Geeks / Mercy Corps",
+        "qualification": "Introduction to AI with Python",
+        "period": "Mar 2026"
+      },
+      "metaFrontend": {
+        "school": "Meta / Coursera",
+        "qualification": "Meta Front-End Developer Professional Certificate",
+        "period": "Oct 2025"
+      },
+      "dsa": {
+        "school": "Gaza Sky Geeks / Mercy Corps",
+        "qualification": "Data Structures and Algorithms",
+        "period": "Aug 2025"
+      }
+    },
+
+    "skills": {
+      "react": "React",
+      "next": "Next.js",
+      "javascript": "JavaScript (ES6+)",
+      "tailwind": "Tailwind CSS",
+      "supabase": "Supabase",
+      "convex": "Convex",
+      "postgres": "PostgreSQL",
+      "restApis": "REST APIs",
+      "auth": "Authentication & Authorization",
+      "responsive": "Responsive Design",
+      "performance": "Performance Optimization",
+      "uiux": "UI/UX Design",
+      "figma": "Figma",
+      "prompt": "Prompt Engineering",
+      "mentorship": "Technical Mentorship"
+    },
+
+    "polaroids": {
+      "portrait": "Mohammed Ashraf holding a laptop",
+      "desk": "A desk with a keyboard, coffee, and an open notebook listing the day's work",
+      "glasses": "Glasses in front of a screen, code reflected in both lenses",
+      "skills": "A grid of frontend icons — HTML, JavaScript, Git, grid systems, typography, and deployment",
+      "medtech": "A laptop showing an MRI viewer beside a code editor",
+      "monogram": "A repeating pattern of the M monogram in white on black"
+    }
+  },
+
+  "contact": {
+    "headline": "Let's build something meaningful",
+    "body": "Whether you have an idea, a project, or just want to connect — I'm always open to discussing new opportunities.",
+    "showEmail": "Show email",
+    "copyEmail": "Copy {email}",
+    "copied": "Email copied",
+    "contactLabel": "Contact",
+    "rights": "All rights reserved",
+    "builtWith": "Built with Next.js"
+  }
+}
