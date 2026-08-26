@@ -1,0 +1,17 @@
+{
+  "name": "Mohammed Ashraf",
+  "short_name": "M. Ashraf",
+  "description": "Full-stack developer and frontend instructor.",
+  "start_url": "/en",
+  "display": "standalone",
+  "background_color": "#f5f2e9",
+  "theme_color": "#c0562a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
