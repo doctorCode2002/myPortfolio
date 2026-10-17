@@ -82,6 +82,7 @@ export class Building {
     if (this.isPlayerAtDoor) {
       if (!wasAtDoor) {
         this.promptBubble.setVisible(true);
+        this.interact();
       }
       const bob = Math.sin(time * 0.006) * 2;
       this.promptBubble.y = bob;

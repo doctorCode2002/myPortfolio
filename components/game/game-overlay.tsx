@@ -46,6 +46,19 @@ export function GameOverlay({
             />
           </div>
           <span>{dict.play.changeCharacter}</span>
+          {dict.play.charNames[
+            currentChar as keyof typeof dict.play.charNames
+          ] && (
+            <span className="text-muted-foreground font-semibold">
+              (
+              {
+                dict.play.charNames[
+                  currentChar as keyof typeof dict.play.charNames
+                ]
+              }
+              )
+            </span>
+          )}
         </button>
       </div>
 

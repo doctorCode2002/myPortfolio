@@ -321,7 +321,17 @@
       "You've arrived at the Projects Pavilion!",
       "Interactive 3D showcases and live project portals are currently being built inside.",
       "Check back soon to step inside and explore Mohammed's work in full game mode!"
-    ]
+    ],
+    "charNames": {
+      "char_0": "Alex",
+      "char_1": "Sam",
+      "char_2": "Robin",
+      "char_3": "Leo",
+      "char_4": "Zayn",
+      "char_5": "Noor"
+    },
+    "buildingStatus": "Under Construction",
+    "buildingClose": "Got it"
   },
 
   "contact": {

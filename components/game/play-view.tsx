@@ -1,10 +1,16 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import type { Locale } from "@/lib/i18n";
+import { BuildingModal, type BuildingModalData } from "./building-modal";
 import {
   CharacterPicker,
   hasSavedCharacter,
@@ -15,6 +21,8 @@ import {
 import { DialogueBox, type DialogueData } from "./dialogue-box";
 import { gameEvents } from "./engine/events";
 import { GameOverlay } from "./game-overlay";
+
+const emptySubscribe = () => () => {};
 
 const GameCanvas = dynamic(
   () => import("./game-canvas").then((mod) => mod.GameCanvas),
@@ -37,23 +45,28 @@ export function PlayView({
   locale: Locale;
   dict: Dictionary;
 }): ReactNode {
-  const [selectedChar, setSelectedChar] = useState<CharacterId>(() => {
-    if (typeof window !== "undefined") {
-      return loadSavedCharacter();
-    }
-    return "char_0";
-  });
+  // Safe hydration mount detection without cascading renders
+  const isMounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
-  const [isPickerOpen, setIsPickerOpen] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return !hasSavedCharacter();
-    }
-    return false;
-  });
-
+  const [selectedCharOverride, setSelectedCharOverride] =
+    useState<CharacterId | null>(null);
+  const [pickerOpenOverride, setPickerOpenOverride] = useState<boolean | null>(
+    null
+  );
   const [activeDialogue, setActiveDialogue] = useState<DialogueData | null>(
     null
   );
+  const [activeBuilding, setActiveBuilding] =
+    useState<BuildingModalData | null>(null);
+
+  const selectedChar =
+    selectedCharOverride ?? (isMounted ? loadSavedCharacter() : "char_0");
+  const isPickerOpen =
+    pickerOpenOverride ?? (isMounted ? !hasSavedCharacter() : false);
 
   // Lock scrolling on html and body on /play route
   useEffect(() => {
@@ -76,23 +89,26 @@ export function PlayView({
     const unbindNpc = gameEvents.on(
       "interact:npc",
       ({ charSheet, dialogueKey }) => {
-        const lines = dict.play[dialogueKey];
+        const rawLines = dict.play[dialogueKey];
+        const lines = Array.isArray(rawLines) ? rawLines : [rawLines];
         setActiveDialogue({
           title: dict.play.demoNpcName,
           subtitle: dict.play.demoNpcRole,
           portraitCharSheet: charSheet,
-          lines: Array.isArray(lines) ? lines : [lines],
+          lines,
         });
       }
     );
 
     const unbindBuilding = gameEvents.on(
       "interact:building",
-      ({ messageKey }) => {
-        const lines = dict.play[messageKey];
-        setActiveDialogue({
-          title: dict.play.demoBuildingTitle,
-          lines: Array.isArray(lines) ? lines : [lines],
+      ({ titleKey, messageKey }) => {
+        const rawLines = dict.play[messageKey];
+        const lines = Array.isArray(rawLines) ? rawLines : [rawLines];
+        setActiveBuilding({
+          id: "pavilion",
+          title: dict.play[titleKey],
+          lines,
         });
       }
     );
@@ -104,11 +120,27 @@ export function PlayView({
   }, [dict]);
 
   const handleSelectCharacter = (charId: CharacterId): void => {
-    setSelectedChar(charId);
+    setSelectedCharOverride(charId);
     saveCharacter(charId);
-    setIsPickerOpen(false);
+    setPickerOpenOverride(false);
+    gameEvents.unlockUi("picker");
     gameEvents.emit("player:change-character", { charSheet: charId });
   };
+
+  const handleClosePicker = (): void => {
+    setPickerOpenOverride(false);
+    gameEvents.unlockUi("picker");
+  };
+
+  if (!isMounted) {
+    return (
+      <div className="bg-background flex h-screen w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="border-accent h-8 w-8 animate-spin rounded-full border-2 border-t-transparent" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative h-screen w-full overflow-hidden select-none">
@@ -118,7 +150,7 @@ export function PlayView({
         locale={locale}
         dict={dict}
         currentChar={selectedChar}
-        onOpenCharacterPicker={() => setIsPickerOpen(true)}
+        onOpenCharacterPicker={() => setPickerOpenOverride(true)}
       />
 
       <DialogueBox
@@ -128,11 +160,18 @@ export function PlayView({
         locale={locale}
       />
 
+      <BuildingModal
+        building={activeBuilding}
+        onClose={() => setActiveBuilding(null)}
+        dict={dict}
+        locale={locale}
+      />
+
       <CharacterPicker
         isOpen={isPickerOpen}
         selectedChar={selectedChar}
         onSelect={handleSelectCharacter}
-        onClose={selectedChar ? () => setIsPickerOpen(false) : undefined}
+        onClose={selectedChar ? handleClosePicker : undefined}
         dict={dict}
         locale={locale}
       />

@@ -96,6 +96,9 @@ export class WorldScene extends Phaser.Scene {
     // 7. Subscribe to Event Bus for React interactions
     this.setupEventSubscriptions();
 
+    // Guard: reset any UI lock lingering from scene restart
+    gameEvents.resetUiLocks();
+
     // 8. Camera with smooth lerp and integer zoom
     this.setupCamera(WORLD_WIDTH, WORLD_HEIGHT);
   }
@@ -158,6 +161,14 @@ export class WorldScene extends Phaser.Scene {
       gameEvents.on("game:freeze", (frozen) => {
         this.player.setFrozen(frozen);
         this.controls.setFrozen(frozen);
+      })
+    );
+
+    // Guard: unconditionally unfreeze player when all UI panels are closed
+    this.unbindEvents.push(
+      gameEvents.on("ui:close", () => {
+        this.player.setFrozen(false);
+        this.controls.setFrozen(false);
       })
     );
 

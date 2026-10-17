@@ -60,9 +60,9 @@ function DialogueModal({
 
   // Freeze player movement while dialogue is open
   useEffect(() => {
-    gameEvents.emit("game:freeze", true);
+    gameEvents.lockUi("dialogue");
     return () => {
-      gameEvents.emit("game:freeze", false);
+      gameEvents.unlockUi("dialogue");
     };
   }, []);
 
@@ -122,7 +122,12 @@ function DialogueModal({
     >
       <div
         onClick={handleAdvance}
-        className="border-foreground/20 bg-background/95 pointer-events-auto relative flex w-full max-w-xl cursor-pointer flex-col gap-3 rounded-2xl border-2 p-5 shadow-2xl backdrop-blur-xl sm:flex-row sm:items-start sm:gap-4 sm:p-6"
+        style={{
+          boxShadow:
+            "0 -2px 0 0 #000, 0 2px 0 0 #000, -2px 0 0 0 #000, 2px 0 0 0 #000, -2px -2px 0 0 #000, 2px -2px 0 0 #000, -2px 2px 0 0 #000, 2px 2px 0 0 #000, inset 0 0 0 2px #d4a359, inset 0 0 0 4px #261f18",
+          imageRendering: "pixelated",
+        }}
+        className="bg-background pointer-events-auto relative flex w-full max-w-xl cursor-pointer flex-col gap-3 rounded-none p-5 shadow-2xl sm:flex-row sm:items-start sm:gap-4 sm:p-6"
       >
         {/* Close Button */}
         <button
@@ -132,7 +137,12 @@ function DialogueModal({
             onClose();
           }}
           aria-label={dict.play.dialogueClose}
-          className="focus-ring border-foreground/15 text-muted-foreground hover:border-accent hover:text-foreground absolute end-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full border transition-colors"
+          style={{
+            boxShadow:
+              "0 -2px 0 0 #000, 0 2px 0 0 #000, -2px 0 0 0 #000, 2px 0 0 0 #000",
+            imageRendering: "pixelated",
+          }}
+          className="focus-ring bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground absolute end-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-none transition-colors"
         >
           <X className="h-3.5 w-3.5" />
         </button>
@@ -140,7 +150,14 @@ function DialogueModal({
         {/* NPC Portrait */}
         {dialogue.portraitCharSheet && (
           <div className="flex shrink-0 items-center justify-center">
-            <div className="border-accent/40 bg-muted/60 flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border-2 shadow-inner sm:h-20 sm:w-20">
+            <div
+              style={{
+                boxShadow:
+                  "0 -2px 0 0 #000, 0 2px 0 0 #000, -2px 0 0 0 #000, 2px 0 0 0 #000, inset 0 0 0 2px #d4a359",
+                imageRendering: "pixelated",
+              }}
+              className="bg-muted/80 flex h-16 w-16 items-center justify-center overflow-hidden rounded-none shadow-inner sm:h-20 sm:w-20"
+            >
               <div
                 style={{
                   width: 16,
@@ -162,7 +179,7 @@ function DialogueModal({
               {dialogue.title}
             </span>
             {dialogue.subtitle && (
-              <span className="text-muted-foreground text-xs">
+              <span className="text-muted-foreground font-mono text-xs">
                 ({dialogue.subtitle})
               </span>
             )}
@@ -178,7 +195,7 @@ function DialogueModal({
 
           {/* Action indicator at bottom */}
           <div className="text-muted-foreground mt-3 flex items-center justify-end gap-2 text-xs">
-            <span>
+            <span className="font-medium">
               {isTyping
                 ? dict.play.dialogueNext
                 : isLastLine

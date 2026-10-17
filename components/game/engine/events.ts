@@ -11,7 +11,7 @@ export type GameEventMap = {
     titleKey: "demoBuildingTitle";
     messageKey: "demoBuildingDialogue";
   };
-  "ui:open": { type: "dialogue" | "building" | "picker" };
+  "ui:open": { type: "dialogue" | "building" | "picker" | string };
   "ui:close": void;
   "player:change-character": { charSheet: string };
   "game:freeze": boolean;
@@ -22,6 +22,7 @@ type GenericCallback = (data: unknown) => void;
 
 class GameEventBus {
   private listeners = new Map<keyof GameEventMap, Set<GenericCallback>>();
+  private uiLocks = new Set<string>();
 
   public on<K extends keyof GameEventMap>(
     event: K,
@@ -50,13 +51,62 @@ class GameEventBus {
     }
   }
 
+  public lockUi(source: string): void {
+    const wasLocked = this.uiLocks.size > 0;
+    this.uiLocks.add(source);
+    if (!wasLocked) {
+      this.dispatchInternal("game:freeze", true);
+    }
+    this.dispatchInternal("ui:open", { type: source });
+  }
+
+  public unlockUi(source: string): void {
+    if (!this.uiLocks.has(source)) return;
+    this.uiLocks.delete(source);
+    if (this.uiLocks.size === 0) {
+      this.dispatchInternal("game:freeze", false);
+      this.dispatchInternal("ui:close", undefined);
+    }
+  }
+
+  public resetUiLocks(): void {
+    const hadLocks = this.uiLocks.size > 0;
+    this.uiLocks.clear();
+    if (hadLocks) {
+      this.dispatchInternal("game:freeze", false);
+      this.dispatchInternal("ui:close", undefined);
+    }
+  }
+
+  public isUiLocked(): boolean {
+    return this.uiLocks.size > 0;
+  }
+
   public emit<K extends keyof GameEventMap>(
     event: K,
     ...args: GameEventMap[K] extends void ? [] : [GameEventMap[K]]
   ): void {
+    const payload = args[0];
+
+    // Intercept manual ui:close to clear all locks and guarantee unfreeze
+    if (event === "ui:close") {
+      this.uiLocks.clear();
+      this.dispatchInternal("game:freeze", false);
+    } else if (event === "ui:open") {
+      const openPayload = payload as GameEventMap["ui:open"];
+      this.uiLocks.add(openPayload?.type ?? "overlay");
+      this.dispatchInternal("game:freeze", true);
+    }
+
+    this.dispatchInternal(event, payload);
+  }
+
+  private dispatchInternal<K extends keyof GameEventMap>(
+    event: K,
+    payload: unknown
+  ): void {
     const set = this.listeners.get(event);
     if (set) {
-      const payload = args[0];
       for (const cb of set) {
         try {
           cb(payload);
@@ -69,6 +119,7 @@ class GameEventBus {
 
   public clear(): void {
     this.listeners.clear();
+    this.uiLocks.clear();
   }
 }
 
