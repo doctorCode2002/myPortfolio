@@ -32,6 +32,8 @@ export class WorldScene extends Phaser.Scene {
 
   private unbindEvents: Array<() => void> = [];
   private initialCharSheet = "char_0";
+  private dict?: unknown;
+  private locale = "en";
 
   private zoomControl!: {
     setZoomIndex: (idx: number) => number;
@@ -43,8 +45,10 @@ export class WorldScene extends Phaser.Scene {
     super({ key: "WorldScene" });
   }
 
-  init(data: { charSheet?: string }): void {
+  init(data: { charSheet?: string; dict?: unknown; locale?: string }): void {
     if (data?.charSheet) this.initialCharSheet = data.charSheet;
+    if (data?.dict) this.dict = data.dict;
+    if (data?.locale) this.locale = data.locale;
   }
 
   preload(): void {
@@ -125,7 +129,9 @@ export class WorldScene extends Phaser.Scene {
           `island-material-${island.id}`,
           art,
           islandLayout.worldX,
-          islandLayout.worldY
+          islandLayout.worldY,
+          this.dict as Record<string, unknown> | undefined,
+          this.locale
         );
         this.illustratedIslands.set(island.id, ill);
       }
@@ -204,6 +210,7 @@ export class WorldScene extends Phaser.Scene {
           charSheet: `char_${(i % 5) + 1}`,
           x: mx,
           y: my,
+          locale: this.locale,
         });
         this.npcs.push(npc);
       }

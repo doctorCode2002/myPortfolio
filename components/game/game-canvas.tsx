@@ -5,8 +5,12 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 export function GameCanvas({
   initialCharSheet = "char_0",
+  dict,
+  locale = "en",
 }: {
   initialCharSheet?: string;
+  dict?: unknown;
+  locale?: string;
 }): ReactNode {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -28,7 +32,9 @@ export function GameCanvas({
         gameInstance = engineModule.createGame(
           containerRef.current,
           PhaserLib,
-          initialCharSheet
+          initialCharSheet,
+          dict,
+          locale
         );
         if (isMounted) {
           setHasLoaded(true);
@@ -47,7 +53,7 @@ export function GameCanvas({
         gameInstance = null;
       }
     };
-  }, [initialCharSheet]);
+  }, [initialCharSheet, locale, dict]);
 
   return (
     <div className="relative h-full w-full">

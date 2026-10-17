@@ -4,7 +4,9 @@ import { WorldScene } from "./scenes/WorldScene";
 export function createGame(
   container: HTMLElement,
   PhaserLib: typeof Phaser,
-  initialCharSheet = "char_0"
+  initialCharSheet = "char_0",
+  dict?: unknown,
+  locale = "en"
 ): Phaser.Game {
   const config: Phaser.Types.Core.GameConfig = {
     type: PhaserLib.AUTO,
@@ -26,6 +28,10 @@ export function createGame(
   };
 
   const game = new PhaserLib.Game(config);
-  game.scene.start("WorldScene", { charSheet: initialCharSheet });
+  game.scene.start("WorldScene", {
+    charSheet: initialCharSheet,
+    dict,
+    locale,
+  });
   return game;
 }

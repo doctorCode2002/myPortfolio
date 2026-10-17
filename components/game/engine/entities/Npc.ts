@@ -1,11 +1,13 @@
 import type Phaser from "phaser";
 import { gameEvents } from "../events";
+import { InteractionPrompt } from "../world/interactionPrompt";
 
 export interface NpcConfig {
   id: string;
   charSheet: string;
   x: number;
   y: number;
+  locale?: string;
   nameKey?: string;
   roleKey?: string;
   dialogueKey?: string;
@@ -19,7 +21,7 @@ export class Npc {
   public readonly config: NpcConfig;
   public readonly sprite: Phaser.GameObjects.Sprite;
   private readonly shadow: Phaser.GameObjects.Graphics;
-  private readonly promptBubble: Phaser.GameObjects.Graphics;
+  private readonly prompt: InteractionPrompt;
 
   private isPlayerInRange = false;
   private basePromptY: number;
@@ -56,12 +58,9 @@ export class Npc {
       }
     });
 
-    // Pixel prompt bubble above head ("E" key / talk bubble)
+    // Interaction prompt above head ("E" key / Talk)
     this.basePromptY = this.config.y - 28;
-    this.promptBubble = scene.add.graphics();
-    this.promptBubble.setDepth(npcDepth + 50);
-    this.promptBubble.setVisible(false);
-    this.drawPromptBubble();
+    this.prompt = new InteractionPrompt(scene);
   }
 
   public get inRange(): boolean {
@@ -86,8 +85,6 @@ export class Npc {
     this.shadow.setDepth(y + 11);
     this.sprite.setDepth(y + 12);
     this.basePromptY = y - 28;
-    this.promptBubble.setDepth(y + 50);
-    this.drawPromptBubble();
   }
 
   public interact(): void {
@@ -137,52 +134,23 @@ export class Npc {
       this.sprite.setFrame(1);
     }
 
-    // Toggle and bob prompt bubble
+    // Toggle and bob prompt
     if (this.isPlayerInRange) {
-      if (!wasInRange) {
-        this.promptBubble.setVisible(true);
-      }
-      const bob = Math.sin(time * 0.006) * 2;
-      this.promptBubble.y = bob;
+      const text = this.config.locale === "ar" ? "تحدث" : "Talk";
+      this.prompt.showPrompt(this.config.x, this.basePromptY - 4, text, () =>
+        this.interact()
+      );
+      this.prompt.updateBob(time);
     } else if (wasInRange) {
-      this.promptBubble.setVisible(false);
+      this.prompt.hide();
     }
 
     return this.isPlayerInRange;
   }
 
-  private drawPromptBubble(): void {
-    const bx = this.config.x;
-    const by = this.basePromptY;
-
-    this.promptBubble.clear();
-
-    // Bubble outline & body
-    this.promptBubble.fillStyle(0x14110f, 0.9);
-    this.promptBubble.fillRoundedRect(bx - 10, by - 10, 20, 18, 4);
-
-    // Tail pointing down
-    this.promptBubble.fillTriangle(bx - 3, by + 8, bx + 3, by + 8, bx, by + 12);
-
-    // Inner background
-    this.promptBubble.fillStyle(0xf5f2e9, 1);
-    this.promptBubble.fillRoundedRect(bx - 8, by - 8, 16, 14, 3);
-
-    // Pixel "E" glyph in terracotta accent color
-    this.promptBubble.fillStyle(0xab4c24, 1);
-    // Vertical spine
-    this.promptBubble.fillRect(bx - 4, by - 5, 2, 8);
-    // Top bar
-    this.promptBubble.fillRect(bx - 2, by - 5, 5, 2);
-    // Mid bar
-    this.promptBubble.fillRect(bx - 2, by - 2, 4, 2);
-    // Bottom bar
-    this.promptBubble.fillRect(bx - 2, by + 1, 5, 2);
-  }
-
   public destroy(): void {
     this.sprite.destroy();
     this.shadow.destroy();
-    this.promptBubble.destroy();
+    this.prompt.destroy();
   }
 }

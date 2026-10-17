@@ -18,32 +18,32 @@
   "doors": [
     {
       "buildingId": "building_education",
-      "at": [170, 555],
+      "at": [235, 377],
       "radius": 32
     },
     {
       "buildingId": "building_experience",
-      "at": [400, 435],
+      "at": [415, 292],
       "radius": 34
     },
     {
       "buildingId": "building_stack",
-      "at": [560, 550],
-      "radius": 34
+      "at": [578, 368],
+      "radius": 32
     },
     {
       "buildingId": "building_hobbies",
-      "at": [235, 680],
+      "at": [180, 568],
       "radius": 32
     },
     {
       "buildingId": "building_family",
-      "at": [545, 680],
+      "at": [562, 608],
       "radius": 32
     },
     {
       "buildingId": "board_news",
-      "at": [435, 570],
+      "at": [498, 388],
       "radius": 28
     }
   ],

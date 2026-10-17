@@ -214,7 +214,7 @@ export function PlayView({
 
   return (
     <div className="relative h-screen w-full overflow-hidden select-none">
-      <GameCanvas initialCharSheet={selectedChar} />
+      <GameCanvas initialCharSheet={selectedChar} dict={dict} locale={locale} />
 
       <GameOverlay
         locale={locale}

@@ -6,6 +6,7 @@ import {
   destroyOcclusionObjects,
   type OcclusionObject,
 } from "./autoDepth";
+import { InteractionPrompt } from "./interactionPrompt";
 import { buildWalkGrid, canWalkFeetBox } from "./materialMap";
 
 export interface IslandArt {
@@ -38,6 +39,8 @@ export class IllustratedIsland {
   public readonly worldX: number;
   public readonly worldY: number;
   public art: IslandArt;
+  private readonly dict: Record<string, unknown> | undefined;
+  private readonly locale: string;
 
   public materialCanvas: HTMLCanvasElement;
   private walkGrid!: Uint8Array;
@@ -45,11 +48,10 @@ export class IllustratedIsland {
   private gh = 0;
 
   private readonly baseImage: Phaser.GameObjects.Image;
-  private readonly promptBubble: Phaser.GameObjects.Graphics;
+  private readonly prompt: InteractionPrompt;
   private occlusionObjects: OcclusionObject[] = [];
 
   private activeDoorId: string | null = null;
-  private lastEnteredDoorId: string | null = null;
 
   constructor(
     scene: Phaser.Scene,
@@ -57,12 +59,16 @@ export class IllustratedIsland {
     materialTextureKey: string,
     art: IslandArt,
     worldX: number,
-    worldY: number
+    worldY: number,
+    dict?: Record<string, unknown>,
+    locale = "en"
   ) {
     this.scene = scene;
     this.art = art;
     this.worldX = worldX;
     this.worldY = worldY;
+    this.dict = dict;
+    this.locale = locale;
 
     const { DEPTHS } = ENGINE_CONSTANTS;
 
@@ -94,11 +100,8 @@ export class IllustratedIsland {
       );
     }
 
-    // 4. Door interaction prompt bubble
-    this.promptBubble = scene.add.graphics();
-    this.promptBubble.setDepth(15000);
-    this.promptBubble.setVisible(false);
-    this.renderPromptBubble();
+    // 4. Door interaction prompt
+    this.prompt = new InteractionPrompt(scene);
   }
 
   public rebuildWalkGrid(): void {
@@ -169,19 +172,13 @@ export class IllustratedIsland {
     this.activeDoorId = closestDoor?.id ?? null;
 
     if (closestDoor) {
-      if (this.lastEnteredDoorId !== closestDoor.id) {
-        this.lastEnteredDoorId = closestDoor.id;
-        this.interact();
-      }
-
-      this.promptBubble.setVisible(true);
-      const bob = Math.sin(time * 0.006) * 2;
-      this.promptBubble.setPosition(closestDoor.x, closestDoor.y - 32 + bob);
-    } else {
-      this.lastEnteredDoorId = null;
-      if (prevDoor) {
-        this.promptBubble.setVisible(false);
-      }
+      const signText = this.getDoorSign(closestDoor.id);
+      this.prompt.showPrompt(closestDoor.x, closestDoor.y - 36, signText, () =>
+        this.interact()
+      );
+      this.prompt.updateBob(time);
+    } else if (prevDoor) {
+      this.prompt.hide();
     }
   }
 
@@ -189,20 +186,34 @@ export class IllustratedIsland {
     destroyOcclusionObjects(this.scene, this.occlusionObjects);
     this.occlusionObjects = [];
     this.baseImage.destroy();
-    this.promptBubble.destroy();
+    this.prompt.destroy();
   }
 
-  private renderPromptBubble(): void {
-    this.promptBubble.clear();
-    this.promptBubble.fillStyle(0x14110f, 0.9);
-    this.promptBubble.fillRoundedRect(-10, -10, 20, 18, 4);
-    this.promptBubble.fillTriangle(-3, 8, 3, 8, 0, 12);
-    this.promptBubble.fillStyle(0xf5f2e9, 1);
-    this.promptBubble.fillRoundedRect(-8, -8, 16, 14, 3);
-    this.promptBubble.fillStyle(0xab4c24, 1);
-    this.promptBubble.fillRect(-4, -5, 2, 8);
-    this.promptBubble.fillRect(-2, -5, 5, 2);
-    this.promptBubble.fillRect(-2, -2, 4, 2);
-    this.promptBubble.fillRect(-2, 1, 5, 2);
+  private getDoorSign(doorId: string): string {
+    const rawSign = (
+      this.dict as {
+        world?: {
+          buildings?: Record<string, { sign?: string }>;
+        };
+      } | null
+    )?.world?.buildings?.[doorId]?.sign;
+
+    if (typeof rawSign === "string" && rawSign.trim().length > 0) {
+      const trimmed = rawSign.trim();
+      const title = trimmed.includes("—")
+        ? trimmed.split("—")[0]!.trim()
+        : trimmed;
+      if (title) return title;
+    }
+
+    if (this.locale === "ar") {
+      return "مدخل";
+    }
+
+    const formatted = doorId
+      .replace(/^building_/, "")
+      .replace(/^portal_/, "")
+      .replace(/_/g, " ");
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }
 }

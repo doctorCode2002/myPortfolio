@@ -55,7 +55,9 @@ export class ControlsManager {
       this.keys["e"]?.isDown ||
       this.keys["E"]?.isDown ||
       this.keys["space"]?.isDown ||
-      this.keys["SPACE"]?.isDown
+      this.keys["SPACE"]?.isDown ||
+      this.keys["enter"]?.isDown ||
+      this.keys["ENTER"]?.isDown
     );
     const triggered = isDown && !this.wasInteractDown;
     this.wasInteractDown = isDown;
@@ -128,6 +130,7 @@ export class ControlsManager {
         d: "D",
         e: "E",
         space: "SPACE",
+        enter: "ENTER",
       }) as Record<string, Phaser.Input.Keyboard.Key>;
     }
   }
