@@ -54,7 +54,7 @@ export function GameCanvas({
       <div
         ref={containerRef}
         id="phaser-game-container"
-        className="h-full w-full overflow-hidden [&>canvas]:block [&>canvas]:!h-full [&>canvas]:!w-full"
+        className="h-full w-full overflow-hidden bg-gradient-to-b from-[#467298] to-[#deb38a] [&>canvas]:block [&>canvas]:!h-full [&>canvas]:!w-full"
       />
       {!hasLoaded && (
         <div className="bg-background/90 absolute inset-0 flex items-center justify-center transition-opacity duration-300">

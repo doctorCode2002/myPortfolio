@@ -18,7 +18,7 @@
   "doors": [
     {
       "buildingId": "portal_khidmty",
-      "at": [253, 400],
+      "at": [253, 305],
       "radius": 32
     }
   ],

@@ -18,8 +18,8 @@
   "doors": [
     {
       "buildingId": "portal_civicmind",
-      "at": [268, 400],
-      "radius": 32
+      "at": [268, 360],
+      "radius": 34
     }
   ],
   "spawns": {
@@ -29,7 +29,7 @@
   "anchors": [
     {
       "id": "to_home",
-      "at": [4, 396]
+      "at": [13, 290]
     }
   ]
 }

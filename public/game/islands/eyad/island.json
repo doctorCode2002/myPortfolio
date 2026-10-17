@@ -18,7 +18,7 @@
   "doors": [
     {
       "buildingId": "portal_eyad",
-      "at": [267, 374],
+      "at": [330, 335],
       "radius": 32
     }
   ],
@@ -29,7 +29,7 @@
   "anchors": [
     {
       "id": "to_home",
-      "at": [516, 344]
+      "at": [480, 290]
     }
   ]
 }

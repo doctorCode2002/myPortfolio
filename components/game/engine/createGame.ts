@@ -13,13 +13,19 @@ export function createGame(
     height: container.clientHeight || window.innerHeight,
     pixelArt: true,
     roundPixels: true,
-    backgroundColor: "#507ea8",
+    transparent: true,
+    backgroundColor: "#929391",
     scale: {
       mode: PhaserLib.Scale.RESIZE,
       autoCenter: PhaserLib.Scale.CENTER_BOTH,
     },
+    audio: {
+      noAudio: true,
+    },
     scene: [WorldScene],
   };
+
+  container.style.background = "linear-gradient(to bottom, #467298, #deb38a)";
 
   const game = new PhaserLib.Game(config);
   game.scene.start("WorldScene", { charSheet: initialCharSheet });

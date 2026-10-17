@@ -10,41 +10,17 @@ interface CloudInstance {
 }
 
 export class CloudSystem {
-  private skyGraphics: Phaser.GameObjects.Graphics;
   private clouds: CloudInstance[] = [];
   private isVisible = true;
   private curWorldWidth: number = ENGINE_CONSTANTS.WORLD_WIDTH;
 
   constructor(private scene: Phaser.Scene) {
     this.createOrganicCloudTextures();
-    const { DEPTHS } = ENGINE_CONSTANTS;
-    this.skyGraphics = this.scene.add.graphics();
-    this.skyGraphics.setScrollFactor(0);
-    this.skyGraphics.setDepth(DEPTHS.SKY);
-    this.renderGradient();
     this.spawnCloudLayers();
   }
 
   public setWorldBounds(width: number, _height: number): void {
     this.curWorldWidth = width;
-  }
-
-  private renderGradient(): void {
-    this.skyGraphics.clear();
-    const w = this.scene.scale.width;
-    const h = this.scene.scale.height;
-    // Sunset gradient: twilight top (0x467298) down to warm peach/gold sunset (0xdeb38a)
-    this.skyGraphics.fillGradientStyle(
-      0x467298,
-      0x467298,
-      0xdeb38a,
-      0xdeb38a,
-      1,
-      1,
-      1,
-      1
-    );
-    this.skyGraphics.fillRect(0, 0, w, h);
   }
 
   private createOrganicCloudTextures(): void {
@@ -212,11 +188,10 @@ export class CloudSystem {
   }
 
   public resize(): void {
-    this.renderGradient();
+    // Handled by viewport container CSS background gradient
   }
 
   public destroy(): void {
-    this.skyGraphics.destroy();
     for (const c of this.clouds) {
       c.sprite.destroy();
     }

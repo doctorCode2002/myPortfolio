@@ -153,7 +153,7 @@ type ProjectIslandConfig = {
  */
 const PROJECT_ISLAND_CONFIGS: Record<ProjectId, ProjectIslandConfig> = {
   khidmty: {
-    at: { x: 0, y: -90 },
+    at: { x: 0, y: -75 },
     size: "m",
     biome: "meadow",
     portalAt: { x: 0, y: -2 },
@@ -177,7 +177,7 @@ const PROJECT_ISLAND_CONFIGS: Record<ProjectId, ProjectIslandConfig> = {
     },
   },
   onyx: {
-    at: { x: 53, y: 73 },
+    at: { x: 65, y: 40 },
     size: "m",
     biome: "desert",
     portalAt: { x: 0, y: -2 },
@@ -189,7 +189,7 @@ const PROJECT_ISLAND_CONFIGS: Record<ProjectId, ProjectIslandConfig> = {
     },
   },
   saleh: {
-    at: { x: -53, y: 73 },
+    at: { x: -65, y: 40 },
     size: "m",
     biome: "autumn",
     portalAt: { x: 0, y: -2 },

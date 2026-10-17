@@ -148,9 +148,136 @@ export function isWalkableMaterial(r: number, g: number, b: number): boolean {
   return isRoad || isGrass;
 }
 
+export interface MaterialMapLike {
+  width: number;
+  height: number;
+  pixels: Uint8Array | Uint8ClampedArray | number[];
+  channels?: number;
+}
+
+export interface IslandMaterialContext {
+  islandId: string;
+  worldX: number;
+  worldY: number;
+  material: MaterialMapLike;
+}
+
+export interface DeckCollisionHit {
+  islandId: string;
+  worldX: number;
+  worldY: number;
+  localX: number;
+  localY: number;
+  material: string;
+  distance: number;
+}
+
+/**
+ * Checks whether an RGB(A) sample represents a deck-blocking material (cliff, water, solid, or roof).
+ */
+export function isBlockingDeckMaterial(
+  r: number,
+  g: number,
+  b: number,
+  a = 255
+): boolean {
+  if (a < 128) return false;
+
+  // Cliff: reddish brown (r ~ 128, g ~ 64, b ~ 0)
+  if (r >= 100 && r <= 155 && g >= 40 && g <= 90 && b <= 35) {
+    return true;
+  }
+  // Water: deep blue (r < 60, g < 60, b > 180)
+  if (r < 60 && g < 60 && b > 180) {
+    return true;
+  }
+  // Solid: bright red obstacle (r > 200, g < 50, b < 50)
+  if (r > 200 && g < 50 && b < 50) {
+    return true;
+  }
+  // Roof: orange obstacle (r > 200, g >= 100 && g <= 160, b < 50)
+  if (r > 200 && g >= 100 && g <= 160 && b < 50) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Samples along a deck line between two islands' anchors (outside the 12px overlap at each end)
+ * against both islands' material maps. Returns all collision hits where the deck line
+ * intersects cliff, water, or solid obstacles.
+ */
+export function sampleDeckCollisions(
+  fromIsland: IslandMaterialContext,
+  toIsland: IslandMaterialContext,
+  start: Point2D,
+  end: Point2D,
+  overlap = 12,
+  sampleStep = 2
+): DeckCollisionHit[] {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const length = Math.hypot(dx, dy);
+  if (length <= overlap * 2) {
+    return [];
+  }
+
+  const hits: DeckCollisionHit[] = [];
+  const islands = [fromIsland, toIsland];
+
+  for (let d = overlap; d <= length - overlap; d += sampleStep) {
+    const t = d / length;
+    const wx = start.x + dx * t;
+    const wy = start.y + dy * t;
+
+    for (const isl of islands) {
+      const lx = Math.round(wx - isl.worldX);
+      const ly = Math.round(wy - isl.worldY);
+
+      if (
+        lx >= 0 &&
+        lx < isl.material.width &&
+        ly >= 0 &&
+        ly < isl.material.height
+      ) {
+        const channels = isl.material.channels ?? 3;
+        const idx = (ly * isl.material.width + lx) * channels;
+        const r = isl.material.pixels[idx] ?? 0;
+        const g = isl.material.pixels[idx + 1] ?? 0;
+        const b = isl.material.pixels[idx + 2] ?? 0;
+        const a = channels >= 4 ? (isl.material.pixels[idx + 3] ?? 255) : 255;
+
+        if (isBlockingDeckMaterial(r, g, b, a)) {
+          let matName = "solid";
+          if (r >= 100 && r <= 155 && g >= 40 && g <= 90 && b <= 35)
+            matName = "cliff";
+          else if (r < 60 && g < 60 && b > 180) matName = "water";
+          else if (r > 200 && g >= 100 && g <= 160 && b < 50) matName = "roof";
+
+          hits.push({
+            islandId: isl.islandId,
+            worldX: Math.round(wx),
+            worldY: Math.round(wy),
+            localX: lx,
+            localY: ly,
+            material: matName,
+            distance: d,
+          });
+        }
+      }
+    }
+  }
+
+  return hits;
+}
+
 /**
  * Computes an anchor automatically on an island: the walkable (road|grass)
- * material pixel closest to the other island's centre, on the edge facing it.
+ * material pixel closest to the other island's centre, on the top-surface lip
+ * bordering void (never pixels that only border cliff underside).
+ *
+ * For targets below the island (south), prefers side lips (east/west)
+ * so the deck avoids crossing the southern cliff underside or waterfalls.
  *
  * Returns pixel coordinates in native island space [0..matWidth-1, 0..matHeight-1].
  */
@@ -163,6 +290,29 @@ export function findAutomaticAnchor(
 ): Point2D {
   const originX = islandWorldCenter.x - matWidth / 2;
   const originY = islandWorldCenter.y - matHeight / 2;
+  const channels = materialPixels.length >= matWidth * matHeight * 4 ? 4 : 3;
+
+  function isVoid(px: number, py: number): boolean {
+    if (px < 0 || px >= matWidth || py < 0 || py >= matHeight) return true;
+    const idx = (py * matWidth + px) * channels;
+    const a = channels >= 4 ? (materialPixels[idx + 3] ?? 255) : 255;
+    if (a < 128) return true;
+    const r = materialPixels[idx] ?? 0;
+    const g = materialPixels[idx + 1] ?? 0;
+    const b = materialPixels[idx + 2] ?? 0;
+    return r > 200 && b > 200 && g < 50;
+  }
+
+  function bordersVoid(px: number, py: number): boolean {
+    return (
+      isVoid(px - 1, py) ||
+      isVoid(px + 1, py) ||
+      isVoid(px, py - 1) ||
+      isVoid(px, py + 1)
+    );
+  }
+
+  const isTargetBelow = targetWorldCenter.y > islandWorldCenter.y + 40;
 
   let bestDistSq = Infinity;
   let bestPt: Point2D = {
@@ -170,8 +320,8 @@ export function findAutomaticAnchor(
     y: Math.round(matHeight / 2),
   };
 
-  const channels = materialPixels.length >= matWidth * matHeight * 4 ? 4 : 3;
-  const stride = 1; // Check every pixel for exact edge precision
+  const stride = 1;
+  // First pass: look strictly for walkable pixels that border void (top-surface lip)
   for (let y = 0; y < matHeight; y += stride) {
     for (let x = 0; x < matWidth; x += stride) {
       const idx = (y * matWidth + x) * channels;
@@ -179,14 +329,46 @@ export function findAutomaticAnchor(
       const g = materialPixels[idx + 1] ?? 0;
       const b = materialPixels[idx + 2] ?? 0;
 
-      if (isWalkableMaterial(r, g, b)) {
+      if (isWalkableMaterial(r, g, b) && bordersVoid(x, y)) {
         const wx = originX + x;
         const wy = originY + y;
-        const dsq =
+        let dsq =
           (wx - targetWorldCenter.x) ** 2 + (wy - targetWorldCenter.y) ** 2;
+
+        // If target is below, penalize center-south cliff underside
+        if (isTargetBelow) {
+          const distFromHorizCenter = Math.abs(x - matWidth / 2);
+          if (distFromHorizCenter < matWidth * 0.25) {
+            dsq += 500000; // Strong penalty favoring side lips (east / west)
+          }
+        }
+
         if (dsq < bestDistSq) {
           bestDistSq = dsq;
           bestPt = { x, y };
+        }
+      }
+    }
+  }
+
+  // Fallback if no void-bordering pixel found
+  if (bestDistSq === Infinity) {
+    for (let y = 0; y < matHeight; y += stride) {
+      for (let x = 0; x < matWidth; x += stride) {
+        const idx = (y * matWidth + x) * channels;
+        const r = materialPixels[idx] ?? 0;
+        const g = materialPixels[idx + 1] ?? 0;
+        const b = materialPixels[idx + 2] ?? 0;
+
+        if (isWalkableMaterial(r, g, b)) {
+          const wx = originX + x;
+          const wy = originY + y;
+          const dsq =
+            (wx - targetWorldCenter.x) ** 2 + (wy - targetWorldCenter.y) ** 2;
+          if (dsq < bestDistSq) {
+            bestDistSq = dsq;
+            bestPt = { x, y };
+          }
         }
       }
     }

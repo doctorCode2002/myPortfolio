@@ -3,6 +3,8 @@ import {
   createBridgeCorridor,
   isPointInCorridor,
   isWalkableMaterial,
+  isBlockingDeckMaterial,
+  sampleDeckCollisions,
   findAutomaticAnchor,
   resolveIslandAnchor,
   computeWorldLayout,
@@ -244,5 +246,113 @@ describe("Bridge Geometry and Layout Logic", () => {
       expect(overlaps).toEqual([]);
     });
   });
-});
 
+  describe("Deck Collision Sampling", () => {
+    it("identifies cliff, water, solid, and roof as blocking deck materials", () => {
+      expect(isBlockingDeckMaterial(128, 64, 0)).toBe(true); // Cliff
+      expect(isBlockingDeckMaterial(0, 0, 255)).toBe(true); // Water
+      expect(isBlockingDeckMaterial(255, 0, 0)).toBe(true); // Solid
+      expect(isBlockingDeckMaterial(255, 128, 0)).toBe(true); // Roof
+
+      // Road, grass, and void are not blocking deck materials
+      expect(isBlockingDeckMaterial(255, 255, 255)).toBe(false); // Road
+      expect(isBlockingDeckMaterial(0, 200, 0)).toBe(false); // Grass
+      expect(isBlockingDeckMaterial(255, 0, 255)).toBe(false); // Void
+      expect(isBlockingDeckMaterial(0, 0, 0, 0)).toBe(false); // Transparent void
+    });
+
+    it("detects no collisions on clear deck lines suspended over void", () => {
+      // 50x50 island canvases with void in the middle
+      const fromMat = {
+        width: 50,
+        height: 50,
+        pixels: new Uint8Array(50 * 50 * 3), // All 0
+        channels: 3,
+      };
+      const toMat = {
+        width: 50,
+        height: 50,
+        pixels: new Uint8Array(50 * 50 * 3),
+        channels: 3,
+      };
+
+      const fromIsland = {
+        islandId: "home",
+        worldX: 0,
+        worldY: 0,
+        material: fromMat,
+      };
+      const toIsland = {
+        islandId: "onyx",
+        worldX: 200,
+        worldY: 0,
+        material: toMat,
+      };
+
+      // Deck spans from (40, 25) to (210, 25)
+      const hits = sampleDeckCollisions(
+        fromIsland,
+        toIsland,
+        { x: 40, y: 25 },
+        { x: 210, y: 25 },
+        12,
+        2
+      );
+      expect(hits).toEqual([]);
+    });
+
+    it("detects collision hits when deck crosses cliff or water outside the overlap", () => {
+      const fromMat = {
+        width: 60,
+        height: 60,
+        pixels: new Uint8Array(60 * 60 * 3),
+        channels: 3,
+      };
+      // Place a cliff patch on fromIsland at x in [30, 40], y in [20, 30]
+      for (let y = 20; y <= 30; y++) {
+        for (let x = 30; x <= 40; x++) {
+          const idx = (y * 60 + x) * 3;
+          fromMat.pixels[idx] = 128;
+          fromMat.pixels[idx + 1] = 64;
+          fromMat.pixels[idx + 2] = 0;
+        }
+      }
+
+      const toMat = {
+        width: 60,
+        height: 60,
+        pixels: new Uint8Array(60 * 60 * 3),
+        channels: 3,
+      };
+
+      const fromIsland = {
+        islandId: "home",
+        worldX: 0,
+        worldY: 0,
+        material: fromMat,
+      };
+      const toIsland = {
+        islandId: "saleh",
+        worldX: 100,
+        worldY: 0,
+        material: toMat,
+      };
+
+      // Line from (10, 25) to (120, 25).
+      // Overlap is 12px, so testing runs from x=22 to x=108.
+      // Cliff is at x in [30, 40], so hits should be detected!
+      const hits = sampleDeckCollisions(
+        fromIsland,
+        toIsland,
+        { x: 10, y: 25 },
+        { x: 120, y: 25 },
+        12,
+        2
+      );
+
+      expect(hits.length).toBeGreaterThan(0);
+      expect(hits[0]!.material).toBe("cliff");
+      expect(hits[0]!.islandId).toBe("home");
+    });
+  });
+});

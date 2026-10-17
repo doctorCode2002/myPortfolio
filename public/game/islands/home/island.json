@@ -28,8 +28,8 @@
     },
     {
       "buildingId": "building_stack",
-      "at": [630, 555],
-      "radius": 32
+      "at": [560, 550],
+      "radius": 34
     },
     {
       "buildingId": "building_hobbies",
@@ -54,7 +54,7 @@
   "anchors": [
     {
       "id": "to_khidmty",
-      "at": [572, 234]
+      "at": [400, 292]
     },
     {
       "id": "to_civicmind",
@@ -62,11 +62,11 @@
     },
     {
       "id": "to_onyx",
-      "at": [618, 742]
+      "at": [760, 605]
     },
     {
       "id": "to_saleh",
-      "at": [166, 722]
+      "at": [16, 596]
     },
     {
       "id": "to_eyad",

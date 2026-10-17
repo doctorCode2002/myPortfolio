@@ -18,7 +18,7 @@
   "doors": [
     {
       "buildingId": "portal_onyx",
-      "at": [260, 407],
+      "at": [260, 365],
       "radius": 32
     }
   ],
@@ -29,7 +29,7 @@
   "anchors": [
     {
       "id": "to_home",
-      "at": [72, 190]
+      "at": [98, 177]
     }
   ]
 }
