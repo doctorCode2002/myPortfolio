@@ -10,6 +10,7 @@ import type { ReactNode } from "react";
 
 import { getDictionary } from "./dictionaries";
 import { Nav } from "@/components/layout/nav";
+import { HideOnPlay } from "@/components/layout/hide-on-play";
 import { PageBackdrop } from "@/components/layout/page-backdrop";
 import { Providers } from "@/components/layout/providers";
 import { SkipToContent } from "@/components/layout/skip-to-content";
@@ -125,15 +126,20 @@ export default async function LocaleLayout({
           dangerouslySetInnerHTML={{ __html: profileJsonLd(locale) }}
         />
         <Providers>
-          <div className="site-frame site-frame--top" aria-hidden="true" />
-          <div className="site-frame site-frame--left" aria-hidden="true" />
-          <div className="site-frame site-frame--right" aria-hidden="true" />
-          <CornerGlyph className="site-corner site-corner--top-left" />
-          <CornerGlyph className="site-corner site-corner--top-right" />
+          {/* Play mode is full-screen: no site frame, backdrop or nav there. */}
+          <HideOnPlay>
+            <div className="site-frame site-frame--top" aria-hidden="true" />
+            <div className="site-frame site-frame--left" aria-hidden="true" />
+            <div className="site-frame site-frame--right" aria-hidden="true" />
+            <CornerGlyph className="site-corner site-corner--top-left" />
+            <CornerGlyph className="site-corner site-corner--top-right" />
+          </HideOnPlay>
 
           <SkipToContent label={dict.nav.skipToContent} />
-          <PageBackdrop />
-          <Nav locale={locale} labels={dict.nav} />
+          <HideOnPlay>
+            <PageBackdrop />
+            <Nav locale={locale} labels={dict.nav} />
+          </HideOnPlay>
           {children}
         </Providers>
       </body>

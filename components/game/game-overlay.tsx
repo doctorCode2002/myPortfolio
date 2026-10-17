@@ -27,8 +27,8 @@ export function GameOverlay({
 
   return (
     <div className="pointer-events-none absolute inset-0 z-40 overflow-hidden select-none">
-      {/* Top Controls: "Back to portfolio", "Change character", and Zoom controls */}
-      <div className="pointer-events-auto absolute start-4 top-20 flex flex-wrap items-center gap-2 sm:start-6 sm:top-6">
+      {/* Top controls, stacked: "Back to portfolio", then "Change character", then zoom */}
+      <div className="pointer-events-auto absolute start-4 top-4 flex flex-col items-start gap-2 sm:start-6 sm:top-6">
         <Link
           href={localePath(locale, "/")}
           className="group focus-ring border-foreground/15 bg-background/85 text-foreground hover:border-accent/40 hover:bg-background inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-medium shadow-sm backdrop-blur-md transition-all duration-200 sm:text-sm"
