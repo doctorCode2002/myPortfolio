@@ -1,15 +1,19 @@
 import Phaser from "phaser";
-import { ENGINE_CONSTANTS, computeIntegerZoom } from "../constants";
-import { Building } from "../entities/Building";
+import {
+  ENGINE_CONSTANTS,
+  ZOOM_LEVELS,
+  computeFitZoom,
+  computeIntegerZoom,
+} from "../constants";
+import type { Building } from "../entities/Building";
 import { Npc } from "../entities/Npc";
 import { Player } from "../entities/Player";
 import { gameEvents } from "../events";
 import { ControlsManager } from "../input/controls";
 import { IllustratedIsland, type IslandArt } from "../world/illustratedIsland";
-import { Island } from "../world/islandRenderer";
+import type { Island } from "../world/islandRenderer";
+import { createProceduralFallback } from "../world/proceduralFallback";
 import { SkySystem } from "../world/sky";
-
-const ZOOM_LEVELS = [0.5, 0.75, 1, 1.5, 2, 3, 4] as const;
 
 export class WorldScene extends Phaser.Scene {
   private sky!: SkySystem;
@@ -78,7 +82,11 @@ export class WorldScene extends Phaser.Scene {
         dialogueKey: "demoNpcDialogue",
       });
     } else {
-      this.initProceduralFallback();
+      const fallback = createProceduralFallback(this, this.initialCharSheet);
+      this.centerIsland = fallback.centerIsland;
+      this.demoBuilding = fallback.demoBuilding;
+      this.demoNpc = fallback.demoNpc;
+      this.player = fallback.player;
     }
 
     this.controls = new ControlsManager(this);
@@ -87,43 +95,18 @@ export class WorldScene extends Phaser.Scene {
 
     this.setupCamera(WORLD_WIDTH, WORLD_HEIGHT);
     this.setupZoomInputs();
-  }
 
-  private initProceduralFallback(): void {
-    const { ISLAND, PLAYER } = ENGINE_CONSTANTS;
-    this.centerIsland = new Island(this, {
-      id: "center-island",
-      centerX: ISLAND.CENTER_X,
-      centerY: ISLAND.CENTER_Y,
-      surfaceRadiusX: ISLAND.SURFACE_RADIUS_X,
-      surfaceRadiusY: ISLAND.SURFACE_RADIUS_Y,
-      walkRadiusX: ISLAND.WALK_RADIUS_X,
-      walkRadiusY: ISLAND.WALK_RADIUS_Y,
-      shadowY: ISLAND.SHADOW_Y,
-      biome: "grass",
-    });
-    this.demoBuilding = new Building(this, {
-      id: "pavilion",
-      titleKey: "demoBuildingTitle",
-      messageKey: "demoBuildingDialogue",
-      x: 700,
-      y: 490,
-    });
-    this.demoNpc = new Npc(this, {
-      id: "mayor",
-      nameKey: "demoNpcName",
-      roleKey: "demoNpcRole",
-      charSheet: "char_1",
-      x: 890,
-      y: 540,
-      dialogueKey: "demoNpcDialogue",
-    });
-    this.player = new Player(
-      this,
-      PLAYER.START_X,
-      PLAYER.START_Y,
-      this.initialCharSheet
-    );
+    if (
+      process.env.NODE_ENV !== "production" &&
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("edit") === "1" &&
+      this.illustratedIsland
+    ) {
+      import("../../editor/editorPhaser").then(({ initDevEditor }) => {
+        const cleanup = initDevEditor(this, this.illustratedIsland!);
+        this.events.once("shutdown", cleanup);
+      });
+    }
   }
 
   override update(time: number, delta: number): void {
@@ -146,18 +129,14 @@ export class WorldScene extends Phaser.Scene {
       ? Boolean(this.illustratedIsland.activeDoor)
       : Boolean(this.demoBuilding?.update(this.player.x, this.player.y, time));
 
-    if (this.illustratedIsland) {
+    if (this.illustratedIsland)
       this.illustratedIsland.update(this.player.x, this.player.y, time);
-    } else {
-      this.centerIsland?.update(time);
-    }
+    else this.centerIsland?.update(time);
 
     if (this.controls.isInteractTriggered()) {
       if (isNpcInRange) this.demoNpc.interact();
-      else if (isBuildingInRange) {
-        if (this.illustratedIsland) this.illustratedIsland.interact();
-        else this.demoBuilding?.interact();
-      }
+      else if (isBuildingInRange)
+        (this.illustratedIsland ?? this.demoBuilding)?.interact();
     }
 
     const isWalkable = (x: number, y: number): boolean =>
@@ -191,18 +170,16 @@ export class WorldScene extends Phaser.Scene {
       }
     );
     this.input.on("pointermove", () => {
-      const p1 = this.input.pointer1;
-      const p2 = this.input.pointer2;
+      const p1 = this.input.pointer1,
+        p2 = this.input.pointer2;
       if (p1?.isDown && p2?.isDown) {
         const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        const next =
+          dist > this.pinchDist ? this.zoomIndex + 1 : this.zoomIndex - 1;
         if (this.pinchDist > 0 && Math.abs(dist - this.pinchDist) > 25) {
-          this.setZoomLevel(
-            dist > this.pinchDist ? this.zoomIndex + 1 : this.zoomIndex - 1
-          );
+          this.setZoomLevel(next);
           this.pinchDist = dist;
-        } else if (!this.pinchDist) {
-          this.pinchDist = dist;
-        }
+        } else if (!this.pinchDist) this.pinchDist = dist;
       } else {
         this.pinchDist = 0;
       }
@@ -247,17 +224,6 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
-  private computeFitZoom(viewW: number, viewH: number): number {
-    const rawFit = Math.min(viewW / 880, viewH / 1200);
-    let bestIdx = 0;
-    for (let i = 0; i < ZOOM_LEVELS.length; i++) {
-      if ((ZOOM_LEVELS[i] ?? 0.5) <= Math.max(0.5, rawFit)) {
-        bestIdx = i;
-      }
-    }
-    return bestIdx;
-  }
-
   private setupCamera(worldWidth: number, worldHeight: number): void {
     const cam = this.cameras.main;
     cam.setBackgroundColor("#507ea8");
@@ -266,7 +232,7 @@ export class WorldScene extends Phaser.Scene {
 
     const isPhone = this.scale.width < 640;
     if (isPhone) {
-      this.zoomIndex = this.computeFitZoom(this.scale.width, this.scale.height);
+      this.zoomIndex = computeFitZoom(this.scale.width, this.scale.height);
     } else {
       const initialZoom = computeIntegerZoom(
         this.scale.width,
@@ -278,8 +244,6 @@ export class WorldScene extends Phaser.Scene {
     this.targetZoom = ZOOM_LEVELS[this.zoomIndex] ?? 2;
     cam.setZoom(this.targetZoom);
 
-    this.scale.on("resize", () => {
-      this.sky.resize();
-    });
+    this.scale.on("resize", () => this.sky.resize());
   }
 }

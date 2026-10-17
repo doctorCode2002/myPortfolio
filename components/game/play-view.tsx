@@ -38,6 +38,16 @@ const GameCanvas = dynamic(
   }
 );
 
+const DevEditor =
+  process.env.NODE_ENV !== "production"
+    ? dynamic(
+        () => import("./editor/dev-editor").then((mod) => mod.DevEditor),
+        {
+          ssr: false,
+        }
+      )
+    : null;
+
 export function PlayView({
   locale,
   dict,
@@ -67,6 +77,12 @@ export function PlayView({
     selectedCharOverride ?? (isMounted ? loadSavedCharacter() : "char_0");
   const isPickerOpen =
     pickerOpenOverride ?? (isMounted ? !hasSavedCharacter() : false);
+
+  const isEditMode =
+    process.env.NODE_ENV !== "production" &&
+    isMounted &&
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("edit") === "1";
 
   // Lock scrolling on html and body on /play route
   useEffect(() => {
@@ -200,6 +216,8 @@ export function PlayView({
         dict={dict}
         locale={locale}
       />
+
+      {isEditMode && DevEditor && <DevEditor />}
     </div>
   );
 }

@@ -48,7 +48,7 @@ export function isPointInPolygon(
 export class IllustratedIsland {
   public readonly worldX: number;
   public readonly worldY: number;
-  public readonly art: IslandArt;
+  public art: IslandArt;
 
   private readonly baseImage: Phaser.GameObjects.Image;
   private readonly shadow: Phaser.GameObjects.Graphics;

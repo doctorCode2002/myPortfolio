@@ -22,6 +22,15 @@ export type GameEventMap = {
   "player:change-character": { charSheet: string };
   "game:freeze": boolean;
   "prompt:show": { textKey: string; targetId: string } | null;
+  "editor:set-tool": {
+    tool:
+      "walkable" | "blockers" | "doors" | "occluders" | "spawns" | "anchors";
+  };
+  "editor:toggle-layer": { layer: string };
+  "editor:data-updated": { art: unknown };
+  "editor:request-data": void;
+  "editor:update-art": { art: unknown };
+  "editor:select-item": { tool: string; index: number };
 };
 
 type GenericCallback = (data: unknown) => void;
