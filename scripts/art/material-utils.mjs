@@ -2,7 +2,7 @@
  * Living World Material Map Utilities.
  *
  * Implements material palette mapping, nearest-neighbor palette snapping,
- * speck cleanup, and auto heuristic material map generation per `docs/LIVING_WORLD_SPEC.md`.
+ * outline fill, road snag cleanup, and segmentation processing per `docs/LIVING_WORLD_SPEC.md`.
  */
 
 export const MATERIAL_PALETTE = {
@@ -28,6 +28,29 @@ export const PALETTE_ENTRIES = Object.entries(MATERIAL_PALETTE).map(
   })
 );
 
+export function packRgb(r, g, b) {
+  return (r << 16) | (g << 8) | b;
+}
+
+export function unpackRgb(packed) {
+  return [(packed >> 16) & 0xff, (packed >> 8) & 0xff, packed & 0xff];
+}
+
+export const PACKED_PALETTE = {
+  void: packRgb(...MATERIAL_PALETTE.void),
+  road: packRgb(...MATERIAL_PALETTE.road),
+  grass: packRgb(...MATERIAL_PALETTE.grass),
+  solid: packRgb(...MATERIAL_PALETTE.solid),
+  roof: packRgb(...MATERIAL_PALETTE.roof),
+  canopy: packRgb(...MATERIAL_PALETTE.canopy),
+  water: packRgb(...MATERIAL_PALETTE.water),
+  cliff: packRgb(...MATERIAL_PALETTE.cliff),
+  cloth: packRgb(...MATERIAL_PALETTE.cloth),
+  fire: packRgb(...MATERIAL_PALETTE.fire),
+};
+
+export const UNKNOWN_COLOR = 0xffffffff;
+
 /**
  * Snaps an arbitrary [r, g, b] color to the nearest material palette color.
  */
@@ -47,7 +70,11 @@ export function snapToNearestPalette(r, g, b) {
     }
   }
 
-  return { name: bestEntry.name, rgb: bestEntry.rgb };
+  return {
+    name: bestEntry.name,
+    rgb: bestEntry.rgb,
+    distance: Math.sqrt(minDistanceSq),
+  };
 }
 
 /**
@@ -73,9 +100,133 @@ export function snapBufferToPalette(buffer, width, height, channels = 3) {
 }
 
 /**
- * Morphological speck removal:
- * Identifies connected components of identical palette color.
- * Any component smaller than `minSize` pixels is remapped to its most frequent neighboring color.
+ * Fills UNKNOWN pixels (from black outlines or anti-aliased edge fringes)
+ * using a majority (mode) filter of their known neighbors (3x3 then 5x5).
+ */
+export function fillUnknownPixels(colorArray, width, height) {
+  for (let pass = 1; pass <= 2; pass++) {
+    const radius = pass === 1 ? 1 : 2;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const idx = y * width + x;
+        if (colorArray[idx] !== UNKNOWN_COLOR) continue;
+
+        const counts = new Map();
+        for (let dy = -radius; dy <= radius; dy++) {
+          const ny = y + dy;
+          if (ny < 0 || ny >= height) continue;
+          for (let dx = -radius; dx <= radius; dx++) {
+            const nx = x + dx;
+            if (nx < 0 || nx >= width) continue;
+            const c = colorArray[ny * width + nx];
+            if (c !== UNKNOWN_COLOR) {
+              counts.set(c, (counts.get(c) || 0) + 1);
+            }
+          }
+        }
+
+        if (counts.size > 0) {
+          let best = UNKNOWN_COLOR;
+          let maxCount = 0;
+          for (const [c, cnt] of counts.entries()) {
+            if (cnt > maxCount) {
+              maxCount = cnt;
+              best = c;
+            }
+          }
+          colorArray[idx] = best;
+        }
+      }
+    }
+  }
+
+  // Fallback for any remaining isolated unknown pixel
+  for (let i = 0; i < colorArray.length; i++) {
+    if (colorArray[i] === UNKNOWN_COLOR) {
+      colorArray[i] = PACKED_PALETTE.solid;
+    }
+  }
+}
+
+/**
+ * Removes obstacle specks (solid, roof, canopy) smaller than or equal to `maxSnagSize`
+ * that are surrounded by walkable ground (road or grass).
+ * Prevents invisible 1-12px walls from snagging the player.
+ */
+export function removeRoadSnags(colorArray, width, height, maxSnagSize = 12) {
+  const numPixels = width * height;
+  const visited = new Uint8Array(numPixels);
+
+  const ROAD = PACKED_PALETTE.road;
+  const GRASS = PACKED_PALETTE.grass;
+  const SOLID = PACKED_PALETTE.solid;
+  const ROOF = PACKED_PALETTE.roof;
+  const CANOPY = PACKED_PALETTE.canopy;
+
+  for (let i = 0; i < numPixels; i++) {
+    if (visited[i]) continue;
+    const c = colorArray[i];
+    const isObstacle = c === SOLID || c === ROOF || c === CANOPY;
+    const comp = [i];
+    visited[i] = 1;
+    let head = 0;
+
+    while (head < comp.length) {
+      const idx = comp[head++];
+      const cx = idx % width;
+      const cy = Math.floor(idx / width);
+      const neighbors = [
+        cy > 0 ? idx - width : -1,
+        cy < height - 1 ? idx + width : -1,
+        cx > 0 ? idx - 1 : -1,
+        cx < width - 1 ? idx + 1 : -1,
+      ];
+      for (const n of neighbors) {
+        if (n !== -1 && !visited[n] && colorArray[n] === c) {
+          visited[n] = 1;
+          comp.push(n);
+        }
+      }
+    }
+
+    if (isObstacle && comp.length <= maxSnagSize) {
+      const boundaryCounts = new Map();
+      for (const idx of comp) {
+        const cx = idx % width;
+        const cy = Math.floor(idx / width);
+        const neighbors = [
+          cy > 0 ? idx - width : -1,
+          cy < height - 1 ? idx + width : -1,
+          cx > 0 ? idx - 1 : -1,
+          cx < width - 1 ? idx + 1 : -1,
+        ];
+        for (const n of neighbors) {
+          if (n !== -1 && colorArray[n] !== c) {
+            const nc = colorArray[n];
+            boundaryCounts.set(nc, (boundaryCounts.get(nc) || 0) + 1);
+          }
+        }
+      }
+
+      const roadCount = boundaryCounts.get(ROAD) || 0;
+      const grassCount = boundaryCounts.get(GRASS) || 0;
+      const walkableCount = roadCount + grassCount;
+      let totalBoundary = 0;
+      for (const cnt of boundaryCounts.values()) totalBoundary += cnt;
+
+      if (totalBoundary > 0 && walkableCount / totalBoundary >= 0.7) {
+        const fill = roadCount >= grassCount ? ROAD : GRASS;
+        for (const idx of comp) {
+          colorArray[idx] = fill;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * General speck removal: re-maps components smaller than `minSize` pixels
+ * to their most frequent neighboring color.
  */
 export function removeSpecks(buffer, width, height, minSize = 6) {
   const numPixels = width * height;
@@ -158,22 +309,124 @@ export function removeSpecks(buffer, width, height, minSize = 6) {
 }
 
 /**
- * Generates an auto material map from an island's RGBA pixel buffer based on
- * the heuristics in `docs/LIVING_WORLD_SPEC.md`:
- * - alpha 0 -> void
- * - blue-dominant -> water
- * - high-saturation green -> grass
- * - dark low-luminance green blobs -> canopy
- * - light low-texture tan / paved -> road
- * - alpha edge band ~4 px near bottom outline / underside rock -> cliff
- * - rest -> solid
+ * Full AI segmentation map processor:
+ * - Maps transparent art pixels to `void`
+ * - Flags black outlines & distant fringe as UNKNOWN
+ * - Fills UNKNOWN pixels with majority filter (3x3 then 5x5)
+ * - Removes obstacle specks <= 12 px surrounded by road or grass
+ * - Cleans specks < 6 px
+ */
+export function processSegmentationMap(
+  mapRgb,
+  width,
+  height,
+  artAlpha = null,
+  options = {}
+) {
+  const { maxSnagSize = 12, minSpeckSize = 6 } = options;
+  const numPixels = width * height;
+  const colorArray = new Uint32Array(numPixels);
+
+  for (let i = 0; i < numPixels; i++) {
+    if (artAlpha && artAlpha[i * 4 + 3] === 0) {
+      colorArray[i] = PACKED_PALETTE.void;
+      continue;
+    }
+
+    const r = mapRgb[i * 3];
+    const g = mapRgb[i * 3 + 1];
+    const b = mapRgb[i * 3 + 2];
+
+    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+    const max = Math.max(r, g, b);
+
+    // Black outline strokes from Gemini: dark and low saturation
+    if (lum < 45 && max < 55) {
+      colorArray[i] = UNKNOWN_COLOR;
+      continue;
+    }
+
+    const snapped = snapToNearestPalette(r, g, b);
+    if (snapped.distance > 80) {
+      // Anti-aliased boundary fringe far from palette
+      colorArray[i] = UNKNOWN_COLOR;
+      continue;
+    }
+
+    colorArray[i] = packRgb(...snapped.rgb);
+  }
+
+  // Majority filter for outlines
+  fillUnknownPixels(colorArray, width, height);
+
+  // Remove snagging obstacle specks on road or grass
+  if (maxSnagSize > 0) {
+    removeRoadSnags(colorArray, width, height, maxSnagSize);
+  }
+
+  // Convert to RGB buffer
+  const outRgb = Buffer.alloc(numPixels * 3);
+  for (let i = 0; i < numPixels; i++) {
+    const c = colorArray[i];
+    outRgb[i * 3] = (c >> 16) & 0xff;
+    outRgb[i * 3 + 1] = (c >> 8) & 0xff;
+    outRgb[i * 3 + 2] = c & 0xff;
+  }
+
+  // General speck cleanup
+  const cleanedRgb =
+    minSpeckSize > 1
+      ? removeSpecks(outRgb, width, height, minSpeckSize)
+      : outRgb;
+
+  return cleanedRgb;
+}
+
+/**
+ * Computes per-class pixel counts and percentages.
+ */
+export function computeClassHistogram(materialRgb, width, height) {
+  const numPixels = width * height;
+  const counts = {};
+  for (const name of Object.keys(MATERIAL_PALETTE)) {
+    counts[name] = 0;
+  }
+
+  const nameByPack = new Map();
+  for (const [name, rgb] of Object.entries(MATERIAL_PALETTE)) {
+    nameByPack.set(packRgb(...rgb), name);
+  }
+
+  for (let i = 0; i < numPixels; i++) {
+    const packed = packRgb(
+      materialRgb[i * 3],
+      materialRgb[i * 3 + 1],
+      materialRgb[i * 3 + 2]
+    );
+    const name = nameByPack.get(packed) || "other";
+    counts[name] = (counts[name] || 0) + 1;
+  }
+
+  const histogram = {};
+  for (const [name, count] of Object.entries(counts)) {
+    histogram[name] = {
+      count,
+      percent: (count / numPixels) * 100,
+      percentStr: `${((count / numPixels) * 100).toFixed(2)}%`,
+    };
+  }
+
+  return histogram;
+}
+
+/**
+ * Generates an auto material map from an island's RGBA pixel buffer based on heuristics.
  */
 export function generateAutoMaterial(islandRgba, width, height, options = {}) {
   const { minSpeckSize = 6, cliffBand = 4 } = options;
   const numPixels = width * height;
   const mat = Buffer.alloc(numPixels * 3);
 
-  // 1. Identify alpha mask and distance to transparent void (within 6px)
   const isOpaque = new Uint8Array(numPixels);
   for (let i = 0; i < numPixels; i++) {
     isOpaque[i] = islandRgba[i * 4 + 3] > 0 ? 1 : 0;
@@ -206,7 +459,6 @@ export function generateAutoMaterial(islandRgba, width, height, options = {}) {
     }
   }
 
-  // 2. Classify each pixel
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const idx = y * width + x;
@@ -232,7 +484,6 @@ export function generateAutoMaterial(islandRgba, width, height, options = {}) {
 
       let cls = "solid";
 
-      // Underside cliff edge band and rock
       if (y > height * 0.5 && distToVoid[idx] <= cliffBand) {
         cls = "cliff";
       } else if (
@@ -243,16 +494,9 @@ export function generateAutoMaterial(islandRgba, width, height, options = {}) {
         !(g > r + 10)
       ) {
         cls = "cliff";
-      } else if (
-        // Water (blue dominant, water streams/waterfalls/pools)
-        b > r + 15 &&
-        b > g - 15 &&
-        b > 80 &&
-        y > height * 0.35
-      ) {
+      } else if (b > r + 15 && b > g - 15 && b > 80 && y > height * 0.35) {
         cls = "water";
       } else if (g > r && g > b) {
-        // Green foliage
         if (lum < 95 || (g < 110 && sat > 0.2)) {
           cls = "canopy";
         } else if (sat > 0.22 || g > 110) {
@@ -261,7 +505,6 @@ export function generateAutoMaterial(islandRgba, width, height, options = {}) {
           cls = "solid";
         }
       } else if (
-        // Light low-texture tan / stone paved roads, plazas, and stairs
         (lum > 110 &&
           sat < 0.42 &&
           r > 110 &&
@@ -276,7 +519,6 @@ export function generateAutoMaterial(islandRgba, width, height, options = {}) {
           b > 100 &&
           r >= g &&
           g >= b) ||
-        // Desert sand walkable ground (warm tan/sand top ground surface)
         (y < height * 0.62 &&
           y > height * 0.25 &&
           r > 165 &&
@@ -289,7 +531,6 @@ export function generateAutoMaterial(islandRgba, width, height, options = {}) {
       ) {
         cls = "road";
       } else if (
-        // Cherry blossom tree canopy (pink/white floral tree crowns in spring, b > g - 10)
         y < height * 0.65 &&
         r > 175 &&
         g > 110 &&
@@ -301,14 +542,7 @@ export function generateAutoMaterial(islandRgba, width, height, options = {}) {
         sat < 0.45
       ) {
         cls = "canopy";
-      } else if (
-        // Autumn tree foliage (Saleh island: warm golden/orange/crimson crowns)
-        y < height * 0.55 &&
-        r > 130 &&
-        g > 40 &&
-        g < 135 &&
-        b < 75
-      ) {
+      } else if (y < height * 0.55 && r > 130 && g > 40 && g < 135 && b < 75) {
         cls = "canopy";
       }
 
@@ -319,13 +553,11 @@ export function generateAutoMaterial(islandRgba, width, height, options = {}) {
     }
   }
 
-  // 3. Remove specks < minSpeckSize
   return removeSpecks(mat, width, height, minSpeckSize);
 }
 
 /**
- * Creates a debug overlay buffer blending the material colors (50% opacity)
- * on top of the original island RGBA image.
+ * Creates a debug overlay buffer blending material colors on top of the island art.
  */
 export function generateDebugOverlay(
   islandRgba,

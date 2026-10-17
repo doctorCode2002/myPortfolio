@@ -207,4 +207,106 @@ describe("Living World material map utilities", () => {
       expect(mat[roadIdx + 2]).toBe(255);
     });
   });
+
+  describe("Segmentation map processing & class preservation", () => {
+    it("preserves all 10 material classes in a synthetic map with black outlines", async () => {
+      const { processSegmentationMap, computeClassHistogram } =
+        await import("../../scripts/art/material-utils.mjs");
+
+      // Create a 10x10 grid of blocks (width = 100, height = 40)
+      // 10 classes arranged horizontally in 10x40 patches, separated by 2px black outlines
+      const w = 120;
+      const h = 40;
+      const mapRgb = Buffer.alloc(w * h * 3);
+      const artAlpha = Buffer.alloc(w * h * 4);
+      artAlpha.fill(255);
+
+      const classEntries = Object.entries(MATERIAL_PALETTE);
+      expect(classEntries.length).toBe(10);
+
+      // Fill blocks
+      for (let c = 0; c < 10; c++) {
+        const entry = classEntries[c]!;
+        const rgb = entry[1];
+        const startX = c * 12;
+        for (let y = 0; y < h; y++) {
+          for (let x = startX; x < startX + 10; x++) {
+            const idx = (y * w + x) * 3;
+            mapRgb[idx] = rgb[0]!;
+            mapRgb[idx + 1] = rgb[1]!;
+            mapRgb[idx + 2] = rgb[2]!;
+          }
+          // 2px black outline between blocks
+          for (let x = startX + 10; x < startX + 12; x++) {
+            const idx = (y * w + x) * 3;
+            mapRgb[idx] = 10; // black outline
+            mapRgb[idx + 1] = 10;
+            mapRgb[idx + 2] = 10;
+          }
+        }
+      }
+
+      const processed = (
+        processSegmentationMap as (
+          map: Buffer,
+          w: number,
+          h: number,
+          alpha: Buffer | null,
+          opts?: Record<string, unknown>
+        ) => Buffer
+      )(mapRgb, w, h, artAlpha, {
+        maxSnagSize: 0,
+        minSpeckSize: 2,
+      });
+
+      const hist = (
+        computeClassHistogram as (
+          mat: Buffer,
+          w: number,
+          h: number
+        ) => Record<string, { count: number }>
+      )(processed, w, h);
+
+      // Assert that every single one of the 10 classes is retained
+      for (const [className] of classEntries) {
+        expect(hist[className]!.count).toBeGreaterThan(0);
+      }
+    });
+
+    it("removes small solid snags on road and preserves larger solid obstacles", async () => {
+      const { removeRoadSnags, packRgb } =
+        await import("../../scripts/art/material-utils.mjs");
+
+      const w = 20;
+      const h = 20;
+      const ROAD = packRgb(...MATERIAL_PALETTE.road);
+      const SOLID = packRgb(...MATERIAL_PALETTE.solid);
+
+      const colorArray = new Uint32Array(w * h);
+      colorArray.fill(ROAD);
+
+      // Add a small 4-pixel solid snag (2x2) at (3, 3)
+      for (const y of [3, 4]) {
+        for (const x of [3, 4]) {
+          colorArray[y * w + x] = SOLID;
+        }
+      }
+
+      // Add a large 25-pixel solid building (5x5) at (10, 10)
+      for (let y = 10; y < 15; y++) {
+        for (let x = 10; x < 15; x++) {
+          colorArray[y * w + x] = SOLID;
+        }
+      }
+
+      removeRoadSnags(colorArray, w, h, 12);
+
+      // Small 4px snag should have been eliminated to road
+      expect(colorArray[3 * w + 3]).toBe(ROAD);
+      expect(colorArray[4 * w + 4]).toBe(ROAD);
+
+      // Large 25px building obstacle must remain solid
+      expect(colorArray[12 * w + 12]).toBe(SOLID);
+    });
+  });
 });
