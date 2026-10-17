@@ -1,6 +1,12 @@
 export const ENGINE_CONSTANTS = {
   WORLD_WIDTH: 1600,
   WORLD_HEIGHT: 1200,
+  LAYOUT_SCALE: 0.63,
+
+  BRIDGE: {
+    CORRIDOR_WIDTH: 14,
+    OVERLAP: 12,
+  },
 
   ISLAND: {
     CENTER_X: 800,
