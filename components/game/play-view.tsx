@@ -56,6 +56,15 @@ const World3D = dynamic(
   }
 );
 
+/** The 3D picker (live KayKit previews in one shared canvas), loaded on first open. */
+const CharacterPicker3D = dynamic(
+  () =>
+    import("./picker3d/character-picker-3d").then(
+      (mod) => mod.CharacterPicker3D
+    ),
+  { ssr: false }
+);
+
 const DevEditor =
   process.env.NODE_ENV !== "production"
     ? dynamic(
@@ -251,6 +260,7 @@ export function PlayView({
         dict={dict}
         currentChar={selectedChar}
         onOpenCharacterPicker={() => setPickerOpenOverride(true)}
+        portrait={use2d ? "2d" : "3d"}
       />
 
       <DialogueBox
@@ -270,14 +280,25 @@ export function PlayView({
         locale={locale}
       />
 
-      <CharacterPicker
-        isOpen={isPickerOpen}
-        selectedChar={selectedChar}
-        onSelect={handleSelectCharacter}
-        onClose={selectedChar ? handleClosePicker : undefined}
-        dict={dict}
-        locale={locale}
-      />
+      {use2d ? (
+        <CharacterPicker
+          isOpen={isPickerOpen}
+          selectedChar={selectedChar}
+          onSelect={handleSelectCharacter}
+          onClose={selectedChar ? handleClosePicker : undefined}
+          dict={dict}
+          locale={locale}
+        />
+      ) : (
+        <CharacterPicker3D
+          isOpen={isPickerOpen}
+          selectedChar={selectedChar}
+          onSelect={handleSelectCharacter}
+          onClose={selectedChar ? handleClosePicker : undefined}
+          dict={dict}
+          locale={locale}
+        />
+      )}
 
       {isEditMode && DevEditor && <DevEditor />}
     </div>

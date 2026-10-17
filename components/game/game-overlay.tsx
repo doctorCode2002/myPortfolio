@@ -5,17 +5,21 @@ import { useEffect, useState, type ReactNode } from "react";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { localePath, type Locale } from "@/lib/i18n";
 import { gameEvents } from "./engine/events";
+import { CharacterPortrait } from "./picker3d/character-portrait";
 
 export function GameOverlay({
   locale,
   dict,
   currentChar,
   onOpenCharacterPicker,
+  portrait = "3d",
 }: {
   locale: Locale;
   dict: Dictionary;
   currentChar: string;
   onOpenCharacterPicker: () => void;
+  /** "3d": the pre-rendered 3D portrait; "2d": the Phaser engine's pixel sprite. */
+  portrait?: "3d" | "2d";
 }): ReactNode {
   const [currentZoom, setCurrentZoom] = useState(2);
 
@@ -42,18 +46,26 @@ export function GameOverlay({
           onClick={onOpenCharacterPicker}
           className="focus-ring border-foreground/15 bg-background/85 text-foreground hover:border-accent/40 hover:bg-background inline-flex cursor-pointer items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-medium shadow-sm backdrop-blur-md transition-all duration-200 sm:text-sm"
         >
-          <div className="flex h-4 w-3 items-center justify-center overflow-hidden">
-            <div
-              style={{
-                width: 16,
-                height: 32,
-                backgroundImage: `url(/game/characters/${currentChar}.png)`,
-                backgroundPosition: "-16px 0px",
-                transform: "scale(1.1)",
-                imageRendering: "pixelated",
-              }}
+          {portrait === "3d" ? (
+            <CharacterPortrait
+              charId={currentChar}
+              size={24}
+              className="-my-1 -ms-1.5 ring-1 ring-black/10"
             />
-          </div>
+          ) : (
+            <div className="flex h-4 w-3 items-center justify-center overflow-hidden">
+              <div
+                style={{
+                  width: 16,
+                  height: 32,
+                  backgroundImage: `url(/game/characters/${currentChar}.png)`,
+                  backgroundPosition: "-16px 0px",
+                  transform: "scale(1.1)",
+                  imageRendering: "pixelated",
+                }}
+              />
+            </div>
+          )}
           <span>{dict.play.changeCharacter}</span>
           {dict.play.charNames[
             currentChar as keyof typeof dict.play.charNames
