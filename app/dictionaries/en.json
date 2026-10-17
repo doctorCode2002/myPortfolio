@@ -399,5 +399,121 @@
     "contactLabel": "Contact",
     "rights": "All rights reserved",
     "builtWith": "Built with Next.js"
+  },
+
+  "world": {
+    "islands": {
+      "home": {
+        "name": "Home Island",
+        "sign": "Welcome to Mohammed's sky realm! Explore my background, stack, journey, and projects across the floating archipelago."
+      },
+      "khidmty": {
+        "name": "Khidmty Island",
+        "sign": "Khidmty — On-demand service platform connecting clients with trusted local pros."
+      },
+      "civicmind": {
+        "name": "CivicMind Island",
+        "sign": "CivicMind — Municipal AI assistant optimizing public inquiries and service workflows."
+      },
+      "onyx": {
+        "name": "Onyx Island",
+        "sign": "Onyx — Premium e-commerce experience featuring fluid animations and tactile interactions."
+      },
+      "saleh": {
+        "name": "Saleh Island",
+        "sign": "Saleh Portfolio — Clean showcase for a graphic designer, built to let the art speak."
+      },
+      "eyad": {
+        "name": "Eyad Island",
+        "sign": "Eyad Studio — Modern portfolio and client portal for a brand designer."
+      }
+    },
+    "buildings": {
+      "building_education": {
+        "sign": "Education & Academy — Degrees, certifications, and technical foundations.",
+        "enterPrompt": "Press Enter to inspect degrees and certificates"
+      },
+      "building_experience": {
+        "sign": "Career & Experience — Instruction, full-stack development, and community impact.",
+        "enterPrompt": "Press Enter to review career milestones"
+      },
+      "building_stack": {
+        "sign": "Tech Stack & Tooling — Core frameworks, libraries, and workflows.",
+        "enterPrompt": "Press Enter to view the tech stack"
+      },
+      "building_hobbies": {
+        "sign": "Passions & Hobbies — Life outside the terminal.",
+        "enterPrompt": "Press Enter to learn about hobbies"
+      },
+      "building_family": {
+        "sign": "Family & Roots — The foundation and values behind the work.",
+        "enterPrompt": "Press Enter to read about family and roots"
+      },
+      "board_news": {
+        "sign": "Gazette Notice Board — Latest updates, releases, and announcements.",
+        "enterPrompt": "Press Enter to read the latest bulletin"
+      },
+      "portal_khidmty": {
+        "sign": "Khidmty Portal — Step through to launch the live site.",
+        "enterPrompt": "Press Enter to open Khidmty in a new tab"
+      },
+      "portal_civicmind": {
+        "sign": "CivicMind Portal — Step through to launch the live demo.",
+        "enterPrompt": "Press Enter to open CivicMind in a new tab"
+      },
+      "portal_onyx": {
+        "sign": "Onyx Portal — Step through to launch the storefront.",
+        "enterPrompt": "Press Enter to open Onyx in a new tab"
+      },
+      "portal_saleh": {
+        "sign": "Saleh Portfolio Portal — Step through to explore the showcase.",
+        "enterPrompt": "Press Enter to open Saleh's portfolio in a new tab"
+      },
+      "portal_eyad": {
+        "sign": "Eyad Studio Portal — Step through to explore the showcase.",
+        "enterPrompt": "Press Enter to open Eyad's studio in a new tab"
+      }
+    },
+    "mayors": {
+      "mayor_khidmty": {
+        "name": "Khidmty Mayor",
+        "title": "TODO: user to fill",
+        "lines": ["TODO: user to fill"]
+      },
+      "mayor_civicmind": {
+        "name": "CivicMind Mayor",
+        "title": "TODO: user to fill",
+        "lines": ["TODO: user to fill"]
+      },
+      "mayor_onyx": {
+        "name": "Onyx Mayor",
+        "title": "TODO: user to fill",
+        "lines": ["TODO: user to fill"]
+      },
+      "mayor_saleh": {
+        "lines": [
+          "Saleh is the mayor of this island. Talk to hear what he said about working with Mohammed."
+        ]
+      },
+      "mayor_eyad": {
+        "lines": [
+          "Eyad is the mayor of this island. Talk to hear what he said about working with Mohammed."
+        ]
+      }
+    },
+    "hobbies": {
+      "title": "Hobbies & Interests",
+      "body": "TODO: user to fill"
+    },
+    "family": {
+      "title": "Family & Roots",
+      "body": "TODO: user to fill"
+    },
+    "news": {
+      "launch": {
+        "title": "Sky Islands Launch",
+        "body": "TODO: user to fill"
+      }
+    }
   }
 }
