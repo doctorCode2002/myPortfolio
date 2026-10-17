@@ -9,7 +9,7 @@ import { IllustratedIsland, type IslandArt } from "../world/illustratedIsland";
 import { Island } from "../world/islandRenderer";
 import { SkySystem } from "../world/sky";
 
-const ZOOM_LEVELS = [1, 1.5, 2, 3, 4] as const;
+const ZOOM_LEVELS = [0.5, 0.75, 1, 1.5, 2, 3, 4] as const;
 
 export class WorldScene extends Phaser.Scene {
   private sky!: SkySystem;
@@ -229,7 +229,7 @@ export class WorldScene extends Phaser.Scene {
         this.setZoomLevel(this.zoomIndex - 1)
       ),
       gameEvents.on("camera:set-zoom", ({ zoom }) => {
-        let bestIdx = 2;
+        let bestIdx = 4;
         let bestDiff = Infinity;
         for (let i = 0; i < ZOOM_LEVELS.length; i++) {
           const diff = Math.abs((ZOOM_LEVELS[i] ?? 2) - zoom);
@@ -247,19 +247,39 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
+  private computeFitZoom(viewW: number, viewH: number): number {
+    const rawFit = Math.min(viewW / 880, viewH / 1200);
+    let bestIdx = 0;
+    for (let i = 0; i < ZOOM_LEVELS.length; i++) {
+      if ((ZOOM_LEVELS[i] ?? 0.5) <= Math.max(0.5, rawFit)) {
+        bestIdx = i;
+      }
+    }
+    return bestIdx;
+  }
+
   private setupCamera(worldWidth: number, worldHeight: number): void {
     const cam = this.cameras.main;
+    cam.setBackgroundColor("#507ea8");
     cam.setBounds(0, 0, worldWidth, worldHeight);
     cam.startFollow(this.player.sprite, true, 0.06, 0.06);
 
-    const initialZoom = computeIntegerZoom(this.scale.width, this.scale.height);
-    const closestIdx = ZOOM_LEVELS.findIndex((z) => z === initialZoom);
-    this.zoomIndex = closestIdx >= 0 ? closestIdx : 2;
+    const isPhone = this.scale.width < 640;
+    if (isPhone) {
+      this.zoomIndex = this.computeFitZoom(this.scale.width, this.scale.height);
+    } else {
+      const initialZoom = computeIntegerZoom(
+        this.scale.width,
+        this.scale.height
+      );
+      const closestIdx = ZOOM_LEVELS.findIndex((z) => z === initialZoom);
+      this.zoomIndex = closestIdx >= 0 ? closestIdx : 4;
+    }
     this.targetZoom = ZOOM_LEVELS[this.zoomIndex] ?? 2;
     cam.setZoom(this.targetZoom);
 
-    this.scale.on("resize", (size: Phaser.Structs.Size) => {
-      this.sky.resize(size.width, size.height);
+    this.scale.on("resize", () => {
+      this.sky.resize();
     });
   }
 }

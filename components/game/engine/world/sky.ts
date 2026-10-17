@@ -14,15 +14,14 @@ export class SkySystem {
     this.createProceduralTextures();
 
     this.skyGraphics = scene.add.graphics();
-    this.skyGraphics.setScrollFactor(0);
     this.skyGraphics.setDepth(ENGINE_CONSTANTS.DEPTHS.SKY);
-    this.renderGradient(scene.scale.width, scene.scale.height);
+    this.renderGradient();
 
     this.spawnClouds();
   }
 
-  public resize(width: number, height: number): void {
-    this.renderGradient(width, height);
+  public resize(): void {
+    this.renderGradient();
   }
 
   public update(delta: number): void {
@@ -37,9 +36,10 @@ export class SkySystem {
     }
   }
 
-  private renderGradient(w: number, h: number): void {
+  private renderGradient(): void {
+    const { WORLD_WIDTH, WORLD_HEIGHT } = ENGINE_CONSTANTS;
     this.skyGraphics.clear();
-    // Soft celestial gradient: cornflower blue at top to warm cream at bottom
+    // Soft celestial gradient covering full world space plus generous borders
     this.skyGraphics.fillGradientStyle(
       0x507ea8,
       0x507ea8,
@@ -50,7 +50,12 @@ export class SkySystem {
       1,
       1
     );
-    this.skyGraphics.fillRect(0, 0, w, h);
+    this.skyGraphics.fillRect(
+      -800,
+      -800,
+      WORLD_WIDTH + 1600,
+      WORLD_HEIGHT + 1600
+    );
   }
 
   private createProceduralTextures(): void {
