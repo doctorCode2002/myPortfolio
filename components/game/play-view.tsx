@@ -41,6 +41,21 @@ const GameCanvas = dynamic(
   }
 );
 
+/** The 3D world (React Three Fiber); `?engine=2d` keeps the Phaser engine until 3D replaces it. */
+const World3D = dynamic(
+  () => import("../game3d/world3d").then((mod) => mod.World3D),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-background flex h-screen w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="border-accent h-8 w-8 animate-spin rounded-full border-2 border-t-transparent" />
+        </div>
+      </div>
+    ),
+  }
+);
+
 const DevEditor =
   process.env.NODE_ENV !== "production"
     ? dynamic(
@@ -100,6 +115,13 @@ export function PlayView({
     isMounted &&
     typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("edit") === "1";
+
+  // The Phaser engine stays reachable with ?engine=2d (and the dev editor needs it).
+  const use2d =
+    isMounted &&
+    typeof window !== "undefined" &&
+    (new URLSearchParams(window.location.search).get("engine") === "2d" ||
+      isEditMode);
 
   // Lock scrolling on html and body on /play route
   useEffect(() => {
@@ -214,7 +236,15 @@ export function PlayView({
 
   return (
     <div className="relative h-screen w-full overflow-hidden select-none">
-      <GameCanvas initialCharSheet={selectedChar} dict={dict} locale={locale} />
+      {use2d ? (
+        <GameCanvas
+          initialCharSheet={selectedChar}
+          dict={dict}
+          locale={locale}
+        />
+      ) : (
+        <World3D charId={selectedChar} dict={dict} locale={locale} />
+      )}
 
       <GameOverlay
         locale={locale}

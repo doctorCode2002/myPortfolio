@@ -1,0 +1,278 @@
+{
+  "id": "khidmty",
+  "placeholder": true,
+  "_note": "PLACEHOLDER starter island written by the 3D engine agent so the world works end to end; the island designers replace this file.",
+  "center": [0, -25.86],
+  "baseY": 0.5,
+  "biome": "meadow",
+  "hexes": [
+    {
+      "q": 0,
+      "r": -3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 1,
+      "r": -3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 2,
+      "r": -3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 3,
+      "r": -3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -1,
+      "r": -2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 0,
+      "r": -2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 1,
+      "r": -2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 2,
+      "r": -2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 3,
+      "r": -2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": -1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -1,
+      "r": -1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 0,
+      "r": -1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 1,
+      "r": -1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 2,
+      "r": -1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 3,
+      "r": -1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -3,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -1,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 0,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 1,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 2,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 3,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -3,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -1,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 0,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 1,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 2,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -3,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -1,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 0,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 1,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -3,
+      "r": 3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": 3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -1,
+      "r": 3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 0,
+      "r": 3,
+      "tile": "hex-grass"
+    }
+  ],
+  "objects": [
+    {
+      "model": "building-market-yellow",
+      "q": 0,
+      "r": -2,
+      "rot": 30
+    },
+    {
+      "model": "building-dirt",
+      "q": 0,
+      "r": -1
+    },
+    {
+      "model": "wheelbarrow",
+      "q": 2,
+      "r": -1,
+      "offset": [0.2, 0.2],
+      "rot": 40
+    },
+    {
+      "model": "crate-a-big",
+      "q": -2,
+      "r": 0,
+      "offset": [0.3, 0]
+    },
+    {
+      "model": "tree-single-a",
+      "q": 3,
+      "r": -3
+    },
+    {
+      "model": "tree-single-b",
+      "q": -3,
+      "r": 1
+    },
+    {
+      "model": "tree-oak",
+      "q": 3,
+      "r": 0
+    },
+    {
+      "model": "rock-single-c",
+      "q": -1,
+      "r": -2,
+      "offset": [-0.4, 0.1]
+    },
+    {
+      "model": "plant-bush",
+      "q": 1,
+      "r": 2,
+      "offset": [0.3, 0]
+    }
+  ],
+  "doors": [
+    {
+      "buildingId": "portal_khidmty",
+      "q": 0,
+      "r": -1,
+      "radius": 0.9
+    }
+  ],
+  "spawns": {
+    "player": {
+      "q": -1,
+      "r": 2
+    },
+    "mayor": {
+      "q": 1,
+      "r": 0
+    }
+  },
+  "anchors": [
+    {
+      "id": "to_home",
+      "q": -2,
+      "r": 3
+    }
+  ],
+  "underside": {
+    "depth": 5,
+    "style": "rock",
+    "seed": 3
+  }
+}

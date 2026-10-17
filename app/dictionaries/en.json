@@ -305,6 +305,8 @@
     "startExploring": "Start Exploring",
     "pressToInteract": "Press E or Space to interact",
     "tapToInteract": "Tap to interact",
+    "talk": "Talk",
+    "tap": "Tap",
     "dialogueNext": "Next",
     "dialogueClose": "Close",
     "demoNpcName": "Island Mayor",
