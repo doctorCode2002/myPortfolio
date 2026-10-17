@@ -117,5 +117,10 @@ export type Manifest = {
   levelHeight?: number;
   tileThickness?: number;
   characterHeight?: number;
+  /** Extra manifest files (relative to the models folder) whose models are merged in. */
+  fragments?: string[];
   models: Record<string, ManifestModel>;
 };
+
+/** A manifest fragment: more models, e.g. one island designer's procedural props. */
+export type ManifestFragment = { models: Record<string, ManifestModel> };

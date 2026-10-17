@@ -3,7 +3,8 @@
  * URLs. Banned models are refused here, so no loader can ever fetch them.
  */
 
-import type { Manifest, ManifestModel } from "../logic/types";
+import { mergeManifestFragments } from "../logic/manifest-merge";
+import type { Manifest, ManifestFragment, ManifestModel } from "../logic/types";
 
 export const MODELS_BASE = "/game3d/models/";
 
@@ -17,7 +18,19 @@ export async function fetchManifest(
     );
     if (!res.ok) return null;
     const json = (await res.json()) as Manifest;
-    return json && typeof json === "object" && json.models ? json : null;
+    if (!json || typeof json !== "object" || !json.models) return null;
+    const fragments = await Promise.all(
+      (json.fragments ?? []).map(async (name) => {
+        const r = await fetch(
+          `${MODELS_BASE}${name}`,
+          signal ? { signal } : {}
+        );
+        if (!r.ok)
+          throw new Error(`manifest fragment ${name}: HTTP ${r.status}`);
+        return { name, fragment: (await r.json()) as ManifestFragment };
+      })
+    );
+    return mergeManifestFragments(json, fragments);
   } catch {
     return null;
   }

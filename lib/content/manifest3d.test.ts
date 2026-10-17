@@ -3,14 +3,14 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { isModelKind, type ModelManifest } from "./manifest3d";
+import { readManifestFromDisk } from "./manifest3d.node";
 
 const MODELS_DIR = path.resolve(
   import.meta.dirname,
   "../../public/game3d/models"
 );
-const manifest = JSON.parse(
-  fs.readFileSync(path.join(MODELS_DIR, "manifest.json"), "utf8")
-) as ModelManifest;
+// Base manifest merged with its fragments (each island designer's procedural models).
+const manifest = readManifestFromDisk(MODELS_DIR) as unknown as ModelManifest;
 const entries = Object.entries(manifest.models);
 
 describe("3D model manifest", () => {

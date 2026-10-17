@@ -1,4 +1,5 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
+import { readManifestFromDisk } from "@/lib/content/manifest3d.node";
 
 import { describe, expect, it } from "vitest";
 
@@ -189,7 +190,7 @@ describe("starter content (content/islands3d)", () => {
 describe("starter content with the real manifest (when present)", () => {
   const path = "public/game3d/models/manifest.json";
   const manifest: Manifest | null = existsSync(path)
-    ? (JSON.parse(readFileSync(path, "utf8")) as Manifest)
+    ? readManifestFromDisk()
     : null;
   const mayors: Record<string, MayorInfo | undefined> = Object.fromEntries(
     ISLANDS.map((i) => [
