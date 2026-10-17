@@ -332,6 +332,26 @@
     },
     "buildingStatus": "Under Construction",
     "buildingClose": "Got it",
+    "buildingPanels": {
+      "close": "Close",
+      "visitLiveSite": "Visit Live Site",
+      "viewSource": "View Source Code",
+      "demoTag": "demo",
+      "degree": "Degree",
+      "certificate": "Certificate",
+      "tech": "Tech",
+      "skill": "Skill",
+      "coreSkills": "Core Skills & Specialisms",
+      "latestDispatch": "Latest Dispatch",
+      "newTab": "(opens in new tab)",
+      "education": "Education",
+      "experience": "Experience",
+      "stack": "Stack",
+      "hobbies": "Hobbies",
+      "family": "Family",
+      "news": "News",
+      "portal": "Portal"
+    },
     "buildings": {
       "castle": {
         "title": "Grand Castle",

@@ -334,6 +334,26 @@
     },
     "buildingStatus": "قيد الإنشاء",
     "buildingClose": "فهمت",
+    "buildingPanels": {
+      "close": "إغلاق",
+      "visitLiveSite": "زيارة الموقع المباشر",
+      "viewSource": "عرض الشفرة المصدرية",
+      "demoTag": "تجريبي",
+      "degree": "درجة جامعية",
+      "certificate": "شهادة مهنية",
+      "tech": "تقنية",
+      "skill": "مهارة",
+      "coreSkills": "المهارات والتخصصات الأساسية",
+      "latestDispatch": "أحدث نشرة",
+      "newTab": "(يفتح في نافذة جديدة)",
+      "education": "التعليم",
+      "experience": "الخبرات",
+      "stack": "التقنيات",
+      "hobbies": "الهوايات",
+      "family": "العائلة",
+      "news": "الأخبار",
+      "portal": "بوابة"
+    },
     "buildings": {
       "castle": {
         "title": "القلعة الكبرى",
