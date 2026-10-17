@@ -293,17 +293,20 @@ describe("Island Art processing pipeline", () => {
     }
   });
 
-  it("validates existing public/game/islands/home/island.json metadata", async () => {
-    const jsonPath = path.join(
-      process.cwd(),
-      "public",
-      "game",
-      "islands",
-      "home",
-      "island.json"
-    );
-    const content = JSON.parse(await fs.readFile(jsonPath, "utf-8"));
-    const errors = validateIslandArt(content);
-    expect(errors).toEqual([]);
+  it("validates existing metadata for all world islands", async () => {
+    const ids = ["home", "khidmty", "civicmind", "onyx", "saleh", "eyad"];
+    for (const id of ids) {
+      const jsonPath = path.join(
+        process.cwd(),
+        "public",
+        "game",
+        "islands",
+        id,
+        "island.json"
+      );
+      const content = JSON.parse(await fs.readFile(jsonPath, "utf-8"));
+      const errors = validateIslandArt(content);
+      expect(errors).toEqual([]);
+    }
   });
 });

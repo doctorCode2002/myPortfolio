@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "art:island": "node scripts/art/process-island.mjs",
+    "art:material": "node scripts/art/material-map.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

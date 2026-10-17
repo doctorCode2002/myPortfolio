@@ -94,9 +94,69 @@ Per island (append to STYLE):
 ## Reproducing committed island art
 
 - **home**:
+
   ```bash
   npm run art:island -- home ~/Downloads/islands/home.jpeg --width 896 --report-scale
   ```
   - Source: 1792x2400 AI-painted image on magenta (`~/Downloads/islands/home.jpeg`)
   - Target width: 896 px (`--width 896`)
   - Output: 801x1133 px native trimmed, 64 colors, ~159.6 KB lossless WebP at `public/game/islands/home/island.webp`
+
+- **khidmty**:
+
+  ```bash
+  npm run art:island -- khidmty ~/Downloads/islands/khidmty.jpeg --width 566 --report-scale
+  ```
+  - Output: 507x691 px native trimmed, 64 colors, 68.1 KB lossless WebP at `public/game/islands/khidmty/island.webp`
+
+- **civicmind**:
+
+  ```bash
+  npm run art:island -- civicmind ~/Downloads/islands/civicMind.jpeg --width 566 --report-scale
+  ```
+  - Output: 537x727 px native trimmed, 64 colors, 66.8 KB lossless WebP at `public/game/islands/civicmind/island.webp`
+
+- **onyx**:
+
+  ```bash
+  npm run art:island -- onyx ~/Downloads/islands/ONYX.jpeg --width 566 --report-scale
+  ```
+  - Output: 521x664 px native trimmed, 64 colors, 73.2 KB lossless WebP at `public/game/islands/onyx/island.webp`
+
+- **saleh**:
+
+  ```bash
+  npm run art:island -- saleh ~/Downloads/islands/Saleh.jpeg --width 566 --report-scale
+  ```
+  - Output: 541x724 px native trimmed, 64 colors, 77.0 KB lossless WebP at `public/game/islands/saleh/island.webp`
+
+- **eyad**:
+  ```bash
+  npm run art:island -- eyad ~/Downloads/islands/Eyad.jpeg --width 566 --report-scale
+  ```
+  - Output: 534x613 px native trimmed, 64 colors, 77.1 KB lossless WebP at `public/game/islands/eyad/island.webp`
+
+## Bridges & Sky Assets
+
+- **Rope Bridge** (`public/game/bridges/rope.webp`):
+  - Horizontally tileable segment: 21x40 px (lossless WebP)
+  - Walkable deck band: rows 14 to 34 (top ropes at rows 0-13, bottom railing at rows 35-39)
+
+- **Stone Bridge** (`public/game/bridges/stone.webp`):
+  - Horizontally tileable segment: 19x40 px (lossless WebP)
+  - Walkable deck band: rows 15 to 26 (top battlements at rows 0-14, bottom wall at rows 27-39)
+
+- **Sky Backdrop** (`public/game/sky/sky.webp`):
+  - Horizontally seamless panoramic backdrop: 1024x576 px (high-quality WebP, 44 KB)
+  - Soft sunset gradient and cloud band with mirror-blended seamless horizontal wrap
+
+## Material Maps CLI
+
+Generate or update 8-bit material maps matching `island.webp` size:
+
+```bash
+npm run art:material -- <islandId> --auto
+npm run art:material -- <islandId> --seg <segmentation-image.png>
+```
+
+Outputs `public/game/islands/<islandId>/material.png` and saves a 50% opacity overlay preview to scratch.
