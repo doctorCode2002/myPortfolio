@@ -2,7 +2,9 @@
 
 Direction (user decision 2026-10-17): every island is ONE AI-painted pixel-art image in the style of the
 reference (detailed 3/4 top-down: front walls + roofs visible, cliff underside, vines, waterfalls,
-sunset sky). Free/CC0 only; the user generates the art with Gemini. Characters stay MetroCity 16x32.
+sunset sky). Free/CC0 only; the user generates the art with Gemini.
+
+**Hard rule: no cross symbols anywhere** (tiles, props, graves, churches, banners, flags, signs, icons, generated art). Exclude any asset tile that contains a cross, and say "no crosses or religious symbols" in every image prompt. Characters stay MetroCity 16x32.
 
 ## Files per island
 
@@ -50,7 +52,7 @@ STYLE: "Detailed 16-bit pixel art, 3/4 top-down view like a classic JRPG, crisp 
 no blur, limited warm palette, sunset lighting from the left. A single floating sky island seen slightly from above:
 grassy top surface with paths, rocky cliff underside tapering down with hanging roots and vines.
 Centered, the whole island fully visible with margin, on a perfectly flat solid magenta (#FF00FF) background,
-no sky, no clouds, no other islands, no text, no characters."
+no sky, no clouds, no other islands, no text, no characters, no crosses or religious symbols."
 
 Per island (append to STYLE):
 
