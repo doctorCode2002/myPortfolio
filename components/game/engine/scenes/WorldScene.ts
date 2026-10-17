@@ -7,12 +7,12 @@ import { gameEvents } from "../events";
 import { ControlsManager } from "../input/controls";
 import { IllustratedIsland, type IslandArt } from "../world/illustratedIsland";
 import { Island } from "../world/islandRenderer";
-import { SkySystem } from "../world/sky";
+import { LivingWorldFX } from "../fx/livingWorldFX";
 
 const ZOOM_LEVELS = [0.5, 0.75, 1, 1.5, 2, 3, 4] as const;
 
 export class WorldScene extends Phaser.Scene {
-  private sky!: SkySystem;
+  private fx!: LivingWorldFX;
   private illustratedIsland: IllustratedIsland | null = null;
   private centerIsland: Island | null = null;
   private player!: Player;
@@ -45,11 +45,12 @@ export class WorldScene extends Phaser.Scene {
     }
     this.load.json("dev-island-json", "/game/islands/_dev/island.json");
     this.load.image("dev-island-home", "/game/islands/_dev/home.webp");
+    LivingWorldFX.preload(this);
   }
 
   create(): void {
     const { WORLD_WIDTH, WORLD_HEIGHT } = ENGINE_CONSTANTS;
-    this.sky = new SkySystem(this);
+    this.fx = new LivingWorldFX(this);
 
     const art = this.cache.json.get("dev-island-json") as IslandArt | null;
     if (art && this.textures.exists("dev-island-home") && art.size) {
@@ -62,6 +63,7 @@ export class WorldScene extends Phaser.Scene {
         ix,
         iy
       );
+      this.fx.create({ islandArt: art, worldX: ix, worldY: iy });
       const px = ix + (art.spawns.player?.[0] ?? art.size.w / 2);
       const py = iy + (art.spawns.player?.[1] ?? art.size.h / 2);
       this.player = new Player(this, px, py, this.initialCharSheet);
@@ -124,11 +126,12 @@ export class WorldScene extends Phaser.Scene {
       PLAYER.START_Y,
       this.initialCharSheet
     );
+    this.fx.create();
   }
 
   override update(time: number, delta: number): void {
     const dt = delta / 1000;
-    this.sky.update(delta);
+    this.fx.update(time, delta, this.player?.x, this.player?.y);
 
     const cam = this.cameras.main;
     if (Math.abs(cam.zoom - this.targetZoom) > 0.005) {
@@ -242,6 +245,7 @@ export class WorldScene extends Phaser.Scene {
       })
     );
     this.events.once("shutdown", () => {
+      this.fx.destroy();
       for (const unbind of this.unbindEvents) unbind();
       this.unbindEvents = [];
     });
@@ -279,7 +283,7 @@ export class WorldScene extends Phaser.Scene {
     cam.setZoom(this.targetZoom);
 
     this.scale.on("resize", () => {
-      this.sky.resize();
+      this.fx.resize();
     });
   }
 }
