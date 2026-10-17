@@ -133,10 +133,10 @@ export { hexKey };
  * above the tile top, vertex-coloured from one world-space meadow field (no per-tile
  * pattern, so neighbouring hexes read as one lawn and the KayKit bevels disappear).
  */
-export function buildGrassSkin(
-  cells: readonly { x: number; z: number; y: number }[],
+export function buildGrassSkin<C extends { x: number; z: number; y: number }>(
+  cells: readonly C[],
   size: number,
-  colorAt: (x: number, z: number) => [number, number, number],
+  colorAt: (x: number, z: number, cell: C) => [number, number, number],
   heightAt: (x: number, z: number, cellY: number) => number
 ): THREE.BufferGeometry {
   const pos: number[] = [];
@@ -145,9 +145,9 @@ export function buildGrassSkin(
     const a = (Math.PI / 180) * (60 * i - 30);
     return [Math.cos(a) * size * 1.002, Math.sin(a) * size * 1.002];
   };
-  const push = (x: number, z: number, cy: number): void => {
-    pos.push(x, heightAt(x, z, cy), z);
-    const c = colorAt(x, z);
+  const push = (x: number, z: number, cell: C): void => {
+    pos.push(x, heightAt(x, z, cell.y), z);
+    const c = colorAt(x, z, cell);
     col.push(c[0], c[1], c[2]);
   };
   for (const cell of cells) {
@@ -178,9 +178,70 @@ export function buildGrassSkin(
         [m20, m12, P[2]!],
         [m01, m12, m20],
       ];
-      for (const t of tris) for (const v of t) push(v[0], v[1], cell.y);
+      for (const t of tris) for (const v of t) push(v[0], v[1], cell);
     }
   }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+  g.computeVertexNormals();
+  g.computeBoundingSphere();
+  return g;
+}
+
+export type TerraceWall = {
+  /** Edge end points (world x, z), ordered clockwise seen from above around the cell. */
+  ax: number;
+  az: number;
+  bx: number;
+  bz: number;
+  top: number;
+  bottom: number;
+  lip: [number, number, number];
+  soil: [number, number, number];
+};
+
+const ROCK: [number, number, number] = [0.3, 0.24, 0.2];
+
+/**
+ * Vertical faces for the exposed edges of skinned hexes (terrace sides, banks, rim):
+ * a thin grass (or sand) lip, soil below, and rock on tall faces. Flat-shaded quads with
+ * vertex colours, all in one geometry; replaces the bevelled KayKit tile sides.
+ */
+export function buildTerraceWalls(
+  walls: readonly TerraceWall[]
+): THREE.BufferGeometry {
+  const pos: number[] = [];
+  const col: number[] = [];
+  const quad = (
+    a: [number, number],
+    b: [number, number],
+    y0: number,
+    y1: number,
+    c: [number, number, number],
+    jitter: number
+  ): void => {
+    if (y0 - y1 < 1e-3) return;
+    const k = 0.92 + jitter * 0.14;
+    const cc: [number, number, number] = [c[0] * k, c[1] * k, c[2] * k];
+    const A = [a[0], y0, a[1]];
+    const B = [b[0], y0, b[1]];
+    const C = [b[0], y1, b[1]];
+    const D = [a[0], y1, a[1]];
+    pos.push(...A, ...B, ...D, ...B, ...C, ...D);
+    for (let i = 0; i < 6; i++) col.push(cc[0], cc[1], cc[2]);
+  };
+  walls.forEach((w, i) => {
+    const a: [number, number] = [w.ax, w.az];
+    const b: [number, number] = [w.bx, w.bz];
+    const h = w.top - w.bottom;
+    const j = ((i * 7919) % 13) / 13;
+    const lipBottom = w.top - Math.min(0.12, h);
+    quad(a, b, w.top, lipBottom, w.lip, j);
+    const soilBottom = h > 0.75 ? w.top - 0.55 : w.bottom;
+    quad(a, b, lipBottom, soilBottom, w.soil, j);
+    if (h > 0.75) quad(a, b, soilBottom, w.bottom, ROCK, j);
+  });
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));

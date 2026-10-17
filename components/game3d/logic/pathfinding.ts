@@ -8,6 +8,7 @@ import { canStand } from "./collision";
 import { hexKey, hexNeighbours } from "./hex";
 import type { Island3D } from "./types";
 import {
+  cellHeightAt,
   isCellWalkable,
   obstacleDistance,
   worldToIslandHex,
@@ -63,7 +64,13 @@ export function buildNavGraph(world: WalkWorld): NavGraph {
       if (!graph.nodes.has(id)) continue;
       for (const n of hexNeighbours(cell.q, cell.r)) {
         const other = grid.cells.get(hexKey(n.q, n.r));
-        if (!other || Math.abs(other.y - cell.y) > world.maxStep) continue;
+        if (!other) continue;
+        // Compare heights where the two hexes meet (slopes are low on one side only).
+        const mx = (cell.x + other.x) / 2;
+        const mz = (cell.z + other.z) / 2;
+        const ha = cellHeightAt(cell, mx, mz, grid.hexWidth);
+        const hb = cellHeightAt(other, mx, mz, grid.hexWidth);
+        if (Math.abs(ha - hb) > world.maxStep) continue;
         link(graph, id, cellNodeId(grid.islandId, n.q, n.r));
       }
     }

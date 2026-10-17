@@ -13,8 +13,8 @@ import {
 } from "react";
 import { CanvasTexture, SRGBColorSpace, type Group } from "three";
 
+import { fetchManifest } from "@/components/game3d/assets/manifest";
 import {
-  MANIFEST_URL,
   MODEL_KINDS,
   MODELS_BASE_URL,
   type ModelEntry,
@@ -305,9 +305,13 @@ export function ModelGallery(): ReactNode {
   const [params, setParams] = useState<GalleryParams>(() => readParams());
 
   useEffect(() => {
-    fetch(MANIFEST_URL, { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${r.status}`))))
-      .then((m: ModelManifest) => setManifest(m))
+    // fetchManifest merges the designers' manifest fragments (custom-*.json).
+    fetchManifest()
+      .then((m) =>
+        m
+          ? setManifest(m as unknown as ModelManifest)
+          : setError("manifest or a fragment failed to load")
+      )
       .catch((e: unknown) => setError(String(e)));
   }, []);
 

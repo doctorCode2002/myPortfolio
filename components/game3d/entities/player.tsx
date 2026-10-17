@@ -6,7 +6,7 @@ import * as THREE from "three";
 
 import { CHARACTER_COLORS, playerModelFor } from "../assets/characters";
 import { angleDelta, cameraRelative, damp } from "../logic/camera-math";
-import { moveCircle, nearestStandable } from "../logic/collision";
+import { canStand, moveCircle, nearestStandable } from "../logic/collision";
 import type { Manifest } from "../logic/types";
 import { worldToIslandHex } from "../logic/walk-grid";
 import { surfaceAt, type Surface } from "../logic/walk-world";
@@ -20,6 +20,23 @@ import { CharacterModel, type AnimState } from "./character-model";
 
 export const WALK_SPEED = 2.1;
 export const RUN_SPEED = 4.4;
+
+/** Put the player on an island's spawn (falls back to home for unknown ids). */
+function placeOnIsland(
+  rt: Runtime,
+  world: GameWorld,
+  islandId: string,
+  radius: number
+): void {
+  const id = world.islands.some((i) => i.id === islandId) ? islandId : "home";
+  const sp = spawnPoint(world, id);
+  const ok = nearestStandable(world.walk, sp.x, sp.z, radius);
+  rt.player.pos = ok ? { x: ok.x, y: ok.surface.y, z: ok.z } : sp;
+  rt.player.heading = Math.PI;
+  rt.path = null;
+  rt.target = null;
+  rt.placed = true;
+}
 
 /** Visual bob under a surface: the island's, or a blend of both ends on a bridge. */
 export function surfaceBob(
@@ -82,17 +99,23 @@ export function Player({
   );
 
   // Place the player on the home spawn once per world.
+  // Place the player when a world is built. A rebuild (HMR, manifest or bounds arriving)
+  // keeps the current position if it is still standable; otherwise respawn on the
+  // remembered island (dev ?island=<id> or the last teleport).
   useLayoutEffect(() => {
     const rt = rtRef.current;
-    const sp = spawnPoint(world, "home");
-    const ok = nearestStandable(world.walk, sp.x, sp.z, radius);
-    rt.player.pos = ok ? { x: ok.x, y: ok.surface.y, z: ok.z } : sp;
-    rt.player.heading = Math.PI;
-    rt.path = null;
+    const p = rt.player.pos;
+    if (rt.placed && canStand(world.walk, p.x, p.z, radius)) return;
+    placeOnIsland(rt, world, rt.spawnIsland, radius);
   }, [world, radius, rtRef]);
 
   useFrame(({ clock }, rawDt) => {
     const rt = rtRef.current;
+    if (rt.teleport) {
+      rt.spawnIsland = rt.teleport;
+      rt.teleport = null;
+      placeOnIsland(rt, world, rt.spawnIsland, radius);
+    }
     const dt = Math.min(rawDt, 0.05);
     const p = rt.player.pos;
     let dirX = 0;

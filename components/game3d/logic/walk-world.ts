@@ -15,6 +15,7 @@ import {
   type IslandWalkGrid,
   type WalkCell,
   type WalkGridOptions,
+  cellHeightAt,
 } from "./walk-grid";
 
 export type Vec3 = { x: number; y: number; z: number };
@@ -204,7 +205,13 @@ export function surfaceAt(
     const cell = cellAtWorld(grid, x, z);
     if (!cell) continue;
     if (isCellWalkable(cell)) {
-      return { y: cell.y, islandId: grid.islandId, bridgeId: null, cell, t: 0 };
+      return {
+        y: cellHeightAt(cell, x, z, grid.hexWidth),
+        islandId: grid.islandId,
+        bridgeId: null,
+        cell,
+        t: 0,
+      };
     }
     blockedByIsland = true;
   }

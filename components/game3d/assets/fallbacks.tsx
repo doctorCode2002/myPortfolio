@@ -205,4 +205,5 @@ export const FALLBACK_COLORS: Record<ObjectKind, string> = {
   rock: "#9a948a",
   prop: "#a8754a",
   flat: "#c9a66b",
+  bridge: "#9a7650",
 };

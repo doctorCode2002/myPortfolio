@@ -5,6 +5,7 @@
  */
 
 import { buildNavGraph, type NavGraph } from "./pathfinding";
+import { needsBounds, type ModelLocalBounds } from "./catalog";
 import type { Island3D, Manifest } from "./types";
 import { circumradiusFromWidth } from "./hex";
 import { islandHexToWorld, resolveHexWidth } from "./walk-grid";
@@ -45,7 +46,10 @@ export function buildGameWorld(
   islands: readonly Island3D[],
   links: readonly BridgeLink[],
   mayors: Readonly<Record<string, MayorInfo | undefined>>,
-  manifest: Manifest | null
+  manifest: Manifest | null,
+  opts: {
+    bounds?: Readonly<Record<string, ModelLocalBounds | null | undefined>>;
+  } = {}
 ): GameWorld {
   const hexWidth = resolveHexWidth({ manifest });
   const size = circumradiusFromWidth(hexWidth);
@@ -64,7 +68,11 @@ export function buildGameWorld(
         ]
       : [];
   });
-  const walk = buildWalkWorld(islands, links, { manifest, npcs });
+  const walk = buildWalkWorld(islands, links, {
+    manifest,
+    npcs,
+    ...(opts.bounds ? { bounds: opts.bounds } : {}),
+  });
   const nav = buildNavGraph(walk);
 
   const interactables: Interactable[] = [];
@@ -139,4 +147,17 @@ export function spawnPoint(
     y: grid?.cells.get(`${s.q},${s.r}`)?.y ?? island.baseY ?? 0,
     z: p.z,
   };
+}
+
+/** Names of the models whose colliders need real geometry bounds (see catalog.needsBounds). */
+export function modelsNeedingBounds(
+  islands: readonly Island3D[],
+  manifest: Manifest | null
+): string[] {
+  const names = new Set<string>();
+  for (const island of islands)
+    for (const o of island.objects ?? [])
+      if (needsBounds(o.model, manifest) && manifest?.models[o.model])
+        names.add(o.model);
+  return [...names];
 }

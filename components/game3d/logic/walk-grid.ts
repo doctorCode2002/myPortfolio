@@ -4,7 +4,12 @@
  */
 
 import { groundJitter } from "./ground";
-import { objectCollision, isTileWalkable, isWaterTile } from "./catalog";
+import {
+  objectCollision,
+  isTileWalkable,
+  isWaterTile,
+  type ModelLocalBounds,
+} from "./catalog";
 import {
   DEFAULT_HEX_WIDTH,
   circumradiusFromWidth,
@@ -41,7 +46,43 @@ export type WalkCell = {
   ground: boolean;
   /** A building footprint covers the hex. */
   blocked: boolean;
+  /**
+   * Sloped tiles: the surface rises by `rise` from the low edge (y = `lowY`) towards the
+   * high side (world direction dirX, dirZ). `y` holds the height at the centre.
+   */
+  slope?: { rise: number; dirX: number; dirZ: number; lowY: number };
+  /** A bridge model's deck covers this hex (walkable even over a river). */
+  deck?: boolean;
 };
+
+/** Height profile across a slope tile (fitted to the KayKit ramps): t = 0 low edge, 1 high edge. */
+export function slopeProfile(t: number): number {
+  const c = Math.min(1, Math.max(0, t));
+  return 1 - Math.pow(1 - c, 1.6);
+}
+
+/** Surface height of a cell at a world point (slopes vary across the hex, others are flat). */
+export function cellHeightAt(
+  cell: WalkCell,
+  x: number,
+  z: number,
+  hexWidth: number
+): number {
+  const sl = cell.slope;
+  if (!sl) return cell.y;
+  const along = (x - cell.x) * sl.dirX + (z - cell.z) * sl.dirZ;
+  return sl.lowY + sl.rise * slopeProfile((along / (hexWidth / 2) + 1) / 2);
+}
+
+/** Rise of a slope tile from the manifest (`rise`) or its name; 0 for flat tiles. */
+export function tileRise(tile: string, manifest: Manifest | null): number {
+  const m = manifest?.models[tile] as
+    (Manifest["models"][string] & { rise?: number }) | undefined;
+  if (typeof m?.rise === "number") return m.rise;
+  if (/sloped-high/i.test(tile)) return 1;
+  if (/sloped|ramp/i.test(tile)) return 0.5;
+  return 0;
+}
 
 export type CircleObstacle = {
   shape: "circle";
@@ -101,6 +142,8 @@ export type WalkGridOptions = {
   levelHeight?: number;
   /** Extra obstacles in island-local hex terms, e.g. the mayor. */
   extraObstacles?: { q: number; r: number; radius: number; source: string }[];
+  /** Model-space bounds for models whose geometry sits off their origin (hex-edge fences). */
+  bounds?: Readonly<Record<string, ModelLocalBounds | null | undefined>>;
 };
 
 export function resolveHexWidth(opts: WalkGridOptions = {}): number {
@@ -137,14 +180,22 @@ export function buildIslandWalkGrid(
     const level = hex.h ?? 0;
     const p = islandHexToWorld(island, hex.q, hex.r, size);
     const water = isWaterTile(hex.tile, manifest);
+    const rise = tileRise(hex.tile, manifest);
+    const flatY = baseY + level * levelHeight;
+    // A slope's high side points along the tile's local +x, turned by its rotation.
+    const rot = ((hex.rot ?? 0) * Math.PI) / 180;
+    const slope =
+      rise > 0
+        ? { rise, dirX: Math.cos(rot), dirZ: -Math.sin(rot), lowY: flatY }
+        : undefined;
     cells.set(hexKey(hex.q, hex.r), {
+      ...(slope ? { slope } : {}),
       q: hex.q,
       r: hex.r,
       level,
-      y:
-        baseY +
-        level * levelHeight +
-        (water ? 0 : groundLift(p.x, p.z, island.heightJitter ?? 0)),
+      y: slope
+        ? flatY + rise * slopeProfile(0.5)
+        : flatY + (water ? 0 : groundLift(p.x, p.z, island.heightJitter ?? 0)),
       x: p.x,
       z: p.z,
       tile: hex.tile,
@@ -156,11 +207,31 @@ export function buildIslandWalkGrid(
 
   const obstacles: Obstacle[] = [];
   for (const obj of island.objects ?? []) {
-    const col = objectCollision(obj, manifest, hexWidth);
+    const col = objectCollision(
+      obj,
+      manifest,
+      hexWidth,
+      opts.bounds?.[obj.model] ?? null
+    );
     if (col.type === "none") continue;
     const p = islandHexToWorld(island, obj.q, obj.r, size);
     const x = p.x + (obj.offset?.[0] ?? 0);
     const z = p.z + (obj.offset?.[1] ?? 0);
+    const rot = ((obj.rot ?? 0) * Math.PI) / 180;
+    const c = Math.cos(rot);
+    const s = Math.sin(rot);
+    if (col.type === "deck") {
+      // The deck makes its whole hex walkable at the deck top (bridges are placed at
+      // varying angles to their roads, so no rails that could cut the crossing).
+      const cell = cells.get(hexKey(obj.q, obj.r));
+      if (cell) {
+        cell.ground = true;
+        cell.deck = true;
+        cell.y = baseY + cell.level * levelHeight + col.top;
+        delete cell.slope;
+      }
+      continue;
+    }
     if (col.type === "circle") {
       if (col.radius > 0)
         obstacles.push({
@@ -176,13 +247,14 @@ export function buildIslandWalkGrid(
       const cell = cells.get(hexKey(obj.q, obj.r));
       if (cell) cell.blocked = true;
     }
+    // Box centre: the object origin plus its local bounds centre, turned by the rotation.
     obstacles.push({
       shape: "box",
-      x,
-      z,
+      x: x + c * col.cx + s * col.cz,
+      z: z - s * col.cx + c * col.cz,
       hx: col.hx,
       hz: col.hz,
-      rot: ((obj.rot ?? 0) * Math.PI) / 180,
+      rot,
       source: obj.model,
     });
   }

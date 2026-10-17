@@ -14,6 +14,11 @@ export type HexTile = {
   rot?: number;
   /** Optional override of the tile's walkability. */
   walkable?: boolean;
+  /**
+   * Optional ground colouring for this hex: "sand" grades grass tiles (e.g. grass slopes
+   * used as dune ramps) and the grass skin to sand; "meadow" forces green on a desert island.
+   */
+  tint?: "sand" | "meadow";
 };
 
 export type IslandObject = {

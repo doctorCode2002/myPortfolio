@@ -1,7 +1,7 @@
 "use client";
 
 import { useFrame } from "@react-three/fiber";
-import { Suspense, useMemo, useRef, type ReactNode } from "react";
+import { Suspense, useMemo, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
 
 import {
@@ -18,24 +18,39 @@ import {
 import { allowedModel, modelUrl } from "../assets/manifest";
 import type { GradeMode } from "../fx/grade";
 import { createWaterMaterial } from "../fx/water";
+import { zoomToDistance } from "../logic/camera-math";
 import {
   isFoliage,
+  isGroundDecal,
+  isSeasonalFoliage,
   isWaterTile,
   objectKind,
   type ObjectKind,
 } from "../logic/catalog";
-import { meadowColor } from "../logic/ground";
-import { hexKey } from "../logic/hex";
+import {
+  groundColor,
+  groundSide,
+  islandPalette,
+  type GroundPalette,
+} from "../logic/ground";
+import { HEX_DIRECTIONS, hexKey } from "../logic/hex";
 import { createRng, seedFromString } from "../logic/noise";
 import { scatterDecor } from "../logic/scatter";
 import type { Island3D, Manifest } from "../logic/types";
 import { buildUnderside } from "../logic/underside";
-import { groundLift, type IslandWalkGrid } from "../logic/walk-grid";
+import {
+  cellHeightAt,
+  groundLift,
+  type IslandWalkGrid,
+  type WalkCell,
+} from "../logic/walk-grid";
 import { islandBob, useRuntimeRef } from "../runtime";
 import {
   buildGrassSkin,
+  buildTerraceWalls,
   buildWaterGeometry,
   undersideGeometry,
+  type TerraceWall,
 } from "./geometry";
 import { LampGlows, type Glow } from "./lamp-glows";
 import { Roots } from "./roots";
@@ -44,6 +59,10 @@ import { Waterfall } from "./waterfall";
 /** Water surfaces sit this far below the tile top (KayKit water tiles top out at -0.2). */
 export const WATER_DROP = 0.14;
 
+/** Island objects stream in within this range (plus the camera distance) of the player. */
+const STREAM_RANGE = 14;
+const STREAM_HYSTERESIS = 10;
+
 type Placement = {
   url: string;
   foliage: boolean;
@@ -51,6 +70,8 @@ type Placement = {
   shadow: boolean;
   grade: GradeMode | null;
 };
+
+type SkinCell = { x: number; z: number; y: number; palette: GroundPalette };
 
 /** Ground decoration candidates (only those present and allowed in the manifest are used). */
 const SCATTER_MODELS = [
@@ -62,21 +83,42 @@ const SCATTER_MODELS = [
   { name: "rock-small-c", weight: 1 },
   { name: "plant-bush-small", weight: 0.7 },
 ];
+const DESERT_SCATTER = [
+  { name: "rock-small-c", weight: 2 },
+  { name: "rock-sand-a", weight: 1 },
+  { name: "cactus-short", weight: 0.6 },
+];
 
-/** Flat grass tiles get the continuous skin; slopes, roads, coasts and water keep their tile top. */
+/** Flat grass and sand tiles get the continuous skin; slopes, roads, coasts and water keep their tile top. */
 function isSkinTile(name: string, manifest: Manifest | null): boolean {
   const m = manifest?.models[name];
   const text = [name, ...(m?.tags ?? [])].join(" ");
+  if (m && m.kind !== "terrain") return false;
   return (
-    /grass/i.test(text) &&
-    !/slope|ramp|coast|water|river|road|bottom/i.test(text)
+    /grass|sand|dune/i.test(text) &&
+    !/slope|ramp|coast|water|river|road|bottom|stone|path/i.test(text)
   );
 }
 
-function gradeFor(name: string, manifest: Manifest | null): GradeMode {
+/** Sand-tagged tiles always use the sand palette. */
+function tilePalette(
+  name: string,
+  manifest: Manifest | null
+): GroundPalette | null {
+  const m = manifest?.models[name];
+  const text = [name, ...(m?.tags ?? [])].join(" ");
+  return /sand|dune|desert/i.test(text) && !/grass/i.test(text) ? "sand" : null;
+}
+
+function gradeFor(
+  name: string,
+  manifest: Manifest | null,
+  palette: GroundPalette
+): GradeMode {
   const m = manifest?.models[name];
   const text = [name, ...(m?.tags ?? [])].join(" ");
   if (m?.overlay || /dirt|path|plaza/i.test(name)) return "path";
+  if (palette === "sand" && /grass/i.test(text)) return "sand";
   if (/road/i.test(text)) return "road";
   return "terrain";
 }
@@ -92,10 +134,26 @@ function hexTint(
   return [k * (0.98 + rng() * 0.04), k, k * (0.97 + rng() * 0.04)];
 }
 
+/** Pointy-top corner i (angle 60i - 30 degrees) of a cell. */
+function corner(cell: WalkCell, size: number, i: number): [number, number] {
+  const a = (Math.PI / 180) * (60 * i - 30);
+  return [cell.x + Math.cos(a) * size, cell.z + Math.sin(a) * size];
+}
+
+/** The tile-top height of a cell, without the deck or jitter (where tiles and props sit). */
+function tileTop(
+  cell: WalkCell,
+  island: Island3D,
+  levelHeight: number
+): number {
+  return (island.baseY ?? 0) + cell.level * levelHeight;
+}
+
 /**
- * One floating island: hex tiles (manifest models, or prisms), objects (instanced per
- * model), the generated rock underside with roots, water surfaces, waterfalls, and a
- * gentle bob of the whole group.
+ * One floating island: the terrain (KayKit tiles, the continuous grass skin with terrace
+ * walls, the rock underside, water and waterfalls) is always drawn; its objects (props,
+ * buildings, ground scatter, lamp glows) stream in when the player is within range, so
+ * far islands cost only their terrain and their models load on demand.
  */
 export function IslandView({
   island,
@@ -108,53 +166,96 @@ export function IslandView({
 }): ReactNode {
   const rtRef = useRuntimeRef();
   const group = useRef<THREE.Group>(null);
+  const objectsGroup = useRef<THREE.Group>(null);
   const size = grid.size;
   const baseY = island.baseY ?? 0;
   const tileThickness = manifest?.tileThickness ?? 1;
+  const levelHeight = grid.levelHeight;
+  const islandPal = islandPalette(island);
 
-  const {
-    tilePlacements,
-    tileFallback,
-    objectPlacements,
-    objectFallback,
-    waterCells,
-    skinCells,
-    glows,
-  } = useMemo(() => {
+  const terrain = useMemo(() => {
     const tileMap = new Map<string, Placement>();
     const tileFallback: ColoredInstance[] = [];
-    const objectMap = new Map<string, Placement>();
-    const objectFallback: (ColoredInstance & { kind: ObjectKind })[] = [];
-    const skinCells: { x: number; z: number; y: number }[] = [];
-    const glows: Glow[] = [];
-    const add = (
-      map: Map<string, Placement>,
-      name: string,
-      url: string,
-      it: InstanceTransform,
-      foliage = false,
-      shadow = true,
-      grade: GradeMode | null = null
-    ): void => {
-      let p = map.get(name);
-      if (!p) {
-        p = { url, foliage, items: [], shadow, grade };
-        map.set(name, p);
-      }
-      p.items.push(it);
-    };
+    const skinCells: SkinCell[] = [];
+    const walls: TerraceWall[] = [];
+    const skinned = new Set<string>();
+    const paletteOf = new Map<string, GroundPalette>();
+    for (const hex of island.hexes) {
+      const key = hexKey(hex.q, hex.r);
+      const cell = grid.cells.get(key);
+      const pal = hex.tint ?? tilePalette(hex.tile, manifest) ?? islandPal;
+      paletteOf.set(key, pal);
+      if (
+        cell &&
+        modelUrl(manifest, hex.tile) &&
+        isSkinTile(hex.tile, manifest) &&
+        cell.ground &&
+        !cell.deck
+      )
+        skinned.add(key);
+    }
     const fillerName = allowedModel(manifest, "hex-grass-bottom")
       ? "hex-grass-bottom"
       : null;
+    const add = (
+      name: string,
+      url: string,
+      it: InstanceTransform,
+      grade: GradeMode
+    ): void => {
+      let p = tileMap.get(name + "|" + grade);
+      if (!p) {
+        p = { url, foliage: false, items: [], shadow: false, grade };
+        tileMap.set(name + "|" + grade, p);
+      }
+      p.items.push(it);
+    };
 
     for (const hex of island.hexes) {
-      const cell = grid.cells.get(hexKey(hex.q, hex.r));
+      const key = hexKey(hex.q, hex.r);
+      const cell = grid.cells.get(key);
       if (!cell) continue;
+      const pal = paletteOf.get(key) ?? islandPal;
+      const flatY = tileTop(cell, island, levelHeight);
+      if (skinned.has(key)) {
+        // The skin replaces the tile top; terrace walls replace its bevelled sides.
+        const top = cell.y;
+        skinCells.push({ x: cell.x, z: cell.z, y: flatY, palette: pal });
+        const side = groundSide(pal);
+        for (let i = 0; i < 6; i++) {
+          const dir = HEX_DIRECTIONS[(6 - i) % 6] as { q: number; r: number };
+          const nKey = hexKey(cell.q + dir.q, cell.r + dir.r);
+          const n = grid.cells.get(nKey);
+          const [ax, az] = corner(cell, size, i);
+          const [bx, bz] = corner(cell, size, i + 1);
+          const mx = (ax + bx) / 2;
+          const mz = (az + bz) / 2;
+          let bottom: number;
+          if (!n) bottom = baseY - tileThickness;
+          else if (skinned.has(nKey)) bottom = n.y;
+          else if (n.water && !n.deck)
+            bottom = tileTop(n, island, levelHeight) - 0.2;
+          else
+            bottom = Math.min(
+              cellHeightAt(n, mx, mz, grid.hexWidth),
+              tileTop(n, island, levelHeight)
+            );
+          if (top - bottom > 0.02)
+            walls.push({
+              ax,
+              az,
+              bx,
+              bz,
+              top: top + 0.012,
+              bottom: bottom - 0.01,
+              lip: side.lip,
+              soil: side.soil,
+            });
+        }
+        continue;
+      }
       const rotY = ((hex.rot ?? 0) * Math.PI) / 180;
       const url = modelUrl(manifest, hex.tile);
-      const flatY =
-        cell.y -
-        (cell.water ? 0 : groundLift(cell.x, cell.z, island.heightJitter ?? 0));
       const t: InstanceTransform = {
         x: cell.x,
         y: flatY,
@@ -163,58 +264,97 @@ export function IslandView({
         scale: 1,
         tint: hexTint(island.id, hex.q, hex.r),
       };
-      if (url)
-        add(
-          tileMap,
-          hex.tile,
-          url,
-          t,
-          false,
-          false,
-          gradeFor(hex.tile, manifest)
-        );
+      if (url) add(hex.tile, url, t, gradeFor(hex.tile, manifest, pal));
       else tileFallback.push({ ...t, color: tileColor(hex.tile) });
-      // Building hexes are skinned too (their footprint hides the seam); only the terrain type matters.
-      if (url && isSkinTile(hex.tile, manifest) && cell.ground)
-        skinCells.push({ x: cell.x, z: cell.z, y: flatY });
       // Fill under raised tiles so stacks read as solid columns.
       for (
-        let top = cell.y - tileThickness;
+        let top = flatY - tileThickness;
         top > baseY + 1e-3;
         top -= tileThickness
       ) {
         const f = { ...t, y: top, rotY: 0 };
-        if (top === cell.y - tileThickness) f.y = flatY - tileThickness;
         const fillerUrl = fillerName ? modelUrl(manifest, fillerName) : null;
         if (fillerName && fillerUrl)
-          add(tileMap, fillerName, fillerUrl, f, false, false);
+          add(fillerName, fillerUrl, f, gradeFor(fillerName, manifest, pal));
         else tileFallback.push({ ...f, color: "#8a6f55" });
       }
     }
+    const waterCells = [...grid.cells.values()].filter((c) => c.water);
+    return {
+      tilePlacements: [...tileMap.entries()],
+      tileFallback,
+      skinCells,
+      walls,
+      waterCells,
+      skinnedKeys: skinned,
+    };
+  }, [
+    island,
+    grid,
+    manifest,
+    baseY,
+    tileThickness,
+    size,
+    levelHeight,
+    islandPal,
+  ]);
 
+  const objects = useMemo(() => {
+    const objectMap = new Map<string, Placement>();
+    const objectFallback: (ColoredInstance & { kind: ObjectKind })[] = [];
+    const glows: Glow[] = [];
+    const add = (
+      name: string,
+      url: string,
+      it: InstanceTransform,
+      foliage: boolean,
+      shadow: boolean,
+      grade: GradeMode | null
+    ): void => {
+      let p = objectMap.get(name);
+      if (!p) {
+        p = { url, foliage, items: [], shadow, grade };
+        objectMap.set(name, p);
+      }
+      p.items.push(it);
+    };
     for (const obj of island.objects ?? []) {
       const cell = grid.cells.get(hexKey(obj.q, obj.r));
       if (!cell) continue;
       const model = allowedModel(manifest, obj.model);
       const water = isWaterTile(cell.tile, manifest);
+      const kind = objectKind(obj.model, manifest);
+      // Bridge models sit on the tile (their deck is the raised walk surface); props on a
+      // skinned hex follow the skin; props on water float at the water line.
+      // Ground decals (crop rows, path stones) are lifted just above the grass skin.
+      const decalLift =
+        terrain.skinnedKeys.has(hexKey(obj.q, obj.r)) &&
+        isGroundDecal(obj.model, manifest)
+          ? 0.03
+          : 0;
+      const y =
+        kind === "bridge" || cell.deck
+          ? tileTop(cell, island, levelHeight)
+          : water
+            ? tileTop(cell, island, levelHeight) - WATER_DROP
+            : cell.y + decalLift;
       const t: InstanceTransform = {
         x: cell.x + (obj.offset?.[0] ?? 0),
-        y: cell.y - (water ? WATER_DROP : 0),
+        y,
         z: cell.z + (obj.offset?.[1] ?? 0),
         rotY: ((obj.rot ?? 0) * Math.PI) / 180,
         scale: (model?.scale ?? 1) * (obj.scale ?? 1),
       };
       const url = modelUrl(manifest, obj.model);
       if (url && model) {
-        add(
-          objectMap,
-          obj.model,
-          url,
-          t,
-          isFoliage(obj.model, manifest),
-          model.kind !== "terrain",
-          model.kind === "terrain" ? gradeFor(obj.model, manifest) : null
-        );
+        const foliage = isFoliage(obj.model, manifest);
+        const grade: GradeMode | null =
+          model.kind === "terrain"
+            ? gradeFor(obj.model, manifest, islandPal)
+            : foliage && !isSeasonalFoliage(obj.model, manifest)
+              ? "foliage"
+              : null;
+        add(obj.model, url, t, foliage, model.kind !== "terrain", grade);
         if ((model.tags ?? []).some((tag) => /lamp|lantern|torch/i.test(tag))) {
           glows.push({
             x: t.x,
@@ -223,7 +363,6 @@ export function IslandView({
           });
         }
       } else if (!manifest?.models[obj.model]?.banned) {
-        const kind = objectKind(obj.model, manifest);
         objectFallback.push({
           ...t,
           scale: obj.scale ?? 1,
@@ -232,26 +371,24 @@ export function IslandView({
         });
       }
     }
-    const waterCells = [...grid.cells.values()].filter((c) => c.water);
 
-    // Ground decoration on open grass hexes (count-capped, one instanced mesh per model).
-    const skinKeys = new Set(
-      skinCells.map((c) => `${c.x.toFixed(3)},${c.z.toFixed(3)}`)
-    );
+    // Ground decoration on open skinned hexes (count-capped, one instanced mesh per model).
     const scatterCells = [...grid.cells.values()].filter((c) =>
-      skinKeys.has(`${c.x.toFixed(3)},${c.z.toFixed(3)}`)
+      terrain.skinnedKeys.has(hexKey(c.q, c.r))
     );
-    const models = SCATTER_MODELS.filter((m) => allowedModel(manifest, m.name));
+    const models = (
+      islandPal === "sand" ? DESERT_SCATTER : SCATTER_MODELS
+    ).filter((m) => allowedModel(manifest, m.name));
     for (const it of scatterDecor(island, scatterCells, {
       models,
       size,
-      maxTotal: 240,
+      maxTotal: 200,
     })) {
       const model = allowedModel(manifest, it.model);
       const url = modelUrl(manifest, it.model);
       if (!model || !url) continue;
+      const foliage = isFoliage(it.model, manifest);
       add(
-        objectMap,
         `scatter:${it.model}`,
         url,
         {
@@ -260,25 +397,26 @@ export function IslandView({
           z: it.z,
           rotY: it.rotY,
           scale: (model.scale ?? 1) * it.scale,
-          // Kenney tufts are teal; pull them towards the meadow green.
-          ...(/grass|bush/.test(it.model)
-            ? { tint: [0.72, 1.0, 0.48] as const }
-            : {}),
         },
-        isFoliage(it.model, manifest),
-        false
+        foliage,
+        false,
+        foliage && !isSeasonalFoliage(it.model, manifest) ? "foliage" : null
       );
     }
     return {
-      tilePlacements: [...tileMap.entries()],
-      tileFallback,
       objectPlacements: [...objectMap.entries()],
       objectFallback,
-      waterCells,
-      skinCells,
       glows,
     };
-  }, [island, grid, manifest, baseY, tileThickness, size]);
+  }, [
+    island,
+    grid,
+    manifest,
+    size,
+    levelHeight,
+    islandPal,
+    terrain.skinnedKeys,
+  ]);
 
   const underside = useMemo(() => {
     const cells = [...grid.cells.values()];
@@ -289,14 +427,17 @@ export function IslandView({
         depth: island.underside?.depth ?? 6,
         seed: island.underside?.seed ?? seedFromString(island.id),
         style: island.underside?.style ?? "rock",
+        palette: islandPal,
         surfaceY: baseY,
         topY: baseY - tileThickness + 0.25,
       }
     );
-    return { data, geometry: undersideGeometry(data) };
-  }, [grid, size, island, baseY, tileThickness]);
+    let maxR = size;
+    for (const r of data.profile) maxR = Math.max(maxR, r);
+    return { data, geometry: undersideGeometry(data), radius: maxR };
+  }, [grid, size, island, baseY, tileThickness, islandPal]);
 
-  const undersideMaterial = useMemo(
+  const flatMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
         vertexColors: true,
@@ -307,33 +448,44 @@ export function IslandView({
   );
 
   const skin = useMemo(() => {
-    if (skinCells.length === 0) return null;
+    if (terrain.skinCells.length === 0) return null;
     const amp = island.heightJitter ?? 0;
     const geometry = buildGrassSkin(
-      skinCells,
+      terrain.skinCells,
       size,
-      (x, z) => meadowColor(x, z),
+      (x, z, cell) => groundColor(cell.palette, x, z),
       (x, z, flatY) => flatY + 0.012 + groundLift(x, z, amp)
     );
-    const material = new THREE.MeshLambertMaterial({ vertexColors: true });
-    return { geometry, material };
-  }, [skinCells, size, island.heightJitter]);
+    return {
+      geometry,
+      material: new THREE.MeshLambertMaterial({ vertexColors: true }),
+    };
+  }, [terrain.skinCells, size, island.heightJitter]);
+
+  const walls = useMemo(
+    () => (terrain.walls.length ? buildTerraceWalls(terrain.walls) : null),
+    [terrain.walls]
+  );
 
   const water = useMemo(() => {
-    if (waterCells.length === 0) return null;
+    if (terrain.waterCells.length === 0) return null;
     const isWater = (q: number, r: number): boolean =>
       Boolean(grid.cells.get(hexKey(q, r))?.water);
     return {
       geometry: buildWaterGeometry(
-        waterCells,
+        terrain.waterCells,
         isWater,
         size * 1.0,
         -WATER_DROP
       ),
       material: createWaterMaterial(),
     };
-  }, [waterCells, grid, size]);
+  }, [terrain.waterCells, grid, size]);
 
+  // Streaming: objects mount the first time the player comes within range, then toggle visibility.
+  const [loaded, setLoaded] = useState(false);
+  const frame = useRef(0);
+  const centroid = underside.data.centroid;
   useFrame(({ clock }) => {
     const rt = rtRef.current;
     if (group.current)
@@ -342,11 +494,24 @@ export function IslandView({
         clock.elapsedTime,
         rt.reducedMotion
       );
+    frame.current = (frame.current + 1) % 20;
+    if (frame.current !== 0) return;
+    const p = rt.player.pos;
+    const range = STREAM_RANGE + zoomToDistance(rt.camera.zoom) * 1.1;
+    const gap =
+      Math.hypot(p.x - centroid.x, p.z - centroid.z) - underside.radius;
+    const g = objectsGroup.current;
+    if (gap < range) {
+      if (!loaded) setLoaded(true);
+      if (g && !g.visible) g.visible = true;
+    } else if (gap > range + STREAM_HYSTERESIS && g && g.visible) {
+      g.visible = false;
+    }
   });
 
   return (
     <group ref={group} name={`island-${island.id}`}>
-      {tilePlacements.map(([name, p]) => (
+      {terrain.tilePlacements.map(([name, p]) => (
         <Suspense key={name} fallback={null}>
           <InstancedModel
             url={p.url}
@@ -356,29 +521,17 @@ export function IslandView({
           />
         </Suspense>
       ))}
-      <FallbackTiles items={tileFallback} size={size} />
+      <FallbackTiles items={terrain.tileFallback} size={size} />
       {skin && (
         <mesh geometry={skin.geometry} material={skin.material} receiveShadow />
       )}
-      {objectPlacements.map(([name, p]) => (
-        <Suspense key={name} fallback={null}>
-          <InstancedModel
-            url={p.url}
-            items={p.items}
-            foliage={p.foliage}
-            castShadow={p.shadow}
-            grade={p.grade}
-          />
-        </Suspense>
-      ))}
-      <FallbackObjects items={objectFallback} />
+      {walls && <mesh geometry={walls} material={flatMaterial} receiveShadow />}
       <mesh
         geometry={underside.geometry}
-        material={undersideMaterial}
+        material={flatMaterial}
         receiveShadow
       />
       <Roots segments={underside.data.roots} />
-      <LampGlows glows={glows} />
       {water && (
         <mesh
           geometry={water.geometry}
@@ -389,7 +542,7 @@ export function IslandView({
       {(island.underside?.waterfalls ?? []).map((wf) => {
         const cell = grid.cells.get(hexKey(wf.q, wf.r));
         if (!cell) return null;
-        const { centroid, profile } = underside.data;
+        const { profile } = underside.data;
         let ang = Math.atan2(cell.z - centroid.z, cell.x - centroid.x);
         if (ang < 0) ang += Math.PI * 2;
         const bin =
@@ -399,17 +552,39 @@ export function IslandView({
           <Waterfall
             key={hexKey(wf.q, wf.r)}
             cell={cell}
-            centroid={underside.data.centroid}
+            centroid={centroid}
             size={size}
             rim={{
               x: centroid.x + Math.cos(ang) * rimR,
               z: centroid.z + Math.sin(ang) * rimR,
             }}
-            topY={cell.y - (cell.water ? WATER_DROP : 0.02)}
+            topY={
+              tileTop(cell, island, levelHeight) -
+              (cell.water ? WATER_DROP : 0.02)
+            }
             length={underside.data.depth + 2.5}
           />
         );
       })}
+      <group ref={objectsGroup} name={`island-objects-${island.id}`}>
+        {loaded && (
+          <>
+            {objects.objectPlacements.map(([name, p]) => (
+              <Suspense key={name} fallback={null}>
+                <InstancedModel
+                  url={p.url}
+                  items={p.items}
+                  foliage={p.foliage}
+                  castShadow={p.shadow}
+                  grade={p.grade}
+                />
+              </Suspense>
+            ))}
+            <FallbackObjects items={objects.objectFallback} />
+            <LampGlows glows={objects.glows} />
+          </>
+        )}
+      </group>
     </group>
   );
 }

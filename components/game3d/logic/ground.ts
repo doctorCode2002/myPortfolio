@@ -56,3 +56,46 @@ export function groundJitter(x: number, z: number, amplitude: number): number {
   if (!amplitude) return 0;
   return (valueNoise2(x * 0.35, z * 0.35, 71) - 0.5) * 2 * amplitude;
 }
+
+export const DUNE = {
+  light: srgbToLinear("#ecd29c"),
+  mid: srgbToLinear("#e0c088"),
+  dark: srgbToLinear("#cfa86f"),
+  warm: srgbToLinear("#f1cf8f"),
+  lipSide: srgbToLinear("#c79a62"),
+  soil: srgbToLinear("#9c6f45"),
+};
+
+/** Warm sand at a world point (desert islands and sand-tinted hexes). */
+export function sandColor(x: number, z: number): Rgb {
+  const broad =
+    valueNoise2(x * 0.13, z * 0.13, 41) * 0.7 +
+    valueNoise2(x * 0.31, z * 0.31, 43) * 0.3;
+  const fine = valueNoise2(x * 1.1, z * 1.1, 47);
+  let c = mix(DUNE.dark, DUNE.light, broad);
+  c = mix(c, DUNE.mid, 0.2);
+  const k = 0.95 + fine * 0.08;
+  return [c[0] * k, c[1] * k, c[2] * k];
+}
+
+export type GroundPalette = "meadow" | "sand";
+
+export function groundColor(palette: GroundPalette, x: number, z: number): Rgb {
+  return palette === "sand" ? sandColor(x, z) : meadowColor(x, z);
+}
+
+export function groundSide(palette: GroundPalette): { lip: Rgb; soil: Rgb } {
+  return palette === "sand"
+    ? { lip: DUNE.lipSide, soil: DUNE.soil }
+    : { lip: MEADOW.lipSide, soil: MEADOW.soil };
+}
+
+/** The island's default ground palette: sand for desert biomes and sand undersides. */
+export function islandPalette(island: {
+  biome?: string;
+  underside?: { style?: string };
+}): GroundPalette {
+  return island.biome === "desert" || island.underside?.style === "sand"
+    ? "sand"
+    : "meadow";
+}

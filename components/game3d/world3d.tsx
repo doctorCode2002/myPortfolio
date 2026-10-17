@@ -24,7 +24,8 @@ import { ISLANDS_3D } from "@/content/islands3d";
 import { BRIDGES, ISLANDS } from "@/lib/content/world";
 import { getMayorDialogue } from "@/lib/content/world.selectors";
 import { isRtl, type Locale } from "@/lib/i18n";
-import { fetchManifest } from "./assets/manifest";
+import { fetchManifest, fetchModelBounds } from "./assets/manifest";
+import type { ModelBounds } from "./logic/glb-bounds";
 import { FollowCamera } from "./camera/follow-camera";
 import { DebugOverlay } from "./debug/debug-overlay";
 import { WalkGridViz } from "./debug/walk-grid-viz";
@@ -37,6 +38,7 @@ import { IslandView } from "./island/island-view";
 import type { Manifest } from "./logic/types";
 import {
   buildGameWorld,
+  modelsNeedingBounds,
   type GameWorld,
   type MayorInfo,
 } from "./logic/world-layout";
@@ -272,6 +274,7 @@ export function World3D({
   const [manifest, setManifest] = useState<Manifest | null | undefined>(
     undefined
   );
+  const [bounds, setBounds] = useState<Record<string, ModelBounds | null>>({});
   const [dpr, setDpr] = useState(1.5);
   const [shadowSize, setShadowSize] = useState(2048);
   const debug = useMemo(
@@ -286,10 +289,28 @@ export function World3D({
     rtRef.current.reducedMotion = reducedMotion;
   }, [reducedMotion]);
 
+  // Dev: ?island=<id> spawns on that island (kept across world rebuilds).
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    const id = new URLSearchParams(window.location.search).get("island");
+    if (id) rtRef.current.spawnIsland = id;
+  }, []);
+
   useEffect(() => {
     const ctrl = new AbortController();
-    void fetchManifest(ctrl.signal).then((m) => {
-      if (!ctrl.signal.aborted) setManifest(m);
+    void fetchManifest(ctrl.signal).then(async (m) => {
+      // Real bounds for hex-edge models (fences, walls) before the walk grid is built.
+      const bounds = m
+        ? await fetchModelBounds(
+            m,
+            modelsNeedingBounds(ISLANDS_3D, m),
+            ctrl.signal
+          )
+        : {};
+      if (!ctrl.signal.aborted) {
+        setBounds(bounds);
+        setManifest(m);
+      }
     });
     return () => ctrl.abort();
   }, []);
@@ -300,8 +321,8 @@ export function World3D({
     () =>
       manifest === undefined
         ? null
-        : buildGameWorld(ISLANDS_3D, BRIDGES, MAYORS, manifest),
-    [manifest]
+        : buildGameWorld(ISLANDS_3D, BRIDGES, MAYORS, manifest, { bounds }),
+    [manifest, bounds]
   );
   const labels = useMemo(() => buildLabels(dict, locale), [dict, locale]);
 

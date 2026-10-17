@@ -31,6 +31,12 @@ export type Runtime = {
   /** Click/tap target marker. */
   target: Vec3 | null;
   nearest: Interactable | null;
+  /** Island to spawn on (dev ?island=<id>); kept so world rebuilds respawn there. */
+  spawnIsland: string;
+  /** A pending dev teleport request (debug overlay buttons). */
+  teleport: string | null;
+  /** True once the player has been placed in some world. */
+  placed: boolean;
   frozen: boolean;
   /** performance.now() when the UI last unfroze (guards key repeats from the overlays). */
   unfrozenAt: number;
@@ -53,6 +59,9 @@ export function createRuntime(reducedMotion: boolean): Runtime {
     path: null,
     target: null,
     nearest: null,
+    spawnIsland: "home",
+    teleport: null,
+    placed: false,
     frozen: false,
     unfrozenAt: 0,
     fps: 0,

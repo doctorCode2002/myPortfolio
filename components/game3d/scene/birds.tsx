@@ -14,9 +14,10 @@ function wingGeometry(): THREE.BufferGeometry {
   g.setAttribute(
     "position",
     new THREE.Float32BufferAttribute(
+      // A swept gull wing: broad near the body, tapering to a tip behind the shoulder.
       [
-        0, 0, 0.12, 0, 0, -0.1, 0.42, 0, -0.02, 0, 0, 0.12, 0.42, 0, -0.02, 0,
-        0, -0.1,
+        0, 0, 0.09, 0, 0, -0.07, 0.2, 0.02, 0.06, 0.2, 0.02, 0.06, 0, 0, -0.07,
+        0.2, 0.02, -0.06, 0.2, 0.02, 0.06, 0.2, 0.02, -0.06, 0.36, 0.0, -0.12,
       ],
       3
     )
@@ -38,11 +39,17 @@ export function Birds({
 }): ReactNode {
   const left = useRef<THREE.InstancedMesh>(null);
   const right = useRef<THREE.InstancedMesh>(null);
+  const body = useRef<THREE.InstancedMesh>(null);
   const geo = useMemo(() => wingGeometry(), []);
+  const bodyGeo = useMemo(() => {
+    const g = new THREE.OctahedronGeometry(1, 0);
+    g.scale(0.055, 0.05, 0.2);
+    return g;
+  }, []);
   const mat = useMemo(
     () =>
       new THREE.MeshLambertMaterial({
-        color: "#3c3a48",
+        color: "#4f4a5e",
         side: THREE.DoubleSide,
       }),
     []
@@ -50,8 +57,10 @@ export function Birds({
   const flocks = useMemo(
     () =>
       Array.from({ length: FLOCKS }, (_, i) => ({
-        radius: 22 + i * 11,
-        height: 9 + i * 3,
+        // Wide, high orbits around the whole archipelago so the flocks read against the
+        // sky instead of crossing the islands as dark shards.
+        radius: 62 + i * 14,
+        height: 16 + i * 4,
         speed: (0.07 + i * 0.02) * (i % 2 ? -1 : 1),
         phase: i * 2.1,
       })),
@@ -63,7 +72,7 @@ export function Birds({
       q: new THREE.Quaternion(),
       e: new THREE.Euler(),
       p: new THREE.Vector3(),
-      s: new THREE.Vector3(1, 1, 1),
+      s: new THREE.Vector3(2.4, 2.4, 2.4),
     }),
     []
   );
@@ -89,11 +98,16 @@ export function Birds({
         const row = Math.ceil(b / 2);
         const side = b === 0 ? 0 : b % 2 ? -1 : 1;
         tmp.p.set(
-          cx - fx * row * 0.9 + fz * side * row * 0.8,
+          cx - fx * row * 2.0 + fz * side * row * 1.8,
           f.height + Math.sin(t * 1.3 + b) * 0.25,
-          cz - fz * row * 0.9 - fx * side * row * 0.8
+          cz - fz * row * 2.0 - fx * side * row * 1.8
         );
         const flap = Math.sin(t * 9 + b * 0.7) * 0.6;
+        tmp.e.set(0, heading, 0, "YXZ");
+        body.current?.setMatrixAt(
+          i,
+          tmp.m.compose(tmp.p, tmp.q.setFromEuler(tmp.e), tmp.s)
+        );
         tmp.e.set(0, heading, flap, "YXZ");
         l.setMatrixAt(
           i,
@@ -108,6 +122,7 @@ export function Birds({
       }
     }
     l.instanceMatrix.needsUpdate = true;
+    if (body.current) body.current.instanceMatrix.needsUpdate = true;
     r.instanceMatrix.needsUpdate = true;
   });
 
@@ -116,6 +131,11 @@ export function Birds({
     <>
       <instancedMesh ref={left} args={[geo, mat, N]} frustumCulled={false} />
       <instancedMesh ref={right} args={[geo, mat, N]} frustumCulled={false} />
+      <instancedMesh
+        ref={body}
+        args={[bodyGeo, mat, N]}
+        frustumCulled={false}
+      />
     </>
   );
 }

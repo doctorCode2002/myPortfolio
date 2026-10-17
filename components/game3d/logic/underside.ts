@@ -5,7 +5,12 @@
  * BufferGeometry. Pure: no three or react imports.
  */
 
-import { MEADOW, meadowColor, type Rgb } from "./ground";
+import {
+  groundColor,
+  groundSide,
+  type GroundPalette,
+  type Rgb,
+} from "./ground";
 import { createRng, valueNoise2 } from "./noise";
 import type { Point2 } from "./hex";
 
@@ -22,6 +27,8 @@ export type UndersideOptions = {
   /** Number of angular segments around the outline. */
   segments?: number;
   rings?: number;
+  /** Lip colouring: meadow grass or desert sand. */
+  palette?: GroundPalette;
 };
 
 export type RootSegment = {
@@ -180,8 +187,10 @@ export function buildUnderside(
 
   // 1. Grass lip: a top band from just inside the edge hexes to slightly past the outline,
   //    coloured like the meadow, then an overhanging green side and a soil band.
+  const palette0 = opts.palette ?? (style === "sand" ? "sand" : "meadow");
   const lipGrass = (p: number[]): Rgb =>
-    meadowColor(p[0] as number, p[2] as number);
+    groundColor(palette0, p[0] as number, p[2] as number);
+  const lipSideColor = groundSide(palette0).lip;
   const inner = [] as number[][];
   const outer = [] as number[][];
   const over = [] as number[][];
@@ -207,7 +216,7 @@ export function buildUnderside(
       outer[j] as number[],
       over[j] as number[],
       over[i] as number[],
-      jit(MEADOW.lipSide, 0.12)
+      jit(lipSideColor, 0.12)
     );
     quad(
       over[i] as number[],

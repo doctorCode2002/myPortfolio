@@ -3,6 +3,7 @@
  * URLs. Banned models are refused here, so no loader can ever fetch them.
  */
 
+import { glbBounds, type ModelBounds } from "../logic/glb-bounds";
 import { mergeManifestFragments } from "../logic/manifest-merge";
 import type { Manifest, ManifestFragment, ManifestModel } from "../logic/types";
 
@@ -63,4 +64,25 @@ export function modelUrl(
 ): string | null {
   const m = allowedModel(manifest, name);
   return m ? `${MODELS_BASE}${m.file}` : null;
+}
+
+/** Fetch model-space bounds for the given models (small requests; the files are cached for useGLTF). */
+export async function fetchModelBounds(
+  manifest: Manifest,
+  names: readonly string[],
+  signal?: AbortSignal
+): Promise<Record<string, ModelBounds | null>> {
+  const entries = await Promise.all(
+    names.map(async (name): Promise<[string, ModelBounds | null]> => {
+      const url = modelUrl(manifest, name);
+      if (!url) return [name, null];
+      try {
+        const res = await fetch(url, signal ? { signal } : {});
+        return [name, res.ok ? glbBounds(await res.arrayBuffer()) : null];
+      } catch {
+        return [name, null];
+      }
+    })
+  );
+  return Object.fromEntries(entries);
 }

@@ -68,6 +68,21 @@ export function DebugOverlay({
       <div>in range {snap.inRange}</div>
       <div>cam {snap.zoom}</div>
       <div>frozen {String(snap.frozen)}</div>
+      <div className="pointer-events-auto mt-1 flex max-w-[15rem] flex-wrap gap-1">
+        {world.islands.map((isl) => (
+          <button
+            key={isl.id}
+            type="button"
+            data-game3d-goto={isl.id}
+            onClick={() => {
+              rtRef.current.teleport = isl.id;
+            }}
+            className="cursor-pointer rounded bg-white/15 px-1.5 py-0.5 hover:bg-white/30"
+          >
+            {isl.id}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
