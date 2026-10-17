@@ -4,22 +4,15 @@ import type { Building } from "../entities/Building";
 import { Npc } from "../entities/Npc";
 import { Player } from "../entities/Player";
 import { gameEvents } from "../events";
-import {
-  getActiveWorldFx,
-  registerWorldFx,
-  type WorldFxSystem,
-} from "../fxHook";
 import { ControlsManager } from "../input/controls";
 import { setupCameraAndZoom } from "../world/cameraZoom";
 import { IllustratedIsland, type IslandArt } from "../world/illustratedIsland";
 import type { Island } from "../world/islandRenderer";
 import { createProceduralFallback } from "../world/proceduralFallback";
-import { SkySystem } from "../world/sky";
-
-export { registerWorldFx, type WorldFxSystem };
+import { LivingWorldFX } from "../fx/livingWorldFX";
 
 export class WorldScene extends Phaser.Scene {
-  private sky!: SkySystem;
+  private fx!: LivingWorldFX;
   private illustratedIsland: IllustratedIsland | null = null;
   private centerIsland: Island | null = null;
   private player!: Player;
@@ -53,15 +46,12 @@ export class WorldScene extends Phaser.Scene {
     }
     this.load.json("dev-island-json", "/game/islands/_dev/island.json");
     this.load.image("dev-island-home", "/game/islands/_dev/home.webp");
-    this.load.image(
-      "dev-island-material",
-      "/game/islands/_dev/home.material.png"
-    );
+    LivingWorldFX.preload(this);
   }
 
   create(): void {
     const { WORLD_WIDTH, WORLD_HEIGHT } = ENGINE_CONSTANTS;
-    this.sky = new SkySystem(this);
+    this.fx = new LivingWorldFX(this);
 
     const art = this.cache.json.get("dev-island-json") as IslandArt | null;
     if (art && this.textures.exists("dev-island-home") && art.size) {
@@ -90,12 +80,14 @@ export class WorldScene extends Phaser.Scene {
         y: my,
         dialogueKey: "demoNpcDialogue",
       });
+      this.fx.create({ islandArt: art, worldX: ix, worldY: iy });
     } else {
       const fb = createProceduralFallback(this, this.initialCharSheet);
       this.centerIsland = fb.centerIsland;
       this.demoBuilding = fb.demoBuilding;
       this.demoNpc = fb.demoNpc;
       this.player = fb.player;
+      this.fx.create();
     }
 
     this.controls = new ControlsManager(this);
@@ -110,9 +102,6 @@ export class WorldScene extends Phaser.Scene {
       (zoom) => gameEvents.emit("camera:zoom-changed", { zoom })
     );
 
-    const fx = getActiveWorldFx();
-    if (fx && this.illustratedIsland) fx.create(this, [this.illustratedIsland]);
-
     if (
       process.env.NODE_ENV !== "production" &&
       typeof window !== "undefined" &&
@@ -125,13 +114,12 @@ export class WorldScene extends Phaser.Scene {
       });
     }
 
-    this.scale.on("resize", () => this.sky.resize());
+    this.scale.on("resize", () => this.fx.resize());
   }
 
   override update(time: number, delta: number): void {
     const dt = delta / 1000;
-    this.sky.update(delta);
-    getActiveWorldFx()?.update(dt);
+    this.fx.update(time, delta, this.player?.x, this.player?.y);
 
     const cam = this.cameras.main;
     const targetZoom = this.zoomControl.getTargetZoom();
@@ -201,17 +189,13 @@ export class WorldScene extends Phaser.Scene {
       ),
       gameEvents.on("camera:set-zoom", ({ zoom }) =>
         this.setZoomLevel(findClosestZoomIndex(zoom))
-      ),
-      gameEvents.on("fx:register", (fx) => {
-        registerWorldFx(fx as WorldFxSystem);
-        if (this.illustratedIsland)
-          (fx as WorldFxSystem).create(this, [this.illustratedIsland]);
-      })
+      )
     );
     this.events.once("shutdown", () => {
       for (const unbind of this.unbindEvents) unbind();
       this.unbindEvents = [];
       this.illustratedIsland?.destroy();
+      this.fx.destroy();
     });
   }
 }

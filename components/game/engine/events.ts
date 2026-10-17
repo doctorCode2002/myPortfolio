@@ -21,10 +21,6 @@ export type GameEventMap = {
   "ui:close": void;
   "player:change-character": { charSheet: string };
   "game:freeze": boolean;
-  "fx:register": {
-    create: (scene: unknown, islands: unknown[]) => void;
-    update: (dt: number) => void;
-  };
   "editor:set-tool": {
     tool: "brush" | "fill" | "doors" | "spawns" | "anchors";
   };
