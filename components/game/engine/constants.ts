@@ -1,20 +1,16 @@
-export const GAME_CONSTANTS = {
+export const ENGINE_CONSTANTS = {
   WORLD_WIDTH: 1600,
   WORLD_HEIGHT: 1200,
 
   ISLAND: {
     CENTER_X: 800,
     CENTER_Y: 550,
-    // Visual grass dimensions
     SURFACE_RADIUS_X: 220,
     SURFACE_RADIUS_Y: 105,
-    // Strict walkable boundary
     WALK_RADIUS_X: 200,
     WALK_RADIUS_Y: 88,
-    // Underside rock depth
-    ROCK_BOTTOM_Y: 830,
-    // Shadow depth
     SHADOW_Y: 800,
+    ROCK_BOTTOM_Y: 830,
   },
 
   PLAYER: {
@@ -24,6 +20,7 @@ export const GAME_CONSTANTS = {
     FRAME_WIDTH: 16,
     FRAME_HEIGHT: 32,
     ANIM_FPS: 8,
+    FEET_OFFSET_Y: 12,
   },
 
   DEPTHS: {
@@ -42,17 +39,14 @@ export const GAME_CONSTANTS = {
   },
 } as const;
 
+/**
+ * Integer camera zoom:
+ * - Desktop: zoom 2 provides crisp 2x pixels while keeping the entire island
+ *   surrounded by generous sky margin for the floating feel.
+ * - 4K displays: zoom 3 maintains the floating sky ratio.
+ * - Phones: zoom 2 keeps the character comfortably close and legible on narrow screens.
+ */
 export function computeIntegerZoom(width: number, height: number): number {
-  const minDim = Math.min(width, height);
-  if (minDim < 520) return 2;
-  if (minDim < 900) return 3;
-  return 4;
-}
-
-export function isInsideWalkableIsland(x: number, y: number): boolean {
-  const dx =
-    (x - GAME_CONSTANTS.ISLAND.CENTER_X) / GAME_CONSTANTS.ISLAND.WALK_RADIUS_X;
-  const dy =
-    (y - GAME_CONSTANTS.ISLAND.CENTER_Y) / GAME_CONSTANTS.ISLAND.WALK_RADIUS_Y;
-  return dx * dx + dy * dy <= 1.0;
+  if (width >= 2400 && height >= 1350) return 3;
+  return 2;
 }

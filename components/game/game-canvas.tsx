@@ -15,7 +15,7 @@ export function GameCanvas(): ReactNode {
       try {
         const [phaserModule, engineModule] = await Promise.all([
           import("phaser"),
-          import("./game-engine"),
+          import("./engine/createGame"),
         ]);
 
         if (!isMounted || !containerRef.current) return;

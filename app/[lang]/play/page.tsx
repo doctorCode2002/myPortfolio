@@ -36,7 +36,7 @@ export default async function PlayPage({
   return (
     <main
       id="main-content"
-      className="bg-background relative h-screen w-full overflow-hidden"
+      className="bg-background fixed inset-0 h-dvh w-screen overflow-hidden"
     >
       <PlayView locale={locale} dict={dict} />
     </main>
