@@ -12,10 +12,7 @@
  * translations (app/dictionaries/ar.json) and the RTL rules in globals.css are
  * untouched and stay shape-checked — see getArabicDictionary().
  */
-export const LOCALES = [
-  "en",
-  // "ar",
-] as const;
+export const LOCALES = ["en", "ar"] as const;
 
 export type Locale = (typeof LOCALES)[number];
 
@@ -60,17 +57,17 @@ export function switchLocalePath(pathname: string, next: Locale): string {
 /** BCP 47 tags for <html lang> and hreflang. */
 export const HTML_LANG: Record<Locale, string> = {
   en: "en",
-  // ar: "ar",
+  ar: "ar",
 };
 
 /** OpenGraph locale identifiers. */
 export const OG_LOCALE: Record<Locale, string> = {
   en: "en_US",
-  // ar: "ar_AR",
+  ar: "ar_AR",
 };
 
 /** Native names, used by the language switch. */
 export const LOCALE_LABEL: Record<Locale, string> = {
   en: "EN",
-  // ar: "ع",
+  ar: "ع",
 };
