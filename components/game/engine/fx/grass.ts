@@ -93,19 +93,24 @@ export class GrassSystem {
     return true;
   }
 
-  public populate(
+  public populateIsland(
     worldX: number,
     worldY: number,
-    materialKey = "dev-island-material"
+    width: number,
+    height: number,
+    materialKey: string,
+    artKey?: string
   ): void {
-    this.clear();
-
     const points: Array<{ x: number; y: number; variant: number }> = [];
-    const minSpacing = 42; // Sparse placement
+    const minSpacing = 42;
 
-    // Sample across the walkable meadow area of the island
-    for (let gy = 460; gy <= 740; gy += 36) {
-      for (let gx = 100; gx <= 700; gx += 36) {
+    const startY = Math.round(height * 0.3);
+    const endY = Math.round(height * 0.75);
+    const startX = Math.round(width * 0.15);
+    const endX = Math.round(width * 0.85);
+
+    for (let gy = startY; gy <= endY; gy += 36) {
+      for (let gx = startX; gx <= endX; gx += 36) {
         const jx = gx + Math.floor((Math.random() - 0.5) * 16);
         const jy = gy + Math.floor((Math.random() - 0.5) * 16);
 
@@ -122,15 +127,13 @@ export class GrassSystem {
           (p) => Math.hypot(p.x - wx, p.y - wy) < minSpacing
         );
         if (!tooClose) {
-          // Select variant based on local art brightness
-          const artCol = this.scene.textures.exists("dev-island-home")
-            ? this.scene.textures.getPixel(jx, jy, "dev-island-home")
-            : null;
           let variant = 0;
-          if (artCol) {
-            if (artCol.green > 145)
-              variant = 2; // Sunlit
-            else if (artCol.green < 120) variant = 1; // Shady
+          if (artKey && this.scene.textures.exists(artKey)) {
+            const artCol = this.scene.textures.getPixel(jx, jy, artKey);
+            if (artCol) {
+              if (artCol.green > 145) variant = 2;
+              else if (artCol.green < 120) variant = 1;
+            }
           }
           points.push({ x: wx, y: wy, variant });
         }
@@ -157,11 +160,28 @@ export class GrassSystem {
     }
   }
 
+  public populate(
+    worldX: number,
+    worldY: number,
+    materialKey = "dev-island-material"
+  ): void {
+    this.clear();
+    this.populateIsland(
+      worldX,
+      worldY,
+      800,
+      1134,
+      materialKey,
+      "dev-island-home"
+    );
+  }
+
   public update(
     time: number,
     playerX?: number,
     playerY?: number,
-    reducedMotion = false
+    reducedMotion = false,
+    cullRect?: { x: number; y: number; width: number; height: number }
   ): void {
     if (!this.isVisible) return;
 
@@ -175,6 +195,18 @@ export class GrassSystem {
     const tSec = time * 0.001;
 
     for (const tuft of this.tufts) {
+      // Viewport culling: skip animating tufts outside camera view
+      if (cullRect) {
+        if (
+          tuft.baseX < cullRect.x ||
+          tuft.baseX > cullRect.x + cullRect.width ||
+          tuft.baseY < cullRect.y ||
+          tuft.baseY > cullRect.y + cullRect.height
+        ) {
+          continue;
+        }
+      }
+
       // Part grass away from player
       if (playerX !== undefined && playerY !== undefined) {
         const dist = Math.hypot(playerX - tuft.baseX, playerY - tuft.baseY);

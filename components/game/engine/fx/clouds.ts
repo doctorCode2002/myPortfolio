@@ -14,6 +14,8 @@ export class CloudSystem {
   private skyGraphics: Phaser.GameObjects.Graphics | null = null;
   private clouds: CloudInstance[] = [];
   private isVisible = true;
+  private curWorldWidth: number = ENGINE_CONSTANTS.WORLD_WIDTH;
+  private curWorldHeight: number = ENGINE_CONSTANTS.WORLD_HEIGHT;
 
   constructor(private scene: Phaser.Scene) {
     this.createOrganicCloudTextures();
@@ -21,20 +23,34 @@ export class CloudSystem {
     this.spawnCloudLayers();
   }
 
+  public setWorldBounds(width: number, height: number): void {
+    this.curWorldWidth = width;
+    this.curWorldHeight = height;
+
+    if (this.skyBackdrop) {
+      this.skyBackdrop.setPosition(width / 2, height / 2);
+      const scaleX = (width + 1200) / this.skyBackdrop.width;
+      const scaleY = (height + 1200) / this.skyBackdrop.height;
+      this.skyBackdrop.setScale(Math.max(scaleX, scaleY));
+    } else if (this.skyGraphics) {
+      this.renderGradient();
+    }
+  }
+
   private createSkyBackdrop(): void {
-    const { WORLD_WIDTH, WORLD_HEIGHT, DEPTHS } = ENGINE_CONSTANTS;
+    const { DEPTHS } = ENGINE_CONSTANTS;
 
     if (this.scene.textures.exists("sky-backdrop")) {
       this.skyBackdrop = this.scene.add.image(
-        WORLD_WIDTH / 2,
-        WORLD_HEIGHT / 2,
+        this.curWorldWidth / 2,
+        this.curWorldHeight / 2,
         "sky-backdrop"
       );
       this.skyBackdrop.setOrigin(0.5, 0.5);
       this.skyBackdrop.setScrollFactor(0.05);
       this.skyBackdrop.setDepth(DEPTHS.SKY);
-      const scaleX = (WORLD_WIDTH + 800) / this.skyBackdrop.width;
-      const scaleY = (WORLD_HEIGHT + 800) / this.skyBackdrop.height;
+      const scaleX = (this.curWorldWidth + 800) / this.skyBackdrop.width;
+      const scaleY = (this.curWorldHeight + 800) / this.skyBackdrop.height;
       this.skyBackdrop.setScale(Math.max(scaleX, scaleY));
     } else {
       this.skyGraphics = this.scene.add.graphics();
@@ -46,7 +62,6 @@ export class CloudSystem {
 
   private renderGradient(): void {
     if (!this.skyGraphics) return;
-    const { WORLD_WIDTH, WORLD_HEIGHT } = ENGINE_CONSTANTS;
     this.skyGraphics.clear();
     this.skyGraphics.fillGradientStyle(
       0x477299,
@@ -61,8 +76,8 @@ export class CloudSystem {
     this.skyGraphics.fillRect(
       -1000,
       -1000,
-      WORLD_WIDTH + 2000,
-      WORLD_HEIGHT + 2000
+      this.curWorldWidth + 2000,
+      this.curWorldHeight + 2000
     );
   }
 
@@ -193,7 +208,7 @@ export class CloudSystem {
     if (reducedMotion || !this.isVisible) return;
 
     const dt = delta / 1000;
-    const wrapBound = ENGINE_CONSTANTS.WORLD_WIDTH + 260;
+    const wrapBound = this.curWorldWidth + 260;
 
     for (const cloud of this.clouds) {
       cloud.sprite.x += cloud.speed * dt;

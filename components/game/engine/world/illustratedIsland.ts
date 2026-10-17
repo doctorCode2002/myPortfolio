@@ -130,9 +130,12 @@ export class IllustratedIsland {
   }
 
   public isInsideWalkable(worldPx: number, worldPy: number): boolean {
-    if (!this.walkGrid) return true;
+    if (!this.walkGrid) return false;
     const lx = worldPx - this.worldX;
     const ly = worldPy - this.worldY;
+    if (lx < 0 || lx >= this.art.size.w || ly < 0 || ly >= this.art.size.h) {
+      return false;
+    }
     return canWalkFeetBox(
       this.walkGrid,
       this.gw,

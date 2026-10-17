@@ -7,7 +7,19 @@ export interface FxConfig {
   chimneyEmitters?: Array<{ x: number; y: number }>;
 }
 
+export interface IslandFXItem {
+  id: string;
+  worldX: number;
+  worldY: number;
+  width: number;
+  height: number;
+  islandImageKey: string;
+  materialTextureKey: string;
+}
+
 export interface LivingWorldInitOptions {
+  worldBounds?: { width: number; height: number };
+  islands?: IslandFXItem[];
   islandArt?: IslandArt | null;
   worldX?: number;
   worldY?: number;

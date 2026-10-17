@@ -3,13 +3,16 @@ import { gameEvents } from "../events";
 
 export interface NpcConfig {
   id: string;
-  nameKey: string;
-  roleKey: string;
   charSheet: string;
   x: number;
   y: number;
+  nameKey?: string;
+  roleKey?: string;
+  dialogueKey?: string;
+  title?: string;
+  subtitle?: string;
+  lines?: string[];
   interactionRadius?: number;
-  dialogueKey: "demoNpcDialogue";
 }
 
 export class Npc {
@@ -94,6 +97,9 @@ export class Npc {
       roleKey: this.config.roleKey,
       charSheet: this.config.charSheet,
       dialogueKey: this.config.dialogueKey,
+      title: this.config.title,
+      subtitle: this.config.subtitle,
+      lines: this.config.lines,
     });
   }
 
@@ -172,5 +178,11 @@ export class Npc {
     this.promptBubble.fillRect(bx - 2, by - 2, 4, 2);
     // Bottom bar
     this.promptBubble.fillRect(bx - 2, by + 1, 5, 2);
+  }
+
+  public destroy(): void {
+    this.sprite.destroy();
+    this.shadow.destroy();
+    this.promptBubble.destroy();
   }
 }

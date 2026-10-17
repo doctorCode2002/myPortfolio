@@ -21,8 +21,8 @@ export class LivingWorldFX {
   private grass: GrassSystem;
   private birds: BirdSystem;
   private pipelineRegistered = false;
-  private islandImage: Phaser.GameObjects.Image | null = null;
-  private pipelineInstance: LivingWorldPipeline | null = null;
+  private islandImages: Phaser.GameObjects.Image[] = [];
+  private pipelineInstances: LivingWorldPipeline[] = [];
   private isEnabled = true;
 
   constructor(private scene: Phaser.Scene) {
@@ -36,43 +36,74 @@ export class LivingWorldFX {
   }
 
   public static preload(scene: Phaser.Scene): void {
-    scene.load.image(
-      "dev-island-material",
-      "/game/islands/_dev/home.material.png"
-    );
     scene.load.image("sky-backdrop", "/game/sky/sky.webp");
   }
 
   public create(options: LivingWorldInitOptions = {}): void {
-    const worldX = options.worldX ?? 0;
-    const worldY = options.worldY ?? 0;
-    const islandKey = options.islandImageKey ?? "dev-island-home";
-    const materialKey = options.materialTextureKey ?? "dev-island-material";
-
-    // 1. Locate island base image and attach pipeline
-    const baseImg = this.scene.children.list.find(
-      (obj) =>
-        obj instanceof Phaser.GameObjects.Image && obj.texture.key === islandKey
-    ) as Phaser.GameObjects.Image | undefined;
-
-    if (baseImg && this.pipelineRegistered) {
-      this.islandImage = baseImg;
-      baseImg.setPostPipeline(LivingWorldPipeline.PIPELINE_NAME);
-      const postPipelines = baseImg.getPostPipeline(
-        LivingWorldPipeline.PIPELINE_NAME
+    // 1. World bounds for celestial clouds and sky backdrop
+    if (options.worldBounds) {
+      this.clouds.setWorldBounds(
+        options.worldBounds.width,
+        options.worldBounds.height
       );
-      if (postPipelines) {
-        this.pipelineInstance = Array.isArray(postPipelines)
-          ? (postPipelines[0] as LivingWorldPipeline)
-          : (postPipelines as LivingWorldPipeline);
-        this.pipelineInstance.setMaterialTextureKey(materialKey);
-      }
     }
 
-    // 2. Initialize subsystems
-    this.particles.initEmitters(worldX, worldY);
-    this.grass.populate(worldX, worldY, materialKey);
-    this.birds.initPerchSites(worldX, worldY);
+    // 2. Initialize multiple islands or fallback single island
+    const islands =
+      options.islands && options.islands.length > 0
+        ? options.islands
+        : [
+            {
+              id: "home",
+              worldX: options.worldX ?? 0,
+              worldY: options.worldY ?? 0,
+              width: options.islandArt?.size.w ?? 800,
+              height: options.islandArt?.size.h ?? 1134,
+              islandImageKey: options.islandImageKey ?? "dev-island-home",
+              materialTextureKey:
+                options.materialTextureKey ?? "dev-island-material",
+            },
+          ];
+
+    for (const isl of islands) {
+      // Find island base image in scene
+      const baseImg = this.scene.children.list.find(
+        (obj) =>
+          obj instanceof Phaser.GameObjects.Image &&
+          obj.texture.key === isl.islandImageKey
+      ) as Phaser.GameObjects.Image | undefined;
+
+      if (baseImg && this.pipelineRegistered) {
+        this.islandImages.push(baseImg);
+        baseImg.setPostPipeline(LivingWorldPipeline.PIPELINE_NAME);
+        const postPipelines = baseImg.getPostPipeline(
+          LivingWorldPipeline.PIPELINE_NAME
+        );
+        if (postPipelines) {
+          const pipe = Array.isArray(postPipelines)
+            ? (postPipelines[0] as LivingWorldPipeline)
+            : (postPipelines as LivingWorldPipeline);
+          pipe.setMaterialTextureKey(isl.materialTextureKey);
+          this.pipelineInstances.push(pipe);
+        }
+      }
+
+      // Populate grass tufts across this island
+      this.grass.populateIsland(
+        isl.worldX,
+        isl.worldY,
+        isl.width,
+        isl.height,
+        isl.materialTextureKey,
+        isl.islandImageKey
+      );
+
+      // Initialize bird perch sites and emitters
+      if (isl.id === "home") {
+        this.particles.initEmitters(isl.worldX, isl.worldY);
+        this.birds.initPerchSites(isl.worldX, isl.worldY);
+      }
+    }
 
     // 3. Debug toggle keyboard shortcut: Pressing "F" toggles all FX on/off
     this.scene.input.keyboard?.on("keydown-F", () => {
@@ -98,11 +129,9 @@ export class LivingWorldFX {
   public setEnabled(enabled: boolean): void {
     this.isEnabled = enabled;
 
-    // Toggle shader pipeline
-    if (this.pipelineInstance) {
-      this.pipelineInstance.setReducedMotion(
-        !enabled || this.perf.isReducedMotion
-      );
+    // Toggle all shader pipeline instances
+    for (const pipe of this.pipelineInstances) {
+      pipe.setReducedMotion(!enabled || this.perf.isReducedMotion);
     }
 
     // Toggle all living entity systems
@@ -122,7 +151,8 @@ export class LivingWorldFX {
     time: number,
     delta: number,
     playerX?: number,
-    playerY?: number
+    playerY?: number,
+    cullRect?: { x: number; y: number; width: number; height: number }
   ): void {
     if (!this.isEnabled) return;
 
@@ -130,13 +160,13 @@ export class LivingWorldFX {
     const reduced = this.perf.isReducedMotion;
     const lowEnd = this.perf.isLowEnd;
 
-    if (this.pipelineInstance) {
-      this.pipelineInstance.setShaderTime(time * 0.001);
-      this.pipelineInstance.setReducedMotion(reduced);
+    for (const pipe of this.pipelineInstances) {
+      pipe.setShaderTime(time * 0.001);
+      pipe.setReducedMotion(reduced);
     }
 
     this.clouds.update(delta, reduced);
-    this.grass.update(time, playerX, playerY, reduced);
+    this.grass.update(time, playerX, playerY, reduced, cullRect);
     this.birds.update(time, delta, reduced);
     this.particles.update(time, delta, reduced, lowEnd);
   }
@@ -157,10 +187,12 @@ export class LivingWorldFX {
     this.grass.destroy();
     this.birds.destroy();
 
-    if (this.islandImage && this.pipelineRegistered) {
-      this.islandImage.removePostPipeline(LivingWorldPipeline.PIPELINE_NAME);
+    if (this.pipelineRegistered) {
+      for (const img of this.islandImages) {
+        img.removePostPipeline(LivingWorldPipeline.PIPELINE_NAME);
+      }
     }
-    this.islandImage = null;
-    this.pipelineInstance = null;
+    this.islandImages = [];
+    this.pipelineInstances = [];
   }
 }

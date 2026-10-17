@@ -9,8 +9,8 @@ import { gameEvents } from "./engine/events";
 
 export interface DialogueData {
   title: string;
-  subtitle?: string;
-  portraitCharSheet?: string;
+  subtitle?: string | undefined;
+  portraitCharSheet?: string | undefined;
   lines: string[];
 }
 

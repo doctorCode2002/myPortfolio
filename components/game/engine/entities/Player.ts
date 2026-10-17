@@ -25,7 +25,8 @@ export class Player {
     this.shadow = scene.add.graphics();
     this.shadow.setDepth(feetDepth - 1);
     this.shadow.fillStyle(0x000000, 0.28);
-    this.shadow.fillEllipse(startX, startY + PLAYER.FEET_OFFSET_Y, 14, 6);
+    this.shadow.fillEllipse(0, PLAYER.FEET_OFFSET_Y, 14, 6);
+    this.shadow.setPosition(startX, startY);
 
     // Player sprite
     this.sprite = scene.add.sprite(startX, startY, this.charSheet, 1);
@@ -46,8 +47,7 @@ export class Player {
   public setPosition(x: number, y: number): void {
     this.sprite.x = x;
     this.sprite.y = y;
-    this.shadow.x = x - ENGINE_CONSTANTS.PLAYER.START_X;
-    this.shadow.y = y - ENGINE_CONSTANTS.PLAYER.START_Y;
+    this.shadow.setPosition(x, y);
     const feetDepth = y + ENGINE_CONSTANTS.PLAYER.FEET_OFFSET_Y;
     this.sprite.setDepth(feetDepth);
     this.shadow.setDepth(feetDepth - 1);

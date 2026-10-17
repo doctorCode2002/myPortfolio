@@ -1,10 +1,13 @@
 export type GameEventMap = {
   "interact:npc": {
     npcId: string;
-    nameKey: string;
-    roleKey: string;
     charSheet: string;
-    dialogueKey: "demoNpcDialogue";
+    nameKey?: string | undefined;
+    roleKey?: string | undefined;
+    dialogueKey?: string | undefined;
+    title?: string | undefined;
+    subtitle?: string | undefined;
+    lines?: string[] | undefined;
   };
   "interact:building": {
     buildingId: string;
@@ -34,6 +37,9 @@ export type GameEventMap = {
   "editor:request-data": void;
   "editor:update-art": { art: unknown };
   "editor:select-item": { tool: string; index: number };
+  "editor:set-island": { islandId: string };
+  "editor:island-list": { islands: string[]; activeIslandId: string };
+  "editor:island-changed": { islandId: string };
 };
 
 type GenericCallback = (data: unknown) => void;

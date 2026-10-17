@@ -165,12 +165,16 @@ export function findAutomaticAnchor(
   const originY = islandWorldCenter.y - matHeight / 2;
 
   let bestDistSq = Infinity;
-  let bestPt: Point2D = { x: Math.round(matWidth / 2), y: Math.round(matHeight / 2) };
+  let bestPt: Point2D = {
+    x: Math.round(matWidth / 2),
+    y: Math.round(matHeight / 2),
+  };
 
+  const channels = materialPixels.length >= matWidth * matHeight * 4 ? 4 : 3;
   const stride = 1; // Check every pixel for exact edge precision
   for (let y = 0; y < matHeight; y += stride) {
     for (let x = 0; x < matWidth; x += stride) {
-      const idx = (y * matWidth + x) * 3;
+      const idx = (y * matWidth + x) * channels;
       const r = materialPixels[idx] ?? 0;
       const g = materialPixels[idx + 1] ?? 0;
       const b = materialPixels[idx + 2] ?? 0;
@@ -178,7 +182,8 @@ export function findAutomaticAnchor(
       if (isWalkableMaterial(r, g, b)) {
         const wx = originX + x;
         const wy = originY + y;
-        const dsq = (wx - targetWorldCenter.x) ** 2 + (wy - targetWorldCenter.y) ** 2;
+        const dsq =
+          (wx - targetWorldCenter.x) ** 2 + (wy - targetWorldCenter.y) ** 2;
         if (dsq < bestDistSq) {
           bestDistSq = dsq;
           bestPt = { x, y };
@@ -211,7 +216,10 @@ export function resolveIslandAnchor(
     return { x: explicitAnchor.at[0], y: explicitAnchor.at[1] };
   }
 
-  if (materialPixels && materialPixels.length >= islandArt.size.w * islandArt.size.h * 3) {
+  if (
+    materialPixels &&
+    materialPixels.length >= islandArt.size.w * islandArt.size.h * 3
+  ) {
     return findAutomaticAnchor(
       materialPixels,
       islandArt.size.w,
@@ -324,9 +332,10 @@ export function computeWorldLayout(
  * Uses the effective island body radius (approx. 45% of island dimensions),
  * accounting for transparent sky margins in raw images.
  */
-export function checkLayoutOverlap(
-  layouts: Iterable<IslandLayout>
-): { overlaps: Array<{ a: string; b: string }>; minClearance: number } {
+export function checkLayoutOverlap(layouts: Iterable<IslandLayout>): {
+  overlaps: Array<{ a: string; b: string }>;
+  minClearance: number;
+} {
   const items = Array.from(layouts);
   const overlaps: Array<{ a: string; b: string }> = [];
   let minClearance = Infinity;
@@ -352,4 +361,3 @@ export function checkLayoutOverlap(
 
   return { overlaps, minClearance };
 }
-

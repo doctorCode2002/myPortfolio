@@ -9,6 +9,8 @@ import {
 } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { ISLANDS } from "@/lib/content/world";
+import { getMayorDialogue } from "@/lib/content/world.selectors";
 import type { Locale } from "@/lib/i18n";
 import { BuildingModal, type BuildingModalData } from "./building-modal";
 import {
@@ -104,15 +106,54 @@ export function PlayView({
   useEffect(() => {
     const unbindNpc = gameEvents.on(
       "interact:npc",
-      ({ charSheet, dialogueKey }) => {
-        const rawLines = dict.play[dialogueKey];
-        const lines = Array.isArray(rawLines) ? rawLines : [rawLines];
-        setActiveDialogue({
-          title: dict.play.demoNpcName,
-          subtitle: dict.play.demoNpcRole,
-          portraitCharSheet: charSheet,
-          lines,
-        });
+      ({
+        npcId,
+        charSheet,
+        dialogueKey,
+        title,
+        subtitle,
+        lines,
+        nameKey,
+        roleKey,
+      }) => {
+        const island = ISLANDS.find((isl) => isl.mayor?.id === npcId);
+        if (island?.mayor) {
+          const mayorDiag = getMayorDialogue(
+            island.mayor,
+            dict as unknown as Record<string, unknown>
+          );
+          setActiveDialogue({
+            title: mayorDiag.name,
+            subtitle: mayorDiag.title,
+            portraitCharSheet: charSheet,
+            lines: [...mayorDiag.lines],
+          });
+          return;
+        }
+
+        if (title && lines) {
+          setActiveDialogue({
+            title,
+            subtitle,
+            portraitCharSheet: charSheet,
+            lines,
+          });
+        } else if (dialogueKey) {
+          const rawLines = dict.play[dialogueKey as keyof typeof dict.play];
+          const resolvedLines = Array.isArray(rawLines)
+            ? (rawLines as string[])
+            : [rawLines as string];
+          setActiveDialogue({
+            title: nameKey
+              ? (dict.play[nameKey as keyof typeof dict.play] as string)
+              : dict.play.demoNpcName,
+            subtitle: roleKey
+              ? (dict.play[roleKey as keyof typeof dict.play] as string)
+              : dict.play.demoNpcRole,
+            portraitCharSheet: charSheet,
+            lines: resolvedLines,
+          });
+        }
       }
     );
 
@@ -121,6 +162,10 @@ export function PlayView({
       ({ buildingId, titleKey, messageKey, title, lines }) => {
         const buildingData =
           dict.play.buildings?.[buildingId as keyof typeof dict.play.buildings];
+        const worldBuilding =
+          dict.world.buildings?.[
+            buildingId as keyof typeof dict.world.buildings
+          ];
 
         if (buildingData) {
           setActiveBuilding({
@@ -133,7 +178,17 @@ export function PlayView({
           setActiveBuilding({
             id: buildingId,
             title,
+            sign: worldBuilding?.sign,
             lines,
+          });
+        } else if (worldBuilding) {
+          setActiveBuilding({
+            id: buildingId,
+            title: buildingId
+              .replace(/^(building_|portal_)/, "")
+              .replace(/_/g, " "),
+            sign: worldBuilding.sign,
+            lines: [worldBuilding.sign, worldBuilding.enterPrompt],
           });
         } else if (titleKey && messageKey) {
           const rawLines = dict.play[messageKey as keyof typeof dict.play];
