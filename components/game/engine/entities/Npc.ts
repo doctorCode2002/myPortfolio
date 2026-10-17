@@ -1,5 +1,4 @@
 import type Phaser from "phaser";
-import { ENGINE_CONSTANTS } from "../constants";
 import { gameEvents } from "../events";
 
 export interface NpcConfig {
@@ -28,11 +27,11 @@ export class Npc {
       ...config,
     };
 
-    const { DEPTHS } = ENGINE_CONSTANTS;
+    const npcDepth = this.config.y + 12;
 
     // Shadow below NPC feet
     this.shadow = scene.add.graphics();
-    this.shadow.setDepth(DEPTHS.PLAYER_SHADOW);
+    this.shadow.setDepth(npcDepth - 1);
     this.shadow.fillStyle(0x000000, 0.28);
     this.shadow.fillEllipse(this.config.x, this.config.y + 12, 14, 6);
 
@@ -44,7 +43,7 @@ export class Npc {
       1 // Default facing down
     );
     this.sprite.setOrigin(0.5, 0.5);
-    this.sprite.setDepth(DEPTHS.PLAYER);
+    this.sprite.setDepth(npcDepth);
 
     // Make NPC interactive on touch / mouse click
     this.sprite.setInteractive({ useHandCursor: true });
@@ -57,7 +56,7 @@ export class Npc {
     // Pixel prompt bubble above head ("E" key / talk bubble)
     this.basePromptY = this.config.y - 28;
     this.promptBubble = scene.add.graphics();
-    this.promptBubble.setDepth(DEPTHS.DETAILS + 10);
+    this.promptBubble.setDepth(npcDepth + 50);
     this.promptBubble.setVisible(false);
     this.drawPromptBubble();
   }
@@ -72,6 +71,20 @@ export class Npc {
 
   public get y(): number {
     return this.config.y;
+  }
+
+  public setPosition(x: number, y: number): void {
+    this.config.x = x;
+    this.config.y = y;
+    this.sprite.setPosition(x, y);
+    this.shadow.clear();
+    this.shadow.fillStyle(0x000000, 0.28);
+    this.shadow.fillEllipse(x, y + 12, 14, 6);
+    this.shadow.setDepth(y + 11);
+    this.sprite.setDepth(y + 12);
+    this.basePromptY = y - 28;
+    this.promptBubble.setDepth(y + 50);
+    this.drawPromptBubble();
   }
 
   public interact(): void {

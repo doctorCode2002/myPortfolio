@@ -102,14 +102,39 @@ export function PlayView({
 
     const unbindBuilding = gameEvents.on(
       "interact:building",
-      ({ titleKey, messageKey }) => {
-        const rawLines = dict.play[messageKey];
-        const lines = Array.isArray(rawLines) ? rawLines : [rawLines];
-        setActiveBuilding({
-          id: "pavilion",
-          title: dict.play[titleKey],
-          lines,
-        });
+      ({ buildingId, titleKey, messageKey, title, lines }) => {
+        const buildingData =
+          dict.play.buildings?.[buildingId as keyof typeof dict.play.buildings];
+
+        if (buildingData) {
+          setActiveBuilding({
+            id: buildingId,
+            title: buildingData.title,
+            sign: buildingData.sign,
+            lines: buildingData.lines,
+          });
+        } else if (title && lines) {
+          setActiveBuilding({
+            id: buildingId,
+            title,
+            lines,
+          });
+        } else if (titleKey && messageKey) {
+          const rawLines = dict.play[messageKey as keyof typeof dict.play];
+          setActiveBuilding({
+            id: buildingId,
+            title: dict.play[titleKey as keyof typeof dict.play] as string,
+            lines: Array.isArray(rawLines)
+              ? (rawLines as string[])
+              : [rawLines as string],
+          });
+        } else {
+          setActiveBuilding({
+            id: buildingId,
+            title: dict.play.demoBuildingTitle,
+            lines: dict.play.demoBuildingDialogue,
+          });
+        }
       }
     );
 

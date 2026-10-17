@@ -5,32 +5,37 @@ import { Npc } from "../entities/Npc";
 import { Player } from "../entities/Player";
 import { gameEvents } from "../events";
 import { ControlsManager } from "../input/controls";
+import { IllustratedIsland, type IslandArt } from "../world/illustratedIsland";
 import { Island } from "../world/islandRenderer";
 import { SkySystem } from "../world/sky";
 
+const ZOOM_LEVELS = [1, 1.5, 2, 3, 4] as const;
+
 export class WorldScene extends Phaser.Scene {
   private sky!: SkySystem;
-  private centerIsland!: Island;
+  private illustratedIsland: IllustratedIsland | null = null;
+  private centerIsland: Island | null = null;
   private player!: Player;
   private controls!: ControlsManager;
   private demoNpc!: Npc;
-  private demoBuilding!: Building;
+  private demoBuilding: Building | null = null;
 
   private unbindEvents: Array<() => void> = [];
   private initialCharSheet = "char_0";
+
+  private zoomIndex = 2;
+  private targetZoom = 2;
+  private pinchDist = 0;
 
   constructor() {
     super({ key: "WorldScene" });
   }
 
   init(data: { charSheet?: string }): void {
-    if (data?.charSheet) {
-      this.initialCharSheet = data.charSheet;
-    }
+    if (data?.charSheet) this.initialCharSheet = data.charSheet;
   }
 
   preload(): void {
-    // Preload all 6 character sheets so avatar switching is instantaneous
     for (let i = 0; i <= 5; i++) {
       const key = `char_${i}`;
       this.load.spritesheet(key, `/game/characters/${key}.png`, {
@@ -38,15 +43,54 @@ export class WorldScene extends Phaser.Scene {
         frameHeight: ENGINE_CONSTANTS.PLAYER.FRAME_HEIGHT,
       });
     }
+    this.load.json("dev-island-json", "/game/islands/_dev/island.json");
+    this.load.image("dev-island-home", "/game/islands/_dev/home.webp");
   }
 
   create(): void {
-    const { ISLAND, PLAYER, WORLD_WIDTH, WORLD_HEIGHT } = ENGINE_CONSTANTS;
-
-    // 1. Procedural Sky & Parallax Drifting Clouds
+    const { WORLD_WIDTH, WORLD_HEIGHT } = ENGINE_CONSTANTS;
     this.sky = new SkySystem(this);
 
-    // 2. Procedural Floating Island (Center Island)
+    const art = this.cache.json.get("dev-island-json") as IslandArt | null;
+    if (art && this.textures.exists("dev-island-home") && art.size) {
+      const ix = Math.round((WORLD_WIDTH - art.size.w) / 2);
+      const iy = 120;
+      this.illustratedIsland = new IllustratedIsland(
+        this,
+        "dev-island-home",
+        art,
+        ix,
+        iy
+      );
+      const px = ix + (art.spawns.player?.[0] ?? art.size.w / 2);
+      const py = iy + (art.spawns.player?.[1] ?? art.size.h / 2);
+      this.player = new Player(this, px, py, this.initialCharSheet);
+
+      const mx = ix + (art.spawns.mayor?.[0] ?? art.size.w / 2 + 35);
+      const my = iy + (art.spawns.mayor?.[1] ?? art.size.h / 2);
+      this.demoNpc = new Npc(this, {
+        id: "mayor",
+        nameKey: "demoNpcName",
+        roleKey: "demoNpcRole",
+        charSheet: "char_1",
+        x: mx,
+        y: my,
+        dialogueKey: "demoNpcDialogue",
+      });
+    } else {
+      this.initProceduralFallback();
+    }
+
+    this.controls = new ControlsManager(this);
+    this.setupEventSubscriptions();
+    gameEvents.resetUiLocks();
+
+    this.setupCamera(WORLD_WIDTH, WORLD_HEIGHT);
+    this.setupZoomInputs();
+  }
+
+  private initProceduralFallback(): void {
+    const { ISLAND, PLAYER } = ENGINE_CONSTANTS;
     this.centerIsland = new Island(this, {
       id: "center-island",
       centerX: ISLAND.CENTER_X,
@@ -58,19 +102,13 @@ export class WorldScene extends Phaser.Scene {
       shadowY: ISLAND.SHADOW_Y,
       biome: "grass",
     });
-
-    // 3. Demo Building (Projects Pavilion) on upper-left meadow
     this.demoBuilding = new Building(this, {
       id: "pavilion",
       titleKey: "demoBuildingTitle",
       messageKey: "demoBuildingDialogue",
       x: 700,
       y: 490,
-      width: 76,
-      height: 68,
     });
-
-    // 4. Demo NPC (Island Mayor) on right side of meadow
     this.demoNpc = new Npc(this, {
       id: "mayor",
       nameKey: "demoNpcName",
@@ -78,105 +116,133 @@ export class WorldScene extends Phaser.Scene {
       charSheet: "char_1",
       x: 890,
       y: 540,
-      interactionRadius: 48,
       dialogueKey: "demoNpcDialogue",
     });
-
-    // 5. Player Character Entity
     this.player = new Player(
       this,
       PLAYER.START_X,
       PLAYER.START_Y,
       this.initialCharSheet
     );
-
-    // 6. Input Controls (Keyboard, Touch Joystick, Tap-to-move)
-    this.controls = new ControlsManager(this);
-
-    // 7. Subscribe to Event Bus for React interactions
-    this.setupEventSubscriptions();
-
-    // Guard: reset any UI lock lingering from scene restart
-    gameEvents.resetUiLocks();
-
-    // 8. Camera with smooth lerp and integer zoom
-    this.setupCamera(WORLD_WIDTH, WORLD_HEIGHT);
   }
 
   override update(time: number, delta: number): void {
     const dt = delta / 1000;
-
-    // Parallax clouds & floating rock bobbing
     this.sky.update(delta);
-    this.centerIsland.update(time);
 
-    // Update NPC and Building interaction states
+    const cam = this.cameras.main;
+    if (Math.abs(cam.zoom - this.targetZoom) > 0.005) {
+      cam.zoom = Phaser.Math.Linear(cam.zoom, this.targetZoom, 0.15);
+    } else {
+      cam.zoom = this.targetZoom;
+    }
+
     const isNpcInRange = this.demoNpc.update(
       this.player.x,
       this.player.y,
       time
     );
-    const isBuildingInRange = this.demoBuilding.update(
-      this.player.x,
-      this.player.y,
-      time
-    );
+    const isBuildingInRange = this.illustratedIsland
+      ? Boolean(this.illustratedIsland.activeDoor)
+      : Boolean(this.demoBuilding?.update(this.player.x, this.player.y, time));
 
-    // Handle interact trigger (E or Space key, or tap)
+    if (this.illustratedIsland) {
+      this.illustratedIsland.update(this.player.x, this.player.y, time);
+    } else {
+      this.centerIsland?.update(time);
+    }
+
     if (this.controls.isInteractTriggered()) {
-      if (isNpcInRange) {
-        this.demoNpc.interact();
-      } else if (isBuildingInRange) {
-        this.demoBuilding.interact();
+      if (isNpcInRange) this.demoNpc.interact();
+      else if (isBuildingInRange) {
+        if (this.illustratedIsland) this.illustratedIsland.interact();
+        else this.demoBuilding?.interact();
       }
     }
 
-    // Gather continuous normalized input
+    const isWalkable = (x: number, y: number): boolean =>
+      this.illustratedIsland
+        ? this.illustratedIsland.isInsideWalkable(x, y)
+        : (this.centerIsland?.isInsideWalkable(x, y) ?? true);
+
+    const isObstacle = (x: number, y: number): boolean =>
+      !this.illustratedIsland && Boolean(this.demoBuilding?.isColliding(x, y));
+
     const { normX, normY } = this.controls.getMovementVector(
       this.player.x,
       this.player.y,
-      (x, y) => this.centerIsland.isInsideWalkable(x, y)
+      isWalkable
     );
+    this.player.move(normX, normY, dt, isWalkable, isObstacle);
+  }
 
-    // Move player with island bounds and solid building wall collision
-    this.player.move(
-      normX,
-      normY,
-      dt,
-      (x, y) => this.centerIsland.isInsideWalkable(x, y),
-      (x, y) => this.demoBuilding.isColliding(x, y)
+  private setZoomLevel(idx: number): void {
+    this.zoomIndex = Phaser.Math.Clamp(idx, 0, ZOOM_LEVELS.length - 1);
+    this.targetZoom = ZOOM_LEVELS[this.zoomIndex] ?? 2;
+    gameEvents.emit("camera:zoom-changed", { zoom: this.targetZoom });
+  }
+
+  private setupZoomInputs(): void {
+    this.input.addPointer(1);
+    this.input.on(
+      "wheel",
+      (_p: unknown, _o: unknown, _dx: number, dy: number) => {
+        this.setZoomLevel(dy < 0 ? this.zoomIndex + 1 : this.zoomIndex - 1);
+      }
     );
+    this.input.on("pointermove", () => {
+      const p1 = this.input.pointer1;
+      const p2 = this.input.pointer2;
+      if (p1?.isDown && p2?.isDown) {
+        const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        if (this.pinchDist > 0 && Math.abs(dist - this.pinchDist) > 25) {
+          this.setZoomLevel(
+            dist > this.pinchDist ? this.zoomIndex + 1 : this.zoomIndex - 1
+          );
+          this.pinchDist = dist;
+        } else if (!this.pinchDist) {
+          this.pinchDist = dist;
+        }
+      } else {
+        this.pinchDist = 0;
+      }
+    });
   }
 
   private setupEventSubscriptions(): void {
-    // Listen for avatar switch from React CharacterPicker
     this.unbindEvents.push(
       gameEvents.on("player:change-character", ({ charSheet }) => {
         this.player.setCharacterSheet(this, charSheet);
-      })
-    );
-
-    // Listen for game freeze (when React dialogue/picker is open)
-    this.unbindEvents.push(
+      }),
       gameEvents.on("game:freeze", (frozen) => {
         this.player.setFrozen(frozen);
         this.controls.setFrozen(frozen);
-      })
-    );
-
-    // Guard: unconditionally unfreeze player when all UI panels are closed
-    this.unbindEvents.push(
+      }),
       gameEvents.on("ui:close", () => {
         this.player.setFrozen(false);
         this.controls.setFrozen(false);
+      }),
+      gameEvents.on("camera:zoom-in", () =>
+        this.setZoomLevel(this.zoomIndex + 1)
+      ),
+      gameEvents.on("camera:zoom-out", () =>
+        this.setZoomLevel(this.zoomIndex - 1)
+      ),
+      gameEvents.on("camera:set-zoom", ({ zoom }) => {
+        let bestIdx = 2;
+        let bestDiff = Infinity;
+        for (let i = 0; i < ZOOM_LEVELS.length; i++) {
+          const diff = Math.abs((ZOOM_LEVELS[i] ?? 2) - zoom);
+          if (diff < bestDiff) {
+            bestDiff = diff;
+            bestIdx = i;
+          }
+        }
+        this.setZoomLevel(bestIdx);
       })
     );
-
-    // Clean up on scene destroy
     this.events.once("shutdown", () => {
-      for (const unbind of this.unbindEvents) {
-        unbind();
-      }
+      for (const unbind of this.unbindEvents) unbind();
       this.unbindEvents = [];
     });
   }
@@ -184,25 +250,16 @@ export class WorldScene extends Phaser.Scene {
   private setupCamera(worldWidth: number, worldHeight: number): void {
     const cam = this.cameras.main;
     cam.setBounds(0, 0, worldWidth, worldHeight);
-
-    // Smooth camera lerp (0.06, 0.06) with pixel-rounded coordinates
     cam.startFollow(this.player.sprite, true, 0.06, 0.06);
 
     const initialZoom = computeIntegerZoom(this.scale.width, this.scale.height);
-    cam.setZoom(initialZoom);
+    const closestIdx = ZOOM_LEVELS.findIndex((z) => z === initialZoom);
+    this.zoomIndex = closestIdx >= 0 ? closestIdx : 2;
+    this.targetZoom = ZOOM_LEVELS[this.zoomIndex] ?? 2;
+    cam.setZoom(this.targetZoom);
 
-    this.scale.on(
-      "resize",
-      (gameSize: Phaser.Structs.Size) => {
-        const w = gameSize.width;
-        const h = gameSize.height;
-
-        this.sky.resize(w, h);
-
-        const nextZoom = computeIntegerZoom(w, h);
-        this.cameras.main.setZoom(nextZoom);
-      },
-      this
-    );
+    this.scale.on("resize", (size: Phaser.Structs.Size) => {
+      this.sky.resize(size.width, size.height);
+    });
   }
 }

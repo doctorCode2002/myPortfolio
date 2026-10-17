@@ -331,7 +331,63 @@
       "char_5": "Noor"
     },
     "buildingStatus": "Under Construction",
-    "buildingClose": "Got it"
+    "buildingClose": "Got it",
+    "buildings": {
+      "castle": {
+        "title": "Grand Castle",
+        "sign": "Castle Gate",
+        "lines": [
+          "The grand stone fortress of the floating island realm.",
+          "Sky bridges to partner islands and client realms will anchor from the lower gates.",
+          "Ascend the stone stairs to explore the core story of Mohammed's development journey."
+        ]
+      },
+      "academy": {
+        "title": "The Academy",
+        "sign": "School & Education",
+        "lines": [
+          "Welcome to the Academy of Computer Science & Software Engineering.",
+          "Here lies Mohammed's academic foundation, coursework, and mentorship archives.",
+          "Interactive lecture notes and deep-dive technical tutorials will be hosted within."
+        ]
+      },
+      "forge": {
+        "title": "The Tech Forge",
+        "sign": "Workshop & Stack",
+        "lines": [
+          "The roaring gears and anvil of the Tech Forge!",
+          "Specialized in TypeScript, React, Next.js, Phaser, Node.js, and modern distributed systems.",
+          "Step inside to inspect the interactive benchmark showcase and open-source toolkits."
+        ]
+      },
+      "pavilion": {
+        "title": "Garden Pavilion",
+        "sign": "Life & Hobbies",
+        "lines": [
+          "A tranquil pavilion surrounded by stone walls, floral meadows, and mountain breezes.",
+          "Discover Mohammed's hobbies: photography, coffee brewing, automotive mechanics, and hiking.",
+          "Relax by the flowers and take in the panoramic sky view."
+        ]
+      },
+      "cottage": {
+        "title": "Family Cottage",
+        "sign": "Roots & Community",
+        "lines": [
+          "A warm timber cottage with a sunlit wooden fence.",
+          "Dedicated to family, community, personal values, and the people who inspire daily work.",
+          "Stories of volunteer mentorship and youth coding workshops are preserved here."
+        ]
+      },
+      "notice_board": {
+        "title": "Island Notice Board",
+        "sign": "News & Dispatches",
+        "lines": [
+          "Hear ye, hear ye! Fresh dispatches posted from the floating islands.",
+          "Latest release: Phase 1 of the interactive game portfolio is now live!",
+          "Next milestone: illustrated bridges and live project pavilions connecting to Khidmty and CivicMind."
+        ]
+      }
+    }
   },
 
   "contact": {

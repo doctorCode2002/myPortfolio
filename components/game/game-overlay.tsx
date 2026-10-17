@@ -1,9 +1,10 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Minus, Plus } from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { localePath, type Locale } from "@/lib/i18n";
+import { gameEvents } from "./engine/events";
 
 export function GameOverlay({
   locale,
@@ -16,9 +17,17 @@ export function GameOverlay({
   currentChar: string;
   onOpenCharacterPicker: () => void;
 }): ReactNode {
+  const [currentZoom, setCurrentZoom] = useState(2);
+
+  useEffect(() => {
+    return gameEvents.on("camera:zoom-changed", ({ zoom }) => {
+      setCurrentZoom(zoom);
+    });
+  }, []);
+
   return (
     <div className="pointer-events-none absolute inset-0 z-40 overflow-hidden select-none">
-      {/* Top Controls: "Back to portfolio" and "Change character" */}
+      {/* Top Controls: "Back to portfolio", "Change character", and Zoom controls */}
       <div className="pointer-events-auto absolute start-4 top-20 flex flex-wrap items-center gap-2 sm:start-6 sm:top-6">
         <Link
           href={localePath(locale, "/")}
@@ -60,6 +69,29 @@ export function GameOverlay({
             </span>
           )}
         </button>
+
+        {/* Zoom Controls (+ / -) for accessibility */}
+        <div className="border-foreground/15 bg-background/85 flex items-center rounded-full border shadow-sm backdrop-blur-md">
+          <button
+            type="button"
+            onClick={() => gameEvents.emit("camera:zoom-out")}
+            aria-label="Zoom out"
+            className="focus-ring text-muted-foreground hover:text-foreground flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-colors"
+          >
+            <Minus className="h-3.5 w-3.5" />
+          </button>
+          <span className="text-foreground min-w-7 text-center font-mono text-xs font-semibold">
+            {currentZoom}x
+          </span>
+          <button
+            type="button"
+            onClick={() => gameEvents.emit("camera:zoom-in")}
+            aria-label="Zoom in"
+            className="focus-ring text-muted-foreground hover:text-foreground flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
 
       {/* Controls HUD pill at bottom */}

@@ -10,6 +10,7 @@ import { gameEvents } from "./engine/events";
 export interface BuildingModalData {
   id: string;
   title: string;
+  sign?: string;
   lines: string[];
 }
 
@@ -111,7 +112,7 @@ export function BuildingModal({
               </span>
             </div>
             <span className="text-muted-foreground font-mono text-xs">
-              {dict.play.demoBuildingSign}
+              {building.sign ?? dict.play.demoBuildingSign}
             </span>
           </div>
         </div>

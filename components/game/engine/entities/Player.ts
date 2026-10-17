@@ -16,19 +16,21 @@ export class Player {
     startY: number,
     initialCharSheet = "char_0"
   ) {
-    const { PLAYER, DEPTHS } = ENGINE_CONSTANTS;
+    const { PLAYER } = ENGINE_CONSTANTS;
     this.charSheet = initialCharSheet;
+
+    const feetDepth = startY + PLAYER.FEET_OFFSET_Y;
 
     // Soft shadow below feet
     this.shadow = scene.add.graphics();
-    this.shadow.setDepth(DEPTHS.PLAYER_SHADOW);
+    this.shadow.setDepth(feetDepth - 1);
     this.shadow.fillStyle(0x000000, 0.28);
     this.shadow.fillEllipse(startX, startY + PLAYER.FEET_OFFSET_Y, 14, 6);
 
     // Player sprite
     this.sprite = scene.add.sprite(startX, startY, this.charSheet, 1);
     this.sprite.setOrigin(0.5, 0.5);
-    this.sprite.setDepth(DEPTHS.PLAYER);
+    this.sprite.setDepth(feetDepth);
 
     this.ensureAnimations(scene, this.charSheet);
   }
@@ -39,6 +41,16 @@ export class Player {
 
   public get y(): number {
     return this.sprite.y;
+  }
+
+  public setPosition(x: number, y: number): void {
+    this.sprite.x = x;
+    this.sprite.y = y;
+    this.shadow.x = x - ENGINE_CONSTANTS.PLAYER.START_X;
+    this.shadow.y = y - ENGINE_CONSTANTS.PLAYER.START_Y;
+    const feetDepth = y + ENGINE_CONSTANTS.PLAYER.FEET_OFFSET_Y;
+    this.sprite.setDepth(feetDepth);
+    this.shadow.setDepth(feetDepth - 1);
   }
 
   public setFrozen(frozen: boolean): void {
@@ -97,9 +109,12 @@ export class Player {
       this.setIdle();
     }
 
-    // Keep shadow aligned under character feet
+    // Keep shadow aligned under character feet and update Y-sorted depth
     this.shadow.x = this.sprite.x - ENGINE_CONSTANTS.PLAYER.START_X;
     this.shadow.y = this.sprite.y - ENGINE_CONSTANTS.PLAYER.START_Y;
+    const feetDepth = this.sprite.y + ENGINE_CONSTANTS.PLAYER.FEET_OFFSET_Y;
+    this.sprite.setDepth(feetDepth);
+    this.shadow.setDepth(feetDepth - 1);
   }
 
   private updateFacing(normX: number, normY: number): void {

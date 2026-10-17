@@ -8,9 +8,15 @@ export type GameEventMap = {
   };
   "interact:building": {
     buildingId: string;
-    titleKey: "demoBuildingTitle";
-    messageKey: "demoBuildingDialogue";
+    titleKey?: string;
+    messageKey?: string;
+    title?: string;
+    lines?: string[];
   };
+  "camera:zoom-in": void;
+  "camera:zoom-out": void;
+  "camera:set-zoom": { zoom: number };
+  "camera:zoom-changed": { zoom: number };
   "ui:open": { type: "dialogue" | "building" | "picker" | string };
   "ui:close": void;
   "player:change-character": { charSheet: string };
