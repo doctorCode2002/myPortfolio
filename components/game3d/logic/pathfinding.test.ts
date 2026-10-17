@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { readManifestFromDisk } from "@/lib/content/manifest3d.node";
+import { readModelBoundsFromDisk } from "./bounds.node";
 
 import { describe, expect, it } from "vitest";
 
@@ -143,12 +144,11 @@ describe("starter content (content/islands3d)", () => {
       i.mayor ? { id: i.mayor.id, sprite: i.mayor.sprite } : undefined,
     ])
   );
-  const world = buildGameWorld(
-    ISLANDS_3D,
-    BRIDGES,
-    mayors,
-    readManifestFromDisk()
-  );
+  // The game loads real hex-edge bounds before building the world; so do the tests.
+  const starterManifest = readManifestFromDisk();
+  const world = buildGameWorld(ISLANDS_3D, BRIDGES, mayors, starterManifest, {
+    bounds: readModelBoundsFromDisk(ISLANDS_3D, starterManifest),
+  });
 
   it("has no content problems and uses ids from lib/content/world.ts", () => {
     const known = new Set(ISLANDS.flatMap((i) => i.buildings.map((b) => b.id)));
@@ -216,7 +216,9 @@ describe("starter content with the real manifest (when present)", () => {
           expect(manifest!.models[name]?.banned, name).toBeFalsy();
         }
       }
-      const world = buildGameWorld(ISLANDS_3D, BRIDGES, mayors, manifest);
+      const world = buildGameWorld(ISLANDS_3D, BRIDGES, mayors, manifest, {
+        bounds: readModelBoundsFromDisk(ISLANDS_3D, manifest!),
+      });
       for (const island of ISLANDS_3D) {
         expect(
           checkIslandReachability(world.walk, island).unreachable,

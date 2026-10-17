@@ -1143,20 +1143,17 @@
       "model": "fence-wood-straight",
       "q": 2,
       "r": -1,
-      "rot": 300,
-      "offset": [0.47, 0.81]
+      "rot": 300
     },
     {
       "model": "fence-wood-straight",
       "q": 4,
-      "r": -1,
-      "offset": [0.93, 0.0]
+      "r": -1
     },
     {
       "model": "fence-wood-straight",
       "q": 5,
-      "r": -3,
-      "offset": [0.93, 0.0]
+      "r": -3
     },
     {
       "model": "rock-single-e",

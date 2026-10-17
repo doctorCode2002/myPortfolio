@@ -6,6 +6,7 @@
  */
 
 import { describe, expect, it } from "vitest";
+import { readModelBoundsFromDisk } from "@/components/game3d/logic/bounds.node";
 
 import { hexKey, hexNeighbours } from "@/components/game3d/logic/hex";
 import { checkIslandReachability } from "@/components/game3d/logic/pathfinding";
@@ -47,7 +48,9 @@ const links = BRIDGES.filter(
 );
 
 describe("group a islands (home, khidmty)", () => {
-  const world = buildGameWorld(islands, links, mayors, manifest);
+  const world = buildGameWorld(islands, links, mayors, manifest, {
+    bounds: readModelBoundsFromDisk(islands, manifest),
+  });
 
   it.each(islands.map((i) => [i.id, i] as const))(
     "%s parses cleanly and is no longer a placeholder",

@@ -141,7 +141,7 @@ describe("content islands with real hex-edge bounds", () => {
   // saleh's three fence-wood-straight pieces carry offsets that put them near the hex
   // centre (the model already sits on the -x edge); with true colliders they close the
   // portal path. Excluded until the content is fixed (drop the offsets, pick the edge with rot).
-  const PENDING_CONTENT_FIX = new Set(["saleh"]);
+  const PENDING_CONTENT_FIX = new Set<string>([]);
 
   it("keeps every door, mayor and anchor reachable", async () => {
     const { ISLANDS_3D } = await import("@/content/islands3d");

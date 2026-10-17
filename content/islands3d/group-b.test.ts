@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readModelBoundsFromDisk } from "@/components/game3d/logic/bounds.node";
 
 import { readManifestFromDisk } from "@/lib/content/manifest3d.node";
 import { ISLANDS } from "@/lib/content/world";
@@ -83,7 +84,9 @@ describe.each(CASES)("island $id (group b)", ({ json, id, plan, baseY }) => {
   });
 
   it("reaches the door, the mayor and every anchor with measured collisions", () => {
-    const world = buildGameWorld([island], [], mayors, manifest);
+    const world = buildGameWorld([island], [], mayors, manifest, {
+      bounds: readModelBoundsFromDisk([island], manifest),
+    });
     const report = checkIslandReachability(world.walk, island);
     expect(report.unreachable).toEqual([]);
     expect(world.interactables.map((i) => i.id).sort()).toEqual(
@@ -92,7 +95,9 @@ describe.each(CASES)("island $id (group b)", ({ json, id, plan, baseY }) => {
   });
 
   it("lets the player's collider walk every path step from the spawn", () => {
-    const world = buildGameWorld([island], [], mayors, manifest);
+    const world = buildGameWorld([island], [], mayors, manifest, {
+      bounds: readModelBoundsFromDisk([island], manifest),
+    });
     const radius = PLAYER_RADIUS_HEX * world.hexWidth;
     const spawn = island.spawns!.player!;
     const start = cellNodeId(id, spawn.q, spawn.r);
