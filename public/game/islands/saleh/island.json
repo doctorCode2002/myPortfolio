@@ -15,9 +15,21 @@
   ],
   "blockers": [],
   "occluders": [],
-  "doors": [],
+  "doors": [
+    {
+      "buildingId": "portal_saleh",
+      "at": [271, 400],
+      "radius": 32
+    }
+  ],
   "spawns": {
-    "player": [271, 326]
+    "player": [271, 420],
+    "mayor": [263, 416]
   },
-  "anchors": []
+  "anchors": [
+    {
+      "id": "to_home",
+      "at": [476, 206]
+    }
+  ]
 }

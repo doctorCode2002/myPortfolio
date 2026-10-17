@@ -15,9 +15,21 @@
   ],
   "blockers": [],
   "occluders": [],
-  "doors": [],
+  "doors": [
+    {
+      "buildingId": "portal_onyx",
+      "at": [260, 407],
+      "radius": 32
+    }
+  ],
   "spawns": {
-    "player": [261, 299]
+    "player": [261, 435],
+    "mayor": [290, 435]
   },
-  "anchors": []
+  "anchors": [
+    {
+      "id": "to_home",
+      "at": [72, 190]
+    }
+  ]
 }

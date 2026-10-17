@@ -15,9 +15,21 @@
   ],
   "blockers": [],
   "occluders": [],
-  "doors": [],
+  "doors": [
+    {
+      "buildingId": "portal_eyad",
+      "at": [267, 374],
+      "radius": 32
+    }
+  ],
   "spawns": {
-    "player": [267, 276]
+    "player": [267, 400],
+    "mayor": [267, 393]
   },
-  "anchors": []
+  "anchors": [
+    {
+      "id": "to_home",
+      "at": [516, 344]
+    }
+  ]
 }

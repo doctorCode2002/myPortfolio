@@ -15,9 +15,62 @@
   ],
   "blockers": [],
   "occluders": [],
-  "doors": [],
+  "doors": [
+    {
+      "buildingId": "building_education",
+      "at": [170, 555],
+      "radius": 32
+    },
+    {
+      "buildingId": "building_experience",
+      "at": [400, 435],
+      "radius": 34
+    },
+    {
+      "buildingId": "building_stack",
+      "at": [630, 555],
+      "radius": 32
+    },
+    {
+      "buildingId": "building_hobbies",
+      "at": [235, 680],
+      "radius": 32
+    },
+    {
+      "buildingId": "building_family",
+      "at": [545, 680],
+      "radius": 32
+    },
+    {
+      "buildingId": "board_news",
+      "at": [435, 570],
+      "radius": 28
+    }
+  ],
   "spawns": {
-    "player": [401, 510]
+    "player": [401, 510],
+    "mayor": [435, 630]
   },
-  "anchors": []
+  "anchors": [
+    {
+      "id": "to_khidmty",
+      "at": [572, 234]
+    },
+    {
+      "id": "to_civicmind",
+      "at": [792, 370]
+    },
+    {
+      "id": "to_onyx",
+      "at": [618, 742]
+    },
+    {
+      "id": "to_saleh",
+      "at": [166, 722]
+    },
+    {
+      "id": "to_eyad",
+      "at": [2, 402]
+    }
+  ]
 }

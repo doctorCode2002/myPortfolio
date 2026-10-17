@@ -15,9 +15,21 @@
   ],
   "blockers": [],
   "occluders": [],
-  "doors": [],
+  "doors": [
+    {
+      "buildingId": "portal_civicmind",
+      "at": [268, 400],
+      "radius": 32
+    }
+  ],
   "spawns": {
-    "player": [269, 327]
+    "player": [269, 430],
+    "mayor": [268, 430]
   },
-  "anchors": []
+  "anchors": [
+    {
+      "id": "to_home",
+      "at": [4, 396]
+    }
+  ]
 }

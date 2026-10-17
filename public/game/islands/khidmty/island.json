@@ -15,9 +15,21 @@
   ],
   "blockers": [],
   "occluders": [],
-  "doors": [],
+  "doors": [
+    {
+      "buildingId": "portal_khidmty",
+      "at": [253, 400],
+      "radius": 32
+    }
+  ],
   "spawns": {
-    "player": [254, 311]
+    "player": [254, 430],
+    "mayor": [285, 430]
   },
-  "anchors": []
+  "anchors": [
+    {
+      "id": "to_home",
+      "at": [230, 502]
+    }
+  ]
 }
