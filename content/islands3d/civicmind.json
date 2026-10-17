@@ -1,0 +1,888 @@
+{
+  "id": "civicmind",
+  "center": [38, -16],
+  "baseY": 2,
+  "biome": "civic",
+  "_note": "CivicMind: a tidy civic district. The clock-tower town hall (b-town-hall) stands on a raised terrace above a paved plaza with a fountain, crystal lamps and benches; civic houses, a records tower and a reservoir pond ring it. Generated layout; procedural models in scripts/3d/procedural/b.mjs.",
+  "hexes": [
+    {
+      "q": 0,
+      "r": -4,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 1,
+      "r": -4,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 2,
+      "r": -4,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 3,
+      "r": -4,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": -1,
+      "r": -3,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 0,
+      "r": -3,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 1,
+      "r": -3,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 2,
+      "r": -3,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 3,
+      "r": -3,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 4,
+      "r": -3,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": -1,
+      "r": -2,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 0,
+      "r": -2,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 1,
+      "r": -2,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 2,
+      "r": -2,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 3,
+      "r": -2,
+      "tile": "hex-grass-sloped-low",
+      "h": 1,
+      "rot": 180
+    },
+    {
+      "q": 4,
+      "r": -2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": -1,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": -1,
+      "r": -1,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": 0,
+      "r": -1,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": 1,
+      "r": -1,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": 2,
+      "r": -1,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": 3,
+      "r": -1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -3,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": 0,
+      "tile": "hex-grass-sloped-low",
+      "rot": 60
+    },
+    {
+      "q": -1,
+      "r": 0,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": 0,
+      "r": 0,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": 1,
+      "r": 0,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": 2,
+      "r": 0,
+      "tile": "b-hex-paving"
+    },
+    {
+      "q": 3,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -3,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": 1,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": -1,
+      "r": 1,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": 0,
+      "r": 1,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": 1,
+      "r": 1,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": 2,
+      "r": 1,
+      "tile": "b-hex-paving"
+    },
+    {
+      "q": 3,
+      "r": 1,
+      "tile": "hex-water"
+    },
+    {
+      "q": -4,
+      "r": 2,
+      "tile": "b-hex-paving"
+    },
+    {
+      "q": -3,
+      "r": 2,
+      "tile": "b-hex-paving"
+    },
+    {
+      "q": -2,
+      "r": 2,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": -1,
+      "r": 2,
+      "tile": "b-hex-paving",
+      "h": 1
+    },
+    {
+      "q": 0,
+      "r": 2,
+      "tile": "hex-grass-sloped-low",
+      "rot": 120
+    },
+    {
+      "q": 1,
+      "r": 2,
+      "tile": "b-hex-paving"
+    },
+    {
+      "q": 2,
+      "r": 2,
+      "tile": "hex-water"
+    },
+    {
+      "q": -4,
+      "r": 3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -3,
+      "r": 3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": 3,
+      "tile": "b-hex-paving"
+    },
+    {
+      "q": -1,
+      "r": 3,
+      "tile": "b-hex-paving"
+    },
+    {
+      "q": 0,
+      "r": 3,
+      "tile": "b-hex-paving"
+    },
+    {
+      "q": -3,
+      "r": 4,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": 4,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -1,
+      "r": 4,
+      "tile": "hex-grass"
+    }
+  ],
+  "objects": [
+    {
+      "model": "b-town-hall",
+      "q": 1,
+      "r": -3,
+      "offset": [0.0, 1.036]
+    },
+    {
+      "model": "b-crystal-lamp",
+      "q": 0,
+      "r": -2,
+      "offset": [-0.15, 1.014]
+    },
+    {
+      "model": "b-crystal-lamp",
+      "q": 1,
+      "r": -2,
+      "offset": [0.15, 1.014]
+    },
+    {
+      "model": "b-planter",
+      "q": -1,
+      "r": -2,
+      "offset": [-0.3, 0.714]
+    },
+    {
+      "model": "b-planter",
+      "q": 2,
+      "r": -2,
+      "offset": [0.3, 0.714]
+    },
+    {
+      "model": "hedge",
+      "q": -1,
+      "r": -2,
+      "offset": [-0.9, -0.436]
+    },
+    {
+      "model": "hedge",
+      "q": 2,
+      "r": -2,
+      "offset": [0.95, -0.436]
+    },
+    {
+      "model": "hedge-curved",
+      "q": 2,
+      "r": -1,
+      "rot": 90,
+      "offset": [0.1, -1.018]
+    },
+    {
+      "model": "hedge-curved",
+      "q": -2,
+      "r": -1,
+      "offset": [0.0, -1.018]
+    },
+    {
+      "model": "b-crystal-cluster",
+      "q": 0,
+      "r": -4,
+      "rot": 20,
+      "offset": [0.4, 0.428]
+    },
+    {
+      "model": "b-crystal-cluster",
+      "q": 3,
+      "r": -4,
+      "rot": 70,
+      "scale": 0.8,
+      "offset": [-0.2, 0.028]
+    },
+    {
+      "model": "b-crystal-cluster",
+      "q": 2,
+      "r": -4,
+      "scale": 0.7,
+      "offset": [-0.6, -0.472]
+    },
+    {
+      "model": "tree-town-high",
+      "q": -1,
+      "r": -3,
+      "offset": [0.6, -0.404]
+    },
+    {
+      "model": "tree-default",
+      "q": 3,
+      "r": -3,
+      "rot": 40,
+      "offset": [0.3, -0.304]
+    },
+    {
+      "model": "tree-town",
+      "q": 2,
+      "r": -4,
+      "rot": 10,
+      "scale": 0.85,
+      "offset": [0.6, -0.072]
+    },
+    {
+      "model": "tree-town-crooked",
+      "q": 1,
+      "r": -4,
+      "scale": 0.8,
+      "offset": [-0.3, -0.172]
+    },
+    {
+      "model": "plant-bush-detailed",
+      "q": 3,
+      "r": -2,
+      "offset": [-0.1, -0.936]
+    },
+    {
+      "model": "flower-purple-a",
+      "q": -1,
+      "r": -3,
+      "offset": [-0.4, 0.496]
+    },
+    {
+      "model": "flower-yellow-b",
+      "q": 3,
+      "r": -4,
+      "offset": [0.6, 0.728]
+    },
+    {
+      "model": "grass-tuft",
+      "q": 1,
+      "r": -4,
+      "offset": [0.4, 0.328]
+    },
+    {
+      "model": "fountain-round-detail",
+      "q": -1,
+      "r": 1,
+      "scale": 0.8,
+      "offset": [0.0, 0.0]
+    },
+    {
+      "model": "b-bench",
+      "q": 0,
+      "r": 1,
+      "rot": -90,
+      "offset": [0.65, -0.002]
+    },
+    {
+      "model": "b-bench",
+      "q": -2,
+      "r": 2,
+      "rot": 150,
+      "offset": [-0.33, 0.536]
+    },
+    {
+      "model": "b-bench",
+      "q": -1,
+      "r": 2,
+      "rot": -150,
+      "offset": [0.33, 0.536]
+    },
+    {
+      "model": "b-crystal-lamp",
+      "q": -2,
+      "r": 0,
+      "offset": [0.6, 0.35]
+    },
+    {
+      "model": "b-crystal-lamp",
+      "q": 1,
+      "r": 0,
+      "offset": [-0.6, 0.35]
+    },
+    {
+      "model": "b-crystal-lamp",
+      "q": -3,
+      "r": 1,
+      "offset": [0.4, 0.868]
+    },
+    {
+      "model": "b-crystal-lamp",
+      "q": 0,
+      "r": 2,
+      "offset": [-0.4, 0.136]
+    },
+    {
+      "model": "b-notice-column",
+      "q": 0,
+      "r": 0,
+      "offset": [0.7, -0.35]
+    },
+    {
+      "model": "flag-blue",
+      "q": -1,
+      "r": -1,
+      "offset": [-0.75, 0.582]
+    },
+    {
+      "model": "flag-blue",
+      "q": 1,
+      "r": -1,
+      "offset": [0.75, 0.582]
+    },
+    {
+      "model": "building-home-b-blue",
+      "q": -3,
+      "r": 0,
+      "rot": 90,
+      "offset": [0.0, 0.0]
+    },
+    {
+      "model": "building-well-blue",
+      "q": -2,
+      "r": -1,
+      "rot": 30,
+      "offset": [0.0, 0.0]
+    },
+    {
+      "model": "bucket-water",
+      "q": -2,
+      "r": -1,
+      "offset": [0.6, 0.552]
+    },
+    {
+      "model": "b-planter",
+      "q": -3,
+      "r": 1,
+      "rot": 60,
+      "offset": [-0.75, -0.382]
+    },
+    {
+      "model": "lantern",
+      "q": -3,
+      "r": 1,
+      "offset": [-0.3, 0.618]
+    },
+    {
+      "model": "lantern",
+      "q": -3,
+      "r": 2,
+      "offset": [0.0, 0.986]
+    },
+    {
+      "model": "tree-town",
+      "q": -4,
+      "r": 3,
+      "scale": 0.9,
+      "offset": [-0.2, -0.196]
+    },
+    {
+      "model": "plant-bush",
+      "q": -4,
+      "r": 2,
+      "offset": [0.0, 0.636]
+    },
+    {
+      "model": "flower-red-a",
+      "q": -4,
+      "r": 3,
+      "offset": [0.4, 0.404]
+    },
+    {
+      "model": "flower-yellow-a",
+      "q": -3,
+      "r": 3,
+      "offset": [-0.4, 0.404]
+    },
+    {
+      "model": "building-home-a-blue",
+      "q": -3,
+      "r": 3,
+      "rot": 90,
+      "offset": [0.0, 0.0]
+    },
+    {
+      "model": "crops-dirt-row",
+      "q": -3,
+      "r": 4,
+      "offset": [0.0, 0.0]
+    },
+    {
+      "model": "flower-red-b",
+      "q": -3,
+      "r": 4,
+      "offset": [-0.55, -0.148]
+    },
+    {
+      "model": "flower-yellow-a",
+      "q": -3,
+      "r": 4,
+      "offset": [-0.18, 0.152]
+    },
+    {
+      "model": "flower-purple-b",
+      "q": -3,
+      "r": 4,
+      "offset": [0.19, -0.148]
+    },
+    {
+      "model": "flower-red-a",
+      "q": -3,
+      "r": 4,
+      "offset": [0.56, 0.152]
+    },
+    {
+      "model": "tree-default",
+      "q": -2,
+      "r": 4,
+      "rot": 30,
+      "scale": 0.9,
+      "offset": [0.2, 0.172]
+    },
+    {
+      "model": "b-planter",
+      "q": -1,
+      "r": 4,
+      "offset": [0.0, -0.328]
+    },
+    {
+      "model": "hedge",
+      "q": -1,
+      "r": 3,
+      "rot": 90,
+      "offset": [0.0, 0.704]
+    },
+    {
+      "model": "plant-bush-small",
+      "q": -1,
+      "r": 4,
+      "offset": [0.9, 0.272]
+    },
+    {
+      "model": "b-crystal-cluster",
+      "q": -3,
+      "r": 4,
+      "rot": 40,
+      "scale": 0.6,
+      "offset": [0.95, -0.028]
+    },
+    {
+      "model": "building-tower-a-blue",
+      "q": 4,
+      "r": -3,
+      "rot": -90,
+      "offset": [0.0, 0.0]
+    },
+    {
+      "model": "building-home-a-blue",
+      "q": 4,
+      "r": -2,
+      "rot": -30,
+      "offset": [0.0, 0.0]
+    },
+    {
+      "model": "building-home-b-blue",
+      "q": 3,
+      "r": 0,
+      "rot": -90,
+      "offset": [0.0, 0.0]
+    },
+    {
+      "model": "hedge",
+      "q": 3,
+      "r": -1,
+      "rot": 90,
+      "offset": [0.7, 0.732]
+    },
+    {
+      "model": "b-crystal-lamp",
+      "q": 1,
+      "r": 1,
+      "offset": [0.4, -0.782]
+    },
+    {
+      "model": "b-crystal-lamp",
+      "q": 1,
+      "r": 2,
+      "offset": [1.0, -0.264]
+    },
+    {
+      "model": "b-crystal-cluster",
+      "q": 4,
+      "r": -3,
+      "rot": 15,
+      "scale": 0.7,
+      "offset": [-0.6, 0.396]
+    },
+    {
+      "model": "rock-small-a",
+      "q": 3,
+      "r": 1,
+      "offset": [0.4, -0.532]
+    },
+    {
+      "model": "waterlily-b",
+      "q": 3,
+      "r": 1,
+      "offset": [0.0, -0.132]
+    },
+    {
+      "model": "waterlily-a",
+      "q": 2,
+      "r": 2,
+      "offset": [0.3, -0.464]
+    },
+    {
+      "model": "waterplant-a",
+      "q": 2,
+      "r": 2,
+      "offset": [-0.5, 0.536]
+    },
+    {
+      "model": "rock-single-c",
+      "q": 2,
+      "r": 2,
+      "offset": [0.3, 0.436]
+    },
+    {
+      "model": "plant-bush-large",
+      "q": 1,
+      "r": 2,
+      "offset": [-0.1, 0.836]
+    },
+    {
+      "model": "flower-purple-a",
+      "q": 0,
+      "r": 2,
+      "offset": [1.0, -0.064]
+    },
+    {
+      "model": "stall-bench",
+      "q": 2,
+      "r": 1,
+      "offset": [-0.4, 0.648]
+    },
+    {
+      "model": "tree-fat",
+      "q": 1,
+      "r": 1,
+      "rot": 20,
+      "scale": 0.9,
+      "offset": [0.25, 0.518]
+    },
+    {
+      "model": "plant-bush-small",
+      "q": 1,
+      "r": 1,
+      "offset": [-0.4, -0.732]
+    },
+    {
+      "model": "flower-yellow-a",
+      "q": 1,
+      "r": 1,
+      "offset": [0.9, 0.168]
+    },
+    {
+      "model": "flower-red-b",
+      "q": 3,
+      "r": -1,
+      "offset": [0.3, -0.568]
+    },
+    {
+      "model": "flower-purple-b",
+      "q": 3,
+      "r": -1,
+      "offset": [-0.4, 0.532]
+    },
+    {
+      "model": "plant-bush",
+      "q": 3,
+      "r": -1,
+      "offset": [-0.8, -0.668]
+    },
+    {
+      "model": "tree-oak",
+      "q": -4,
+      "r": 3,
+      "scale": 0.9,
+      "offset": [0.6, 0.804]
+    },
+    {
+      "model": "grass-tuft",
+      "q": -4,
+      "r": 3,
+      "offset": [-0.8, -0.596]
+    },
+    {
+      "model": "grass-leafs",
+      "q": -3,
+      "r": 4,
+      "offset": [0.0, -1.128]
+    },
+    {
+      "model": "plant-bush-detailed",
+      "q": -1,
+      "r": 4,
+      "scale": 0.8,
+      "offset": [-0.7, 0.472]
+    },
+    {
+      "model": "flower-red-a",
+      "q": 0,
+      "r": 3,
+      "offset": [-0.4, 0.204]
+    },
+    {
+      "model": "flower-yellow-b",
+      "q": -2,
+      "r": 4,
+      "offset": [0.9, -0.628]
+    },
+    {
+      "model": "flower-purple-a",
+      "q": -3,
+      "r": 0,
+      "offset": [0.4, 0.6]
+    },
+    {
+      "model": "plant-bush-small",
+      "q": -2,
+      "r": 0,
+      "offset": [-0.6, -0.7]
+    },
+    {
+      "model": "flower-yellow-a",
+      "q": -1,
+      "r": -2,
+      "offset": [-0.1, 0.464]
+    },
+    {
+      "model": "grass-tuft",
+      "q": 2,
+      "r": -2,
+      "offset": [0.7, 0.464]
+    },
+    {
+      "model": "flower-red-b",
+      "q": 3,
+      "r": -3,
+      "offset": [0.6, 0.496]
+    },
+    {
+      "model": "plant-bush",
+      "q": -1,
+      "r": -3,
+      "offset": [-0.6, 0.196]
+    },
+    {
+      "model": "rock-small-a",
+      "q": 0,
+      "r": -4,
+      "offset": [0.1, -0.472]
+    }
+  ],
+  "doors": [
+    {
+      "buildingId": "portal_civicmind",
+      "q": 0,
+      "r": -1,
+      "radius": 0.9
+    }
+  ],
+  "spawns": {
+    "player": {
+      "q": -3,
+      "r": 2
+    },
+    "mayor": {
+      "q": -1,
+      "r": -1,
+      "rot": 0
+    }
+  },
+  "anchors": [
+    {
+      "id": "to_home",
+      "q": -4,
+      "r": 2
+    }
+  ],
+  "underside": {
+    "depth": 6.5,
+    "style": "rock",
+    "seed": 21,
+    "waterfalls": [
+      {
+        "q": 3,
+        "r": 1
+      },
+      {
+        "q": 2,
+        "r": 2
+      }
+    ]
+  }
+}

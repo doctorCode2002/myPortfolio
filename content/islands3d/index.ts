@@ -8,8 +8,12 @@ import { parseIsland3D } from "@/components/game3d/logic/validate-island";
 import type { Island3D } from "@/components/game3d/logic/types";
 import home from "./home.json";
 import khidmty from "./khidmty.json";
+import civicmind from "./civicmind.json";
+import onyx from "./onyx.json";
 
 export const ISLANDS_3D: readonly Island3D[] = [
   parseIsland3D(home, "home.json"),
   parseIsland3D(khidmty, "khidmty.json"),
+  parseIsland3D(civicmind, "civicmind.json"),
+  parseIsland3D(onyx, "onyx.json"),
 ];

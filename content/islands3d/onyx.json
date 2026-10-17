@@ -1,0 +1,800 @@
+{
+  "id": "onyx",
+  "center": [32, 26],
+  "baseY": -1,
+  "biome": "desert",
+  "_note": "Onyx: an elegant desert bazaar. A black-and-gold boutique palace (b-palace) with a gold dome and a plain ball finial sits on a mosaic terrace; a bazaar lane of stalls, rugs and lanterns runs from the bridge to a pavilion square, with dunes and cacti to the west and a palm oasis that spills over the east edge. Procedural models in scripts/3d/procedural/b.mjs.",
+  "hexes": [
+    {
+      "q": 1,
+      "r": -4,
+      "tile": "b-hex-sand",
+      "rot": 180
+    },
+    {
+      "q": 2,
+      "r": -4,
+      "tile": "b-hex-sand",
+      "h": 2,
+      "rot": 240
+    },
+    {
+      "q": 3,
+      "r": -4,
+      "tile": "b-hex-sand",
+      "h": 2,
+      "rot": 300
+    },
+    {
+      "q": 4,
+      "r": -4,
+      "tile": "b-hex-sand",
+      "h": 2
+    },
+    {
+      "q": -1,
+      "r": -3,
+      "tile": "b-hex-sand",
+      "rot": 120
+    },
+    {
+      "q": 0,
+      "r": -3,
+      "tile": "b-hex-sand",
+      "rot": 180
+    },
+    {
+      "q": 1,
+      "r": -3,
+      "tile": "b-hex-sand",
+      "h": 2,
+      "rot": 240
+    },
+    {
+      "q": 2,
+      "r": -3,
+      "tile": "b-hex-sand",
+      "h": 2,
+      "rot": 300
+    },
+    {
+      "q": 3,
+      "r": -3,
+      "tile": "b-hex-sand",
+      "h": 2
+    },
+    {
+      "q": 4,
+      "r": -3,
+      "tile": "b-hex-sand",
+      "h": 1,
+      "rot": 60
+    },
+    {
+      "q": -2,
+      "r": -2,
+      "tile": "b-hex-sand",
+      "rot": 120
+    },
+    {
+      "q": -1,
+      "r": -2,
+      "tile": "b-hex-sand",
+      "rot": 180
+    },
+    {
+      "q": 0,
+      "r": -2,
+      "tile": "b-hex-mosaic",
+      "h": 2
+    },
+    {
+      "q": 1,
+      "r": -2,
+      "tile": "b-hex-mosaic",
+      "h": 2
+    },
+    {
+      "q": 2,
+      "r": -2,
+      "tile": "b-hex-mosaic",
+      "h": 2
+    },
+    {
+      "q": 3,
+      "r": -2,
+      "tile": "b-hex-sand",
+      "h": 1,
+      "rot": 60
+    },
+    {
+      "q": -2,
+      "r": -1,
+      "tile": "b-hex-sand",
+      "rot": 180
+    },
+    {
+      "q": -1,
+      "r": -1,
+      "tile": "b-hex-sand",
+      "h": 1,
+      "rot": 240
+    },
+    {
+      "q": 0,
+      "r": -1,
+      "tile": "b-hex-mosaic",
+      "h": 1
+    },
+    {
+      "q": 1,
+      "r": -1,
+      "tile": "b-hex-mosaic",
+      "h": 1
+    },
+    {
+      "q": 2,
+      "r": -1,
+      "tile": "b-hex-mosaic",
+      "h": 1
+    },
+    {
+      "q": 3,
+      "r": -1,
+      "tile": "b-hex-sand",
+      "rot": 120
+    },
+    {
+      "q": -3,
+      "r": 0,
+      "tile": "b-hex-sand",
+      "rot": 180
+    },
+    {
+      "q": -2,
+      "r": 0,
+      "tile": "b-hex-sand",
+      "rot": 240
+    },
+    {
+      "q": -1,
+      "r": 0,
+      "tile": "b-hex-sand",
+      "rot": 300
+    },
+    {
+      "q": 0,
+      "r": 0,
+      "tile": "b-hex-sand",
+      "h": 1
+    },
+    {
+      "q": 1,
+      "r": 0,
+      "tile": "b-hex-sand",
+      "rot": 60
+    },
+    {
+      "q": 2,
+      "r": 0,
+      "tile": "b-hex-sand",
+      "rot": 120
+    },
+    {
+      "q": 3,
+      "r": 0,
+      "tile": "hex-water"
+    },
+    {
+      "q": -4,
+      "r": 1,
+      "tile": "b-hex-sand",
+      "h": 1,
+      "rot": 180
+    },
+    {
+      "q": -3,
+      "r": 1,
+      "tile": "b-hex-sand",
+      "h": 1,
+      "rot": 240
+    },
+    {
+      "q": -2,
+      "r": 1,
+      "tile": "b-hex-sand",
+      "rot": 300
+    },
+    {
+      "q": -1,
+      "r": 1,
+      "tile": "b-hex-sand"
+    },
+    {
+      "q": 0,
+      "r": 1,
+      "tile": "b-hex-sand",
+      "rot": 60
+    },
+    {
+      "q": 1,
+      "r": 1,
+      "tile": "b-hex-sand",
+      "rot": 120
+    },
+    {
+      "q": 2,
+      "r": 1,
+      "tile": "hex-water"
+    },
+    {
+      "q": 3,
+      "r": 1,
+      "tile": "hex-water"
+    },
+    {
+      "q": -4,
+      "r": 2,
+      "tile": "b-hex-sand",
+      "h": 2,
+      "rot": 240
+    },
+    {
+      "q": -3,
+      "r": 2,
+      "tile": "b-hex-sand",
+      "h": 1,
+      "rot": 300
+    },
+    {
+      "q": -2,
+      "r": 2,
+      "tile": "b-hex-sand"
+    },
+    {
+      "q": -1,
+      "r": 2,
+      "tile": "b-hex-sand",
+      "rot": 60
+    },
+    {
+      "q": 0,
+      "r": 2,
+      "tile": "b-hex-sand",
+      "rot": 120
+    },
+    {
+      "q": 1,
+      "r": 2,
+      "tile": "b-hex-sand",
+      "rot": 180
+    },
+    {
+      "q": 2,
+      "r": 2,
+      "tile": "hex-water"
+    },
+    {
+      "q": -3,
+      "r": 3,
+      "tile": "b-hex-sand",
+      "h": 1
+    },
+    {
+      "q": -2,
+      "r": 3,
+      "tile": "b-hex-sand",
+      "rot": 60
+    },
+    {
+      "q": -1,
+      "r": 3,
+      "tile": "b-hex-sand",
+      "rot": 120
+    },
+    {
+      "q": 0,
+      "r": 3,
+      "tile": "b-hex-sand",
+      "rot": 180
+    },
+    {
+      "q": 1,
+      "r": 3,
+      "tile": "b-hex-sand",
+      "rot": 240
+    },
+    {
+      "q": -3,
+      "r": 4,
+      "tile": "b-hex-sand",
+      "rot": 60
+    },
+    {
+      "q": -2,
+      "r": 4,
+      "tile": "b-hex-sand",
+      "rot": 120
+    },
+    {
+      "q": -1,
+      "r": 4,
+      "tile": "b-hex-sand",
+      "rot": 180
+    }
+  ],
+  "objects": [
+    {
+      "model": "b-palace",
+      "q": 2,
+      "r": -3,
+      "offset": [0.0, 0.896]
+    },
+    {
+      "model": "b-lantern-gold",
+      "q": 1,
+      "r": -2,
+      "offset": [0.05, 1.114]
+    },
+    {
+      "model": "b-lantern-gold",
+      "q": 2,
+      "r": -2,
+      "offset": [-0.05, 1.114]
+    },
+    {
+      "model": "b-mannequin",
+      "q": 0,
+      "r": -1,
+      "rot": 20,
+      "offset": [-0.3, -0.818]
+    },
+    {
+      "model": "b-mannequin",
+      "q": 2,
+      "r": -1,
+      "rot": -20,
+      "offset": [0.3, -0.818]
+    },
+    {
+      "model": "b-urn",
+      "q": 0,
+      "r": -2,
+      "offset": [-0.6, 0.464]
+    },
+    {
+      "model": "b-urn",
+      "q": 3,
+      "r": -2,
+      "scale": 0.9,
+      "offset": [0.4, 0.264]
+    },
+    {
+      "model": "tree-palm-tall",
+      "q": 1,
+      "r": -3,
+      "rot": 30,
+      "offset": [-0.9, -0.304]
+    },
+    {
+      "model": "tree-palm",
+      "q": 4,
+      "r": -3,
+      "rot": 200,
+      "offset": [-0.7, -0.704]
+    },
+    {
+      "model": "tree-palm-short",
+      "q": 4,
+      "r": -3,
+      "rot": 90,
+      "scale": 0.9,
+      "offset": [0.6, 0.596]
+    },
+    {
+      "model": "cactus-tall",
+      "q": 1,
+      "r": -4,
+      "offset": [-0.6, 0.328]
+    },
+    {
+      "model": "rock-sand-b",
+      "q": 2,
+      "r": -4,
+      "rot": 40,
+      "offset": [0.2, -0.372]
+    },
+    {
+      "model": "pot-small",
+      "q": 3,
+      "r": -4,
+      "offset": [0.6, -0.172]
+    },
+    {
+      "model": "b-rug-indigo",
+      "q": 1,
+      "r": -1,
+      "offset": [0.0, 0.932]
+    },
+    {
+      "model": "b-lantern-gold",
+      "q": -1,
+      "r": 0,
+      "offset": [0.1, -0.9]
+    },
+    {
+      "model": "b-lantern-gold",
+      "q": 2,
+      "r": 0,
+      "offset": [-0.1, -0.9]
+    },
+    {
+      "model": "b-bazaar-stall",
+      "q": 0,
+      "r": -3,
+      "rot": 120,
+      "offset": [-0.2, 0.596]
+    },
+    {
+      "model": "tent-small-open",
+      "q": -2,
+      "r": -2,
+      "rot": 90,
+      "offset": [-0.3, 0.564]
+    },
+    {
+      "model": "b-rug-red",
+      "q": -2,
+      "r": -1,
+      "rot": 30,
+      "offset": [0.5, 0.832]
+    },
+    {
+      "model": "b-bazaar-stall",
+      "q": -3,
+      "r": 0,
+      "rot": 60,
+      "offset": [0.6, -0.4]
+    },
+    {
+      "model": "pot-large",
+      "q": -3,
+      "r": 0,
+      "offset": [-0.2, 0.5]
+    },
+    {
+      "model": "b-urn",
+      "q": -3,
+      "r": 0,
+      "scale": 0.8,
+      "offset": [-0.6, -0.5]
+    },
+    {
+      "model": "sack",
+      "q": -2,
+      "r": 0,
+      "rot": 30,
+      "offset": [0.2, 0.6]
+    },
+    {
+      "model": "crate-a-small",
+      "q": -2,
+      "r": 1,
+      "offset": [0.1, -0.932]
+    },
+    {
+      "model": "b-lantern-gold",
+      "q": -1,
+      "r": -1,
+      "offset": [0.65, -0.568]
+    },
+    {
+      "model": "b-pavilion",
+      "q": -1,
+      "r": 1,
+      "offset": [0.0, -0.002]
+    },
+    {
+      "model": "b-rug-teal",
+      "q": 0,
+      "r": 1,
+      "rot": 70,
+      "offset": [0.0, 0.268]
+    },
+    {
+      "model": "b-rug-red",
+      "q": 1,
+      "r": 0,
+      "rot": -20,
+      "offset": [0.2, 0.4]
+    },
+    {
+      "model": "tent-detailed-open",
+      "q": 0,
+      "r": 2,
+      "rot": 180,
+      "offset": [0.7, 0.436]
+    },
+    {
+      "model": "stall-red",
+      "q": -2,
+      "r": 3,
+      "rot": 180,
+      "offset": [-0.3, -0.596]
+    },
+    {
+      "model": "b-bazaar-stall",
+      "q": -1,
+      "r": 3,
+      "rot": 180,
+      "offset": [-0.3, 0.404]
+    },
+    {
+      "model": "barrel",
+      "q": -1,
+      "r": 4,
+      "offset": [-0.15, -1.028]
+    },
+    {
+      "model": "crate-long-a",
+      "q": -3,
+      "r": 3,
+      "rot": 60,
+      "offset": [0.4, 0.104]
+    },
+    {
+      "model": "b-urn",
+      "q": 1,
+      "r": 1,
+      "offset": [0.7, 0.468]
+    },
+    {
+      "model": "pot-small",
+      "q": 1,
+      "r": 2,
+      "offset": [0.0, -0.364]
+    },
+    {
+      "model": "b-lantern-gold",
+      "q": -2,
+      "r": 2,
+      "offset": [-0.6, -0.564]
+    },
+    {
+      "model": "b-lantern-gold",
+      "q": 0,
+      "r": 2,
+      "offset": [-0.4, -0.464]
+    },
+    {
+      "model": "b-lantern-gold",
+      "q": 2,
+      "r": 0,
+      "offset": [-0.9, 0.2]
+    },
+    {
+      "model": "cactus-tall",
+      "q": -4,
+      "r": 2,
+      "offset": [-0.2, -0.164]
+    },
+    {
+      "model": "cactus-short",
+      "q": -4,
+      "r": 1,
+      "rot": 40,
+      "offset": [-0.1, -0.132]
+    },
+    {
+      "model": "cactus-short",
+      "q": -3,
+      "r": 2,
+      "rot": 200,
+      "offset": [-0.8, -0.564]
+    },
+    {
+      "model": "rock-sand-a",
+      "q": -3,
+      "r": 1,
+      "rot": 10,
+      "offset": [-0.4, -0.532]
+    },
+    {
+      "model": "rock-sand-b",
+      "q": -3,
+      "r": 3,
+      "rot": 80,
+      "offset": [-0.6, -0.296]
+    },
+    {
+      "model": "tree-palm-bend",
+      "q": -3,
+      "r": 2,
+      "rot": 300,
+      "offset": [0.6, 0.136]
+    },
+    {
+      "model": "cactus-short",
+      "q": -2,
+      "r": 4,
+      "scale": 0.8,
+      "offset": [-0.6, -0.028]
+    },
+    {
+      "model": "rock-sand-a",
+      "q": -1,
+      "r": 4,
+      "rot": 120,
+      "scale": 0.8,
+      "offset": [0.6, -0.128]
+    },
+    {
+      "model": "cactus-tall",
+      "q": 1,
+      "r": 3,
+      "rot": 20,
+      "scale": 0.85,
+      "offset": [-0.4, -0.296]
+    },
+    {
+      "model": "tree-palm",
+      "q": 2,
+      "r": 0,
+      "rot": 10,
+      "offset": [0.3, 0.2]
+    },
+    {
+      "model": "tree-palm-tall",
+      "q": 1,
+      "r": 2,
+      "rot": 160,
+      "offset": [0.2, 0.236]
+    },
+    {
+      "model": "tree-palm-short",
+      "q": 3,
+      "r": -1,
+      "rot": 250,
+      "offset": [1.0, 0.132]
+    },
+    {
+      "model": "waterplant-c",
+      "q": 2,
+      "r": 1,
+      "offset": [-0.2, -0.332]
+    },
+    {
+      "model": "waterplant-a",
+      "q": 2,
+      "r": 2,
+      "offset": [-0.6, -0.064]
+    },
+    {
+      "model": "lily-large",
+      "q": 2,
+      "r": 1,
+      "offset": [0.9, 0.168]
+    },
+    {
+      "model": "waterlily-b",
+      "q": 3,
+      "r": 0,
+      "offset": [0.6, 0.5]
+    },
+    {
+      "model": "rock-sand-a",
+      "q": 3,
+      "r": 1,
+      "rot": 60,
+      "scale": 0.8,
+      "offset": [0.6, 0.668]
+    },
+    {
+      "model": "b-urn",
+      "q": 3,
+      "r": -1,
+      "scale": 0.9,
+      "offset": [0.6, 0.732]
+    },
+    {
+      "model": "tree-palm-short",
+      "q": -3,
+      "r": 4,
+      "rot": 140,
+      "scale": 0.9,
+      "offset": [0.1, 0.272]
+    },
+    {
+      "model": "tree-palm-bend",
+      "q": -1,
+      "r": 4,
+      "rot": 20,
+      "scale": 0.85,
+      "offset": [0.3, 0.472]
+    },
+    {
+      "model": "pot-large",
+      "q": -2,
+      "r": 4,
+      "rot": 30,
+      "scale": 0.8,
+      "offset": [0.6, 0.672]
+    },
+    {
+      "model": "pot-small",
+      "q": -2,
+      "r": 4,
+      "offset": [-0.9, -0.028]
+    },
+    {
+      "model": "b-rug-teal",
+      "q": -1,
+      "r": 2,
+      "rot": 10,
+      "offset": [-0.3, 0.136]
+    },
+    {
+      "model": "rock-sand-b",
+      "q": 1,
+      "r": 3,
+      "rot": 200,
+      "scale": 0.7,
+      "offset": [-0.3, 0.704]
+    },
+    {
+      "model": "b-urn",
+      "q": -3,
+      "r": 3,
+      "scale": 0.8,
+      "offset": [-0.6, 0.404]
+    },
+    {
+      "model": "sack",
+      "q": 0,
+      "r": 3,
+      "rot": 70,
+      "offset": [-0.5, 0.004]
+    }
+  ],
+  "doors": [
+    {
+      "buildingId": "portal_onyx",
+      "q": 1,
+      "r": -1,
+      "radius": 0.9
+    }
+  ],
+  "spawns": {
+    "player": {
+      "q": -1,
+      "r": -2
+    },
+    "mayor": {
+      "q": 2,
+      "r": -1,
+      "rot": 0
+    }
+  },
+  "anchors": [
+    {
+      "id": "to_home",
+      "q": -1,
+      "r": -3
+    }
+  ],
+  "underside": {
+    "depth": 6,
+    "style": "sand",
+    "seed": 33,
+    "waterfalls": [
+      {
+        "q": 3,
+        "r": 1
+      },
+      {
+        "q": 2,
+        "r": 2
+      }
+    ]
+  }
+}
