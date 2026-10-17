@@ -45,7 +45,6 @@ export class IllustratedIsland {
   private gh = 0;
 
   private readonly baseImage: Phaser.GameObjects.Image;
-  private readonly shadow: Phaser.GameObjects.Graphics;
   private readonly promptBubble: Phaser.GameObjects.Graphics;
   private occlusionObjects: OcclusionObject[] = [];
 
@@ -67,18 +66,7 @@ export class IllustratedIsland {
 
     const { DEPTHS } = ENGINE_CONSTANTS;
 
-    // 1. Soft atmospheric shadow below the floating island
-    this.shadow = scene.add.graphics();
-    this.shadow.setDepth(DEPTHS.SHADOW);
-    this.shadow.fillStyle(0x0c1322, 0.28);
-    this.shadow.fillEllipse(
-      worldX + art.size.w / 2,
-      worldY + art.size.h + 20,
-      art.size.w * 0.75,
-      60
-    );
-
-    // 2. Base painted island image (1:1 world pixels)
+    // Base painted island image (1:1 world pixels)
     this.baseImage = scene.add.image(worldX, worldY, textureKey);
     this.baseImage.setOrigin(0, 0);
     this.baseImage.setDepth(DEPTHS.GRASS);
@@ -200,7 +188,6 @@ export class IllustratedIsland {
   public destroy(): void {
     destroyOcclusionObjects(this.scene, this.occlusionObjects);
     this.occlusionObjects = [];
-    this.shadow.destroy();
     this.baseImage.destroy();
     this.promptBubble.destroy();
   }

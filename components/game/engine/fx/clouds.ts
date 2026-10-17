@@ -10,75 +10,41 @@ interface CloudInstance {
 }
 
 export class CloudSystem {
-  private skyBackdrop: Phaser.GameObjects.Image | null = null;
-  private skyGraphics: Phaser.GameObjects.Graphics | null = null;
+  private skyGraphics: Phaser.GameObjects.Graphics;
   private clouds: CloudInstance[] = [];
   private isVisible = true;
   private curWorldWidth: number = ENGINE_CONSTANTS.WORLD_WIDTH;
-  private curWorldHeight: number = ENGINE_CONSTANTS.WORLD_HEIGHT;
 
   constructor(private scene: Phaser.Scene) {
     this.createOrganicCloudTextures();
-    this.createSkyBackdrop();
+    const { DEPTHS } = ENGINE_CONSTANTS;
+    this.skyGraphics = this.scene.add.graphics();
+    this.skyGraphics.setScrollFactor(0);
+    this.skyGraphics.setDepth(DEPTHS.SKY);
+    this.renderGradient();
     this.spawnCloudLayers();
   }
 
-  public setWorldBounds(width: number, height: number): void {
+  public setWorldBounds(width: number, _height: number): void {
     this.curWorldWidth = width;
-    this.curWorldHeight = height;
-
-    if (this.skyBackdrop) {
-      this.skyBackdrop.setPosition(width / 2, height / 2);
-      const scaleX = (width + 1200) / this.skyBackdrop.width;
-      const scaleY = (height + 1200) / this.skyBackdrop.height;
-      this.skyBackdrop.setScale(Math.max(scaleX, scaleY));
-    } else if (this.skyGraphics) {
-      this.renderGradient();
-    }
-  }
-
-  private createSkyBackdrop(): void {
-    const { DEPTHS } = ENGINE_CONSTANTS;
-
-    if (this.scene.textures.exists("sky-backdrop")) {
-      this.skyBackdrop = this.scene.add.image(
-        this.curWorldWidth / 2,
-        this.curWorldHeight / 2,
-        "sky-backdrop"
-      );
-      this.skyBackdrop.setOrigin(0.5, 0.5);
-      this.skyBackdrop.setScrollFactor(0.05);
-      this.skyBackdrop.setDepth(DEPTHS.SKY);
-      const scaleX = (this.curWorldWidth + 800) / this.skyBackdrop.width;
-      const scaleY = (this.curWorldHeight + 800) / this.skyBackdrop.height;
-      this.skyBackdrop.setScale(Math.max(scaleX, scaleY));
-    } else {
-      this.skyGraphics = this.scene.add.graphics();
-      this.skyGraphics.setScrollFactor(0.05);
-      this.skyGraphics.setDepth(DEPTHS.SKY);
-      this.renderGradient();
-    }
   }
 
   private renderGradient(): void {
-    if (!this.skyGraphics) return;
     this.skyGraphics.clear();
+    const w = this.scene.scale.width;
+    const h = this.scene.scale.height;
+    // Sunset gradient: twilight top (0x467298) down to warm peach/gold sunset (0xdeb38a)
     this.skyGraphics.fillGradientStyle(
-      0x477299,
-      0x477299,
-      0xe5d8c3,
-      0xe5d8c3,
+      0x467298,
+      0x467298,
+      0xdeb38a,
+      0xdeb38a,
       1,
       1,
       1,
       1
     );
-    this.skyGraphics.fillRect(
-      -1000,
-      -1000,
-      this.curWorldWidth + 2000,
-      this.curWorldHeight + 2000
-    );
+    this.skyGraphics.fillRect(0, 0, w, h);
   }
 
   private createOrganicCloudTextures(): void {
@@ -250,8 +216,7 @@ export class CloudSystem {
   }
 
   public destroy(): void {
-    this.skyBackdrop?.destroy();
-    this.skyGraphics?.destroy();
+    this.skyGraphics.destroy();
     for (const c of this.clouds) {
       c.sprite.destroy();
     }

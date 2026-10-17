@@ -35,8 +35,8 @@ export class LivingWorldFX {
     this.pipelineRegistered = LivingWorldPipeline.register(scene.game);
   }
 
-  public static preload(scene: Phaser.Scene): void {
-    scene.load.image("sky-backdrop", "/game/sky/sky.webp");
+  public static preload(_scene: Phaser.Scene): void {
+    // Sky gradient is purely procedural; no sky-backdrop image required
   }
 
   public create(options: LivingWorldInitOptions = {}): void {

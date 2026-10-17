@@ -18,18 +18,11 @@ export interface BridgeSpec {
 export class BridgeRenderer {
   private corridors: BridgeCorridor[] = [];
   private sprites: Phaser.GameObjects.TileSprite[] = [];
-  private shadowGraphics: Phaser.GameObjects.Graphics;
 
   constructor(
     private scene: Phaser.Scene,
     bridges: BridgeSpec[]
   ) {
-    const { DEPTHS } = ENGINE_CONSTANTS;
-
-    // Atmospheric shadow below floating bridges
-    this.shadowGraphics = scene.add.graphics();
-    this.shadowGraphics.setDepth(DEPTHS.SHADOW);
-
     for (const spec of bridges) {
       const corridor = createBridgeCorridor({
         fromIslandId: spec.from,
@@ -66,11 +59,7 @@ export class BridgeRenderer {
     const { start, end, length, angle, style } = corridor;
     if (length <= 0) return;
 
-    // 1. Soft atmospheric shadow beneath the bridge
-    this.shadowGraphics.lineStyle(14, 0x0c1322, 0.18);
-    this.shadowGraphics.lineBetween(start.x, start.y + 24, end.x, end.y + 24);
-
-    // 2. Tiled bridge strip (lossless 40px segment repeats along length + overlap)
+    // Tiled bridge strip (lossless 40px segment repeats along length + overlap)
     const textureKey = style === "stone" ? "bridge-stone" : "bridge-rope";
     const mx = (start.x + end.x) / 2;
     const my = (start.y + end.y) / 2;
@@ -86,15 +75,16 @@ export class BridgeRenderer {
     sprite.setOrigin(0.5, 0.5);
     sprite.setRotation(angle);
 
-    // Bridge depth: below player sprite (player.y + 12 ~ 2000+), above ground (DEPTHS.GRASS = 10)
-    // The player's depth will sort above the deck as they walk across.
-    sprite.setDepth(ENGINE_CONSTANTS.DEPTHS.DETAILS - 2);
+    // Bridge depth: above island base/cliff layer (DEPTHS.GRASS = 10),
+    // below object sprites whose baseY is greater than the deck point,
+    // and below player sprite as player walks across.
+    const deckDepth = Math.min(start.y, end.y);
+    sprite.setDepth(deckDepth);
 
     this.sprites.push(sprite);
   }
 
   public destroy(): void {
-    this.shadowGraphics.destroy();
     for (const sprite of this.sprites) {
       sprite.destroy();
     }

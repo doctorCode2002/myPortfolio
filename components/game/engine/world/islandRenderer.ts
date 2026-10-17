@@ -49,28 +49,9 @@ export class Island {
 
   private render(scene: Phaser.Scene): void {
     const { centerX, centerY, surfaceRadiusX, surfaceRadiusY } = this.config;
-    const shadowY = this.config.shadowY ?? centerY + 250;
     const { DEPTHS } = ENGINE_CONSTANTS;
 
-    // 1. Soft Shadow
-    const shadow = scene.add.graphics();
-    shadow.setDepth(DEPTHS.SHADOW);
-    shadow.fillStyle(0x1a293d, 0.12);
-    shadow.fillEllipse(
-      centerX,
-      shadowY,
-      surfaceRadiusX * 2,
-      surfaceRadiusY * 1.05
-    );
-    shadow.fillStyle(0x1a293d, 0.18);
-    shadow.fillEllipse(
-      centerX,
-      shadowY,
-      surfaceRadiusX * 1.25,
-      surfaceRadiusY * 0.62
-    );
-
-    // 2. Rocky Underside tapering down to craggy roots
+    // Rocky Underside tapering down to craggy roots
     const rock = scene.add.graphics();
     rock.setDepth(DEPTHS.ROCK);
 
