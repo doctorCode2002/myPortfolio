@@ -9,7 +9,7 @@ import { sharedUniforms } from "./shared-time";
  */
 export function createWaterMaterial(): THREE.MeshStandardMaterial {
   const mat = new THREE.MeshStandardMaterial({
-    color: "#4fa3c7",
+    color: "#5cc2b8",
     roughness: 0.15,
     metalness: 0,
     transparent: true,
@@ -43,8 +43,8 @@ export function createWaterMaterial(): THREE.MeshStandardMaterial {
           float t = uTime * uMotion;
           float ripple = sin(vWaterXZ.x * 3.1 + t * 1.4) * sin(vWaterXZ.y * 2.7 - t * 1.1);
           float bands = smoothstep(0.55, 0.95, ripple);
-          vec3 deep = vec3(0.18, 0.47, 0.62);
-          vec3 shallow = vec3(0.42, 0.74, 0.82);
+          vec3 deep = vec3(0.03, 0.29, 0.33);
+          vec3 shallow = vec3(0.22, 0.66, 0.6);
           diffuseColor.rgb = mix(deep, shallow, 0.35 + 0.35 * vFoam) + bands * 0.12;
           float foamNoise = 0.5 + 0.5 * sin(vWaterXZ.x * 9.0 + t * 2.0) * sin(vWaterXZ.y * 8.0 - t * 1.6);
           float foam = smoothstep(0.62, 0.95, vFoam + foamNoise * 0.18);

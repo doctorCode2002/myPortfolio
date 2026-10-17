@@ -143,7 +143,7 @@ describe("starter content (content/islands3d)", () => {
       i.mayor ? { id: i.mayor.id, sprite: i.mayor.sprite } : undefined,
     ])
   );
-  const world = buildGameWorld(ISLANDS_3D, BRIDGES, mayors, null);
+  const world = buildGameWorld(ISLANDS_3D, BRIDGES, mayors, readManifestFromDisk());
 
   it("has no content problems and uses ids from lib/content/world.ts", () => {
     const known = new Set(ISLANDS.flatMap((i) => i.buildings.map((b) => b.id)));

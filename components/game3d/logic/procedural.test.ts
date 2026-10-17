@@ -9,7 +9,13 @@ import {
   stepZoom,
   zoomToDistance,
 } from "./camera-math";
-import { circumradiusFromWidth, hexSpiral, hexToWorld } from "./hex";
+import {
+  circumradiusFromWidth,
+  hexSpiral,
+  hexToWorld,
+  worldToHex,
+} from "./hex";
+import { scatterDecor } from "./scatter";
 import { createRng, valueNoise2 } from "./noise";
 import { buildUnderside, outlineProfile } from "./underside";
 import { buildWalkWorld } from "./walk-world";
@@ -109,7 +115,8 @@ describe("camera math", () => {
   it("steps zoom through the levels and maps zoom to distance", () => {
     expect(stepZoom(2, 1)).toBe(3);
     expect(stepZoom(2, -1)).toBe(1.5);
-    expect(stepZoom(4, 1)).toBe(4);
+    expect(stepZoom(3, 1)).toBe(3);
+    expect(stepZoom(0.5, -1)).toBe(0.5);
     expect(stepZoom(2.2, -1)).toBe(2);
     expect(zoomToDistance(2)).toBeCloseTo(CAMERA.baseDistance / 2);
   });
@@ -121,5 +128,42 @@ describe("camera math", () => {
     const r = cameraRelative(1, 0, Math.PI / 2);
     expect(r.x).toBeCloseTo(0);
     expect(r.z).toBeCloseTo(-1);
+  });
+});
+
+describe("ground scatter", () => {
+  const island: Island3D = {
+    id: "s",
+    center: [0, 0],
+    hexes: hexSpiral({ q: 0, r: 0 }, 4).map((h) => ({
+      ...h,
+      tile: "hex-grass",
+    })),
+    objects: [{ model: "tree", q: 1, r: 0 }],
+    doors: [{ buildingId: "d", q: 2, r: 0 }],
+    spawns: { player: { q: 0, r: 0 } },
+  };
+  const cells = buildWalkWorld([island], []).islands[0]!;
+  const list = [...cells.cells.values()];
+  const opts = {
+    models: [
+      { name: "grass-tuft", weight: 3 },
+      { name: "flower", weight: 1 },
+    ],
+    size: R,
+  };
+
+  it("is deterministic, capped and keeps reserved hexes clear", () => {
+    const a = scatterDecor(island, list, opts);
+    const b = scatterDecor(island, list, opts);
+    expect(a).toEqual(b);
+    expect(a.length).toBeGreaterThan(5);
+    expect(scatterDecor(island, list, { ...opts, maxTotal: 4 })).toHaveLength(
+      4
+    );
+    for (const it of a) {
+      const h = worldToHex(it.x, it.z, R);
+      expect(["0,0", "1,0", "2,0"]).not.toContain(`${h.q},${h.r}`);
+    }
   });
 });

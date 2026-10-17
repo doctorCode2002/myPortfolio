@@ -183,8 +183,8 @@ function Scene({
   return (
     <>
       <ShaderClock />
-      <SkyDome />
-      <fog attach="fog" args={[SKY.fog, 40, 170]} />
+      <SkyDome reducedMotion={reducedMotion} />
+      <fog attach="fog" args={[SKY.fog, 24, 110]} />
       <Lights shadowMapSize={shadowSize} />
       {world.islands.map((island) => {
         const grid = world.walk.islands.find((g) => g.islandId === island.id);
@@ -330,7 +330,7 @@ export function World3D({
           toneMappingExposure: 1.0,
           outputColorSpace: THREE.SRGBColorSpace,
         }}
-        style={{ background: SKY.below, touchAction: "none" }}
+        style={{ background: SKY.haze, touchAction: "none" }}
       >
         <RuntimeContext.Provider value={rtRef}>
           <PerformanceMonitor
@@ -359,6 +359,15 @@ export function World3D({
           </PerformanceMonitor>
         </RuntimeContext.Provider>
       </Canvas>
+      {/* A soft vignette (CSS, free) instead of a post-processing pass. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-10"
+        style={{
+          background:
+            "radial-gradient(ellipse 75% 70% at 50% 45%, transparent 55%, rgba(38, 26, 58, 0.32) 100%)",
+        }}
+      />
       {touch && <Joystick rtRef={rtRef} />}
       {debug && world && <DebugOverlay rtRef={rtRef} world={world} />}
       <LoadingVeil label={dict.play.loading} show={!world} />

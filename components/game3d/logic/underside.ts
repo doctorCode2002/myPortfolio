@@ -5,6 +5,7 @@
  * BufferGeometry. Pure: no three or react imports.
  */
 
+import { MEADOW, meadowColor, type Rgb } from "./ground";
 import { createRng, valueNoise2 } from "./noise";
 import type { Point2 } from "./hex";
 
@@ -14,7 +15,9 @@ export type UndersideOptions = {
   depth?: number;
   seed?: number;
   style?: UndersideStyle;
-  /** y of the top rim (just under the tiles' top surface). */
+  /** y of the tiles' top surface (the grass lip sits here). */
+  surfaceY?: number;
+  /** y where the rock starts (below the lip and soil band; defaults to surfaceY - 0.6). */
   topY?: number;
   /** Number of angular segments around the outline. */
   segments?: number;
@@ -40,14 +43,12 @@ export type UndersideData = {
   depth: number;
 };
 
-type Rgb = [number, number, number];
-
 const PALETTES: Record<UndersideStyle, Rgb[]> = {
   // soil lip, warm rock, deep cool rock
   rock: [
-    [0.36, 0.27, 0.17],
-    [0.55, 0.43, 0.33],
-    [0.38, 0.34, 0.42],
+    [0.2, 0.12, 0.07],
+    [0.42, 0.3, 0.22],
+    [0.24, 0.21, 0.3],
   ],
   sand: [
     [0.62, 0.49, 0.31],
@@ -125,108 +126,196 @@ export function buildUnderside(
   opts: UndersideOptions = {}
 ): UndersideData {
   const seed = opts.seed ?? 1;
-  const segments = opts.segments ?? 36;
-  const rings = opts.rings ?? 6;
-  const topY = opts.topY ?? -0.05;
+  const segments = opts.segments ?? 40;
+  const rings = opts.rings ?? 7;
+  const surfaceY = opts.surfaceY ?? 0;
+  const topY = opts.topY ?? surfaceY - 0.6;
   const style = opts.style ?? "rock";
   const palette = PALETTES[style];
   const rng = createRng(seed);
   const { centroid, profile } = outlineProfile(centres, size, segments);
   const maxR = Math.max(...profile, size);
-  const depth = opts.depth ?? Math.max(3, maxR * 0.9);
+  // Prominent by default: at least ~0.85x the island radius deep.
+  const depth = Math.max(opts.depth ?? 0, maxR * 0.85, 3);
 
-  // Ring vertices: ring 0 is the top rim; the last ring tapers towards the tip.
-  const ringPts: [number, number, number][][] = [];
-  for (let k = 0; k <= rings; k++) {
-    const t = k / (rings + 1);
-    const row: [number, number, number][] = [];
-    for (let i = 0; i < segments; i++) {
-      const ang = (i / segments) * Math.PI * 2;
-      const base = profile[i] ?? size;
-      const n = valueNoise2(i * 0.45, k * 0.9, seed) - 0.5;
-      // Stay wide under the rim (a visible rock face), then taper to the tip.
-      const shrink = k === 0 ? 1 : (1 - Math.pow(t, 1.35)) * (1 + n * 0.3);
-      const radius = base * shrink * (k === 1 ? 1.03 : 1.0);
-      const y =
-        k === 0 ? topY : topY - depth * Math.pow(t, 0.85) + n * depth * 0.08;
-      row.push([
-        centroid.x + Math.cos(ang) * radius,
-        y,
-        centroid.z + Math.sin(ang) * radius,
-      ]);
-    }
-    ringPts.push(row);
-  }
-  const tip: [number, number, number] = [
-    centroid.x + (rng() - 0.5) * maxR * 0.2,
-    topY - depth * (1 + rng() * 0.15),
-    centroid.z + (rng() - 0.5) * maxR * 0.2,
-  ];
+  const at = (
+    i: number,
+    scale: number,
+    y: number
+  ): [number, number, number] => {
+    const ang = (i / segments) * Math.PI * 2;
+    const r = (profile[i] ?? size) * scale;
+    return [centroid.x + Math.cos(ang) * r, y, centroid.z + Math.sin(ang) * r];
+  };
 
   const pos: number[] = [];
   const col: number[] = [];
-  const pushTri = (a: number[], b: number[], c: number[], t: number): void => {
+  const jit = (c: Rgb, amount = 0.1): Rgb => {
+    const k = 1 - amount / 2 + rng() * amount;
+    return [c[0] * k, c[1] * k, c[2] * k];
+  };
+  const tri = (
+    a: number[],
+    b: number[],
+    c: number[],
+    color: Rgb | Rgb[]
+  ): void => {
     pos.push(...a, ...b, ...c);
-    const band = t < 0.14 ? 0 : t < 0.55 ? 1 : 2;
-    const baseCol = palette[band] as Rgb;
-    const jitter = 0.9 + rng() * 0.2;
-    for (let v = 0; v < 3; v++)
-      col.push(baseCol[0] * jitter, baseCol[1] * jitter, baseCol[2] * jitter);
+    const cs = Array.isArray(color[0])
+      ? (color as Rgb[])
+      : [color as Rgb, color as Rgb, color as Rgb];
+    for (const v of cs) col.push(v[0], v[1], v[2]);
+  };
+  const quad = (
+    a: number[],
+    b: number[],
+    c: number[],
+    d: number[],
+    color: Rgb
+  ): void => {
+    // a-b on the upper ring, c-d below (a above d, b above c)
+    tri(a, b, d, color);
+    tri(b, c, d, color);
   };
 
-  // Top cap (a fan) so gaps between tiles never show the sky.
-  const capC = [centroid.x, topY, centroid.z];
-  const top = ringPts[0] as [number, number, number][];
+  // 1. Grass lip: a top band from just inside the edge hexes to slightly past the outline,
+  //    coloured like the meadow, then an overhanging green side and a soil band.
+  const lipGrass = (p: number[]): Rgb =>
+    meadowColor(p[0] as number, p[2] as number);
+  const inner = [] as number[][];
+  const outer = [] as number[][];
+  const over = [] as number[][];
+  const soil = [] as number[][];
   for (let i = 0; i < segments; i++) {
-    const a = top[i] as number[];
-    const b = top[(i + 1) % segments] as number[];
-    pos.push(...capC, ...b, ...a);
-    for (let v = 0; v < 3; v++) col.push(...(palette[0] as Rgb));
+    const n = valueNoise2(i * 0.6, 3.3, seed) - 0.5;
+    inner.push(at(i, 0.9, surfaceY + 0.004));
+    outer.push(at(i, 1.03 + n * 0.03, surfaceY + 0.004));
+    over.push(at(i, 1.06 + n * 0.05, surfaceY - 0.22 - Math.abs(n) * 0.12));
+    soil.push(at(i, 1.02 + n * 0.04, topY));
   }
-  // Side bands (outward-facing, counter-clockwise seen from outside).
+  for (let i = 0; i < segments; i++) {
+    const j = (i + 1) % segments;
+    const a = inner[i] as number[];
+    const b = inner[j] as number[];
+    const c = outer[j] as number[];
+    const d = outer[i] as number[];
+    // Upward-facing band (counter-clockwise seen from above).
+    tri(a, b, c, [lipGrass(a), lipGrass(b), lipGrass(c)]);
+    tri(a, c, d, [lipGrass(a), lipGrass(c), lipGrass(d)]);
+    quad(
+      outer[i] as number[],
+      outer[j] as number[],
+      over[j] as number[],
+      over[i] as number[],
+      jit(MEADOW.lipSide, 0.12)
+    );
+    quad(
+      over[i] as number[],
+      over[j] as number[],
+      soil[j] as number[],
+      soil[i] as number[],
+      jit(palette[0] as Rgb, 0.14)
+    );
+  }
+
+  // 2. Rock: rings from the soil band down to the tip, staying wide before tapering.
+  const ringPts: number[][][] = [soil];
+  for (let k = 1; k <= rings; k++) {
+    const t = k / (rings + 1);
+    const row: number[][] = [];
+    for (let i = 0; i < segments; i++) {
+      const n = valueNoise2(i * 0.45, k * 0.9, seed) - 0.5;
+      const shrink = (1 - Math.pow(t, 1.5)) * (1 + n * 0.28);
+      const y = topY - depth * Math.pow(t, 0.9) + n * depth * 0.07;
+      row.push(at(i, Math.max(0.05, shrink) * 1.0, y));
+    }
+    ringPts.push(row);
+  }
+  const tip = [
+    centroid.x + (rng() - 0.5) * maxR * 0.2,
+    topY - depth * (1.02 + rng() * 0.12),
+    centroid.z + (rng() - 0.5) * maxR * 0.2,
+  ];
+  const bandColor = (t: number): Rgb => {
+    // Warm rock fading to cool deep rock, darkest near the tip.
+    const p1 = palette[1] as Rgb;
+    const p2 = palette[2] as Rgb;
+    const m = Math.min(1, Math.max(0, (t - 0.25) / 0.5));
+    const base: Rgb = [
+      p1[0] + (p2[0] - p1[0]) * m,
+      p1[1] + (p2[1] - p1[1]) * m,
+      p1[2] + (p2[2] - p1[2]) * m,
+    ];
+    const dark = 1 - Math.max(0, t - 0.6) * 0.9;
+    const stripe = Math.floor(t * 9) % 2 === 0 ? 1.0 : 0.9;
+    return jit(
+      [
+        base[0] * dark * stripe,
+        base[1] * dark * stripe,
+        base[2] * dark * stripe,
+      ],
+      0.14
+    );
+  };
   for (let k = 0; k < rings; k++) {
-    const up = ringPts[k] as [number, number, number][];
-    const dn = ringPts[k + 1] as [number, number, number][];
+    const up = ringPts[k] as number[][];
+    const dn = ringPts[k + 1] as number[][];
     const t = (k + 0.5) / (rings + 1);
     for (let i = 0; i < segments; i++) {
       const j = (i + 1) % segments;
-      pushTri(up[i] as number[], up[j] as number[], dn[i] as number[], t);
-      pushTri(up[j] as number[], dn[j] as number[], dn[i] as number[], t);
+      tri(
+        up[i] as number[],
+        up[j] as number[],
+        dn[i] as number[],
+        bandColor(t)
+      );
+      tri(
+        up[j] as number[],
+        dn[j] as number[],
+        dn[i] as number[],
+        bandColor(t)
+      );
     }
   }
-  const last = ringPts[rings] as [number, number, number][];
+  const last = ringPts[rings] as number[][];
   for (let i = 0; i < segments; i++) {
     const j = (i + 1) % segments;
-    pushTri(last[i] as number[], last[j] as number[], tip, 0.95);
+    tri(last[i] as number[], last[j] as number[], tip, bandColor(0.97));
+  }
+  // A soil cap under the tiles so gaps never show the sky from below.
+  const capC = [centroid.x, topY + 0.02, centroid.z];
+  for (let i = 0; i < segments; i++) {
+    const j = (i + 1) % segments;
+    tri(
+      capC,
+      (soil[j] as number[]).map((v, idx) => (idx === 1 ? v + 0.02 : v)),
+      (soil[i] as number[]).map((v, idx) => (idx === 1 ? v + 0.02 : v)),
+      palette[0] as Rgb
+    );
   }
 
-  // Hanging roots from just under the rim.
+  // 3. Hanging roots from the soil band.
   const roots: RootSegment[] = [];
-  const ring1 = ringPts[1] as [number, number, number][];
-  const rootCount = Math.max(3, Math.round(segments / 4));
+  const rootCount = Math.max(5, Math.round(segments / 3));
   for (let n = 0; n < rootCount; n++) {
     const i = Math.floor(rng() * segments);
-    const p = ring1[i] as [number, number, number];
-    const q = top[i] as [number, number, number];
+    const p = soil[i] as number[];
     let cur: [number, number, number] = [
-      (p[0] + q[0]) / 2,
-      (p[1] + q[1]) / 2,
-      (p[2] + q[2]) / 2,
+      p[0] as number,
+      (p[1] as number) + 0.1,
+      p[2] as number,
     ];
-    const len = 0.6 + rng() * 1.6;
+    const len = 0.8 + rng() * 2.2;
     const pieces = 3;
-    const outX =
-      (cur[0] - centroid.x) /
-      (Math.hypot(cur[0] - centroid.x, cur[2] - centroid.z) || 1);
-    const outZ =
-      (cur[2] - centroid.z) /
-      (Math.hypot(cur[0] - centroid.x, cur[2] - centroid.z) || 1);
-    let radius = 0.05 + rng() * 0.03;
+    const ox = cur[0] - centroid.x;
+    const oz = cur[2] - centroid.z;
+    const ol = Math.hypot(ox, oz) || 1;
+    let radius = 0.05 + rng() * 0.04;
     for (let s = 0; s < pieces; s++) {
       const next: [number, number, number] = [
-        cur[0] + outX * (0.06 + rng() * 0.1) + (rng() - 0.5) * 0.15,
+        cur[0] + (ox / ol) * (0.05 + rng() * 0.12) + (rng() - 0.5) * 0.15,
         cur[1] - len / pieces,
-        cur[2] + outZ * (0.06 + rng() * 0.1) + (rng() - 0.5) * 0.15,
+        cur[2] + (oz / ol) * (0.05 + rng() * 0.12) + (rng() - 0.5) * 0.15,
       ];
       roots.push({ a: cur, b: next, radius });
       cur = next;

@@ -17,10 +17,13 @@ export function Waterfall({
   cell,
   centroid,
   size,
+  rim,
   topY,
   length,
 }: {
   cell: WalkCell;
+  /** Where the ribbon leaves the island lip (world x, z). */
+  rim?: { x: number; z: number };
   centroid: Point2;
   size: number;
   topY: number;
@@ -36,10 +39,12 @@ export function Waterfall({
       );
       if (outward.lengthSq() < 1e-6) outward.set(0, 0, 1);
       outward.normalize();
-      const start = new THREE.Vector3(cell.x, topY, cell.z).addScaledVector(
-        outward,
-        size * 0.82
-      );
+      const start = rim
+        ? new THREE.Vector3(rim.x, topY, rim.z)
+        : new THREE.Vector3(cell.x, topY, cell.z).addScaledVector(
+            outward,
+            size * 0.82
+          );
       const geometry = buildWaterfallGeometry(
         start,
         outward,
@@ -74,7 +79,7 @@ export function Waterfall({
         bottom,
         seeds,
       };
-    }, [cell, centroid, size, topY, length]);
+    }, [cell, centroid, size, topY, length, rim]);
 
   const updated = useRef(false);
   useFrame(({ clock }) => {

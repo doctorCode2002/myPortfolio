@@ -55,6 +55,11 @@ export type Island3D = {
   /** World placement of the island origin (metres): [x, z]. */
   center: [number, number];
   baseY?: number;
+  /**
+   * Optional gentle ground undulation in metres (e.g. 0.05): grass tops and the walk
+   * heights follow one continuous noise field, so the hex grid reads less.
+   */
+  heightJitter?: number;
   /** Optional biome hint for procedural colours. */
   biome?: string;
   hexes: HexTile[];

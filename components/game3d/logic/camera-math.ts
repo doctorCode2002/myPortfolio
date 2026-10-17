@@ -5,13 +5,19 @@ export const CAMERA = {
   yawLimit: (60 * Math.PI) / 180,
   pitchMin: (30 * Math.PI) / 180,
   pitchMax: (65 * Math.PI) / 180,
-  pitchDefault: (45 * Math.PI) / 180,
-  /** Zoom factor limits; the camera distance is baseDistance / zoom. */
-  zoomMin: 1,
-  zoomMax: 4,
+  pitchDefault: (40 * Math.PI) / 180,
+  /**
+   * Zoom factor limits; the camera distance is baseDistance / zoom. The default (2)
+   * frames the character at about a tenth of the screen height; 0.5 fits a whole
+   * large island with its neighbours in the haze.
+   */
+  zoomMin: 0.5,
+  zoomMax: 3,
   zoomDefault: 2,
-  baseDistance: 24,
-  zoomLevels: [1, 1.5, 2, 3, 4] as const,
+  baseDistance: 19,
+  zoomLevels: [0.5, 0.75, 1, 1.5, 2, 3] as const,
+  /** How far (m) the view leads the player at full run. */
+  lead: 1.4,
 } as const;
 
 export function clamp(v: number, lo: number, hi: number): number {

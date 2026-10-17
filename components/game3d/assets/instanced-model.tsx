@@ -4,6 +4,7 @@ import { useGLTF } from "@react-three/drei";
 import { useLayoutEffect, useMemo, useRef, type ReactNode } from "react";
 import * as THREE from "three";
 
+import type { GradeMode } from "../fx/grade";
 import { collectMeshParts, type MeshPart } from "./prepare";
 
 export type InstanceTransform = {
@@ -13,6 +14,8 @@ export type InstanceTransform = {
   /** Radians around +y. */
   rotY: number;
   scale: number;
+  /** Optional per-instance colour multiplier (linear rgb, around 1). */
+  tint?: readonly [number, number, number];
 };
 
 /**
@@ -24,19 +27,21 @@ export function InstancedModel({
   url,
   items,
   foliage = false,
+  grade = null,
   castShadow = true,
   receiveShadow = true,
 }: {
   url: string;
   items: readonly InstanceTransform[];
   foliage?: boolean;
+  grade?: GradeMode | null;
   castShadow?: boolean;
   receiveShadow?: boolean;
 }): ReactNode {
   const gltf = useGLTF(url);
   const parts = useMemo(
-    () => collectMeshParts(gltf.scene, foliage),
-    [gltf.scene, foliage]
+    () => collectMeshParts(gltf.scene, foliage, grade),
+    [gltf.scene, foliage, grade]
   );
   if (items.length === 0) return null;
   return (
@@ -59,6 +64,7 @@ const tmpQ = new THREE.Quaternion();
 const tmpP = new THREE.Vector3();
 const tmpS = new THREE.Vector3();
 const UP = new THREE.Vector3(0, 1, 0);
+const tmpC = new THREE.Color();
 
 function InstancedPart({
   part,
@@ -81,8 +87,11 @@ function InstancedPart({
       tmpS.setScalar(it.scale);
       tmpM.compose(tmpP, tmpQ, tmpS).multiply(part.matrix);
       mesh.setMatrixAt(i, tmpM);
+      if (it.tint)
+        mesh.setColorAt(i, tmpC.setRGB(it.tint[0], it.tint[1], it.tint[2]));
     });
     mesh.instanceMatrix.needsUpdate = true;
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     mesh.computeBoundingSphere();
     mesh.computeBoundingBox();
   }, [items, part]);

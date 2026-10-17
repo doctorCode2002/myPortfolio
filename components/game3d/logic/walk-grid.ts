@@ -3,6 +3,7 @@
  * obstacles (trees, rocks, props, NPCs) stand on them. Pure: no three or react imports.
  */
 
+import { groundJitter } from "./ground";
 import { objectCollision, isTileWalkable, isWaterTile } from "./catalog";
 import {
   DEFAULT_HEX_WIDTH,
@@ -15,6 +16,14 @@ import {
 import type { Island3D, Manifest } from "./types";
 
 export const DEFAULT_LEVEL_HEIGHT = 0.5;
+
+/**
+ * Height added to a dry tile's top by the optional heightJitter (never below the tile
+ * top, so the tile's bevels stay hidden under the grass skin).
+ */
+export function groundLift(x: number, z: number, amplitude: number): number {
+  return amplitude ? amplitude + groundJitter(x, z, amplitude) : 0;
+}
 
 export type WalkCell = {
   q: number;
@@ -132,7 +141,10 @@ export function buildIslandWalkGrid(
       q: hex.q,
       r: hex.r,
       level,
-      y: baseY + level * levelHeight,
+      y:
+        baseY +
+        level * levelHeight +
+        (water ? 0 : groundLift(p.x, p.z, island.heightJitter ?? 0)),
       x: p.x,
       z: p.z,
       tile: hex.tile,

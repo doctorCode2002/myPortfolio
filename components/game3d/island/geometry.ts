@@ -127,3 +127,64 @@ export function createMistTexture(): THREE.Texture {
 }
 
 export { hexKey };
+
+/**
+ * A continuous grass skin over flat grass hexes: each hex is 24 small triangles a hair
+ * above the tile top, vertex-coloured from one world-space meadow field (no per-tile
+ * pattern, so neighbouring hexes read as one lawn and the KayKit bevels disappear).
+ */
+export function buildGrassSkin(
+  cells: readonly { x: number; z: number; y: number }[],
+  size: number,
+  colorAt: (x: number, z: number) => [number, number, number],
+  heightAt: (x: number, z: number, cellY: number) => number
+): THREE.BufferGeometry {
+  const pos: number[] = [];
+  const col: number[] = [];
+  const corner = (i: number): [number, number] => {
+    const a = (Math.PI / 180) * (60 * i - 30);
+    return [Math.cos(a) * size * 1.002, Math.sin(a) * size * 1.002];
+  };
+  const push = (x: number, z: number, cy: number): void => {
+    pos.push(x, heightAt(x, z, cy), z);
+    const c = colorAt(x, z);
+    col.push(c[0], c[1], c[2]);
+  };
+  for (const cell of cells) {
+    for (let i = 0; i < 6; i++) {
+      const [ax, az] = corner(i);
+      const [bx, bz] = corner((i + 1) % 6);
+      // Sector (centre, b, a) subdivided into four triangles via edge midpoints.
+      const P = [
+        [cell.x, cell.z],
+        [cell.x + bx, cell.z + bz],
+        [cell.x + ax, cell.z + az],
+      ] as [number, number][];
+      const m01: [number, number] = [
+        (P[0]![0] + P[1]![0]) / 2,
+        (P[0]![1] + P[1]![1]) / 2,
+      ];
+      const m12: [number, number] = [
+        (P[1]![0] + P[2]![0]) / 2,
+        (P[1]![1] + P[2]![1]) / 2,
+      ];
+      const m20: [number, number] = [
+        (P[2]![0] + P[0]![0]) / 2,
+        (P[2]![1] + P[0]![1]) / 2,
+      ];
+      const tris: [number, number][][] = [
+        [P[0]!, m01, m20],
+        [m01, P[1]!, m12],
+        [m20, m12, P[2]!],
+        [m01, m12, m20],
+      ];
+      for (const t of tris) for (const v of t) push(v[0], v[1], cell.y);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+  g.computeVertexNormals();
+  g.computeBoundingSphere();
+  return g;
+}

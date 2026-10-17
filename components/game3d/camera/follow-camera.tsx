@@ -33,6 +33,7 @@ function roundZoom(z: number): number {
 export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
   const rtRef = useRuntimeRef();
   const camera = useThree((s) => s.camera);
+  const lead = useRef({ x: 0, z: 0 });
   const gl = useThree((s) => s.gl);
   const smoothTarget = useRef(new THREE.Vector3());
   const goal = useRef<{ yaw: number; pitch: number; zoom: number }>({
@@ -194,7 +195,7 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
     };
   }, [gl, camera, world, rtRef]);
 
-  useFrame((_, rawDt) => {
+  useFrame((state, rawDt) => {
     const rt = rtRef.current;
     const dt = Math.min(rawDt, 0.05);
     const p = rt.player.pos;
@@ -205,10 +206,16 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
     cam.zoom += (goal.current.zoom - cam.zoom) * k;
     const t = smoothTarget.current;
     const kt = first.current ? 1 : damp(8, dt);
-    t.x += (p.x - t.x) * kt;
+    // Lead slightly in the movement direction so the view opens up ahead.
+    const l = lead.current;
+    const run = Math.min(1, rt.player.speed / 4.4);
+    const kl = damp(2.5, dt);
+    l.x += (Math.sin(rt.player.heading) * CAMERA.lead * run - l.x) * kl;
+    l.z += (Math.cos(rt.player.heading) * CAMERA.lead * run - l.z) * kl;
+    t.x += (p.x + l.x - t.x) * kt;
     t.y +=
       (p.y + 0.55 - t.y) * damp(4, dt) + (first.current ? p.y + 0.55 - t.y : 0);
-    t.z += (p.z - t.z) * kt;
+    t.z += (p.z + l.z - t.z) * kt;
     first.current = false;
     const dist = zoomToDistance(cam.zoom);
     const horiz = Math.cos(cam.pitch) * dist;
@@ -218,6 +225,12 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
       t.z + Math.cos(cam.yaw) * horiz
     );
     camera.lookAt(t);
+    // Fog starts past the player at any zoom, so far islands sink into the haze.
+    const fog = state.scene.fog as THREE.Fog | null;
+    if (fog && "near" in fog) {
+      fog.near = dist * 0.9 + 14;
+      fog.far = dist * 0.9 + 95;
+    }
   });
 
   return null;

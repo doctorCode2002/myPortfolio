@@ -1,5 +1,6 @@
 import * as THREE from "three";
 
+import { patchGrade, type GradeMode } from "../fx/grade";
 import { patchFoliage } from "../fx/wind";
 
 /**
@@ -9,7 +10,8 @@ import { patchFoliage } from "../fx/wind";
  */
 export function prepareMaterial(
   src: THREE.Material,
-  foliage: boolean
+  foliage: boolean,
+  grade: GradeMode | null = null
 ): THREE.Material {
   let mat: THREE.Material;
   if (src instanceof THREE.MeshBasicMaterial) {
@@ -29,6 +31,7 @@ export function prepareMaterial(
   }
   // Patch every material of a foliage model (trunk included) so the crown never detaches.
   if (foliage) patchFoliage(mat);
+  if (grade) patchGrade(mat, grade);
   return mat;
 }
 
@@ -42,7 +45,8 @@ export type MeshPart = {
 /** Flatten a static model (no skinning) into mesh parts with root-relative matrices. */
 export function collectMeshParts(
   root: THREE.Object3D,
-  foliage: boolean
+  foliage: boolean,
+  grade: GradeMode | null = null
 ): MeshPart[] {
   root.updateMatrixWorld(true);
   const inv = new THREE.Matrix4().copy(root.matrixWorld).invert();
@@ -51,8 +55,8 @@ export function collectMeshParts(
     const mesh = obj as THREE.Mesh;
     if (!mesh.isMesh || (obj as THREE.SkinnedMesh).isSkinnedMesh) return;
     const material = Array.isArray(mesh.material)
-      ? mesh.material.map((m) => prepareMaterial(m, foliage))
-      : prepareMaterial(mesh.material, foliage);
+      ? mesh.material.map((m) => prepareMaterial(m, foliage, grade))
+      : prepareMaterial(mesh.material, foliage, grade);
     parts.push({
       geometry: mesh.geometry,
       material,

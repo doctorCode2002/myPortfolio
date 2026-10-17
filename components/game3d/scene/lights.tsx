@@ -23,12 +23,12 @@ export function Lights({
     const light = sun.current;
     if (!light) return;
     const cam = light.shadow.camera;
-    cam.left = -14;
-    cam.right = 14;
-    cam.top = 14;
-    cam.bottom = -14;
+    cam.left = -18;
+    cam.right = 18;
+    cam.top = 18;
+    cam.bottom = -18;
     cam.near = 1;
-    cam.far = 80;
+    cam.far = 120;
     cam.updateProjectionMatrix();
     light.shadow.bias = -0.0004;
     light.shadow.normalBias = 0.03;
@@ -50,26 +50,26 @@ export function Lights({
     if (!light) return;
     const p = rt.player.pos;
     // Snap to shadow texels to avoid shimmering while walking.
-    const texel = 28 / shadowMapSize;
+    const texel = 36 / shadowMapSize;
     const x = Math.round(p.x / texel) * texel;
     const z = Math.round(p.z / texel) * texel;
     light.target.position.set(x, p.y, z);
     light.position.set(
-      x + SUN_DIR.x * 40,
-      p.y + SUN_DIR.y * 40,
-      z + SUN_DIR.z * 40
+      x + SUN_DIR.x * 55,
+      p.y + SUN_DIR.y * 55,
+      z + SUN_DIR.z * 55
     );
     light.target.updateMatrixWorld();
   });
 
   return (
     <>
-      <hemisphereLight args={["#dfeaff", "#7d6a5a", 1.1]} />
-      <ambientLight intensity={0.15} color={SKY.horizon} />
+      <hemisphereLight args={["#a9c8ec", "#c08d63", 1.05]} />
+      <ambientLight intensity={0.12} color="#f3c9b0" />
       <directionalLight
         ref={sun}
         color={SKY.sunColor}
-        intensity={1.9}
+        intensity={2.3}
         castShadow
       />
     </>
