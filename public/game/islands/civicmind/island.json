@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "size": {
+    "w": 537,
+    "h": 727
+  },
+  "walkable": [
+    [
+      [81, 182],
+      [456, 182],
+      [456, 473],
+      [81, 473],
+      [81, 182]
+    ]
+  ],
+  "blockers": [],
+  "occluders": [],
+  "doors": [
+    {
+      "buildingId": "portal_civicmind",
+      "at": [268, 360],
+      "radius": 34
+    }
+  ],
+  "spawns": {
+    "player": [269, 430],
+    "mayor": [268, 430]
+  },
+  "anchors": [
+    {
+      "id": "to_home",
+      "at": [13, 290]
+    }
+  ]
+}

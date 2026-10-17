@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "size": {
+    "w": 507,
+    "h": 692
+  },
+  "walkable": [
+    [
+      [76, 173],
+      [431, 173],
+      [431, 449],
+      [76, 449],
+      [76, 173]
+    ]
+  ],
+  "blockers": [],
+  "occluders": [],
+  "doors": [
+    {
+      "buildingId": "portal_khidmty",
+      "at": [253, 305],
+      "radius": 32
+    }
+  ],
+  "spawns": {
+    "player": [254, 430],
+    "mayor": [285, 430]
+  },
+  "anchors": [
+    {
+      "id": "to_home",
+      "at": [230, 502]
+    }
+  ]
+}

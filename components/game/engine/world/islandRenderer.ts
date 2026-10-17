@@ -49,28 +49,9 @@ export class Island {
 
   private render(scene: Phaser.Scene): void {
     const { centerX, centerY, surfaceRadiusX, surfaceRadiusY } = this.config;
-    const shadowY = this.config.shadowY ?? centerY + 250;
     const { DEPTHS } = ENGINE_CONSTANTS;
 
-    // 1. Soft Shadow
-    const shadow = scene.add.graphics();
-    shadow.setDepth(DEPTHS.SHADOW);
-    shadow.fillStyle(0x1a293d, 0.12);
-    shadow.fillEllipse(
-      centerX,
-      shadowY,
-      surfaceRadiusX * 2,
-      surfaceRadiusY * 1.05
-    );
-    shadow.fillStyle(0x1a293d, 0.18);
-    shadow.fillEllipse(
-      centerX,
-      shadowY,
-      surfaceRadiusX * 1.25,
-      surfaceRadiusY * 0.62
-    );
-
-    // 2. Rocky Underside tapering down to craggy roots
+    // Rocky Underside tapering down to craggy roots
     const rock = scene.add.graphics();
     rock.setDepth(DEPTHS.ROCK);
 
@@ -219,38 +200,37 @@ export class Island {
     // 5. Surface details: Stepping stones and wildflowers
     const details = scene.add.graphics();
     details.setDepth(DEPTHS.DETAILS);
-
     details.fillStyle(0x948573, 0.8);
-    const stones = [
-      { x: -20, y: -10, rx: 7, ry: 4 },
-      { x: -5, y: 15, rx: 8, ry: 5 },
-      { x: 18, y: -5, rx: 6, ry: 4 },
-      { x: 35, y: 20, rx: 9, ry: 5 },
-      { x: -45, y: 8, rx: 7, ry: 4 },
+    const stones: [number, number, number, number][] = [
+      [-20, -10, 7, 4],
+      [-5, 15, 8, 5],
+      [18, -5, 6, 4],
+      [35, 20, 9, 5],
+      [-45, 8, 7, 4],
     ];
-    for (const s of stones) {
-      details.fillEllipse(centerX + s.x, centerY + s.y, s.rx * 2, s.ry * 2);
+    for (const [sx, sy, srx, sry] of stones) {
+      details.fillEllipse(centerX + sx, centerY + sy, srx * 2, sry * 2);
     }
 
-    const flowers = [
-      { x: -120, y: -20, col: 0xffd24d },
-      { x: -115, y: -15, col: 0xffffff },
-      { x: -90, y: 25, col: 0xe0703c },
-      { x: -140, y: 10, col: 0xffd24d },
-      { x: -60, y: -45, col: 0xffffff },
-      { x: 70, y: -35, col: 0xffd24d },
-      { x: 110, y: -15, col: 0xe0703c },
-      { x: 135, y: 12, col: 0xffffff },
-      { x: 85, y: 30, col: 0xffd24d },
-      { x: 150, y: -10, col: 0xe0703c },
-      { x: 30, y: -50, col: 0xffffff },
-      { x: -30, y: 45, col: 0xffd24d },
+    const flowers: [number, number, number][] = [
+      [-120, -20, 0xffd24d],
+      [-115, -15, 0xffffff],
+      [-90, 25, 0xe0703c],
+      [-140, 10, 0xffd24d],
+      [-60, -45, 0xffffff],
+      [70, -35, 0xffd24d],
+      [110, -15, 0xe0703c],
+      [135, 12, 0xffffff],
+      [85, 30, 0xffd24d],
+      [150, -10, 0xe0703c],
+      [30, -50, 0xffffff],
+      [-30, 45, 0xffd24d],
     ];
-    for (const f of flowers) {
-      details.fillStyle(f.col, 1);
-      details.fillRect(centerX + f.x, centerY + f.y, 3, 3);
+    for (const [fx, fy, col] of flowers) {
+      details.fillStyle(col, 1);
+      details.fillRect(centerX + fx, centerY + fy, 3, 3);
       details.fillStyle(0x2f522b, 1);
-      details.fillRect(centerX + f.x + 1, centerY + f.y + 3, 2, 2);
+      details.fillRect(centerX + fx + 1, centerY + fy + 3, 2, 2);
     }
   }
 }

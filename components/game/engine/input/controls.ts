@@ -3,22 +3,22 @@ import { ENGINE_CONSTANTS } from "../constants";
 
 export class ControlsManager {
   private keys: Record<string, Phaser.Input.Keyboard.Key> = {};
-
-  // Touch joystick state
   private joystickActive = false;
   private joystickOrigin = { x: 0, y: 0 };
   private joystickVector = { x: 0, y: 0 };
   private joystickBase: Phaser.GameObjects.Graphics;
   private joystickThumb: Phaser.GameObjects.Graphics;
-
-  // Tap-to-move state
   private tapTarget: { x: number; y: number } | null = null;
   private tapMarker: Phaser.GameObjects.Graphics;
+
+  private isFrozen = false;
+  private wasInteractDown = false;
+  private directInteractTriggered = false;
+  private onKeyDownListener?: ((e: KeyboardEvent) => void) | undefined;
 
   constructor(private scene: Phaser.Scene) {
     const { DEPTHS } = ENGINE_CONSTANTS;
 
-    // Create fixed-to-viewport joystick graphics
     this.joystickBase = scene.add.graphics();
     this.joystickBase.setScrollFactor(0);
     this.joystickBase.setDepth(DEPTHS.TOUCH_UI);
@@ -29,7 +29,6 @@ export class ControlsManager {
     this.joystickThumb.setDepth(DEPTHS.TOUCH_UI + 1);
     this.joystickThumb.setVisible(false);
 
-    // Tap indicator marker in world space
     this.tapMarker = scene.add.graphics();
     this.tapMarker.setDepth(DEPTHS.DETAILS);
     this.tapMarker.setVisible(false);
@@ -38,50 +37,60 @@ export class ControlsManager {
     this.setupPointer(scene);
   }
 
+  public setFrozen(frozen: boolean): void {
+    this.isFrozen = frozen;
+    if (frozen) {
+      this.tapTarget = null;
+      this.joystickActive = false;
+      this.joystickVector = { x: 0, y: 0 };
+      this.joystickBase.setVisible(false);
+      this.joystickThumb.setVisible(false);
+    }
+  }
+
+  public isInteractTriggered(): boolean {
+    if (this.isFrozen) {
+      this.wasInteractDown = false;
+      this.directInteractTriggered = false;
+      return false;
+    }
+    const isDown = Boolean(
+      this.keys["e"]?.isDown ||
+      this.keys["E"]?.isDown ||
+      this.keys["space"]?.isDown ||
+      this.keys["SPACE"]?.isDown ||
+      this.keys["enter"]?.isDown ||
+      this.keys["ENTER"]?.isDown
+    );
+    const direct = this.directInteractTriggered;
+    this.directInteractTriggered = false;
+
+    const triggered = direct || (isDown && !this.wasInteractDown);
+    this.wasInteractDown = isDown;
+    return triggered;
+  }
+
   public getMovementVector(
     playerX: number,
     playerY: number,
     isWalkable: (x: number, y: number) => boolean
   ): { normX: number; normY: number } {
+    if (this.isFrozen) return { normX: 0, normY: 0 };
+
     let moveX = 0;
     let moveY = 0;
 
-    // 1. Continuous keyboard polling via isDown state each frame
-    if (
-      this.keys["left"]?.isDown ||
-      this.keys["LEFT"]?.isDown ||
-      this.keys["a"]?.isDown ||
-      this.keys["A"]?.isDown
-    )
-      moveX -= 1;
-    if (
-      this.keys["right"]?.isDown ||
-      this.keys["RIGHT"]?.isDown ||
-      this.keys["d"]?.isDown ||
-      this.keys["D"]?.isDown
-    )
-      moveX += 1;
-    if (
-      this.keys["up"]?.isDown ||
-      this.keys["UP"]?.isDown ||
-      this.keys["w"]?.isDown ||
-      this.keys["W"]?.isDown
-    )
-      moveY -= 1;
-    if (
-      this.keys["down"]?.isDown ||
-      this.keys["DOWN"]?.isDown ||
-      this.keys["s"]?.isDown ||
-      this.keys["S"]?.isDown
-    )
-      moveY += 1;
+    // Continuous keyboard polling via isDown state each frame
+    if (this.keys["left"]?.isDown || this.keys["a"]?.isDown) moveX -= 1;
+    if (this.keys["right"]?.isDown || this.keys["d"]?.isDown) moveX += 1;
+    if (this.keys["up"]?.isDown || this.keys["w"]?.isDown) moveY -= 1;
+    if (this.keys["down"]?.isDown || this.keys["s"]?.isDown) moveY += 1;
 
-    // Keyboard input takes instant priority over tap targets
     if (moveX !== 0 || moveY !== 0) {
       this.tapTarget = null;
     }
 
-    // 2. Virtual touch joystick input
+    // Touch joystick input
     if (
       this.joystickActive &&
       (this.joystickVector.x !== 0 || this.joystickVector.y !== 0)
@@ -91,7 +100,7 @@ export class ControlsManager {
       this.tapTarget = null;
     }
 
-    // 3. Tap-to-move destination following
+    // Tap-to-move destination following
     if (this.tapTarget && moveX === 0 && moveY === 0) {
       const toX = this.tapTarget.x - playerX;
       const toY = this.tapTarget.y - playerY;
@@ -105,13 +114,10 @@ export class ControlsManager {
       }
     }
 
-    // 4. Strict diagonal normalization so diagonal movement is never faster
+    // Strict diagonal normalization so diagonal movement is never faster
     const mag = Math.hypot(moveX, moveY);
     if (mag > 0) {
-      return {
-        normX: moveX / mag,
-        normY: moveY / mag,
-      };
+      return { normX: moveX / mag, normY: moveY / mag };
     }
 
     return { normX: 0, normY: 0 };
@@ -128,16 +134,27 @@ export class ControlsManager {
         s: "S",
         a: "A",
         d: "D",
+        e: "E",
+        space: "SPACE",
+        enter: "ENTER",
       }) as Record<string, Phaser.Input.Keyboard.Key>;
+    }
+
+    if (typeof window !== "undefined") {
+      this.onKeyDownListener = (e: KeyboardEvent) => {
+        if (e.repeat) return;
+        if (e.code === "KeyE" || e.code === "Space" || e.code === "Enter") {
+          this.directInteractTriggered = true;
+        }
+      };
+      window.addEventListener("keydown", this.onKeyDownListener);
     }
   }
 
   private setupPointer(scene: Phaser.Scene): void {
     scene.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
       const target = pointer.event.target as HTMLElement | null;
-      if (target && target.closest(".pointer-events-auto")) {
-        return;
-      }
+      if (target && target.closest(".pointer-events-auto")) return;
 
       this.joystickActive = true;
       this.joystickOrigin = { x: pointer.x, y: pointer.y };
@@ -160,14 +177,11 @@ export class ControlsManager {
         this.tapTarget = null;
         if (this.tapMarker) this.tapMarker.setVisible(false);
 
-        const clampedDist = Math.min(dist, maxRadius);
-        const thumbX = this.joystickOrigin.x + (dx / dist) * clampedDist;
-        const thumbY = this.joystickOrigin.y + (dy / dist) * clampedDist;
+        const clamped = Math.min(dist, maxRadius);
+        const thumbX = this.joystickOrigin.x + (dx / dist) * clamped;
+        const thumbY = this.joystickOrigin.y + (dy / dist) * clamped;
 
-        this.joystickVector = {
-          x: dx / dist,
-          y: dy / dist,
-        };
+        this.joystickVector = { x: dx / dist, y: dy / dist };
         this.drawJoystick(
           this.joystickOrigin.x,
           this.joystickOrigin.y,
@@ -231,5 +245,15 @@ export class ControlsManager {
         this.tapMarker.setScale(1);
       },
     });
+  }
+
+  public destroy(): void {
+    if (this.onKeyDownListener && typeof window !== "undefined") {
+      window.removeEventListener("keydown", this.onKeyDownListener);
+      this.onKeyDownListener = undefined;
+    }
+    this.joystickBase.destroy();
+    this.joystickThumb.destroy();
+    this.tapMarker.destroy();
   }
 }

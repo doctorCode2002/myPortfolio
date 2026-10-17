@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "size": {
+    "w": 800,
+    "h": 1134
+  },
+  "walkable": [
+    [
+      [120, 283],
+      [681, 283],
+      [681, 736],
+      [120, 736],
+      [120, 283]
+    ]
+  ],
+  "blockers": [],
+  "occluders": [],
+  "doors": [
+    {
+      "buildingId": "building_education",
+      "at": [235, 377],
+      "radius": 36
+    },
+    {
+      "buildingId": "building_experience",
+      "at": [415, 292],
+      "radius": 36
+    },
+    {
+      "buildingId": "building_stack",
+      "at": [578, 372],
+      "radius": 36
+    },
+    {
+      "buildingId": "building_hobbies",
+      "at": [180, 568],
+      "radius": 36
+    },
+    {
+      "buildingId": "building_family",
+      "at": [562, 608],
+      "radius": 36
+    },
+    {
+      "buildingId": "board_news",
+      "at": [498, 414],
+      "radius": 36
+    }
+  ],
+  "spawns": {
+    "player": [401, 510],
+    "mayor": [435, 630]
+  },
+  "anchors": [
+    {
+      "id": "to_khidmty",
+      "at": [400, 292]
+    },
+    {
+      "id": "to_civicmind",
+      "at": [792, 370]
+    },
+    {
+      "id": "to_onyx",
+      "at": [760, 605]
+    },
+    {
+      "id": "to_saleh",
+      "at": [16, 596]
+    },
+    {
+      "id": "to_eyad",
+      "at": [2, 402]
+    }
+  ]
+}

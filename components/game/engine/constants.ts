@@ -1,6 +1,12 @@
 export const ENGINE_CONSTANTS = {
   WORLD_WIDTH: 1600,
   WORLD_HEIGHT: 1200,
+  LAYOUT_SCALE: 0.63,
+
+  BRIDGE: {
+    CORRIDOR_WIDTH: 20,
+    OVERLAP: 24,
+  },
 
   ISLAND: {
     CENTER_X: 800,
@@ -39,6 +45,8 @@ export const ENGINE_CONSTANTS = {
   },
 } as const;
 
+export const ZOOM_LEVELS = [0.5, 0.75, 1, 1.5, 2, 3, 4] as const;
+
 /**
  * Integer camera zoom:
  * - Desktop: zoom 2 provides crisp 2x pixels while keeping the entire island
@@ -49,4 +57,28 @@ export const ENGINE_CONSTANTS = {
 export function computeIntegerZoom(width: number, height: number): number {
   if (width >= 2400 && height >= 1350) return 3;
   return 2;
+}
+
+export function computeFitZoom(viewW: number, viewH: number): number {
+  const rawFit = Math.min(viewW / 880, viewH / 1200);
+  let bestIdx = 0;
+  for (let i = 0; i < ZOOM_LEVELS.length; i++) {
+    if ((ZOOM_LEVELS[i] ?? 0.5) <= Math.max(0.5, rawFit)) {
+      bestIdx = i;
+    }
+  }
+  return bestIdx;
+}
+
+export function findClosestZoomIndex(zoom: number): number {
+  let bestIdx = 4;
+  let bestDiff = Infinity;
+  for (let i = 0; i < ZOOM_LEVELS.length; i++) {
+    const diff = Math.abs((ZOOM_LEVELS[i] ?? 2) - zoom);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      bestIdx = i;
+    }
+  }
+  return bestIdx;
 }

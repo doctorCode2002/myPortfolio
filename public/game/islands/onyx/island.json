@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "size": {
+    "w": 521,
+    "h": 664
+  },
+  "walkable": [
+    [
+      [78, 166],
+      [443, 166],
+      [443, 432],
+      [78, 432],
+      [78, 166]
+    ]
+  ],
+  "blockers": [],
+  "occluders": [],
+  "doors": [
+    {
+      "buildingId": "portal_onyx",
+      "at": [260, 365],
+      "radius": 32
+    }
+  ],
+  "spawns": {
+    "player": [261, 435],
+    "mayor": [290, 435]
+  },
+  "anchors": [
+    {
+      "id": "to_home",
+      "at": [98, 177]
+    }
+  ]
+}
