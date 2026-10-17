@@ -74,8 +74,8 @@ export function createBridgeCorridor(options: {
     style = "rope",
     start,
     end,
-    width = 14,
-    overlap = 12,
+    width = 20,
+    overlap = 24,
   } = options;
 
   const dx = end.x - start.x;

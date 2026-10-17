@@ -7,7 +7,9 @@ import {
   type OcclusionObject,
 } from "./autoDepth";
 import { InteractionPrompt } from "./interactionPrompt";
+import { findClosestDoor } from "./doorDetection";
 import { buildWalkGrid, canWalkFeetBox } from "./materialMap";
+import type { IslandWalkState } from "./worldWalkability";
 
 export interface IslandArt {
   version: 1;
@@ -138,6 +140,19 @@ export class IllustratedIsland {
     );
   }
 
+  public getWalkState(id = "island"): IslandWalkState {
+    return {
+      id,
+      worldX: this.worldX,
+      worldY: this.worldY,
+      width: this.art.size.w,
+      height: this.art.size.h,
+      walkGrid: this.walkGrid,
+      gw: this.gw,
+      gh: this.gh,
+    };
+  }
+
   public get activeDoor(): string | null {
     return this.activeDoorId;
   }
@@ -153,22 +168,13 @@ export class IllustratedIsland {
   }
 
   public update(playerX: number, playerY: number, time: number): void {
-    const feetY = playerY + ENGINE_CONSTANTS.PLAYER.FEET_OFFSET_Y;
-
-    let closestDoor: { id: string; x: number; y: number; dist: number } | null =
-      null;
-    for (const door of this.art.doors) {
-      const dx = this.worldX + door.at[0];
-      const dy = this.worldY + door.at[1];
-      const distCenter = Math.hypot(playerX - dx, playerY - dy);
-      const distFeet = Math.hypot(playerX - dx, feetY - dy);
-      const dist = Math.min(distCenter, distFeet);
-      if (dist <= door.radius) {
-        if (!closestDoor || dist < closestDoor.dist) {
-          closestDoor = { id: door.buildingId, x: dx, y: dy, dist };
-        }
-      }
-    }
+    const closestDoor = findClosestDoor(
+      playerX,
+      playerY,
+      this.art.doors,
+      this.worldX,
+      this.worldY
+    );
 
     this.activeDoorId = closestDoor?.id ?? null;
 

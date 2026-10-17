@@ -13,6 +13,8 @@ export class ControlsManager {
 
   private isFrozen = false;
   private wasInteractDown = false;
+  private directInteractTriggered = false;
+  private onKeyDownListener?: ((e: KeyboardEvent) => void) | undefined;
 
   constructor(private scene: Phaser.Scene) {
     const { DEPTHS } = ENGINE_CONSTANTS;
@@ -49,6 +51,7 @@ export class ControlsManager {
   public isInteractTriggered(): boolean {
     if (this.isFrozen) {
       this.wasInteractDown = false;
+      this.directInteractTriggered = false;
       return false;
     }
     const isDown = Boolean(
@@ -59,7 +62,10 @@ export class ControlsManager {
       this.keys["enter"]?.isDown ||
       this.keys["ENTER"]?.isDown
     );
-    const triggered = isDown && !this.wasInteractDown;
+    const direct = this.directInteractTriggered;
+    this.directInteractTriggered = false;
+
+    const triggered = direct || (isDown && !this.wasInteractDown);
     this.wasInteractDown = isDown;
     return triggered;
   }
@@ -132,6 +138,16 @@ export class ControlsManager {
         space: "SPACE",
         enter: "ENTER",
       }) as Record<string, Phaser.Input.Keyboard.Key>;
+    }
+
+    if (typeof window !== "undefined") {
+      this.onKeyDownListener = (e: KeyboardEvent) => {
+        if (e.repeat) return;
+        if (e.code === "KeyE" || e.code === "Space" || e.code === "Enter") {
+          this.directInteractTriggered = true;
+        }
+      };
+      window.addEventListener("keydown", this.onKeyDownListener);
     }
   }
 
@@ -229,5 +245,15 @@ export class ControlsManager {
         this.tapMarker.setScale(1);
       },
     });
+  }
+
+  public destroy(): void {
+    if (this.onKeyDownListener && typeof window !== "undefined") {
+      window.removeEventListener("keydown", this.onKeyDownListener);
+      this.onKeyDownListener = undefined;
+    }
+    this.joystickBase.destroy();
+    this.joystickThumb.destroy();
+    this.tapMarker.destroy();
   }
 }

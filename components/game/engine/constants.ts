@@ -4,8 +4,8 @@ export const ENGINE_CONSTANTS = {
   LAYOUT_SCALE: 0.63,
 
   BRIDGE: {
-    CORRIDOR_WIDTH: 14,
-    OVERLAP: 12,
+    CORRIDOR_WIDTH: 20,
+    OVERLAP: 24,
   },
 
   ISLAND: {

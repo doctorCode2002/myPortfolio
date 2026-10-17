@@ -14,6 +14,7 @@ import {
 } from "../world/bridgeGeometry";
 import { BridgeRenderer, type BridgeSpec } from "../world/bridgeRenderer";
 import { setupCameraAndZoom } from "../world/cameraZoom";
+import { findNearestDoor } from "../world/doorDetection";
 import { IllustratedIsland, type IslandArt } from "../world/illustratedIsland";
 import type { Island } from "../world/islandRenderer";
 import { createProceduralFallback } from "../world/proceduralFallback";
@@ -25,6 +26,8 @@ export class WorldScene extends Phaser.Scene {
   private npcs: Npc[] = [];
   private player!: Player;
   private controls!: ControlsManager;
+  private debugText?: Phaser.GameObjects.Text;
+  private isDebugMode = false;
 
   // Fallback mode entities
   private centerIsland: Island | null = null;
@@ -267,6 +270,24 @@ export class WorldScene extends Phaser.Scene {
       });
     }
 
+    if (process.env.NODE_ENV !== "production") {
+      this.isDebugMode =
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("debug") === "1";
+
+      if (this.isDebugMode) {
+        this.debugText = this.add.text(12, 12, "", {
+          fontFamily: "monospace, monospace",
+          fontSize: "12px",
+          color: "#22c55e",
+          backgroundColor: "#0f172aee",
+          padding: { x: 8, y: 6 },
+        });
+        this.debugText.setScrollFactor(0);
+        this.debugText.setDepth(200000);
+      }
+    }
+
     this.scale.on("resize", () => this.fx.resize());
   }
 
@@ -345,6 +366,10 @@ export class WorldScene extends Phaser.Scene {
       isWalkable
     );
     this.player.move(normX, normY, dt, isWalkable, isObstacle);
+
+    if (process.env.NODE_ENV !== "production") {
+      this.updateDebugReadout(activeNpc, activeDoorIsland);
+    }
   }
 
   private setZoomLevel(idx: number): void {
@@ -390,7 +415,85 @@ export class WorldScene extends Phaser.Scene {
       this.npcs = [];
       this.demoBuilding = null;
       this.centerIsland = null;
+      this.controls?.destroy();
+      this.debugText?.destroy();
       this.fx.destroy();
     });
+  }
+
+  private updateDebugReadout(
+    activeNpc: Npc | null,
+    activeDoorIsland: IllustratedIsland | null
+  ): void {
+    if (!this.player) return;
+
+    const feetWorldX = Math.round(this.player.x);
+    const feetWorldY = Math.round(
+      this.player.y + ENGINE_CONSTANTS.PLAYER.FEET_OFFSET_Y
+    );
+
+    let activeIslandId = "none";
+    let feetNative: [number, number] | null = null;
+
+    for (const [id, isl] of this.illustratedIslands.entries()) {
+      if (
+        feetWorldX >= isl.worldX &&
+        feetWorldX < isl.worldX + isl.art.size.w &&
+        feetWorldY >= isl.worldY &&
+        feetWorldY < isl.worldY + isl.art.size.h
+      ) {
+        activeIslandId = id;
+        feetNative = [feetWorldX - isl.worldX, feetWorldY - isl.worldY];
+        break;
+      }
+    }
+
+    let nearestDoorId = "none";
+    let nearestDist = Infinity;
+
+    for (const isl of this.illustratedIslands.values()) {
+      const n = findNearestDoor(
+        this.player.x,
+        this.player.y,
+        isl.art.doors,
+        isl.worldX,
+        isl.worldY
+      );
+      if (n && n.dist < nearestDist) {
+        nearestDist = n.dist;
+        nearestDoorId = n.id;
+      }
+    }
+
+    const activeDoor = activeDoorIsland?.activeDoor ?? "none";
+    const npcInRange = activeNpc?.config.id ?? "none";
+
+    if (typeof window !== "undefined") {
+      (
+        window as unknown as { __DEBUG_GAME_STATE?: unknown }
+      ).__DEBUG_GAME_STATE = {
+        feetWorld: [feetWorldX, feetWorldY],
+        feetNative,
+        activeIslandId,
+        nearestDoor:
+          nearestDoorId !== "none"
+            ? { id: nearestDoorId, dist: Math.round(nearestDist * 10) / 10 }
+            : null,
+        activeDoor: activeDoor !== "none" ? activeDoor : null,
+        npcInRange: npcInRange !== "none" ? npcInRange : null,
+      };
+    }
+
+    if (this.isDebugMode && this.debugText) {
+      this.debugText.setText(
+        `[DEBUG HUD]\n` +
+          `Feet World:  [${feetWorldX}, ${feetWorldY}]\n` +
+          `Feet Native: ${feetNative ? `[${feetNative[0]}, ${feetNative[1]}]` : "none"}\n` +
+          `Active Isl:  ${activeIslandId}\n` +
+          `Near Door:   ${nearestDoorId} (${nearestDist.toFixed(1)}px)\n` +
+          `Active Door: ${activeDoor}\n` +
+          `NPC Range:   ${npcInRange}`
+      );
+    }
   }
 }

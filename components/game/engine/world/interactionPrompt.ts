@@ -32,7 +32,12 @@ export class InteractionPrompt extends Phaser.GameObjects.Container {
     this.labelText.setOrigin(0, 0.5);
 
     this.add([this.bg, this.keyBg, this.keyText, this.labelText]);
-    this.setDepth(30000);
+    this.setDepth(100000);
+    this.setScrollFactor(1);
+    this.bg.setScrollFactor(1);
+    this.keyBg.setScrollFactor(1);
+    this.keyText.setScrollFactor(1);
+    this.labelText.setScrollFactor(1);
     this.setVisible(false);
 
     // Make prompt tappable / clickable on touch devices
