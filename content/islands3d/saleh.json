@@ -1,0 +1,1289 @@
+{
+  "id": "saleh",
+  "center": [-32, 26],
+  "baseY": -0.5,
+  "biome": "autumn",
+  "hexes": [
+    {
+      "q": 1,
+      "r": -5,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 2,
+      "r": -5,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": 0,
+      "r": -4,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 1,
+      "r": -4,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": 2,
+      "r": -4,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": 3,
+      "r": -4,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": 5,
+      "r": -4,
+      "tile": "hex-road-a",
+      "h": 1,
+      "rot": 60
+    },
+    {
+      "q": -1,
+      "r": -3,
+      "tile": "hex-grass",
+      "h": 3
+    },
+    {
+      "q": 0,
+      "r": -3,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": 1,
+      "r": -3,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": 2,
+      "r": -3,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": 3,
+      "r": -3,
+      "tile": "hex-road-m",
+      "h": 1,
+      "rot": 120
+    },
+    {
+      "q": 4,
+      "r": -3,
+      "tile": "hex-road-a",
+      "h": 1,
+      "rot": 60
+    },
+    {
+      "q": 5,
+      "r": -3,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": -3,
+      "r": -2,
+      "tile": "hex-grass",
+      "h": 3
+    },
+    {
+      "q": -2,
+      "r": -2,
+      "tile": "hex-grass",
+      "h": 3
+    },
+    {
+      "q": -1,
+      "r": -2,
+      "tile": "hex-grass-sloped-low",
+      "h": 2,
+      "rot": 120
+    },
+    {
+      "q": 0,
+      "r": -2,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": 1,
+      "r": -2,
+      "tile": "hex-road-m",
+      "h": 1,
+      "rot": 120
+    },
+    {
+      "q": 2,
+      "r": -2,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": 3,
+      "r": -2,
+      "tile": "hex-road-e",
+      "h": 1,
+      "rot": 60
+    },
+    {
+      "q": 4,
+      "r": -2,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": -4,
+      "r": -1,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": -3,
+      "r": -1,
+      "tile": "hex-grass",
+      "h": 3
+    },
+    {
+      "q": -2,
+      "r": -1,
+      "tile": "hex-grass",
+      "h": 2
+    },
+    {
+      "q": -1,
+      "r": -1,
+      "tile": "hex-grass-sloped-low",
+      "h": 1,
+      "rot": 120
+    },
+    {
+      "q": 0,
+      "r": -1,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": 1,
+      "r": -1,
+      "tile": "hex-road-d",
+      "h": 1,
+      "rot": 60
+    },
+    {
+      "q": 2,
+      "r": -1,
+      "tile": "hex-road-b",
+      "h": 1
+    },
+    {
+      "q": 3,
+      "r": -1,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": 4,
+      "r": -1,
+      "tile": "hex-grass",
+      "h": 1
+    },
+    {
+      "q": -3,
+      "r": 0,
+      "tile": "hex-water"
+    },
+    {
+      "q": -2,
+      "r": 0,
+      "tile": "hex-water"
+    },
+    {
+      "q": -1,
+      "r": 0,
+      "tile": "hex-grass-sloped-low",
+      "rot": 60
+    },
+    {
+      "q": 0,
+      "r": 0,
+      "tile": "hex-road-a-sloped-low",
+      "rot": 60
+    },
+    {
+      "q": 1,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 2,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 3,
+      "r": 0,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -5,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -4,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -3,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": 1,
+      "tile": "hex-river-a",
+      "rot": 120
+    },
+    {
+      "q": -1,
+      "r": 1,
+      "tile": "hex-road-a",
+      "rot": 60
+    },
+    {
+      "q": 0,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 1,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 2,
+      "r": 1,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -5,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -4,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -3,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -2,
+      "r": 2,
+      "tile": "hex-river-a",
+      "rot": 120,
+      "walkable": true
+    },
+    {
+      "q": -1,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 0,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 1,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 2,
+      "r": 2,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -4,
+      "r": 3,
+      "tile": "hex-road-m",
+      "rot": 180
+    },
+    {
+      "q": -3,
+      "r": 3,
+      "tile": "hex-road-b"
+    },
+    {
+      "q": -2,
+      "r": 3,
+      "tile": "hex-river-b",
+      "rot": 60
+    },
+    {
+      "q": -1,
+      "r": 3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 0,
+      "r": 3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 1,
+      "r": 3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 2,
+      "r": 3,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -4,
+      "r": 4,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -3,
+      "r": 4,
+      "tile": "hex-river-b",
+      "rot": 240
+    },
+    {
+      "q": -2,
+      "r": 4,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -1,
+      "r": 4,
+      "tile": "hex-grass"
+    },
+    {
+      "q": 1,
+      "r": 4,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -4,
+      "r": 5,
+      "tile": "hex-grass"
+    },
+    {
+      "q": -3,
+      "r": 5,
+      "tile": "hex-river-a",
+      "rot": 120
+    },
+    {
+      "q": -2,
+      "r": 5,
+      "tile": "hex-grass"
+    }
+  ],
+  "objects": [
+    {
+      "model": "c-gallery",
+      "q": 1,
+      "r": -3,
+      "rot": 30
+    },
+    {
+      "model": "building-home-b-red",
+      "q": 3,
+      "r": -4,
+      "rot": 30
+    },
+    {
+      "model": "building-bridge-a",
+      "q": -2,
+      "r": 2,
+      "rot": 300,
+      "solid": false
+    },
+    {
+      "model": "c-frame-abstract",
+      "q": 2,
+      "r": -3,
+      "rot": -50,
+      "offset": [-0.2, 0.35]
+    },
+    {
+      "model": "c-easel-abstract",
+      "q": 0,
+      "r": -2,
+      "rot": 40,
+      "offset": [-0.45, -0.45]
+    },
+    {
+      "model": "c-paint-pots",
+      "q": 0,
+      "r": -2,
+      "offset": [-0.1, -0.75]
+    },
+    {
+      "model": "c-easel-sea",
+      "q": 0,
+      "r": -1,
+      "rot": 20,
+      "offset": [-0.6, 0.3]
+    },
+    {
+      "model": "stall-stool",
+      "q": 0,
+      "r": -1,
+      "offset": [-0.75, -0.3]
+    },
+    {
+      "model": "c-frame-autumn",
+      "q": 2,
+      "r": -2,
+      "rot": -30,
+      "offset": [0.55, -0.35]
+    },
+    {
+      "model": "path-stone-circle",
+      "q": 1,
+      "r": -1
+    },
+    {
+      "model": "tree-detailed-fall",
+      "q": -2,
+      "r": -2,
+      "rot": 40,
+      "scale": 2.3
+    },
+    {
+      "model": "c-leaves-decal-a",
+      "q": -2,
+      "r": -2
+    },
+    {
+      "model": "statue-head",
+      "q": -3,
+      "r": -2,
+      "rot": 200,
+      "offset": [0.1, 0.0]
+    },
+    {
+      "model": "statue-ring",
+      "q": -3,
+      "r": -1,
+      "rot": 150,
+      "offset": [-0.1, 0]
+    },
+    {
+      "model": "c-sculpture-spiral",
+      "q": -2,
+      "r": -1,
+      "offset": [0.2, 0.1]
+    },
+    {
+      "model": "statue-column",
+      "q": 0,
+      "r": -4,
+      "offset": [0.1, 0.1]
+    },
+    {
+      "model": "statue-block",
+      "q": 0,
+      "r": -4,
+      "offset": [-0.6, 0.5]
+    },
+    {
+      "model": "c-bench",
+      "q": -1,
+      "r": -3,
+      "rot": -30,
+      "offset": [0.55, 0.45]
+    },
+    {
+      "model": "lantern",
+      "q": -1,
+      "r": -3,
+      "offset": [-0.6, 0.5]
+    },
+    {
+      "model": "path-stone",
+      "q": -1,
+      "r": -1,
+      "rot": 60
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": -1,
+      "r": -3,
+      "rot": 120
+    },
+    {
+      "model": "path-stone",
+      "q": 0,
+      "r": -1,
+      "rot": 60,
+      "offset": [-0.4, 0.3]
+    },
+    {
+      "model": "tree-oak-fall",
+      "q": 1,
+      "r": -5,
+      "offset": [0, 0]
+    },
+    {
+      "model": "tree-autumn-tall",
+      "q": 0,
+      "r": -3,
+      "offset": [0.3, -0.4]
+    },
+    {
+      "model": "mushroom-red-group",
+      "q": -2,
+      "r": -1,
+      "offset": [-0.5, 0.5]
+    },
+    {
+      "model": "rock-single-c",
+      "q": -2,
+      "r": 0,
+      "rot": 30,
+      "offset": [-0.55, -0.6]
+    },
+    {
+      "model": "rock-single-a",
+      "q": -3,
+      "r": 0,
+      "rot": 80,
+      "offset": [0.1, -0.75]
+    },
+    {
+      "model": "waterlily-b",
+      "q": -3,
+      "r": 0,
+      "offset": [0.2, 0.2]
+    },
+    {
+      "model": "waterlily-a",
+      "q": -2,
+      "r": 0,
+      "offset": [0.3, 0.2]
+    },
+    {
+      "model": "lily-large",
+      "q": -3,
+      "r": 0,
+      "offset": [-0.3, -0.1]
+    },
+    {
+      "model": "waterplant-c",
+      "q": -3,
+      "r": 0,
+      "offset": [-0.6, 0.3]
+    },
+    {
+      "model": "waterplant-a",
+      "q": -2,
+      "r": 0,
+      "offset": [0.6, -0.1]
+    },
+    {
+      "model": "rock-large-b",
+      "q": -4,
+      "r": 1,
+      "rot": 30,
+      "offset": [0.4, -0.5]
+    },
+    {
+      "model": "c-easel-autumn",
+      "q": -4,
+      "r": 4,
+      "rot": -60,
+      "offset": [0.1, -0.1]
+    },
+    {
+      "model": "stall-stool",
+      "q": -4,
+      "r": 4,
+      "offset": [-0.3, -0.3]
+    },
+    {
+      "model": "c-paint-pots",
+      "q": -4,
+      "r": 4,
+      "offset": [0.35, 0.35]
+    },
+    {
+      "model": "c-easel-sea",
+      "q": -3,
+      "r": 2,
+      "rot": -120,
+      "offset": [0.2, 0.0]
+    },
+    {
+      "model": "c-bench",
+      "q": -4,
+      "r": 2,
+      "rot": -60,
+      "offset": [0.3, 0.0]
+    },
+    {
+      "model": "lantern",
+      "q": -3,
+      "r": 3,
+      "offset": [0.55, -0.45]
+    },
+    {
+      "model": "lantern",
+      "q": -1,
+      "r": 1,
+      "offset": [0.55, 0.2]
+    },
+    {
+      "model": "waterplant-a",
+      "q": -2,
+      "r": 3,
+      "offset": [0.5, 0.3]
+    },
+    {
+      "model": "waterplant-c",
+      "q": -3,
+      "r": 4,
+      "offset": [-0.5, 0.0]
+    },
+    {
+      "model": "rock-single-c",
+      "q": -2,
+      "r": 5,
+      "offset": [0.3, -0.2]
+    },
+    {
+      "model": "rock-small-a",
+      "q": -4,
+      "r": 5,
+      "offset": [0.2, 0.2]
+    },
+    {
+      "model": "crops-dirt-double-row",
+      "q": 1,
+      "r": 1
+    },
+    {
+      "model": "crop-pumpkin",
+      "q": 1,
+      "r": 1,
+      "rot": 318,
+      "scale": 0.5,
+      "offset": [-0.45, -0.35]
+    },
+    {
+      "model": "crop-pumpkin",
+      "q": 1,
+      "r": 1,
+      "rot": 130,
+      "scale": 0.5,
+      "offset": [0.15, -0.35]
+    },
+    {
+      "model": "crop-pumpkin",
+      "q": 1,
+      "r": 1,
+      "rot": 183,
+      "scale": 0.5,
+      "offset": [-0.15, 0.3]
+    },
+    {
+      "model": "crop-pumpkin",
+      "q": 1,
+      "r": 1,
+      "rot": 353,
+      "scale": 0.5,
+      "offset": [0.45, 0.3]
+    },
+    {
+      "model": "crops-dirt-row",
+      "q": 1,
+      "r": 0,
+      "rot": 60
+    },
+    {
+      "model": "crop-pumpkin",
+      "q": 1,
+      "r": 0,
+      "rot": 333,
+      "scale": 0.5,
+      "offset": [-0.35, 0.2]
+    },
+    {
+      "model": "crop-pumpkin",
+      "q": 1,
+      "r": 0,
+      "rot": 271,
+      "scale": 0.5,
+      "offset": [0.3, -0.2]
+    },
+    {
+      "model": "c-hay-bale",
+      "q": 2,
+      "r": 0,
+      "rot": 30,
+      "scale": 0.75,
+      "offset": [0.1, 0.2]
+    },
+    {
+      "model": "c-hay-bale",
+      "q": 2,
+      "r": 1,
+      "rot": 100,
+      "scale": 0.75,
+      "offset": [-0.3, 0.1]
+    },
+    {
+      "model": "wheelbarrow",
+      "q": 0,
+      "r": 1,
+      "rot": 120,
+      "offset": [0.3, 0.2]
+    },
+    {
+      "model": "crop-pumpkin",
+      "q": 0,
+      "r": 1,
+      "scale": 0.5,
+      "offset": [-0.2, -0.3]
+    },
+    {
+      "model": "c-bench",
+      "q": 2,
+      "r": 2,
+      "rot": -90,
+      "offset": [0.4, 0.0]
+    },
+    {
+      "model": "lantern",
+      "q": 2,
+      "r": 2,
+      "offset": [0.3, -0.6]
+    },
+    {
+      "model": "lantern",
+      "q": 2,
+      "r": -1,
+      "offset": [0.7, 0.4]
+    },
+    {
+      "model": "lantern",
+      "q": 4,
+      "r": -3,
+      "offset": [0.75, 0.15]
+    },
+    {
+      "model": "barrel",
+      "q": 3,
+      "r": -2,
+      "offset": [0.75, 0.3],
+      "solid": false
+    },
+    {
+      "model": "crate-a-big",
+      "q": 4,
+      "r": -3,
+      "offset": [-0.2, -0.7],
+      "solid": false
+    },
+    {
+      "model": "log-stack",
+      "q": 4,
+      "r": -2,
+      "rot": 20,
+      "offset": [-0.3, -0.4],
+      "solid": false
+    },
+    {
+      "model": "tree-autumn-tall",
+      "q": 4,
+      "r": -2,
+      "rot": 14,
+      "offset": [0.2, 0.17]
+    },
+    {
+      "model": "tree-detailed-fall",
+      "q": 4,
+      "r": -1,
+      "rot": 127,
+      "offset": [0.09, 0.24]
+    },
+    {
+      "model": "tree-oak-fall",
+      "q": 5,
+      "r": -3,
+      "rot": 57,
+      "offset": [-0.08, 0.22]
+    },
+    {
+      "model": "tree-default-fall",
+      "q": 2,
+      "r": -4,
+      "rot": 194,
+      "offset": [0.03, 0.04]
+    },
+    {
+      "model": "tree-autumn",
+      "q": 3,
+      "r": -1,
+      "rot": 6,
+      "offset": [0.14, -0.06]
+    },
+    {
+      "model": "tree-autumn-tall",
+      "q": 2,
+      "r": -5,
+      "rot": 93,
+      "offset": [0.25, 0.16]
+    },
+    {
+      "model": "tree-autumn",
+      "q": 1,
+      "r": -4,
+      "rot": 81,
+      "offset": [0.16, -0.26]
+    },
+    {
+      "model": "tree-autumn",
+      "q": 3,
+      "r": 0,
+      "rot": 316,
+      "offset": [0.07, -0.22]
+    },
+    {
+      "model": "tree-oak-fall",
+      "q": 2,
+      "r": 3,
+      "offset": [0.28, -0.3]
+    },
+    {
+      "model": "tree-autumn-tall",
+      "q": 1,
+      "r": 4,
+      "rot": 110,
+      "offset": [0.28, -0.2]
+    },
+    {
+      "model": "tree-autumn-tall",
+      "q": 1,
+      "r": 3,
+      "rot": 85,
+      "offset": [-0.13, 0.28]
+    },
+    {
+      "model": "tree-autumn",
+      "q": 0,
+      "r": 3,
+      "rot": 276,
+      "offset": [0.23, 0.08]
+    },
+    {
+      "model": "tree-fat-fall",
+      "q": -1,
+      "r": 4,
+      "rot": 93,
+      "offset": [0.26, 0.11]
+    },
+    {
+      "model": "tree-oak-fall",
+      "q": -5,
+      "r": 1,
+      "rot": 196,
+      "offset": [-0.12, -0.08]
+    },
+    {
+      "model": "tree-autumn",
+      "q": -5,
+      "r": 2,
+      "rot": 84,
+      "offset": [0.26, -0.14]
+    },
+    {
+      "model": "tree-oak-fall",
+      "q": -4,
+      "r": 1,
+      "rot": 169,
+      "offset": [-0.12, 0.06]
+    },
+    {
+      "model": "tree-autumn-tall",
+      "q": -4,
+      "r": -1,
+      "rot": 1,
+      "offset": [0.06, 0.12]
+    },
+    {
+      "model": "tree-autumn",
+      "q": -3,
+      "r": 1,
+      "rot": 33,
+      "offset": [-0.11, 0.19]
+    },
+    {
+      "model": "tree-autumn",
+      "q": 2,
+      "r": -3,
+      "rot": 246,
+      "offset": [0.12, -0.19]
+    },
+    {
+      "model": "tree-autumn",
+      "q": -1,
+      "r": 3,
+      "rot": 241,
+      "offset": [0.12, -0.27]
+    },
+    {
+      "model": "tree-oak-fall",
+      "q": -2,
+      "r": 4,
+      "rot": 11,
+      "offset": [0.27, -0.09]
+    },
+    {
+      "model": "tree-detailed-fall",
+      "q": -4,
+      "r": 5,
+      "rot": 206,
+      "offset": [-0.29, 0.17]
+    },
+    {
+      "model": "plant-bush-large",
+      "q": -1,
+      "r": 4,
+      "rot": 192,
+      "offset": [0.5, -0.3]
+    },
+    {
+      "model": "plant-bush-small",
+      "q": 3,
+      "r": -1,
+      "rot": 4,
+      "offset": [-0.5, 0.4]
+    },
+    {
+      "model": "plant-bush-large",
+      "q": 4,
+      "r": -1,
+      "rot": 23,
+      "offset": [0.5, 0.4]
+    },
+    {
+      "model": "plant-bush-small",
+      "q": -5,
+      "r": 1,
+      "rot": 92,
+      "offset": [0.4, 0.4]
+    },
+    {
+      "model": "plant-bush-small",
+      "q": 2,
+      "r": 3,
+      "rot": 100,
+      "offset": [-0.5, 0.3]
+    },
+    {
+      "model": "plant-bush",
+      "q": 1,
+      "r": -4,
+      "rot": 125,
+      "offset": [0.5, 0.4]
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": 4,
+      "r": -2,
+      "rot": 120
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": 1,
+      "r": 3,
+      "rot": 240
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": -4,
+      "r": 1,
+      "rot": 180
+    },
+    {
+      "model": "c-leaves-decal-a",
+      "q": 2,
+      "r": -4,
+      "rot": 240
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": -1,
+      "r": 3,
+      "rot": 120
+    },
+    {
+      "model": "c-leaves-decal-a",
+      "q": 0,
+      "r": 2,
+      "rot": 180
+    },
+    {
+      "model": "c-leaves-decal-a",
+      "q": 3,
+      "r": -1,
+      "rot": 60
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": -5,
+      "r": 2,
+      "rot": 240
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": 2,
+      "r": -2,
+      "rot": 60
+    },
+    {
+      "model": "grass-tuft",
+      "q": -3,
+      "r": 2,
+      "offset": [-0.16, 0.42]
+    },
+    {
+      "model": "grass-tuft",
+      "q": 0,
+      "r": 2,
+      "offset": [0.05, -0.19]
+    },
+    {
+      "model": "grass-tuft",
+      "q": 1,
+      "r": 2,
+      "offset": [-0.18, -0.32]
+    },
+    {
+      "model": "grass-tuft",
+      "q": -1,
+      "r": 2,
+      "offset": [-0.42, -0.35]
+    },
+    {
+      "model": "grass-tuft",
+      "q": 2,
+      "r": 1,
+      "offset": [0.19, 0.5]
+    },
+    {
+      "model": "grass-tuft",
+      "q": -3,
+      "r": -2,
+      "offset": [-0.34, -0.45]
+    },
+    {
+      "model": "mushroom-red-group",
+      "q": 0,
+      "r": 2,
+      "offset": [0.49, 0.03]
+    },
+    {
+      "model": "mushroom-red-group",
+      "q": -1,
+      "r": 2,
+      "offset": [-0.09, -0.26]
+    },
+    {
+      "model": "mushroom-red-group",
+      "q": -4,
+      "r": 3,
+      "offset": [0.09, 0.33]
+    },
+    {
+      "model": "mushroom-red-group",
+      "q": 1,
+      "r": 2,
+      "offset": [-0.04, -0.08]
+    },
+    {
+      "model": "crop-pumpkin",
+      "q": 1,
+      "r": 1,
+      "rot": 28,
+      "scale": 0.5,
+      "offset": [-0.1, -0.75]
+    },
+    {
+      "model": "crop-pumpkin",
+      "q": 1,
+      "r": 1,
+      "rot": 326,
+      "scale": 0.5,
+      "offset": [0.5, -0.6]
+    },
+    {
+      "model": "fence-wood-straight",
+      "q": 2,
+      "r": -1,
+      "rot": 300,
+      "offset": [0.47, 0.81]
+    },
+    {
+      "model": "fence-wood-straight",
+      "q": 4,
+      "r": -1,
+      "offset": [0.93, 0.0]
+    },
+    {
+      "model": "fence-wood-straight",
+      "q": 5,
+      "r": -3,
+      "offset": [0.93, 0.0]
+    },
+    {
+      "model": "rock-single-e",
+      "q": -4,
+      "r": 3,
+      "rot": 40,
+      "offset": [-0.6, 0.4]
+    },
+    {
+      "model": "plant-bush-detailed",
+      "q": -5,
+      "r": 2,
+      "offset": [0.5, -0.4]
+    },
+    {
+      "model": "plant-bush",
+      "q": -3,
+      "r": 3,
+      "offset": [-0.6, 0.6]
+    },
+    {
+      "model": "tree-autumn-trunk",
+      "q": -4,
+      "r": 2,
+      "offset": [-0.6, -0.5]
+    },
+    {
+      "model": "stump-round",
+      "q": 0,
+      "r": 2,
+      "offset": [0.6, 0.4]
+    },
+    {
+      "model": "rock-small-c",
+      "q": 0,
+      "r": 2,
+      "offset": [-0.6, -0.5]
+    },
+    {
+      "model": "grass-leafs",
+      "q": -2,
+      "r": 4,
+      "offset": [0.6, -0.3]
+    },
+    {
+      "model": "grass-leafs",
+      "q": -4,
+      "r": 3,
+      "offset": [0.5, -0.5]
+    },
+    {
+      "model": "grass-leafs",
+      "q": 1,
+      "r": 2,
+      "offset": [-0.5, 0.5]
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": -4,
+      "r": 4
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": -3,
+      "r": 3,
+      "rot": 180
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": -2,
+      "r": -1,
+      "rot": 120
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": 4,
+      "r": -3,
+      "rot": 60
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": -1,
+      "r": 1,
+      "rot": 60
+    },
+    {
+      "model": "c-leaves-decal-b",
+      "q": 0,
+      "r": 0,
+      "rot": 300
+    }
+  ],
+  "doors": [
+    {
+      "buildingId": "portal_saleh",
+      "q": 1,
+      "r": -2,
+      "radius": 0.9
+    }
+  ],
+  "spawns": {
+    "player": {
+      "q": 4,
+      "r": -3
+    },
+    "mayor": {
+      "q": 2,
+      "r": -2,
+      "rot": 200
+    }
+  },
+  "anchors": [
+    {
+      "id": "to_home",
+      "q": 5,
+      "r": -4
+    }
+  ],
+  "underside": {
+    "depth": 7,
+    "style": "rock",
+    "seed": 11,
+    "waterfalls": [
+      {
+        "q": -3,
+        "r": 5
+      }
+    ]
+  }
+}
