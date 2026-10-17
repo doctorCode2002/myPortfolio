@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -91,12 +94,16 @@ jobs:
         run: npm ci
 
       - name: Check formatting on changed files
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE_SHA: ${{ github.event.before }}
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch origin "${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}" || git fetch origin "${{ github.base_ref }}"
-            BASE="origin/${{ github.base_ref }}"
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            git fetch origin "$BASE_REF:refs/remotes/origin/$BASE_REF" || git fetch origin "$BASE_REF"
+            BASE="origin/$BASE_REF"
           else
-            BASE="${{ github.event.before }}"
+            BASE="$BEFORE_SHA"
             if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] || ! git rev-parse --verify "$BASE" >/dev/null 2>&1; then
               BASE="HEAD~1"
             fi
