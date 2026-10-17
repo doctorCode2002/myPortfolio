@@ -23,6 +23,7 @@ import {
 import { DialogueBox, type DialogueData } from "./dialogue-box";
 import { gameEvents } from "./engine/events";
 import { GameOverlay } from "./game-overlay";
+import { getBuildingPanel } from "@/lib/content/world.panels";
 
 const emptySubscribe = () => () => {};
 
@@ -72,8 +73,22 @@ export function PlayView({
   const [activeDialogue, setActiveDialogue] = useState<DialogueData | null>(
     null
   );
-  const [activeBuilding, setActiveBuilding] =
+  const [activeBuildingOverride, setActiveBuildingOverride] =
     useState<BuildingModalData | null>(null);
+  const [panelDismissed, setPanelDismissed] = useState(false);
+
+  const devPanel =
+    process.env.NODE_ENV !== "production" &&
+    isMounted &&
+    typeof window !== "undefined"
+      ? (() => {
+          const p = new URLSearchParams(window.location.search).get("panel");
+          return p ? getBuildingPanel(p, locale) : null;
+        })()
+      : null;
+
+  const activeBuilding =
+    activeBuildingOverride ?? (panelDismissed ? null : devPanel);
 
   const selectedChar =
     selectedCharOverride ?? (isMounted ? loadSavedCharacter() : "char_0");
@@ -159,52 +174,11 @@ export function PlayView({
 
     const unbindBuilding = gameEvents.on(
       "interact:building",
-      ({ buildingId, titleKey, messageKey, title, lines }) => {
-        const buildingData =
-          dict.play.buildings?.[buildingId as keyof typeof dict.play.buildings];
-        const worldBuilding =
-          dict.world.buildings?.[
-            buildingId as keyof typeof dict.world.buildings
-          ];
-
-        if (buildingData) {
-          setActiveBuilding({
-            id: buildingId,
-            title: buildingData.title,
-            sign: buildingData.sign,
-            lines: buildingData.lines,
-          });
-        } else if (title && lines) {
-          setActiveBuilding({
-            id: buildingId,
-            title,
-            sign: worldBuilding?.sign,
-            lines,
-          });
-        } else if (worldBuilding) {
-          setActiveBuilding({
-            id: buildingId,
-            title: buildingId
-              .replace(/^(building_|portal_)/, "")
-              .replace(/_/g, " "),
-            sign: worldBuilding.sign,
-            lines: [worldBuilding.sign, worldBuilding.enterPrompt],
-          });
-        } else if (titleKey && messageKey) {
-          const rawLines = dict.play[messageKey as keyof typeof dict.play];
-          setActiveBuilding({
-            id: buildingId,
-            title: dict.play[titleKey as keyof typeof dict.play] as string,
-            lines: Array.isArray(rawLines)
-              ? (rawLines as string[])
-              : [rawLines as string],
-          });
-        } else {
-          setActiveBuilding({
-            id: buildingId,
-            title: dict.play.demoBuildingTitle,
-            lines: dict.play.demoBuildingDialogue,
-          });
+      ({ buildingId }) => {
+        const panel = getBuildingPanel(buildingId, locale);
+        if (panel) {
+          setPanelDismissed(false);
+          setActiveBuildingOverride(panel);
         }
       }
     );
@@ -213,7 +187,7 @@ export function PlayView({
       unbindNpc();
       unbindBuilding();
     };
-  }, [dict]);
+  }, [dict, locale]);
 
   const handleSelectCharacter = (charId: CharacterId): void => {
     setSelectedCharOverride(charId);
@@ -258,7 +232,10 @@ export function PlayView({
 
       <BuildingModal
         building={activeBuilding}
-        onClose={() => setActiveBuilding(null)}
+        onClose={() => {
+          setActiveBuildingOverride(null);
+          setPanelDismissed(true);
+        }}
         dict={dict}
         locale={locale}
       />
