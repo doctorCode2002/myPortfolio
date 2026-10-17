@@ -2,11 +2,9 @@ import Phaser from "phaser";
 import { ENGINE_CONSTANTS } from "../constants";
 import type { PerchSite } from "./types";
 
-type BirdState = "flying" | "landing" | "perched" | "taking_off";
-
 interface BirdEntity {
   sprite: Phaser.GameObjects.Sprite;
-  state: BirdState;
+  state: "flying" | "landing" | "perched" | "taking_off";
   x: number;
   y: number;
   vx: number;
@@ -22,7 +20,9 @@ export class BirdSystem {
   private birds: BirdEntity[] = [];
   private perchSites: PerchSite[] = [];
   private spawnTimer = 0;
-  private readonly textureKey = "fx_bird_sprite";
+  private initialSpawnDone = false;
+  private isVisible = true;
+  private readonly textureKey = "fx_bird_sprite_7px";
 
   constructor(private scene: Phaser.Scene) {
     this.createBirdTexture();
@@ -31,74 +31,76 @@ export class BirdSystem {
   private createBirdTexture(): void {
     if (this.scene.textures.exists(this.textureKey)) return;
 
-    // 2 frames side by side: [0]=wings up, [1]=wings flat/down
-    const canvas = this.scene.textures.createCanvas(this.textureKey, 12, 6);
+    // 2 frames side by side: [0]=wings up, [1]=wings flat/down (each 7x5 on a 16x5 canvas)
+    const canvas = this.scene.textures.createCanvas(this.textureKey, 16, 5);
     if (!canvas) return;
 
     const ctx = canvas.context;
     ctx.imageSmoothingEnabled = false;
 
-    // Frame 0: Wings up (x: 0..5)
-    ctx.fillStyle = "#2c333f";
-    ctx.fillRect(1, 1, 1, 1);
-    ctx.fillRect(4, 1, 1, 1);
-    ctx.fillRect(0, 2, 6, 1);
-    ctx.fillRect(2, 3, 2, 1);
-
-    // Frame 1: Wings down/flat (x: 6..11)
-    ctx.fillStyle = "#2c333f";
-    ctx.fillRect(6 + 2, 1, 2, 1);
-    ctx.fillRect(6 + 0, 2, 6, 1);
-    ctx.fillRect(6 + 0, 3, 1, 1);
-    ctx.fillRect(6 + 5, 3, 1, 1);
-    ctx.fillRect(6 + 2, 3, 2, 1);
+    ctx.fillStyle = "#222731";
+    const f0 = [".#...#.", "###.###", "..###..", "...#...", "...#..."];
+    const f1 = ["...#...", ".#####.", "#..#..#", "...#...", "...#..."];
+    for (let y = 0; y < 5; y++) {
+      for (let x = 0; x < 7; x++) {
+        if (f0[y]?.[x] === "#") ctx.fillRect(x, y, 1, 1);
+        if (f1[y]?.[x] === "#") ctx.fillRect(8 + x, y, 1, 1);
+      }
+    }
 
     canvas.refresh();
-
     const tex = this.scene.textures.get(this.textureKey);
-    tex.add("bird_0", 0, 0, 0, 6, 6);
-    tex.add("bird_1", 0, 6, 0, 6, 6);
+    tex.add("bird_0", 0, 0, 0, 7, 5);
+    tex.add("bird_1", 0, 8, 0, 7, 5);
   }
 
   public initPerchSites(worldX: number, worldY: number): void {
-    // Known roof ridge coordinates on the home island
-    const offsets = [
-      { id: "castle_arch", ox: 395, oy: 265, od: 430 },
-      { id: "academy_roof", ox: 165, oy: 402, od: 500 },
-      { id: "forge_roof", ox: 630, oy: 402, od: 500 },
-      { id: "pavilion_roof", ox: 165, oy: 598, od: 675 },
-      { id: "cottage_roof", ox: 610, oy: 598, od: 675 },
+    const raw = [
+      [395, 265, 430],
+      [165, 402, 500],
+      [630, 402, 500],
+      [165, 598, 675],
+      [610, 598, 675],
     ];
-    this.perchSites = offsets.map((o) => ({
-      id: o.id,
-      x: worldX + o.ox,
-      y: worldY + o.oy,
-      depth: worldY + o.od,
+    this.perchSites = raw.map(([ox, oy, od], idx) => ({
+      id: `p_${idx}`,
+      x: worldX + (ox ?? 0),
+      y: worldY + (oy ?? 0),
+      depth: worldY + (od ?? 0),
       occupied: false,
     }));
-
-    // Spawn an initial gentle flock crossing the sky
-    this.spawnFlock(-60, 220, 1);
   }
 
   public update(time: number, delta: number, reducedMotion = false): void {
-    if (reducedMotion) {
-      for (const b of this.birds) {
-        b.sprite.setVisible(false);
-      }
+    if (reducedMotion || !this.isVisible) {
+      for (const b of this.birds) b.sprite.setVisible(false);
       return;
     }
 
     const dt = Math.min(delta / 1000, 0.1);
     this.spawnTimer += dt;
 
-    // Periodically spawn a new flock
-    if (this.spawnTimer > 18) {
+    const cam = this.scene.cameras?.main;
+    const wv = cam?.worldView;
+
+    // Spawn first flock across the player's view at 5.5s
+    if (!this.initialSpawnDone && this.spawnTimer >= 5.5) {
+      this.initialSpawnDone = true;
       this.spawnTimer = 0;
-      const startX =
-        Math.random() > 0.5 ? -60 : ENGINE_CONSTANTS.WORLD_WIDTH + 60;
-      const startY = 140 + Math.random() * 220;
-      const dir = startX < 0 ? 1 : -1;
+      const startX = wv ? wv.x - 40 : 400;
+      const startY = wv ? wv.y + 60 : 350;
+      this.spawnFlock(startX, startY, 1);
+    } else if (this.initialSpawnDone && this.spawnTimer > 18) {
+      this.spawnTimer = 0;
+      const dir = Math.random() > 0.5 ? 1 : -1;
+      const startX = wv
+        ? dir > 0
+          ? wv.x - 40
+          : wv.right + 40
+        : dir > 0
+          ? 350
+          : 1250;
+      const startY = (wv ? wv.y : 300) + 40 + Math.random() * 120;
       this.spawnFlock(startX, startY, dir);
     }
 
@@ -113,25 +115,24 @@ export class BirdSystem {
         b.x += b.vx * dt;
         b.y = b.baseY + Math.sin(time * 0.003 + b.phase) * 12;
 
-        // Flap cycle: 1.2s flapping, 1.8s gliding
-        const flapCycle = b.flapTimer % 3.0;
-        if (flapCycle < 1.2) {
+        const flapCycle = b.flapTimer % 2.8;
+        if (flapCycle < 1.3) {
           b.sprite.setFrame(
-            Math.floor(flapCycle * 9) % 2 === 0 ? "bird_0" : "bird_1"
+            Math.floor(flapCycle * 8) % 2 === 0 ? "bird_0" : "bird_1"
           );
         } else {
           b.sprite.setFrame("bird_1");
         }
 
-        // Try perching if near a free perch site
-        if (b.stateTimer > 3.0) {
+        // Perch check near free site
+        if (b.stateTimer > 2.5) {
           const site = this.perchSites.find(
             (p) =>
               !p.occupied &&
               Math.abs(b.x - p.x) < 45 &&
               Math.abs(b.y - p.y) < 65
           );
-          if (site && Math.random() < 0.45) {
+          if (site && Math.random() < 0.4) {
             site.occupied = true;
             b.perchSite = site;
             b.state = "landing";
@@ -140,7 +141,6 @@ export class BirdSystem {
           }
         }
 
-        // Despawn when far out of bounds
         if (b.x < -120 || b.x > ENGINE_CONSTANTS.WORLD_WIDTH + 120) {
           b.sprite.destroy();
           this.birds.splice(i, 1);
@@ -151,10 +151,9 @@ export class BirdSystem {
           b.state = "flying";
           continue;
         }
-        b.x = Phaser.Math.Linear(b.x, b.perchSite.x, 0.06);
-        b.y = Phaser.Math.Linear(b.y, b.perchSite.y, 0.06);
+        b.x = Phaser.Math.Linear(b.x, b.perchSite.x, 0.07);
+        b.y = Phaser.Math.Linear(b.y, b.perchSite.y, 0.07);
         b.sprite.setFrame("bird_1");
-
         if (Math.hypot(b.x - b.perchSite.x, b.y - b.perchSite.y) < 3) {
           b.x = b.perchSite.x;
           b.y = b.perchSite.y;
@@ -162,12 +161,9 @@ export class BirdSystem {
           b.stateTimer = 0;
         }
       } else if (b.state === "perched") {
-        b.sprite.setFrame("bird_1");
-        // Tiny head peck / hop every 1.8s
-        const bob = Math.sin(time * 0.006) > 0.85 ? 1 : 0;
-        b.sprite.setPosition(b.x, b.y + bob);
-
-        // Perch for 5 to 9 seconds then take off
+        b.sprite
+          .setFrame("bird_1")
+          .setPosition(b.x, b.y + (Math.sin(time * 0.006) > 0.85 ? 1 : 0));
         if (b.stateTimer > 5.0 + (b.phase % 4)) {
           b.state = "taking_off";
           b.stateTimer = 0;
@@ -186,7 +182,7 @@ export class BirdSystem {
         if (b.stateTimer > 1.2) {
           b.state = "flying";
           b.baseY = b.y;
-          b.sprite.setDepth(ENGINE_CONSTANTS.DEPTHS.MIDGROUND_CLOUDS + 1);
+          b.sprite.setDepth(45);
         }
       }
 
@@ -199,14 +195,15 @@ export class BirdSystem {
     const baseSpeed = 55 + Math.random() * 15;
 
     for (let i = 0; i < flockSize; i++) {
-      const offsetX = -dir * (i * 18 + (Math.random() - 0.5) * 12);
+      const offsetX = -dir * (i * 20 + (Math.random() - 0.5) * 12);
       const offsetY = (Math.random() - 0.5) * 36;
       const bx = startX + offsetX;
       const by = startY + offsetY;
 
       const sprite = this.scene.add.sprite(bx, by, this.textureKey, "bird_0");
-      sprite.setDepth(ENGINE_CONSTANTS.DEPTHS.MIDGROUND_CLOUDS + 1);
+      sprite.setDepth(45);
       sprite.setFlipX(dir < 0);
+      sprite.setVisible(this.isVisible);
 
       this.birds.push({
         sprite,
@@ -221,6 +218,13 @@ export class BirdSystem {
         stateTimer: 0,
         perchSite: null,
       });
+    }
+  }
+
+  public setVisible(visible: boolean): void {
+    this.isVisible = visible;
+    for (const b of this.birds) {
+      b.sprite.setVisible(visible);
     }
   }
 

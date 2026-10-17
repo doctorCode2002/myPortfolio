@@ -7,6 +7,13 @@ import { ParticleSystem } from "./particles";
 import { PerfManager } from "./perf";
 import type { LivingWorldInitOptions } from "./types";
 
+declare global {
+  interface Window {
+    __TOGGLE_FX__?: () => boolean;
+    __SET_FX__?: (enabled: boolean) => void;
+  }
+}
+
 export class LivingWorldFX {
   private perf: PerfManager;
   private clouds: CloudSystem;
@@ -16,6 +23,7 @@ export class LivingWorldFX {
   private pipelineRegistered = false;
   private islandImage: Phaser.GameObjects.Image | null = null;
   private pipelineInstance: LivingWorldPipeline | null = null;
+  private isEnabled = true;
 
   constructor(private scene: Phaser.Scene) {
     this.perf = new PerfManager();
@@ -28,14 +36,10 @@ export class LivingWorldFX {
   }
 
   public static preload(scene: Phaser.Scene): void {
-    // Preload the development material map
     scene.load.image(
       "dev-island-material",
       "/game/islands/_dev/home.material.png"
     );
-
-    // Preload sky backdrop if available in public/game/sky/sky.webp
-    // Phaser will fail silently if not found, falling back to procedural gradient
     scene.load.image("sky-backdrop", "/game/sky/sky.webp");
   }
 
@@ -45,7 +49,7 @@ export class LivingWorldFX {
     const islandKey = options.islandImageKey ?? "dev-island-home";
     const materialKey = options.materialTextureKey ?? "dev-island-material";
 
-    // 1. Locate the base island image in the scene and attach the Living World shader
+    // 1. Locate island base image and attach pipeline
     const baseImg = this.scene.children.list.find(
       (obj) =>
         obj instanceof Phaser.GameObjects.Image && obj.texture.key === islandKey
@@ -65,14 +69,53 @@ export class LivingWorldFX {
       }
     }
 
-    // 2. Initialize particles (waterfall spray, chimney smoke, fire glow)
+    // 2. Initialize subsystems
     this.particles.initEmitters(worldX, worldY);
-
-    // 3. Populate swaying grass tufts across grass pixels
     this.grass.populate(worldX, worldY, materialKey);
-
-    // 4. Initialize bird flocks and roof perch sites
     this.birds.initPerchSites(worldX, worldY);
+
+    // 3. Debug toggle keyboard shortcut: Pressing "F" toggles all FX on/off
+    this.scene.input.keyboard?.on("keydown-F", () => {
+      this.toggle();
+    });
+
+    // 4. Expose debug toggle to window for console / screenshot automation
+    if (typeof window !== "undefined") {
+      window.__TOGGLE_FX__ = () => this.toggle();
+      window.__SET_FX__ = (enabled: boolean) => this.setEnabled(enabled);
+
+      if (window.location.search.includes("fx=0")) {
+        this.setEnabled(false);
+      }
+    }
+  }
+
+  public toggle(): boolean {
+    this.setEnabled(!this.isEnabled);
+    return this.isEnabled;
+  }
+
+  public setEnabled(enabled: boolean): void {
+    this.isEnabled = enabled;
+
+    // Toggle shader pipeline
+    if (this.pipelineInstance) {
+      this.pipelineInstance.setReducedMotion(
+        !enabled || this.perf.isReducedMotion
+      );
+    }
+
+    // Toggle all living entity systems
+    this.particles.setVisible(enabled);
+    this.grass.setVisible(enabled);
+    this.birds.setVisible(enabled);
+    this.clouds.setVisible(enabled);
+
+    console.log(`[LivingWorldFX] Effects ${enabled ? "ENABLED" : "DISABLED"}`);
+  }
+
+  public get enabled(): boolean {
+    return this.isEnabled;
   }
 
   public update(
@@ -81,17 +124,17 @@ export class LivingWorldFX {
     playerX?: number,
     playerY?: number
   ): void {
+    if (!this.isEnabled) return;
+
     this.perf.update(delta);
     const reduced = this.perf.isReducedMotion;
     const lowEnd = this.perf.isLowEnd;
 
-    // Update island shader pipeline uniforms
     if (this.pipelineInstance) {
       this.pipelineInstance.setShaderTime(time * 0.001);
       this.pipelineInstance.setReducedMotion(reduced);
     }
 
-    // Update individual living world effect systems
     this.clouds.update(delta, reduced);
     this.grass.update(time, playerX, playerY, reduced);
     this.birds.update(time, delta, reduced);
@@ -103,6 +146,11 @@ export class LivingWorldFX {
   }
 
   public destroy(): void {
+    if (typeof window !== "undefined") {
+      delete window.__TOGGLE_FX__;
+      delete window.__SET_FX__;
+    }
+
     this.perf.destroy();
     this.clouds.destroy();
     this.particles.destroy();

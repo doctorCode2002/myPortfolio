@@ -6,11 +6,13 @@ interface Tuft {
   baseX: number;
   baseY: number;
   phase: number;
+  variant: number;
 }
 
 export class GrassSystem {
   private tufts: Tuft[] = [];
-  private readonly textureKey = "fx_grass_tufts";
+  private isVisible = true;
+  private readonly textureKey = "fx_grass_tufts_v2";
 
   constructor(private scene: Phaser.Scene) {
     this.createProceduralTexture();
@@ -19,60 +21,76 @@ export class GrassSystem {
   private createProceduralTexture(): void {
     if (this.scene.textures.exists(this.textureKey)) return;
 
-    // 3 frames side by side on an 18x6 canvas: [0]=idle, [1]=sway right, [2]=sway left
-    const canvas = this.scene.textures.createCanvas(this.textureKey, 18, 6);
+    // 3 variants x 3 frames = 9 frames total, each 9x8 px on an 81x8 canvas
+    // Variants: 0=standard island olive, 1=shady olive, 2=sunlit olive
+    const canvas = this.scene.textures.createCanvas(this.textureKey, 81, 8);
     if (!canvas) return;
 
     const ctx = canvas.context;
     ctx.imageSmoothingEnabled = false;
 
-    // Colors
-    const baseCol = "#1d581a";
-    const midCol = "#3ea62c";
-    const tipCol = "#75d65c";
+    const variants = [
+      { base: "#445c2a", mid: "#6a8647", tip: "#8ea956" }, // Standard island grass
+      { base: "#354c20", mid: "#556f38", tip: "#748d48" }, // Deep meadow
+      { base: "#506c30", mid: "#789750", tip: "#9cbd64" }, // Sunlit meadow
+    ];
 
-    // Frame 0: Idle upright (x: 0..5)
-    ctx.fillStyle = baseCol;
-    ctx.fillRect(2, 4, 2, 2);
-    ctx.fillStyle = midCol;
-    ctx.fillRect(1, 2, 1, 2);
-    ctx.fillRect(2, 2, 2, 2);
-    ctx.fillRect(4, 2, 1, 2);
-    ctx.fillStyle = tipCol;
-    ctx.fillRect(1, 1, 1, 1);
-    ctx.fillRect(2, 0, 2, 2);
-    ctx.fillRect(4, 1, 1, 1);
+    const drawFrame = (
+      ox: number,
+      shear: number,
+      pal: { base: string; mid: string; tip: string }
+    ) => {
+      ctx.fillStyle = pal.base;
+      ctx.fillRect(ox + 3, 6, 3, 2); // Anchored base
 
-    // Frame 1: Swayed right (x: 6..11)
-    ctx.fillStyle = baseCol;
-    ctx.fillRect(6 + 2, 4, 2, 2);
-    ctx.fillStyle = midCol;
-    ctx.fillRect(6 + 2, 2, 2, 2);
-    ctx.fillRect(6 + 4, 2, 1, 2);
-    ctx.fillRect(6 + 5, 2, 1, 2);
-    ctx.fillStyle = tipCol;
-    ctx.fillRect(6 + 3, 1, 1, 1);
-    ctx.fillRect(6 + 4, 0, 1, 2);
-    ctx.fillRect(6 + 5, 1, 1, 1);
+      ctx.fillStyle = pal.mid;
+      ctx.fillRect(ox + 2, 5, 1, 1);
+      ctx.fillRect(ox + 4, 5, 1, 1);
+      ctx.fillRect(ox + 6, 5, 1, 1);
+      ctx.fillRect(ox + 2 + (shear > 0 ? 1 : shear < 0 ? -1 : 0), 4, 1, 1);
+      ctx.fillRect(ox + 4 + shear, 4, 1, 2);
+      ctx.fillRect(ox + 6 + (shear > 0 ? 1 : shear < 0 ? -1 : 0), 4, 1, 1);
+      ctx.fillRect(ox + 2 + (shear > 0 ? 1 : shear < 0 ? -1 : 0), 3, 1, 1);
 
-    // Frame 2: Swayed left (x: 12..17)
-    ctx.fillStyle = baseCol;
-    ctx.fillRect(12 + 2, 4, 2, 2);
-    ctx.fillStyle = midCol;
-    ctx.fillRect(12 + 0, 2, 1, 2);
-    ctx.fillRect(12 + 1, 2, 1, 2);
-    ctx.fillRect(12 + 2, 2, 2, 2);
-    ctx.fillStyle = tipCol;
-    ctx.fillRect(12 + 0, 1, 1, 1);
-    ctx.fillRect(12 + 1, 0, 1, 2);
-    ctx.fillRect(12 + 2, 1, 1, 1);
+      ctx.fillStyle = pal.tip;
+      ctx.fillRect(ox + 1 + (shear > 0 ? 2 : shear < 0 ? -1 : 0), 2, 1, 1);
+      ctx.fillRect(ox + 4 + shear * 2, 1, 1, 2);
+      ctx.fillRect(ox + 7 + (shear > 0 ? 1 : shear < 0 ? -2 : 0), 3, 1, 1);
+    };
+
+    variants.forEach((pal, v) => {
+      const offsetX = v * 27;
+      drawFrame(offsetX, 0, pal); // Frame 0: Upright
+      drawFrame(offsetX + 9, 1, pal); // Frame 1: Sheared right
+      drawFrame(offsetX + 18, -1, pal); // Frame 2: Sheared left
+    });
 
     canvas.refresh();
 
     const tex = this.scene.textures.get(this.textureKey);
-    tex.add("tuft_0", 0, 0, 0, 6, 6);
-    tex.add("tuft_1", 0, 6, 0, 6, 6);
-    tex.add("tuft_2", 0, 12, 0, 6, 6);
+    for (let v = 0; v < 3; v++) {
+      tex.add(`v${v}_0`, 0, v * 27, 0, 9, 8);
+      tex.add(`v${v}_1`, 0, v * 27 + 9, 0, 9, 8);
+      tex.add(`v${v}_2`, 0, v * 27 + 18, 0, 9, 8);
+    }
+  }
+
+  private isGrassNeighborhood(
+    jx: number,
+    jy: number,
+    materialKey: string
+  ): boolean {
+    // Only place tufts on grass pixels at least 3 px away from any non-grass class
+    for (let dy = -3; dy <= 3; dy++) {
+      for (let dx = -3; dx <= 3; dx++) {
+        const col = this.scene.textures.getPixel(jx + dx, jy + dy, materialKey);
+        if (!col) return false;
+        if (!(col.green > 150 && col.red < 50 && col.blue < 50)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   public populate(
@@ -82,44 +100,50 @@ export class GrassSystem {
   ): void {
     this.clear();
 
-    const points: Array<{ x: number; y: number }> = [];
-    const minSpacing = 28;
+    const points: Array<{ x: number; y: number; variant: number }> = [];
+    const minSpacing = 42; // Sparse placement
 
-    // Sample across top surface region (walkable grass area of island)
-    // Home island bounds in native pixels: x: 80..720, y: 440..750
-    for (let gy = 440; gy <= 750; gy += 32) {
-      for (let gx = 90; gx <= 710; gx += 32) {
-        const jx = gx + Math.floor((Math.random() - 0.5) * 18);
-        const jy = gy + Math.floor((Math.random() - 0.5) * 18);
+    // Sample across the walkable meadow area of the island
+    for (let gy = 460; gy <= 740; gy += 36) {
+      for (let gx = 100; gx <= 700; gx += 36) {
+        const jx = gx + Math.floor((Math.random() - 0.5) * 16);
+        const jy = gy + Math.floor((Math.random() - 0.5) * 16);
 
-        let isGrassPixel = false;
         if (this.scene.textures.exists(materialKey)) {
-          const col = this.scene.textures.getPixel(jx, jy, materialKey);
-          if (col && col.green > 150 && col.red < 50 && col.blue < 50) {
-            isGrassPixel = true;
+          if (!this.isGrassNeighborhood(jx, jy, materialKey)) {
+            continue;
           }
-        } else {
-          // Fallback check if material map is not yet ready
-          isGrassPixel = Math.random() > 0.4;
         }
 
-        if (isGrassPixel) {
-          const wx = worldX + jx;
-          const wy = worldY + jy;
+        const wx = worldX + jx;
+        const wy = worldY + jy;
 
-          const tooClose = points.some(
-            (p) => Math.hypot(p.x - wx, p.y - wy) < minSpacing
-          );
-          if (!tooClose) {
-            points.push({ x: wx, y: wy });
+        const tooClose = points.some(
+          (p) => Math.hypot(p.x - wx, p.y - wy) < minSpacing
+        );
+        if (!tooClose) {
+          // Select variant based on local art brightness
+          const artCol = this.scene.textures.exists("dev-island-home")
+            ? this.scene.textures.getPixel(jx, jy, "dev-island-home")
+            : null;
+          let variant = 0;
+          if (artCol) {
+            if (artCol.green > 145)
+              variant = 2; // Sunlit
+            else if (artCol.green < 120) variant = 1; // Shady
           }
+          points.push({ x: wx, y: wy, variant });
         }
       }
     }
 
-    // Spawn sprites for sampled points
     for (const p of points) {
-      const sprite = this.scene.add.sprite(p.x, p.y, this.textureKey, "tuft_0");
+      const sprite = this.scene.add.sprite(
+        p.x,
+        p.y,
+        this.textureKey,
+        `v${p.variant}_0`
+      );
       sprite.setOrigin(0.5, 1);
       sprite.setDepth(ENGINE_CONSTANTS.DEPTHS.GRASS + 1);
 
@@ -128,6 +152,7 @@ export class GrassSystem {
         baseX: p.x,
         baseY: p.y,
         phase: Math.random() * Math.PI * 2,
+        variant: p.variant,
       });
     }
   }
@@ -138,9 +163,11 @@ export class GrassSystem {
     playerY?: number,
     reducedMotion = false
   ): void {
+    if (!this.isVisible) return;
+
     if (reducedMotion) {
       for (const t of this.tufts) {
-        t.sprite.setFrame("tuft_0");
+        t.sprite.setFrame(`v${t.variant}_0`);
       }
       return;
     }
@@ -148,29 +175,33 @@ export class GrassSystem {
     const tSec = time * 0.001;
 
     for (const tuft of this.tufts) {
-      // Player parting check
+      // Part grass away from player
       if (playerX !== undefined && playerY !== undefined) {
         const dist = Math.hypot(playerX - tuft.baseX, playerY - tuft.baseY);
         if (dist < 18) {
-          // Part away from player
-          if (playerX > tuft.baseX) {
-            tuft.sprite.setFrame("tuft_2"); // Part left
-          } else {
-            tuft.sprite.setFrame("tuft_1"); // Part right
-          }
+          tuft.sprite.setFrame(
+            playerX > tuft.baseX ? `v${tuft.variant}_2` : `v${tuft.variant}_1`
+          );
           continue;
         }
       }
 
-      // Wind wave sway across the world
+      // Wind wave sway
       const wind = Math.sin(tSec * 2.2 + tuft.baseX * 0.012 + tuft.phase);
       if (wind > 0.45) {
-        tuft.sprite.setFrame("tuft_1");
+        tuft.sprite.setFrame(`v${tuft.variant}_1`);
       } else if (wind < -0.45) {
-        tuft.sprite.setFrame("tuft_2");
+        tuft.sprite.setFrame(`v${tuft.variant}_2`);
       } else {
-        tuft.sprite.setFrame("tuft_0");
+        tuft.sprite.setFrame(`v${tuft.variant}_0`);
       }
+    }
+  }
+
+  public setVisible(visible: boolean): void {
+    this.isVisible = visible;
+    for (const t of this.tufts) {
+      t.sprite.setVisible(visible);
     }
   }
 

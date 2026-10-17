@@ -80,11 +80,18 @@ export class ParticleSystem {
       ];
     }
 
-    // Warm fire / lamp glow spots
-    this.fireGlows = [
-      { x: worldX + 630, y: worldY + 555, radius: 26 },
-      { x: worldX + 435, y: worldY + 570, radius: 18 },
-    ];
+    // Subtle warm fire glow only at the forge
+    this.fireGlows = [{ x: worldX + 630, y: worldY + 555, radius: 14 }];
+  }
+
+  public setVisible(visible: boolean): void {
+    this.graphics.setVisible(visible);
+    this.glowGraphics.setVisible(visible);
+    if (!visible) {
+      this.graphics.clear();
+      this.glowGraphics.clear();
+      this.particles = [];
+    }
   }
 
   public update(
