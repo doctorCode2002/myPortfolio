@@ -32,7 +32,7 @@ export class InteractionPrompt extends Phaser.GameObjects.Container {
     this.labelText.setOrigin(0, 0.5);
 
     this.add([this.bg, this.keyBg, this.keyText, this.labelText]);
-    this.setDepth(15000);
+    this.setDepth(30000);
     this.setVisible(false);
 
     // Make prompt tappable / clickable on touch devices
@@ -52,7 +52,7 @@ export class InteractionPrompt extends Phaser.GameObjects.Container {
   ): void {
     this.baseY = y;
     this.x = x;
-    if (!this.visible) {
+    if (!this.visible || Math.abs(this.y - y) > 10) {
       this.y = y;
     }
     this.onInteractCallback = onInteract;
@@ -115,7 +115,15 @@ export class InteractionPrompt extends Phaser.GameObjects.Container {
 
       // Interactive hit area
       this.setSize(totalWidth, totalHeight + 8);
-      this.setInteractive({ useHandCursor: true });
+      this.setInteractive(
+        new Phaser.Geom.Rectangle(
+          -totalWidth / 2,
+          -totalHeight / 2,
+          totalWidth,
+          totalHeight + 8
+        ),
+        Phaser.Geom.Rectangle.Contains
+      );
     }
 
     this.setVisible(true);

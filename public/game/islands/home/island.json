@@ -19,32 +19,32 @@
     {
       "buildingId": "building_education",
       "at": [235, 377],
-      "radius": 32
+      "radius": 36
     },
     {
       "buildingId": "building_experience",
       "at": [415, 292],
-      "radius": 34
+      "radius": 36
     },
     {
       "buildingId": "building_stack",
-      "at": [578, 368],
-      "radius": 32
+      "at": [578, 372],
+      "radius": 36
     },
     {
       "buildingId": "building_hobbies",
       "at": [180, 568],
-      "radius": 32
+      "radius": 36
     },
     {
       "buildingId": "building_family",
       "at": [562, 608],
-      "radius": 32
+      "radius": 36
     },
     {
       "buildingId": "board_news",
-      "at": [498, 388],
-      "radius": 28
+      "at": [498, 414],
+      "radius": 36
     }
   ],
   "spawns": {

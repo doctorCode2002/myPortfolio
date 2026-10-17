@@ -160,7 +160,9 @@ export class IllustratedIsland {
     for (const door of this.art.doors) {
       const dx = this.worldX + door.at[0];
       const dy = this.worldY + door.at[1];
-      const dist = Math.hypot(playerX - dx, feetY - dy);
+      const distCenter = Math.hypot(playerX - dx, playerY - dy);
+      const distFeet = Math.hypot(playerX - dx, feetY - dy);
+      const dist = Math.min(distCenter, distFeet);
       if (dist <= door.radius) {
         if (!closestDoor || dist < closestDoor.dist) {
           closestDoor = { id: door.buildingId, x: dx, y: dy, dist };
@@ -168,16 +170,15 @@ export class IllustratedIsland {
       }
     }
 
-    const prevDoor = this.activeDoorId;
     this.activeDoorId = closestDoor?.id ?? null;
 
     if (closestDoor) {
       const signText = this.getDoorSign(closestDoor.id);
-      this.prompt.showPrompt(closestDoor.x, closestDoor.y - 36, signText, () =>
+      this.prompt.showPrompt(closestDoor.x, closestDoor.y - 42, signText, () =>
         this.interact()
       );
       this.prompt.updateBob(time);
-    } else if (prevDoor) {
+    } else {
       this.prompt.hide();
     }
   }

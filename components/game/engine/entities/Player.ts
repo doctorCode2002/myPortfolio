@@ -110,8 +110,7 @@ export class Player {
     }
 
     // Keep shadow aligned under character feet and update Y-sorted depth
-    this.shadow.x = this.sprite.x - ENGINE_CONSTANTS.PLAYER.START_X;
-    this.shadow.y = this.sprite.y - ENGINE_CONSTANTS.PLAYER.START_Y;
+    this.shadow.setPosition(this.sprite.x, this.sprite.y);
     const feetDepth = this.sprite.y + ENGINE_CONSTANTS.PLAYER.FEET_OFFSET_Y;
     this.sprite.setDepth(feetDepth);
     this.shadow.setDepth(feetDepth - 1);
