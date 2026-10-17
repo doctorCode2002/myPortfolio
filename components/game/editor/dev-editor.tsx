@@ -36,6 +36,8 @@ export function DevEditor(): ReactNode {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [spawnTarget, setSpawnTarget] = useState<"player" | "mayor">("player");
   const [artData, setArtData] = useState<IslandArt | null>(null);
+  const [islands, setIslands] = useState<string[]>([]);
+  const [activeIsland, setActiveIsland] = useState<string>("home");
 
   const [layers, setLayers] = useState<EditorLayerState>({
     materialOverlay: true,
@@ -45,6 +47,19 @@ export function DevEditor(): ReactNode {
   });
 
   useEffect(() => {
+    const unbindList = gameEvents.on(
+      "editor:island-list",
+      ({ islands: islList, activeIslandId }) => {
+        setIslands(islList);
+        setActiveIsland(activeIslandId);
+      }
+    );
+    const unbindChanged = gameEvents.on(
+      "editor:island-changed",
+      ({ islandId }) => {
+        setActiveIsland(islandId);
+      }
+    );
     const unbind = gameEvents.on(
       "editor:data-updated",
       ({ art, canUndo: u, canRedo: r }) => {
@@ -54,7 +69,11 @@ export function DevEditor(): ReactNode {
       }
     );
     gameEvents.emit("editor:request-data");
-    return unbind;
+    return () => {
+      unbindList();
+      unbindChanged();
+      unbind();
+    };
   }, []);
 
   useEditorShortcuts(TOOLS, (tool) => {
@@ -131,6 +150,32 @@ export function DevEditor(): ReactNode {
 
         {!minimized && (
           <div className="space-y-2.5">
+            {islands.length > 1 && (
+              <div className="border-foreground/10 flex items-center justify-between border-b pb-2">
+                <span className="text-muted-foreground font-mono text-[10px] uppercase">
+                  Island:
+                </span>
+                <select
+                  value={activeIsland}
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    setActiveIsland(id);
+                    gameEvents.emit("editor:set-island", { islandId: id });
+                  }}
+                  className="border-foreground/20 bg-muted/60 text-foreground rounded-none border px-2 py-0.5 font-mono text-xs focus:outline-none"
+                >
+                  {islands.map((id) => (
+                    <option
+                      key={id}
+                      value={id}
+                      className="bg-background text-foreground"
+                    >
+                      {id}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div>
               <span className="text-muted-foreground mb-1 block font-mono text-[10px] uppercase">
                 Active Tool (Keys 1-5)

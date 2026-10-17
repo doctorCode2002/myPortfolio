@@ -11,15 +11,26 @@ import type { EditorLayerState, EditorTool } from "./types";
 
 export function initDevEditor(
   scene: Phaser.Scene,
-  island: IllustratedIsland
+  islandsInput: Map<string, IllustratedIsland> | IllustratedIsland,
+  defaultIslandId = "home"
 ): () => void {
+  const islandsMap: Map<string, IllustratedIsland> =
+    islandsInput instanceof Map
+      ? islandsInput
+      : new Map([[defaultIslandId, islandsInput]]);
+
+  let activeIslandId = islandsMap.has(defaultIslandId)
+    ? defaultIslandId
+    : (islandsMap.keys().next().value ?? "home");
+  let island = islandsMap.get(activeIslandId)!;
+
   const gfx = scene.add.graphics();
   gfx.setDepth(25000);
 
   let activeTool: EditorTool = "brush";
   let activeMaterial: MaterialClass = "road";
   let brushSize = 4;
-  const history = new MaterialHistory();
+  let history = new MaterialHistory();
 
   const layers: EditorLayerState = {
     materialOverlay: true,
@@ -36,11 +47,7 @@ export function initDevEditor(
     scene.textures.remove(overlayTexKey);
   scene.textures.addCanvas(overlayTexKey, island.materialCanvas);
 
-  const overlayImg = scene.add.image(
-    island.worldX,
-    island.worldY,
-    overlayTexKey
-  );
+  let overlayImg = scene.add.image(island.worldX, island.worldY, overlayTexKey);
   overlayImg.setOrigin(0, 0);
   overlayImg.setAlpha(0.5);
   overlayImg.setDepth(24000);
@@ -58,7 +65,15 @@ export function initDevEditor(
   };
   redraw();
 
+  const emitIslandList = (): void => {
+    gameEvents.emit("editor:island-list", {
+      islands: Array.from(islandsMap.keys()),
+      activeIslandId,
+    });
+  };
+
   const emitUpdated = (): void => {
+    emitIslandList();
     gameEvents.emit("editor:data-updated", {
       art: island.art,
       canUndo: history.canUndo(),
@@ -66,9 +81,52 @@ export function initDevEditor(
     });
   };
 
+  const switchIsland = (newId: string): void => {
+    const nextIsland = islandsMap.get(newId);
+    if (!nextIsland || nextIsland === island) return;
+
+    overlayImg.destroy();
+    if (scene.textures.exists(overlayTexKey)) {
+      scene.textures.remove(overlayTexKey);
+    }
+    for (const l of labels) l.destroy();
+    labels.length = 0;
+    gfx.clear();
+
+    activeIslandId = newId;
+    island = nextIsland;
+    history = new MaterialHistory();
+
+    scene.textures.addCanvas(overlayTexKey, island.materialCanvas);
+    overlayImg = scene.add.image(island.worldX, island.worldY, overlayTexKey);
+    overlayImg.setOrigin(0, 0);
+    overlayImg.setAlpha(0.5);
+    overlayImg.setDepth(24000);
+    overlayImg.setVisible(layers.materialOverlay);
+
+    redraw();
+    emitUpdated();
+    gameEvents.emit("editor:island-changed", { islandId: activeIslandId });
+  };
+
   const handlePointerDown = (pointer: Phaser.Input.Pointer): void => {
     const target = pointer.event.target as HTMLElement | null;
     if (target?.closest(".dev-editor-hud")) return;
+
+    // Pick the island under the cursor if clicking another island
+    for (const [id, isl] of islandsMap.entries()) {
+      if (id !== activeIslandId) {
+        if (
+          pointer.worldX >= isl.worldX &&
+          pointer.worldX <= isl.worldX + isl.art.size.w &&
+          pointer.worldY >= isl.worldY &&
+          pointer.worldY <= isl.worldY + isl.art.size.h
+        ) {
+          switchIsland(id);
+          return;
+        }
+      }
+    }
 
     const lx = Math.round(pointer.worldX - island.worldX);
     const ly = Math.round(pointer.worldY - island.worldY);
@@ -174,6 +232,9 @@ export function initDevEditor(
   };
 
   const unbind = [
+    gameEvents.on("editor:set-island", ({ islandId }) => {
+      switchIsland(islandId);
+    }),
     gameEvents.on("editor:set-tool", ({ tool }) => {
       activeTool = tool;
       redraw();

@@ -1,23 +1,33 @@
 import Phaser from "phaser";
+import { BRIDGES, ISLANDS } from "@/lib/content/world";
 import { ENGINE_CONSTANTS, findClosestZoomIndex } from "../constants";
 import type { Building } from "../entities/Building";
 import { Npc } from "../entities/Npc";
 import { Player } from "../entities/Player";
 import { gameEvents } from "../events";
+import { LivingWorldFX } from "../fx/livingWorldFX";
 import { ControlsManager } from "../input/controls";
+import {
+  computeWorldLayout,
+  resolveIslandAnchor,
+  type WorldLayoutResult,
+} from "../world/bridgeGeometry";
+import { BridgeRenderer, type BridgeSpec } from "../world/bridgeRenderer";
 import { setupCameraAndZoom } from "../world/cameraZoom";
 import { IllustratedIsland, type IslandArt } from "../world/illustratedIsland";
 import type { Island } from "../world/islandRenderer";
 import { createProceduralFallback } from "../world/proceduralFallback";
-import { LivingWorldFX } from "../fx/livingWorldFX";
 
 export class WorldScene extends Phaser.Scene {
   private fx!: LivingWorldFX;
-  private illustratedIsland: IllustratedIsland | null = null;
-  private centerIsland: Island | null = null;
+  private illustratedIslands = new Map<string, IllustratedIsland>();
+  private bridgeRenderer: BridgeRenderer | null = null;
+  private npcs: Npc[] = [];
   private player!: Player;
   private controls!: ControlsManager;
-  private demoNpc!: Npc;
+
+  // Fallback mode entities
+  private centerIsland: Island | null = null;
   private demoBuilding: Building | null = null;
 
   private unbindEvents: Array<() => void> = [];
@@ -44,48 +54,184 @@ export class WorldScene extends Phaser.Scene {
         frameHeight: ENGINE_CONSTANTS.PLAYER.FRAME_HEIGHT,
       });
     }
-    this.load.json("dev-island-json", "/game/islands/_dev/island.json");
-    this.load.image("dev-island-home", "/game/islands/_dev/home.webp");
+
+    // Preload all real islands
+    for (const island of ISLANDS) {
+      this.load.json(
+        `island-json-${island.id}`,
+        `/game/islands/${island.id}/island.json`
+      );
+      this.load.image(
+        `island-art-${island.id}`,
+        `/game/islands/${island.id}/island.webp`
+      );
+      this.load.image(
+        `island-material-${island.id}`,
+        `/game/islands/${island.id}/material.png`
+      );
+    }
+
+    // Preload bridges
+    this.load.image("bridge-rope", "/game/bridges/rope.webp");
+    this.load.image("bridge-stone", "/game/bridges/stone.webp");
+
     LivingWorldFX.preload(this);
   }
 
   create(): void {
-    const { WORLD_WIDTH, WORLD_HEIGHT } = ENGINE_CONSTANTS;
+    const artMap = new Map<string, IslandArt>();
+    let allArtAvailable = true;
+
+    for (const island of ISLANDS) {
+      const art = this.cache.json.get(
+        `island-json-${island.id}`
+      ) as IslandArt | null;
+      const hasTex = this.textures.exists(`island-art-${island.id}`);
+      if (!art || !hasTex || !art.size) {
+        allArtAvailable = false;
+        break;
+      }
+      artMap.set(island.id, art);
+    }
+
+    let worldWidth: number = ENGINE_CONSTANTS.WORLD_WIDTH;
+    let worldHeight: number = ENGINE_CONSTANTS.WORLD_HEIGHT;
+
     this.fx = new LivingWorldFX(this);
 
-    const art = this.cache.json.get("dev-island-json") as IslandArt | null;
-    if (art && this.textures.exists("dev-island-home") && art.size) {
-      const ix = Math.round((WORLD_WIDTH - art.size.w) / 2),
-        iy = 120;
-      this.illustratedIsland = new IllustratedIsland(
-        this,
-        "dev-island-home",
-        "dev-island-material",
-        art,
-        ix,
-        iy
+    if (allArtAvailable) {
+      const islandSizes: Record<string, { w: number; h: number }> = {};
+      for (const [id, art] of artMap.entries()) {
+        islandSizes[id] = art.size;
+      }
+
+      const layout: WorldLayoutResult = computeWorldLayout(
+        ISLANDS,
+        islandSizes,
+        ENGINE_CONSTANTS.LAYOUT_SCALE,
+        600
       );
-      const px = ix + (art.spawns.player?.[0] ?? art.size.w / 2);
-      const py = iy + (art.spawns.player?.[1] ?? art.size.h / 2);
+
+      worldWidth = layout.bounds.width;
+      worldHeight = layout.bounds.height;
+
+      // 1. Create IllustratedIsland instances
+      for (const island of ISLANDS) {
+        const islandLayout = layout.islands.get(island.id)!;
+        const art = artMap.get(island.id)!;
+        const ill = new IllustratedIsland(
+          this,
+          `island-art-${island.id}`,
+          `island-material-${island.id}`,
+          art,
+          islandLayout.worldX,
+          islandLayout.worldY
+        );
+        this.illustratedIslands.set(island.id, ill);
+      }
+
+      // 2. Create Bridges between island anchors
+      const bridgeSpecs: BridgeSpec[] = [];
+      for (const bridge of BRIDGES) {
+        const fromIsland = this.illustratedIslands.get(bridge.from);
+        const toIsland = this.illustratedIslands.get(bridge.to);
+        const fromLayout = layout.islands.get(bridge.from);
+        const toLayout = layout.islands.get(bridge.to);
+
+        if (!fromIsland || !toIsland || !fromLayout || !toLayout) continue;
+
+        const fromAnchor = resolveIslandAnchor(
+          bridge.to,
+          fromIsland.art,
+          { x: fromLayout.centerX, y: fromLayout.centerY },
+          { x: toLayout.centerX, y: toLayout.centerY },
+          fromIsland.materialCanvas
+            .getContext("2d", { willReadFrequently: true })
+            ?.getImageData(0, 0, fromIsland.art.size.w, fromIsland.art.size.h)
+            .data
+        );
+
+        const toAnchor = resolveIslandAnchor(
+          bridge.from,
+          toIsland.art,
+          { x: toLayout.centerX, y: toLayout.centerY },
+          { x: fromLayout.centerX, y: fromLayout.centerY },
+          toIsland.materialCanvas
+            .getContext("2d", { willReadFrequently: true })
+            ?.getImageData(0, 0, toIsland.art.size.w, toIsland.art.size.h).data
+        );
+
+        bridgeSpecs.push({
+          from: bridge.from,
+          to: bridge.to,
+          style: bridge.style ?? "rope",
+          start: {
+            x: fromLayout.worldX + fromAnchor.x,
+            y: fromLayout.worldY + fromAnchor.y,
+          },
+          end: {
+            x: toLayout.worldX + toAnchor.x,
+            y: toLayout.worldY + toAnchor.y,
+          },
+        });
+      }
+
+      this.bridgeRenderer = new BridgeRenderer(this, bridgeSpecs);
+
+      // 3. Spawn player at home island's spawns.player
+      const homeLayout = layout.islands.get("home")!;
+      const homeArt = artMap.get("home")!;
+      const px =
+        homeLayout.worldX + (homeArt.spawns.player?.[0] ?? homeArt.size.w / 2);
+      const py =
+        homeLayout.worldY + (homeArt.spawns.player?.[1] ?? homeArt.size.h / 2);
       this.player = new Player(this, px, py, this.initialCharSheet);
 
-      const mx = ix + (art.spawns.mayor?.[0] ?? art.size.w / 2 + 35);
-      const my = iy + (art.spawns.mayor?.[1] ?? art.size.h / 2);
-      this.demoNpc = new Npc(this, {
-        id: "mayor",
-        nameKey: "demoNpcName",
-        roleKey: "demoNpcRole",
-        charSheet: "char_1",
-        x: mx,
-        y: my,
-        dialogueKey: "demoNpcDialogue",
+      // 4. Place one Npc per island that has a mayor
+      this.npcs = [];
+      for (let i = 0; i < ISLANDS.length; i++) {
+        const island = ISLANDS[i]!;
+        if (!island.mayor) continue;
+        const islandLayout = layout.islands.get(island.id)!;
+        const art = artMap.get(island.id)!;
+        const mx =
+          islandLayout.worldX + (art.spawns.mayor?.[0] ?? art.size.w / 2);
+        const my =
+          islandLayout.worldY + (art.spawns.mayor?.[1] ?? art.size.h / 2);
+
+        const npc = new Npc(this, {
+          id: island.mayor.id,
+          charSheet: `char_${(i % 5) + 1}`,
+          x: mx,
+          y: my,
+        });
+        this.npcs.push(npc);
+      }
+
+      // 5. LivingWorldFX
+      const fxIslands = ISLANDS.map((isl) => {
+        const islLayout = layout.islands.get(isl.id)!;
+        const art = artMap.get(isl.id)!;
+        return {
+          id: isl.id,
+          worldX: islLayout.worldX,
+          worldY: islLayout.worldY,
+          width: art.size.w,
+          height: art.size.h,
+          islandImageKey: `island-art-${isl.id}`,
+          materialTextureKey: `island-material-${isl.id}`,
+        };
       });
-      this.fx.create({ islandArt: art, worldX: ix, worldY: iy });
+
+      this.fx.create({
+        islands: fxIslands,
+        worldBounds: layout.bounds,
+      });
     } else {
       const fb = createProceduralFallback(this, this.initialCharSheet);
       this.centerIsland = fb.centerIsland;
       this.demoBuilding = fb.demoBuilding;
-      this.demoNpc = fb.demoNpc;
+      this.npcs = [fb.demoNpc];
       this.player = fb.player;
       this.fx.create();
     }
@@ -97,8 +243,8 @@ export class WorldScene extends Phaser.Scene {
     this.zoomControl = setupCameraAndZoom(
       this,
       this.player.sprite,
-      WORLD_WIDTH,
-      WORLD_HEIGHT,
+      worldWidth,
+      worldHeight,
       (zoom) => gameEvents.emit("camera:zoom-changed", { zoom })
     );
 
@@ -106,10 +252,10 @@ export class WorldScene extends Phaser.Scene {
       process.env.NODE_ENV !== "production" &&
       typeof window !== "undefined" &&
       new URLSearchParams(window.location.search).get("edit") === "1" &&
-      this.illustratedIsland
+      this.illustratedIslands.size > 0
     ) {
       import("../../editor/editorPhaser").then(({ initDevEditor }) => {
-        const cleanup = initDevEditor(this, this.illustratedIsland!);
+        const cleanup = initDevEditor(this, this.illustratedIslands, "home");
         this.events.once("shutdown", cleanup);
       });
     }
@@ -119,9 +265,16 @@ export class WorldScene extends Phaser.Scene {
 
   override update(time: number, delta: number): void {
     const dt = delta / 1000;
-    this.fx.update(time, delta, this.player?.x, this.player?.y);
-
     const cam = this.cameras.main;
+
+    const cullRect = {
+      x: cam.worldView.x - 100,
+      y: cam.worldView.y - 100,
+      width: cam.worldView.width + 200,
+      height: cam.worldView.height + 200,
+    };
+    this.fx.update(time, delta, this.player?.x, this.player?.y, cullRect);
+
     const targetZoom = this.zoomControl.getTargetZoom();
     if (Math.abs(cam.zoom - targetZoom) > 0.005) {
       cam.zoom = Phaser.Math.Linear(cam.zoom, targetZoom, 0.15);
@@ -129,32 +282,55 @@ export class WorldScene extends Phaser.Scene {
       cam.zoom = targetZoom;
     }
 
-    const isNpcInRange = this.demoNpc.update(
-      this.player.x,
-      this.player.y,
-      time
-    );
-    const isBuildingInRange = this.illustratedIsland
-      ? Boolean(this.illustratedIsland.activeDoor)
-      : Boolean(this.demoBuilding?.update(this.player.x, this.player.y, time));
-
-    if (this.illustratedIsland)
-      this.illustratedIsland.update(this.player.x, this.player.y, time);
-    else this.centerIsland?.update(time);
-
-    if (this.controls.isInteractTriggered()) {
-      if (isNpcInRange) this.demoNpc.interact();
-      else if (isBuildingInRange)
-        (this.illustratedIsland ?? this.demoBuilding)?.interact();
+    let activeNpc: Npc | null = null;
+    for (const npc of this.npcs) {
+      const inRange = npc.update(this.player.x, this.player.y, time);
+      if (inRange && !activeNpc) {
+        activeNpc = npc;
+      }
     }
 
-    const isWalkable = (x: number, y: number): boolean =>
-      this.illustratedIsland
-        ? this.illustratedIsland.isInsideWalkable(x, y)
-        : (this.centerIsland?.isInsideWalkable(x, y) ?? true);
+    let activeDoorIsland: IllustratedIsland | null = null;
+    if (this.illustratedIslands.size > 0) {
+      for (const island of this.illustratedIslands.values()) {
+        island.update(this.player.x, this.player.y, time);
+        if (island.activeDoor && !activeDoorIsland) {
+          activeDoorIsland = island;
+        }
+      }
+    } else {
+      this.centerIsland?.update(time);
+      this.demoBuilding?.update(this.player.x, this.player.y, time);
+    }
+
+    if (this.controls.isInteractTriggered()) {
+      if (activeNpc) {
+        activeNpc.interact();
+      } else if (activeDoorIsland) {
+        activeDoorIsland.interact();
+      } else if (this.demoBuilding?.isColliding(this.player.x, this.player.y)) {
+        this.demoBuilding.interact();
+      }
+    }
+
+    const isWalkable = (x: number, y: number): boolean => {
+      if (this.bridgeRenderer?.isWalkable(x, y)) {
+        return true;
+      }
+      for (const island of this.illustratedIslands.values()) {
+        if (island.isInsideWalkable(x, y)) {
+          return true;
+        }
+      }
+      if (this.illustratedIslands.size === 0 && this.centerIsland) {
+        return this.centerIsland.isInsideWalkable(x, y);
+      }
+      return false;
+    };
 
     const isObstacle = (x: number, y: number): boolean =>
-      !this.illustratedIsland && Boolean(this.demoBuilding?.isColliding(x, y));
+      this.illustratedIslands.size === 0 &&
+      Boolean(this.demoBuilding?.isColliding(x, y));
 
     const { normX, normY } = this.controls.getMovementVector(
       this.player.x,
@@ -191,10 +367,22 @@ export class WorldScene extends Phaser.Scene {
         this.setZoomLevel(findClosestZoomIndex(zoom))
       )
     );
+
     this.events.once("shutdown", () => {
       for (const unbind of this.unbindEvents) unbind();
       this.unbindEvents = [];
-      this.illustratedIsland?.destroy();
+      for (const isl of this.illustratedIslands.values()) {
+        isl.destroy();
+      }
+      this.illustratedIslands.clear();
+      this.bridgeRenderer?.destroy();
+      this.bridgeRenderer = null;
+      for (const npc of this.npcs) {
+        npc.destroy();
+      }
+      this.npcs = [];
+      this.demoBuilding = null;
+      this.centerIsland = null;
       this.fx.destroy();
     });
   }
