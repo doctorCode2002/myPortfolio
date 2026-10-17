@@ -1,10 +1,19 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import type { Locale } from "@/lib/i18n";
+import {
+  CharacterPicker,
+  hasSavedCharacter,
+  loadSavedCharacter,
+  saveCharacter,
+  type CharacterId,
+} from "./character-picker";
+import { DialogueBox, type DialogueData } from "./dialogue-box";
+import { gameEvents } from "./engine/events";
 import { GameOverlay } from "./game-overlay";
 
 const GameCanvas = dynamic(
@@ -28,6 +37,25 @@ export function PlayView({
   locale: Locale;
   dict: Dictionary;
 }): ReactNode {
+  const [selectedChar, setSelectedChar] = useState<CharacterId>(() => {
+    if (typeof window !== "undefined") {
+      return loadSavedCharacter();
+    }
+    return "char_0";
+  });
+
+  const [isPickerOpen, setIsPickerOpen] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return !hasSavedCharacter();
+    }
+    return false;
+  });
+
+  const [activeDialogue, setActiveDialogue] = useState<DialogueData | null>(
+    null
+  );
+
+  // Lock scrolling on html and body on /play route
   useEffect(() => {
     const html = document.documentElement;
     const body = document.body;
@@ -43,10 +71,71 @@ export function PlayView({
     };
   }, []);
 
+  // Subscribe to typed game events from Phaser
+  useEffect(() => {
+    const unbindNpc = gameEvents.on(
+      "interact:npc",
+      ({ charSheet, dialogueKey }) => {
+        const lines = dict.play[dialogueKey];
+        setActiveDialogue({
+          title: dict.play.demoNpcName,
+          subtitle: dict.play.demoNpcRole,
+          portraitCharSheet: charSheet,
+          lines: Array.isArray(lines) ? lines : [lines],
+        });
+      }
+    );
+
+    const unbindBuilding = gameEvents.on(
+      "interact:building",
+      ({ messageKey }) => {
+        const lines = dict.play[messageKey];
+        setActiveDialogue({
+          title: dict.play.demoBuildingTitle,
+          lines: Array.isArray(lines) ? lines : [lines],
+        });
+      }
+    );
+
+    return () => {
+      unbindNpc();
+      unbindBuilding();
+    };
+  }, [dict]);
+
+  const handleSelectCharacter = (charId: CharacterId): void => {
+    setSelectedChar(charId);
+    saveCharacter(charId);
+    setIsPickerOpen(false);
+    gameEvents.emit("player:change-character", { charSheet: charId });
+  };
+
   return (
     <div className="relative h-screen w-full overflow-hidden select-none">
-      <GameCanvas />
-      <GameOverlay locale={locale} dict={dict} />
+      <GameCanvas initialCharSheet={selectedChar} />
+
+      <GameOverlay
+        locale={locale}
+        dict={dict}
+        currentChar={selectedChar}
+        onOpenCharacterPicker={() => setIsPickerOpen(true)}
+      />
+
+      <DialogueBox
+        dialogue={activeDialogue}
+        onClose={() => setActiveDialogue(null)}
+        dict={dict}
+        locale={locale}
+      />
+
+      <CharacterPicker
+        isOpen={isPickerOpen}
+        selectedChar={selectedChar}
+        onSelect={handleSelectCharacter}
+        onClose={selectedChar ? () => setIsPickerOpen(false) : undefined}
+        dict={dict}
+        locale={locale}
+      />
     </div>
   );
 }

@@ -3,7 +3,11 @@
 import type Phaser from "phaser";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-export function GameCanvas(): ReactNode {
+export function GameCanvas({
+  initialCharSheet = "char_0",
+}: {
+  initialCharSheet?: string;
+}): ReactNode {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
 
@@ -21,7 +25,11 @@ export function GameCanvas(): ReactNode {
         if (!isMounted || !containerRef.current) return;
 
         const PhaserLib = phaserModule.default;
-        gameInstance = engineModule.createGame(containerRef.current, PhaserLib);
+        gameInstance = engineModule.createGame(
+          containerRef.current,
+          PhaserLib,
+          initialCharSheet
+        );
         if (isMounted) {
           setHasLoaded(true);
         }
@@ -39,7 +47,7 @@ export function GameCanvas(): ReactNode {
         gameInstance = null;
       }
     };
-  }, []);
+  }, [initialCharSheet]);
 
   return (
     <div className="relative h-full w-full">

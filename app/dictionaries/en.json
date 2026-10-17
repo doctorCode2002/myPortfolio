@@ -297,7 +297,31 @@
     "backToPortfolio": "Back to portfolio",
     "instructions": "WASD or Arrow keys to move",
     "touchInstructions": "Drag to steer or tap to move",
-    "loading": "Loading world..."
+    "loading": "Loading world...",
+    "changeCharacter": "Change character",
+    "chooseCharacter": "Choose Your Character",
+    "pickerSubtitle": "Pick an avatar to explore the island",
+    "selectCharacter": "Select",
+    "startExploring": "Start Exploring",
+    "pressToInteract": "Press E or Space to interact",
+    "tapToInteract": "Tap to interact",
+    "dialogueNext": "Next",
+    "dialogueClose": "Close",
+    "demoNpcName": "Island Mayor",
+    "demoNpcRole": "Village Guide",
+    "demoNpcDialogue": [
+      "Welcome to the floating portfolio! I am the mayor of this sky island.",
+      "Explore the grounds, walk around the meadow, and visit the pavilion across the path.",
+      "More islands and live project buildings will appear soon connected by sky bridges!"
+    ],
+    "demoBuildingTitle": "Projects Pavilion",
+    "demoBuildingSign": "Pavilion",
+    "demoBuildingPrompt": "Enter Pavilion",
+    "demoBuildingDialogue": [
+      "You've arrived at the Projects Pavilion!",
+      "Interactive 3D showcases and live project portals are currently being built inside.",
+      "Check back soon to step inside and explore Mohammed's work in full game mode!"
+    ]
   },
 
   "contact": {
