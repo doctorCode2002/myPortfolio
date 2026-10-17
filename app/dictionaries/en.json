@@ -389,19 +389,13 @@
         "lines": ["TODO: user to fill"]
       },
       "mayor_saleh": {
-        "name": "Saleh Abu Rayya",
-        "title": "Graphic Designer",
         "lines": [
-          "Welcome to my portfolio island!",
-          "Mohammed built a clean, fast home for my design work that exceeded expectations."
+          "Saleh is the mayor of this island. Talk to hear what he said about working with Mohammed."
         ]
       },
       "mayor_eyad": {
-        "name": "Eyad Alzayan",
-        "title": "Graphic Designer",
         "lines": [
-          "Greetings, wanderer! Welcome to my design island.",
-          "Mohammed crafted my portfolio with a sharp eye for detail and effortless navigation."
+          "Eyad is the mayor of this island. Talk to hear what he said about working with Mohammed."
         ]
       }
     },

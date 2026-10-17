@@ -13,10 +13,11 @@ import {
 } from "./world";
 import {
   getIsland,
+  getMayorDialogue,
   islandWorldBounds,
   neighbors,
-  validateWorld,
 } from "./world.selectors";
+import { validateWorld } from "./world.validate";
 
 describe("Sky-islands world data model", () => {
   it("passes comprehensive validateWorld() with zero errors", () => {
@@ -40,7 +41,6 @@ describe("Sky-islands world data model", () => {
       ).toHaveLength(1);
     }
 
-    // Only "home" plus the project islands
     expect(ISLANDS.length).toBe(projectIds.length + 1);
   });
 
@@ -50,7 +50,6 @@ describe("Sky-islands world data model", () => {
     expect(home!.at).toEqual({ x: 0, y: 0 });
     expect(home!.size).toBe("l");
 
-    // Education building covers all EducationIds
     const eduBuilding = home!.buildings.find(
       (b) => b.kind === "info" && b.section.type === "education"
     );
@@ -65,7 +64,6 @@ describe("Sky-islands world data model", () => {
       expect(eduBuilding.section.ids.length).toBe(eduIds.length);
     }
 
-    // Experience building covers all ExperienceIds
     const expBuilding = home!.buildings.find(
       (b) => b.kind === "info" && b.section.type === "experience"
     );
@@ -80,7 +78,6 @@ describe("Sky-islands world data model", () => {
       expect(expBuilding.section.ids.length).toBe(expIds.length);
     }
 
-    // Stack, hobbies, family, and news board
     expect(
       home!.buildings.some(
         (b) => b.kind === "info" && b.section.type === "stack"
@@ -180,7 +177,6 @@ describe("Sky-islands world data model", () => {
     for (const { locale, dict } of dictionaries) {
       expect(dict.world, `Missing world section in ${locale}`).toBeDefined();
 
-      // Islands
       for (const island of ISLANDS) {
         const entry =
           dict.world.islands[island.id as keyof typeof dict.world.islands];
@@ -198,7 +194,6 @@ describe("Sky-islands world data model", () => {
         ).toBeGreaterThan(0);
       }
 
-      // Buildings
       for (const island of ISLANDS) {
         for (const building of island.buildings) {
           const entry =
@@ -220,39 +215,46 @@ describe("Sky-islands world data model", () => {
         }
       }
 
-      // Mayors
       for (const island of ISLANDS) {
         if (island.mayor) {
+          const m = island.mayor;
           const entry =
-            dict.world.mayors[
-              island.mayor.id as keyof typeof dict.world.mayors
-            ];
+            dict.world.mayors[m.id as keyof typeof dict.world.mayors];
           expect(
             entry,
-            `Missing world.mayors.${island.mayor.id} in ${locale}`
+            `Missing world.mayors.${m.id} in ${locale}`
           ).toBeDefined();
           expect(
-            entry.name?.trim().length,
-            `Empty name for mayor ${island.mayor.id} in ${locale}`
-          ).toBeGreaterThan(0);
-          expect(
-            entry.title?.trim().length,
-            `Empty title for mayor ${island.mayor.id} in ${locale}`
-          ).toBeGreaterThan(0);
-          expect(
             entry.lines.length,
-            `Empty lines for mayor ${island.mayor.id} in ${locale}`
+            `Empty lines for mayor ${m.id} in ${locale}`
           ).toBeGreaterThan(0);
+
+          if (m.testimonialId) {
+            const testimonial =
+              dict.testimonials.items[
+                m.testimonialId as keyof typeof dict.testimonials.items
+              ];
+            expect(
+              testimonial,
+              `Missing testimonials.items.${m.testimonialId} in ${locale}`
+            ).toBeDefined();
+            expect(testimonial.name?.trim().length).toBeGreaterThan(0);
+            expect(testimonial.role?.trim().length).toBeGreaterThan(0);
+            expect(testimonial.quote?.trim().length).toBeGreaterThan(0);
+            expect((entry as Record<string, unknown>)["name"]).toBeUndefined();
+            expect((entry as Record<string, unknown>)["title"]).toBeUndefined();
+          } else {
+            expect((entry as Record<string, unknown>)["name"]).toBeDefined();
+            expect((entry as Record<string, unknown>)["title"]).toBeDefined();
+          }
         }
       }
 
-      // Hobbies and family
       expect(dict.world.hobbies.title?.trim().length).toBeGreaterThan(0);
       expect(dict.world.hobbies.body?.trim().length).toBeGreaterThan(0);
       expect(dict.world.family.title?.trim().length).toBeGreaterThan(0);
       expect(dict.world.family.body?.trim().length).toBeGreaterThan(0);
 
-      // News
       for (const item of NEWS) {
         const entry = dict.world.news[item.id as keyof typeof dict.world.news];
         expect(
@@ -300,6 +302,67 @@ describe("Sky-islands world data model", () => {
       expect(bounds.maxY).toBe(home.at.y + expectedRadius);
     });
 
+    it("getMayorDialogue resolves verbatim quotes for testimonial-backed mayors", () => {
+      const saleh = getIsland("saleh")!.mayor!;
+      const eyad = getIsland("eyad")!.mayor!;
+
+      // English
+      const enSaleh = getMayorDialogue(saleh, enDictionary);
+      expect(enSaleh.name).toBe(enDictionary.testimonials.items.saleh.name);
+      expect(enSaleh.title).toBe(enDictionary.testimonials.items.saleh.role);
+      expect(enSaleh.quote).toBe(enDictionary.testimonials.items.saleh.quote);
+      expect(enSaleh.lines).toContain(
+        enDictionary.testimonials.items.saleh.quote
+      );
+      expect(enSaleh.lines[0]).toBe(
+        enDictionary.world.mayors.mayor_saleh.lines[0]
+      );
+
+      const enEyad = getMayorDialogue(eyad, enDictionary);
+      expect(enEyad.name).toBe(enDictionary.testimonials.items.eyad.name);
+      expect(enEyad.title).toBe(enDictionary.testimonials.items.eyad.role);
+      expect(enEyad.quote).toBe(enDictionary.testimonials.items.eyad.quote);
+      expect(enEyad.lines).toContain(
+        enDictionary.testimonials.items.eyad.quote
+      );
+      expect(enEyad.lines[0]).toBe(
+        enDictionary.world.mayors.mayor_eyad.lines[0]
+      );
+
+      // Arabic
+      const arSaleh = getMayorDialogue(saleh, arDictionary);
+      expect(arSaleh.name).toBe(arDictionary.testimonials.items.saleh.name);
+      expect(arSaleh.title).toBe(arDictionary.testimonials.items.saleh.role);
+      expect(arSaleh.quote).toBe(arDictionary.testimonials.items.saleh.quote);
+      expect(arSaleh.lines).toContain(
+        arDictionary.testimonials.items.saleh.quote
+      );
+      expect(arSaleh.lines[0]).toBe(
+        arDictionary.world.mayors.mayor_saleh.lines[0]
+      );
+
+      const arEyad = getMayorDialogue(eyad, arDictionary);
+      expect(arEyad.name).toBe(arDictionary.testimonials.items.eyad.name);
+      expect(arEyad.title).toBe(arDictionary.testimonials.items.eyad.role);
+      expect(arEyad.quote).toBe(arDictionary.testimonials.items.eyad.quote);
+      expect(arEyad.lines).toContain(
+        arDictionary.testimonials.items.eyad.quote
+      );
+      expect(arEyad.lines[0]).toBe(
+        arDictionary.world.mayors.mayor_eyad.lines[0]
+      );
+    });
+
+    it("getMayorDialogue handles non-testimonial mayors with placeholder data", () => {
+      const khidmtyMayor = getIsland("khidmty")!.mayor!;
+      const dialogue = getMayorDialogue(khidmtyMayor, enDictionary);
+
+      expect(dialogue.name).toBe("Khidmty Mayor");
+      expect(dialogue.title).toBe("TODO: user to fill");
+      expect(dialogue.quote).toBeUndefined();
+      expect(dialogue.lines).toEqual(["TODO: user to fill"]);
+    });
+
     it("validateWorld catches disconnected islands and overlapping islands", () => {
       const disconnectedIsland: Island = {
         id: "khidmty" as ProjectId,
@@ -311,7 +374,7 @@ describe("Sky-islands world data model", () => {
 
       const overlapIsland: Island = {
         id: "onyx" as ProjectId,
-        at: { x: 2, y: 2 }, // overlaps home (0,0) with size l (radius 26)
+        at: { x: 2, y: 2 },
         size: "s",
         biome: "desert",
         buildings: [],

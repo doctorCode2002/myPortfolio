@@ -245,6 +245,7 @@ export const BRIDGES: readonly Bridge[] = [
   { from: "home", to: "onyx", style: "rope" },
   { from: "home", to: "saleh", style: "stone" },
   { from: "home", to: "eyad", style: "rope" },
+  // Placeholder "related projects" link between client graphic design portfolios for the user to confirm.
   { from: "saleh", to: "eyad", style: "rope" },
 ] as const;
 
