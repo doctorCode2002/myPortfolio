@@ -35,18 +35,21 @@ export function SkyDome({
   reducedMotion: boolean;
 }): ReactNode {
   const mesh = useRef<THREE.Mesh>(null);
-  const uniforms = useMemo(() => ({
-    uZenith: { value: col(SKY.zenith) },
-    uUpper: { value: col(SKY.upper) },
-    uHorSun: { value: col(SKY.horizonSun) },
-    uHorAway: { value: col(SKY.horizonAway) },
-    uSunGlow: { value: col(SKY.sunGlow) },
-    uHaze: { value: col(SKY.haze) },
-    uDeep: { value: col(SKY.deep) },
-    uCloud: { value: col(SKY.cloud) },
-    uSunDir: { value: SUN_DIR.clone() },
-    uTime: { value: 0 },
-  }), []);
+  const uniforms = useMemo(
+    () => ({
+      uZenith: { value: col(SKY.zenith) },
+      uUpper: { value: col(SKY.upper) },
+      uHorSun: { value: col(SKY.horizonSun) },
+      uHorAway: { value: col(SKY.horizonAway) },
+      uSunGlow: { value: col(SKY.sunGlow) },
+      uHaze: { value: col(SKY.haze) },
+      uDeep: { value: col(SKY.deep) },
+      uCloud: { value: col(SKY.cloud) },
+      uSunDir: { value: SUN_DIR.clone() },
+      uTime: { value: 0 },
+    }),
+    []
+  );
   const material = useMemo(
     () =>
       new THREE.ShaderMaterial({
