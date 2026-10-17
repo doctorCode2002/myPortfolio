@@ -292,4 +292,18 @@ describe("Island Art processing pipeline", () => {
       await fs.rm(tempDir, { recursive: true, force: true });
     }
   });
+
+  it("validates existing public/game/islands/home/island.json metadata", async () => {
+    const jsonPath = path.join(
+      process.cwd(),
+      "public",
+      "game",
+      "islands",
+      "home",
+      "island.json"
+    );
+    const content = JSON.parse(await fs.readFile(jsonPath, "utf-8"));
+    const errors = validateIslandArt(content);
+    expect(errors).toEqual([]);
+  });
 });

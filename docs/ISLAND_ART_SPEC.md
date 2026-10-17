@@ -90,3 +90,13 @@ Per island (append to STYLE):
 
 3. **Author metadata in the in-game editor**:
    Launch the dev server and open `http://localhost:3000/en/play?edit=1` to trace walkable areas, blockers, door interaction zones, spawns, anchors, and occluders, then export the updated `island.json`.
+
+## Reproducing committed island art
+
+- **home**:
+  ```bash
+  npm run art:island -- home ~/Downloads/islands/home.jpeg --width 896 --report-scale
+  ```
+  - Source: 1792x2400 AI-painted image on magenta (`~/Downloads/islands/home.jpeg`)
+  - Target width: 896 px (`--width 896`)
+  - Output: 801x1133 px native trimmed, 64 colors, ~159.6 KB lossless WebP at `public/game/islands/home/island.webp`
