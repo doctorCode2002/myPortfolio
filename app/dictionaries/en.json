@@ -476,19 +476,28 @@
     },
     "mayors": {
       "mayor_khidmty": {
-        "name": "Khidmty Mayor",
-        "title": "TODO: user to fill",
-        "lines": ["TODO: user to fill"]
+        "name": "Mayor Khidmty (Demo)",
+        "title": "Services Guildmaster",
+        "lines": [
+          "Welcome to Khidmty! We connect verified pros with clients for seamless home maintenance.",
+          "Check out our project portal to see how booking without accounts works!"
+        ]
       },
       "mayor_civicmind": {
-        "name": "CivicMind Mayor",
-        "title": "TODO: user to fill",
-        "lines": ["TODO: user to fill"]
+        "name": "Mayor Civic (Demo)",
+        "title": "Municipal AI Overseer",
+        "lines": [
+          "Greetings, traveler! CivicMind uses AI models to categorize and route citizen reports.",
+          "Visit the portal building to explore our live municipal triage interface."
+        ]
       },
       "mayor_onyx": {
-        "name": "Onyx Mayor",
-        "title": "TODO: user to fill",
-        "lines": ["TODO: user to fill"]
+        "name": "Mayor Onyx (Demo)",
+        "title": "Boutique Curator",
+        "lines": [
+          "Welcome to Onyx! Our storefront is designed around fluid motion and tactile shopping.",
+          "Step through the portal to explore our motion-focused catalog and cart."
+        ]
       },
       "mayor_saleh": {
         "lines": [

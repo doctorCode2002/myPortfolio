@@ -56,6 +56,7 @@ export type Mayor = {
   /** Link to an existing testimonial when the mayor is a client. */
   testimonialId?: TestimonialId;
   at: Tile;
+  demo?: boolean;
 };
 
 export type Bridge = {
@@ -160,6 +161,7 @@ const PROJECT_ISLAND_CONFIGS: Record<ProjectId, ProjectIslandConfig> = {
       id: "mayor_khidmty",
       sprite: "char_3",
       at: { x: 3, y: 1 },
+      demo: true, // DEMO: replace with real content
     },
   },
   civicmind: {
@@ -171,6 +173,7 @@ const PROJECT_ISLAND_CONFIGS: Record<ProjectId, ProjectIslandConfig> = {
       id: "mayor_civicmind",
       sprite: "char_4",
       at: { x: 3, y: 1 },
+      demo: true, // DEMO: replace with real content
     },
   },
   onyx: {
@@ -182,6 +185,7 @@ const PROJECT_ISLAND_CONFIGS: Record<ProjectId, ProjectIslandConfig> = {
       id: "mayor_onyx",
       sprite: "char_5",
       at: { x: 3, y: 1 },
+      demo: true, // DEMO: replace with real content
     },
   },
   saleh: {
@@ -236,8 +240,7 @@ export const ISLANDS: readonly Island[] = [
 ] as const;
 
 /**
- * Bridges connecting islands: home bridges to each project island, and related
- * projects are linked directly (e.g. saleh and eyad graphic design portfolios).
+ * Bridges connecting islands: home bridges to each project island.
  */
 export const BRIDGES: readonly Bridge[] = [
   { from: "home", to: "khidmty", style: "stone" },
@@ -245,8 +248,6 @@ export const BRIDGES: readonly Bridge[] = [
   { from: "home", to: "onyx", style: "rope" },
   { from: "home", to: "saleh", style: "stone" },
   { from: "home", to: "eyad", style: "rope" },
-  // Placeholder "related projects" link between client graphic design portfolios for the user to confirm.
-  { from: "saleh", to: "eyad", style: "rope" },
 ] as const;
 
 /**

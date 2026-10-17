@@ -281,12 +281,10 @@ describe("Sky-islands world data model", () => {
       }
 
       const salehNeighbors = neighbors("saleh");
-      expect(salehNeighbors).toContain("home");
-      expect(salehNeighbors).toContain("eyad");
+      expect(salehNeighbors).toEqual(["home"]);
 
       const eyadNeighbors = neighbors("eyad");
-      expect(eyadNeighbors).toContain("home");
-      expect(eyadNeighbors).toContain("saleh");
+      expect(eyadNeighbors).toEqual(["home"]);
     });
 
     it("islandWorldBounds calculates accurate tile boundaries", () => {
@@ -353,14 +351,25 @@ describe("Sky-islands world data model", () => {
       );
     });
 
-    it("getMayorDialogue handles non-testimonial mayors with placeholder data", () => {
+    it("getMayorDialogue handles non-testimonial mayors with demo dialogue", () => {
       const khidmtyMayor = getIsland("khidmty")!.mayor!;
       const dialogue = getMayorDialogue(khidmtyMayor, enDictionary);
 
-      expect(dialogue.name).toBe("Khidmty Mayor");
-      expect(dialogue.title).toBe("TODO: user to fill");
+      expect(dialogue.name).toBe("Mayor Khidmty (Demo)");
+      expect(dialogue.title).toBe("Services Guildmaster");
       expect(dialogue.quote).toBeUndefined();
-      expect(dialogue.lines).toEqual(["TODO: user to fill"]);
+      expect(dialogue.lines[0]).toContain("Welcome to Khidmty!");
+    });
+
+    it("lists all demo entries so they are easy to find and replace later", () => {
+      const demoMayors = ISLANDS.filter((i) => i.mayor?.demo).map(
+        (i) => i.mayor!.id
+      );
+      expect(demoMayors).toEqual([
+        "mayor_khidmty",
+        "mayor_civicmind",
+        "mayor_onyx",
+      ]);
     });
 
     it("validateWorld catches disconnected islands and overlapping islands", () => {
