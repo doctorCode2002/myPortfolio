@@ -18,6 +18,10 @@
     "about": {
       "title": "About",
       "description": "Full-stack developer and frontend instructor — background, experience, education, and the tools I build with."
+    },
+    "play": {
+      "title": "Play",
+      "description": "Explore the interactive floating island in the portfolio game mode."
     }
   },
 
@@ -27,6 +31,7 @@
     "projects": "Projects",
     "mentoring": "Mentoring",
     "about": "About",
+    "play": "Play",
     "toggleTheme": "Toggle theme",
     "toLight": "Switch to light theme",
     "toDark": "Switch to dark theme",
@@ -286,6 +291,13 @@
       "medtech": "A laptop showing an MRI viewer beside a code editor",
       "monogram": "A repeating pattern of the M monogram in white on black"
     }
+  },
+
+  "play": {
+    "backToPortfolio": "Back to portfolio",
+    "instructions": "WASD or Arrow keys to move",
+    "touchInstructions": "Drag to steer or tap to move",
+    "loading": "Loading world..."
   },
 
   "contact": {

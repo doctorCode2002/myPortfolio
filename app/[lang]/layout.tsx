@@ -1,7 +1,11 @@
 import type { Metadata, Viewport } from "next";
-// IBM_Plex_Sans_Arabic and Noto_Kufi_Arabic are re-imported when Arabic is
-// switched back on — see the commented block below.
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import {
+  Fraunces,
+  Geist,
+  Geist_Mono,
+  IBM_Plex_Sans_Arabic,
+  Noto_Kufi_Arabic,
+} from "next/font/google";
 import type { ReactNode } from "react";
 
 import { getDictionary } from "./dictionaries";
@@ -38,30 +42,25 @@ const fraunces = Fraunces({
   display: "swap",
 });
 
-// Arabic is disabled (see lib/i18n.ts). These stay commented out rather than
-// merely unused: next/font downloads and self-hosts every face it is given, so
-// leaving them active would ship two Arabic families no page ever renders.
-// Uncomment both, and their entries in FONT_VARS, when Arabic comes back.
-//
-// const plexArabic = IBM_Plex_Sans_Arabic({
-//   variable: "--font-plex-arabic",
-//   subsets: ["arabic", "latin"],
-//   weight: ["300", "400", "500", "600", "700"],
-//   display: "swap",
-// });
-//
-// const kufiArabic = Noto_Kufi_Arabic({
-//   variable: "--font-kufi-arabic",
-//   subsets: ["arabic"],
-//   display: "swap",
-// });
+const plexArabic = IBM_Plex_Sans_Arabic({
+  variable: "--font-plex-arabic",
+  subsets: ["arabic", "latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const kufiArabic = Noto_Kufi_Arabic({
+  variable: "--font-kufi-arabic",
+  subsets: ["arabic"],
+  display: "swap",
+});
 
 const FONT_VARS = [
   geistSans.variable,
   geistMono.variable,
   fraunces.variable,
-  // plexArabic.variable,
-  // kufiArabic.variable,
+  plexArabic.variable,
+  kufiArabic.variable,
 ].join(" ");
 
 export const viewport: Viewport = {
@@ -120,7 +119,7 @@ export default async function LocaleLayout({
       suppressHydrationWarning
       className={FONT_VARS}
     >
-      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
+      <body className="bg-background text-foreground min-h-screen font-sans antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: profileJsonLd(locale) }}

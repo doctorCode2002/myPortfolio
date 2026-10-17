@@ -28,6 +28,7 @@ export type NavLabels = {
   projects: string;
   mentoring: string;
   about: string;
+  play: string;
   toggleTheme: string;
   toLight: string;
   toDark: string;
@@ -40,6 +41,7 @@ const NAV_ROUTES = [
   { key: "projects", path: "/projects" },
   { key: "about", path: "/about" },
   { key: "mentoring", path: "/mentoring" },
+  { key: "play", path: "/play" },
 ] as const;
 
 function useIsMounted(): boolean {
@@ -100,21 +102,21 @@ function NavThemeToggle({ labels }: { labels: NavLabels }): ReactNode {
         mounted ? (isDark ? labels.toLight : labels.toDark) : labels.toggleTheme
       }
       aria-pressed={mounted ? isDark : undefined}
-      className="focus-ring relative inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-background ring-1 ring-foreground/10 transition-colors hover:ring-accent/40"
+      className="focus-ring bg-background ring-foreground/10 hover:ring-accent/40 relative inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full ring-1 transition-colors"
     >
       <span aria-hidden="true" className="relative h-4 w-4">
         <Sun
-          className={`absolute inset-0 h-4 w-4 text-foreground transition-all duration-300 ${
+          className={`text-foreground absolute inset-0 h-4 w-4 transition-all duration-300 ${
             mounted && isDark
-              ? "rotate-0 scale-100 opacity-100"
-              : "-rotate-90 scale-0 opacity-0"
+              ? "scale-100 rotate-0 opacity-100"
+              : "scale-0 -rotate-90 opacity-0"
           }`}
         />
         <Moon
-          className={`absolute inset-0 h-4 w-4 text-foreground transition-all duration-300 ${
+          className={`text-foreground absolute inset-0 h-4 w-4 transition-all duration-300 ${
             mounted && !isDark
-              ? "rotate-0 scale-100 opacity-100"
-              : "rotate-90 scale-0 opacity-0"
+              ? "scale-100 rotate-0 opacity-100"
+              : "scale-0 rotate-90 opacity-0"
           }`}
         />
       </span>
@@ -142,7 +144,7 @@ function LanguageSwitch({
       hrefLang={other}
       lang={other}
       aria-label={labels.switchLanguage}
-      className="focus-ring inline-flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full bg-background px-2 text-[13px] font-medium text-foreground ring-1 ring-foreground/10 transition-colors hover:ring-accent/40"
+      className="focus-ring bg-background text-foreground ring-foreground/10 hover:ring-accent/40 inline-flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full px-2 text-[13px] font-medium ring-1 transition-colors"
     >
       {LOCALE_LABEL[other]}
     </Link>
@@ -195,12 +197,12 @@ export function Nav({
   return (
     <nav
       aria-label={labels.label}
-      className="fixed left-1/2 top-6 z-50 -translate-x-1/2"
+      className="fixed top-6 left-1/2 z-50 -translate-x-1/2"
     >
       {/* max-w cap: the pill is centred with a translate, so without it a long
           label set can push past the viewport and cause horizontal scroll on
           small phones. */}
-      <div className="flex max-w-[calc(100vw-1.5rem)] items-center gap-1 rounded-full border border-foreground/10 bg-background p-1.5 shadow-sm">
+      <div className="border-foreground/10 bg-background flex max-w-[calc(100vw-1.5rem)] items-center gap-1 rounded-full border p-1.5 shadow-sm">
         <ul ref={listRef} className="relative flex items-center gap-1">
           {pillRect && (
             <motion.span
@@ -213,7 +215,7 @@ export function Nav({
                   : { duration: 0 }
               }
               style={{ left: 0, top: 0, bottom: 0 }}
-              className="absolute rounded-full bg-accent/10 ring-1 ring-accent/25"
+              className="bg-accent/10 ring-accent/25 absolute rounded-full ring-1"
             />
           )}
           {NAV_ROUTES.map((route, index) => {
@@ -229,13 +231,13 @@ export function Nav({
                 <Link
                   href={localePath(locale, route.path)}
                   aria-current={isActive ? "page" : undefined}
-                  className="focus-ring relative inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors duration-300 sm:px-4 sm:text-sm"
+                  className="focus-ring relative inline-flex cursor-pointer items-center justify-center rounded-full px-3 py-1.5 text-[13px] font-medium whitespace-nowrap transition-colors duration-300 sm:px-4 sm:text-sm"
                 >
                   <span
                     className={
                       isActive
-                        ? "relative z-10 text-foreground"
-                        : "relative z-10 text-muted-foreground hover:text-foreground"
+                        ? "text-foreground relative z-10"
+                        : "text-muted-foreground hover:text-foreground relative z-10"
                     }
                   >
                     {labels[route.key]}
