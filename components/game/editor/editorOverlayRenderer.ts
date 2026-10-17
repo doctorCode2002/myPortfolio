@@ -30,45 +30,6 @@ export function drawEditorOverlay(
     labels.push(lbl);
   };
 
-  if (layers.walkable) {
-    gfx.lineStyle(2, 0x00ff66, 0.9);
-    gfx.fillStyle(0x00ff66, 0.2);
-    for (const poly of art.walkable) {
-      if (poly.length < 3) continue;
-      const pts = poly.map(([x, y]) => new Phaser.Geom.Point(wx + x, wy + y));
-      gfx.fillPoints(pts, true);
-      gfx.strokePoints(pts, true);
-      gfx.fillStyle(0x00ff66, 1);
-      for (const [x, y] of poly) gfx.fillCircle(wx + x, wy + y, 4);
-    }
-  }
-
-  if (layers.blockers) {
-    gfx.lineStyle(2, 0xff2244, 0.9);
-    gfx.fillStyle(0xff2244, 0.25);
-    for (const b of art.blockers) {
-      if (b.length < 3) continue;
-      const pts = b.map(([x, y]) => new Phaser.Geom.Point(wx + x, wy + y));
-      gfx.fillPoints(pts, true);
-      gfx.strokePoints(pts, true);
-      gfx.fillStyle(0xff2244, 1);
-      for (const [x, y] of b) gfx.fillCircle(wx + x, wy + y, 4);
-    }
-  }
-
-  if (layers.occluders) {
-    gfx.lineStyle(2, 0x0099ff, 0.85);
-    gfx.fillStyle(0x0099ff, 0.2);
-    for (const occ of art.occluders) {
-      const [rx, ry, rw, rh] = occ.rect;
-      gfx.fillRect(wx + rx, wy + ry, rw, rh);
-      gfx.strokeRect(wx + rx, wy + ry, rw, rh);
-      gfx.lineStyle(2, 0x00ffff, 1);
-      gfx.lineBetween(wx + rx, wy + occ.baseY, wx + rx + rw, wy + occ.baseY);
-      addLabel(wx + rx + 4, wy + ry + 4, occ.id, "#00ffff");
-    }
-  }
-
   if (layers.doors) {
     gfx.lineStyle(2, 0xffcc00, 0.9);
     gfx.fillStyle(0xffcc00, 0.2);

@@ -1,13 +1,19 @@
 import type Phaser from "phaser";
 import { ENGINE_CONSTANTS } from "../constants";
 import { gameEvents } from "../events";
+import {
+  extractOcclusionObjects,
+  destroyOcclusionObjects,
+  type OcclusionObject,
+} from "./autoDepth";
+import { buildWalkGrid, canWalkFeetBox } from "./materialMap";
 
 export interface IslandArt {
   version: 1;
   size: { w: number; h: number };
-  walkable: Array<Array<[number, number]>>;
-  blockers: Array<Array<[number, number]>>;
-  occluders: Array<{
+  walkable?: Array<Array<[number, number]>>;
+  blockers?: Array<Array<[number, number]>>;
+  occluders?: Array<{
     id: string;
     rect: [number, number, number, number];
     baseY: number;
@@ -27,36 +33,21 @@ export interface IslandArt {
   }>;
 }
 
-export function isPointInPolygon(
-  x: number,
-  y: number,
-  poly: Array<[number, number]>
-): boolean {
-  let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const xi = poly[i]?.[0] ?? 0;
-    const yi = poly[i]?.[1] ?? 0;
-    const xj = poly[j]?.[0] ?? 0;
-    const yj = poly[j]?.[1] ?? 0;
-    const intersect =
-      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-    if (intersect) inside = !inside;
-  }
-  return inside;
-}
-
 export class IllustratedIsland {
+  public readonly scene: Phaser.Scene;
   public readonly worldX: number;
   public readonly worldY: number;
   public art: IslandArt;
 
+  public materialCanvas: HTMLCanvasElement;
+  private walkGrid!: Uint8Array;
+  private gw = 0;
+  private gh = 0;
+
   private readonly baseImage: Phaser.GameObjects.Image;
   private readonly shadow: Phaser.GameObjects.Graphics;
   private readonly promptBubble: Phaser.GameObjects.Graphics;
-  private readonly occluderSlices: Array<{
-    image: Phaser.GameObjects.Image;
-    baseY: number;
-  }> = [];
+  private occlusionObjects: OcclusionObject[] = [];
 
   private activeDoorId: string | null = null;
   private lastEnteredDoorId: string | null = null;
@@ -64,10 +55,12 @@ export class IllustratedIsland {
   constructor(
     scene: Phaser.Scene,
     textureKey: string,
+    materialTextureKey: string,
     art: IslandArt,
     worldX: number,
     worldY: number
   ) {
+    this.scene = scene;
     this.art = art;
     this.worldX = worldX;
     this.worldY = worldY;
@@ -90,24 +83,27 @@ export class IllustratedIsland {
     this.baseImage.setOrigin(0, 0);
     this.baseImage.setDepth(DEPTHS.GRASS);
 
-    // 3. Occluder slices: cropped regions rendered above player when player.y < baseY
-    const texture = scene.textures.get(textureKey);
-    for (const occ of art.occluders) {
-      const frameKey = `occ_${textureKey}_${occ.id}`;
-      const [rx, ry, rw, rh] = occ.rect;
-      if (!texture.has(frameKey)) {
-        texture.add(frameKey, 0, rx, ry, rw, rh);
-      }
-      const sliceImg = scene.add.image(
-        worldX + rx,
-        worldY + ry,
+    // 3. Prepare material canvas & 2px walk grid
+    this.materialCanvas = document.createElement("canvas");
+    this.materialCanvas.width = art.size.w;
+    this.materialCanvas.height = art.size.h;
+    const ctx = this.materialCanvas.getContext("2d", {
+      willReadFrequently: true,
+    });
+
+    const matSource = scene.textures
+      .get(materialTextureKey)
+      .getSourceImage() as HTMLImageElement | HTMLCanvasElement;
+    if (matSource && ctx) {
+      ctx.drawImage(matSource, 0, 0, art.size.w, art.size.h);
+      this.rebuildWalkGrid();
+      this.occlusionObjects = extractOcclusionObjects(
+        scene,
+        worldX,
+        worldY,
         textureKey,
-        frameKey
+        this.materialCanvas
       );
-      sliceImg.setOrigin(0, 0);
-      sliceImg.setDepth(worldY + occ.baseY + 50);
-      sliceImg.setVisible(false);
-      this.occluderSlices.push({ image: sliceImg, baseY: worldY + occ.baseY });
     }
 
     // 4. Door interaction prompt bubble
@@ -117,28 +113,35 @@ export class IllustratedIsland {
     this.renderPromptBubble();
   }
 
+  public rebuildWalkGrid(): void {
+    const ctx = this.materialCanvas.getContext("2d", {
+      willReadFrequently: true,
+    });
+    if (!ctx) return;
+    const imgData = ctx.getImageData(0, 0, this.art.size.w, this.art.size.h);
+    const { grid, gw, gh } = buildWalkGrid(
+      imgData.data,
+      this.art.size.w,
+      this.art.size.h
+    );
+    this.walkGrid = grid;
+    this.gw = gw;
+    this.gh = gh;
+  }
+
   public isInsideWalkable(worldPx: number, worldPy: number): boolean {
+    if (!this.walkGrid) return true;
     const lx = worldPx - this.worldX;
     const ly = worldPy - this.worldY;
-
-    // Must be inside at least one walkable polygon
-    let insideWalkable = false;
-    for (const poly of this.art.walkable) {
-      if (isPointInPolygon(lx, ly, poly)) {
-        insideWalkable = true;
-        break;
-      }
-    }
-    if (!insideWalkable) return false;
-
-    // Must NOT be inside any blocker polygon
-    for (const blocker of this.art.blockers) {
-      if (isPointInPolygon(lx, ly, blocker)) {
-        return false;
-      }
-    }
-
-    return true;
+    return canWalkFeetBox(
+      this.walkGrid,
+      this.gw,
+      this.gh,
+      lx,
+      ly,
+      this.art.size.w,
+      this.art.size.h
+    );
   }
 
   public get activeDoor(): string | null {
@@ -158,12 +161,6 @@ export class IllustratedIsland {
   public update(playerX: number, playerY: number, time: number): void {
     const feetY = playerY + ENGINE_CONSTANTS.PLAYER.FEET_OFFSET_Y;
 
-    // 1. Occluder visibility: slice is visible when player is behind building/tree
-    for (const slice of this.occluderSlices) {
-      slice.image.setVisible(feetY < slice.baseY);
-    }
-
-    // 2. Door radius detection
     let closestDoor: { id: string; x: number; y: number; dist: number } | null =
       null;
     for (const door of this.art.doors) {
@@ -181,7 +178,6 @@ export class IllustratedIsland {
     this.activeDoorId = closestDoor?.id ?? null;
 
     if (closestDoor) {
-      // Step-in trigger on enter zone
       if (this.lastEnteredDoorId !== closestDoor.id) {
         this.lastEnteredDoorId = closestDoor.id;
         this.interact();
@@ -198,16 +194,21 @@ export class IllustratedIsland {
     }
   }
 
+  public destroy(): void {
+    destroyOcclusionObjects(this.scene, this.occlusionObjects);
+    this.occlusionObjects = [];
+    this.shadow.destroy();
+    this.baseImage.destroy();
+    this.promptBubble.destroy();
+  }
+
   private renderPromptBubble(): void {
     this.promptBubble.clear();
-    // Bubble outline & body
     this.promptBubble.fillStyle(0x14110f, 0.9);
     this.promptBubble.fillRoundedRect(-10, -10, 20, 18, 4);
     this.promptBubble.fillTriangle(-3, 8, 3, 8, 0, 12);
-    // Inner background
     this.promptBubble.fillStyle(0xf5f2e9, 1);
     this.promptBubble.fillRoundedRect(-8, -8, 16, 14, 3);
-    // Pixel "E" glyph
     this.promptBubble.fillStyle(0xab4c24, 1);
     this.promptBubble.fillRect(-4, -5, 2, 8);
     this.promptBubble.fillRect(-2, -5, 5, 2);

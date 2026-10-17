@@ -21,13 +21,20 @@ export type GameEventMap = {
   "ui:close": void;
   "player:change-character": { charSheet: string };
   "game:freeze": boolean;
-  "prompt:show": { textKey: string; targetId: string } | null;
-  "editor:set-tool": {
-    tool:
-      "walkable" | "blockers" | "doors" | "occluders" | "spawns" | "anchors";
+  "fx:register": {
+    create: (scene: unknown, islands: unknown[]) => void;
+    update: (dt: number) => void;
   };
+  "editor:set-tool": {
+    tool: "brush" | "fill" | "doors" | "spawns" | "anchors";
+  };
+  "editor:set-material": { material: string };
+  "editor:set-brush-size": { size: number };
+  "editor:undo": void;
+  "editor:redo": void;
+  "editor:export-material": void;
   "editor:toggle-layer": { layer: string };
-  "editor:data-updated": { art: unknown };
+  "editor:data-updated": { art: unknown; canUndo?: boolean; canRedo?: boolean };
   "editor:request-data": void;
   "editor:update-art": { art: unknown };
   "editor:select-item": { tool: string; index: number };

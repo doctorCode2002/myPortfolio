@@ -1,13 +1,14 @@
-import type { IslandArt } from "../engine/world/illustratedIsland";
+import type { MaterialClass } from "../engine/world/materialMap";
+export {
+  MATERIAL_PALETTE,
+  type MaterialClass,
+} from "../engine/world/materialMap";
 
-export type EditorTool =
-  "walkable" | "blockers" | "doors" | "occluders" | "spawns" | "anchors";
+export type EditorTool = "brush" | "fill" | "doors" | "spawns" | "anchors";
 
 export interface EditorLayerState {
-  walkable: boolean;
-  blockers: boolean;
+  materialOverlay: boolean;
   doors: boolean;
-  occluders: boolean;
   spawns: boolean;
   anchors: boolean;
 }
@@ -22,11 +23,10 @@ export const KNOWN_BUILDING_IDS = [
 ] as const;
 
 export interface EditorState {
-  art: IslandArt;
   tool: EditorTool;
+  activeMaterial: MaterialClass;
+  brushSize: number;
   layers: EditorLayerState;
-  selectedBlockerIdx: number;
   selectedDoorIdx: number;
-  selectedOccluderIdx: number;
   selectedAnchorIdx: number;
 }

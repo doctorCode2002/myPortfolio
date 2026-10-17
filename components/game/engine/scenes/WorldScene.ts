@@ -1,19 +1,22 @@
 import Phaser from "phaser";
-import {
-  ENGINE_CONSTANTS,
-  ZOOM_LEVELS,
-  computeFitZoom,
-  computeIntegerZoom,
-} from "../constants";
+import { ENGINE_CONSTANTS, findClosestZoomIndex } from "../constants";
 import type { Building } from "../entities/Building";
 import { Npc } from "../entities/Npc";
 import { Player } from "../entities/Player";
 import { gameEvents } from "../events";
+import {
+  getActiveWorldFx,
+  registerWorldFx,
+  type WorldFxSystem,
+} from "../fxHook";
 import { ControlsManager } from "../input/controls";
+import { setupCameraAndZoom } from "../world/cameraZoom";
 import { IllustratedIsland, type IslandArt } from "../world/illustratedIsland";
 import type { Island } from "../world/islandRenderer";
 import { createProceduralFallback } from "../world/proceduralFallback";
 import { SkySystem } from "../world/sky";
+
+export { registerWorldFx, type WorldFxSystem };
 
 export class WorldScene extends Phaser.Scene {
   private sky!: SkySystem;
@@ -27,9 +30,11 @@ export class WorldScene extends Phaser.Scene {
   private unbindEvents: Array<() => void> = [];
   private initialCharSheet = "char_0";
 
-  private zoomIndex = 2;
-  private targetZoom = 2;
-  private pinchDist = 0;
+  private zoomControl!: {
+    setZoomIndex: (idx: number) => number;
+    getTargetZoom: () => number;
+  };
+  private curZoomIndex = 2;
 
   constructor() {
     super({ key: "WorldScene" });
@@ -41,14 +46,17 @@ export class WorldScene extends Phaser.Scene {
 
   preload(): void {
     for (let i = 0; i <= 5; i++) {
-      const key = `char_${i}`;
-      this.load.spritesheet(key, `/game/characters/${key}.png`, {
+      this.load.spritesheet(`char_${i}`, `/game/characters/char_${i}.png`, {
         frameWidth: ENGINE_CONSTANTS.PLAYER.FRAME_WIDTH,
         frameHeight: ENGINE_CONSTANTS.PLAYER.FRAME_HEIGHT,
       });
     }
     this.load.json("dev-island-json", "/game/islands/_dev/island.json");
     this.load.image("dev-island-home", "/game/islands/_dev/home.webp");
+    this.load.image(
+      "dev-island-material",
+      "/game/islands/_dev/home.material.png"
+    );
   }
 
   create(): void {
@@ -57,11 +65,12 @@ export class WorldScene extends Phaser.Scene {
 
     const art = this.cache.json.get("dev-island-json") as IslandArt | null;
     if (art && this.textures.exists("dev-island-home") && art.size) {
-      const ix = Math.round((WORLD_WIDTH - art.size.w) / 2);
-      const iy = 120;
+      const ix = Math.round((WORLD_WIDTH - art.size.w) / 2),
+        iy = 120;
       this.illustratedIsland = new IllustratedIsland(
         this,
         "dev-island-home",
+        "dev-island-material",
         art,
         ix,
         iy
@@ -82,19 +91,27 @@ export class WorldScene extends Phaser.Scene {
         dialogueKey: "demoNpcDialogue",
       });
     } else {
-      const fallback = createProceduralFallback(this, this.initialCharSheet);
-      this.centerIsland = fallback.centerIsland;
-      this.demoBuilding = fallback.demoBuilding;
-      this.demoNpc = fallback.demoNpc;
-      this.player = fallback.player;
+      const fb = createProceduralFallback(this, this.initialCharSheet);
+      this.centerIsland = fb.centerIsland;
+      this.demoBuilding = fb.demoBuilding;
+      this.demoNpc = fb.demoNpc;
+      this.player = fb.player;
     }
 
     this.controls = new ControlsManager(this);
     this.setupEventSubscriptions();
     gameEvents.resetUiLocks();
 
-    this.setupCamera(WORLD_WIDTH, WORLD_HEIGHT);
-    this.setupZoomInputs();
+    this.zoomControl = setupCameraAndZoom(
+      this,
+      this.player.sprite,
+      WORLD_WIDTH,
+      WORLD_HEIGHT,
+      (zoom) => gameEvents.emit("camera:zoom-changed", { zoom })
+    );
+
+    const fx = getActiveWorldFx();
+    if (fx && this.illustratedIsland) fx.create(this, [this.illustratedIsland]);
 
     if (
       process.env.NODE_ENV !== "production" &&
@@ -107,17 +124,21 @@ export class WorldScene extends Phaser.Scene {
         this.events.once("shutdown", cleanup);
       });
     }
+
+    this.scale.on("resize", () => this.sky.resize());
   }
 
   override update(time: number, delta: number): void {
     const dt = delta / 1000;
     this.sky.update(delta);
+    getActiveWorldFx()?.update(dt);
 
     const cam = this.cameras.main;
-    if (Math.abs(cam.zoom - this.targetZoom) > 0.005) {
-      cam.zoom = Phaser.Math.Linear(cam.zoom, this.targetZoom, 0.15);
+    const targetZoom = this.zoomControl.getTargetZoom();
+    if (Math.abs(cam.zoom - targetZoom) > 0.005) {
+      cam.zoom = Phaser.Math.Linear(cam.zoom, targetZoom, 0.15);
     } else {
-      cam.zoom = this.targetZoom;
+      cam.zoom = targetZoom;
     }
 
     const isNpcInRange = this.demoNpc.update(
@@ -156,34 +177,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private setZoomLevel(idx: number): void {
-    this.zoomIndex = Phaser.Math.Clamp(idx, 0, ZOOM_LEVELS.length - 1);
-    this.targetZoom = ZOOM_LEVELS[this.zoomIndex] ?? 2;
-    gameEvents.emit("camera:zoom-changed", { zoom: this.targetZoom });
-  }
-
-  private setupZoomInputs(): void {
-    this.input.addPointer(1);
-    this.input.on(
-      "wheel",
-      (_p: unknown, _o: unknown, _dx: number, dy: number) => {
-        this.setZoomLevel(dy < 0 ? this.zoomIndex + 1 : this.zoomIndex - 1);
-      }
-    );
-    this.input.on("pointermove", () => {
-      const p1 = this.input.pointer1,
-        p2 = this.input.pointer2;
-      if (p1?.isDown && p2?.isDown) {
-        const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-        const next =
-          dist > this.pinchDist ? this.zoomIndex + 1 : this.zoomIndex - 1;
-        if (this.pinchDist > 0 && Math.abs(dist - this.pinchDist) > 25) {
-          this.setZoomLevel(next);
-          this.pinchDist = dist;
-        } else if (!this.pinchDist) this.pinchDist = dist;
-      } else {
-        this.pinchDist = 0;
-      }
-    });
+    this.curZoomIndex = this.zoomControl.setZoomIndex(idx);
   }
 
   private setupEventSubscriptions(): void {
@@ -200,50 +194,24 @@ export class WorldScene extends Phaser.Scene {
         this.controls.setFrozen(false);
       }),
       gameEvents.on("camera:zoom-in", () =>
-        this.setZoomLevel(this.zoomIndex + 1)
+        this.setZoomLevel(this.curZoomIndex + 1)
       ),
       gameEvents.on("camera:zoom-out", () =>
-        this.setZoomLevel(this.zoomIndex - 1)
+        this.setZoomLevel(this.curZoomIndex - 1)
       ),
-      gameEvents.on("camera:set-zoom", ({ zoom }) => {
-        let bestIdx = 4;
-        let bestDiff = Infinity;
-        for (let i = 0; i < ZOOM_LEVELS.length; i++) {
-          const diff = Math.abs((ZOOM_LEVELS[i] ?? 2) - zoom);
-          if (diff < bestDiff) {
-            bestDiff = diff;
-            bestIdx = i;
-          }
-        }
-        this.setZoomLevel(bestIdx);
+      gameEvents.on("camera:set-zoom", ({ zoom }) =>
+        this.setZoomLevel(findClosestZoomIndex(zoom))
+      ),
+      gameEvents.on("fx:register", (fx) => {
+        registerWorldFx(fx as WorldFxSystem);
+        if (this.illustratedIsland)
+          (fx as WorldFxSystem).create(this, [this.illustratedIsland]);
       })
     );
     this.events.once("shutdown", () => {
       for (const unbind of this.unbindEvents) unbind();
       this.unbindEvents = [];
+      this.illustratedIsland?.destroy();
     });
-  }
-
-  private setupCamera(worldWidth: number, worldHeight: number): void {
-    const cam = this.cameras.main;
-    cam.setBackgroundColor("#507ea8");
-    cam.setBounds(0, 0, worldWidth, worldHeight);
-    cam.startFollow(this.player.sprite, true, 0.06, 0.06);
-
-    const isPhone = this.scale.width < 640;
-    if (isPhone) {
-      this.zoomIndex = computeFitZoom(this.scale.width, this.scale.height);
-    } else {
-      const initialZoom = computeIntegerZoom(
-        this.scale.width,
-        this.scale.height
-      );
-      const closestIdx = ZOOM_LEVELS.findIndex((z) => z === initialZoom);
-      this.zoomIndex = closestIdx >= 0 ? closestIdx : 4;
-    }
-    this.targetZoom = ZOOM_LEVELS[this.zoomIndex] ?? 2;
-    cam.setZoom(this.targetZoom);
-
-    this.scale.on("resize", () => this.sky.resize());
   }
 }

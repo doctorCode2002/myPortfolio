@@ -1,73 +1,67 @@
 "use client";
 
 import {
-  Check,
-  Download,
   Eye,
   EyeOff,
   Layers,
   Maximize2,
   Minimize2,
-  Wrench,
+  Paintbrush,
+  RotateCcw,
+  RotateCw,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 
 import { gameEvents } from "../engine/events";
 import type { IslandArt } from "../engine/world/illustratedIsland";
+import { ExportBar } from "./export-bar";
 import { ToolInspector } from "./inspector";
-import { type EditorLayerState, type EditorTool } from "./types";
+import { PaletteBar } from "./palette-bar";
+import { useEditorShortcuts } from "./editorShortcuts";
+import {
+  type EditorLayerState,
+  type EditorTool,
+  type MaterialClass,
+} from "./types";
 
-const TOOLS: EditorTool[] = [
-  "walkable",
-  "blockers",
-  "doors",
-  "occluders",
-  "spawns",
-  "anchors",
-];
+const TOOLS: EditorTool[] = ["brush", "fill", "doors", "spawns", "anchors"];
 
 export function DevEditor(): ReactNode {
   const [minimized, setMinimized] = useState(false);
-  const [activeTool, setActiveTool] = useState<EditorTool>("walkable");
+  const [activeTool, setActiveTool] = useState<EditorTool>("brush");
+  const [activeMaterial, setActiveMaterial] = useState<MaterialClass>("road");
+  const [brushSize, setBrushSize] = useState(4);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [spawnTarget, setSpawnTarget] = useState<"player" | "mayor">("player");
   const [artData, setArtData] = useState<IslandArt | null>(null);
-  const [copied, setCopied] = useState(false);
+
   const [layers, setLayers] = useState<EditorLayerState>({
-    walkable: true,
-    blockers: true,
+    materialOverlay: true,
     doors: true,
-    occluders: true,
     spawns: true,
     anchors: true,
   });
 
   useEffect(() => {
-    const unbind = gameEvents.on("editor:data-updated", ({ art }) => {
-      setArtData(art as IslandArt);
-    });
+    const unbind = gameEvents.on(
+      "editor:data-updated",
+      ({ art, canUndo: u, canRedo: r }) => {
+        setArtData(art as IslandArt);
+        if (u !== undefined) setCanUndo(u);
+        if (r !== undefined) setCanRedo(r);
+      }
+    );
     gameEvents.emit("editor:request-data");
     return unbind;
   }, []);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent): void => {
-      const target = e.target as HTMLElement | null;
-      if (target?.tagName === "INPUT" || target?.tagName === "SELECT") return;
-
-      const idx = Number(e.key) - 1;
-      if (idx >= 0 && idx < TOOLS.length) {
-        const next = TOOLS[idx];
-        if (next) {
-          setActiveTool(next);
-          setSelectedIdx(0);
-          gameEvents.emit("editor:set-tool", { tool: next });
-        }
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  useEditorShortcuts(TOOLS, (tool) => {
+    setActiveTool(tool);
+    setSelectedIdx(0);
+    gameEvents.emit("editor:set-tool", { tool });
+  });
 
   const handleToolSelect = (tool: EditorTool): void => {
     setActiveTool(tool);
@@ -87,25 +81,6 @@ export function DevEditor(): ReactNode {
     gameEvents.emit("editor:update-art", { art: next });
   };
 
-  const handleExport = (): void => {
-    if (!artData) return;
-    const jsonStr = JSON.stringify(artData, null, 2);
-    try {
-      void navigator.clipboard.writeText(jsonStr);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback if clipboard fails
-    }
-    const blob = new Blob([jsonStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "island.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   return (
     <div className="dev-editor-hud pointer-events-auto fixed end-4 top-20 z-50 flex flex-col items-end gap-2 text-xs select-none">
       <div
@@ -114,33 +89,53 @@ export function DevEditor(): ReactNode {
             "0 -2px 0 0 #000, 0 2px 0 0 #000, -2px 0 0 0 #000, 2px 0 0 0 #000, inset 0 0 0 2px #d4a359",
           imageRendering: "pixelated",
         }}
-        className="bg-background/95 w-80 rounded-none p-3 shadow-2xl backdrop-blur-md"
+        className="bg-background/95 w-84 rounded-none p-3 shadow-2xl backdrop-blur-md"
       >
         <div className="border-foreground/10 mb-2 flex items-center justify-between border-b pb-2">
           <div className="text-foreground flex items-center gap-1.5 font-bold tracking-wide">
-            <Wrench className="text-accent h-3.5 w-3.5" />
-            <span>Island Editor (Dev)</span>
+            <Paintbrush className="text-accent h-3.5 w-3.5" />
+            <span>Brush Editor (Dev)</span>
           </div>
-          <button
-            type="button"
-            onClick={() => setMinimized((v) => !v)}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            {minimized ? (
-              <Maximize2 className="h-3.5 w-3.5" />
-            ) : (
-              <Minimize2 className="h-3.5 w-3.5" />
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={!canUndo}
+              onClick={() => gameEvents.emit("editor:undo")}
+              className="text-muted-foreground hover:text-foreground disabled:opacity-30"
+              title="Undo (Ctrl+Z)"
+            >
+              <RotateCcw className="h-3 w-3" />
+            </button>
+            <button
+              type="button"
+              disabled={!canRedo}
+              onClick={() => gameEvents.emit("editor:redo")}
+              className="text-muted-foreground hover:text-foreground disabled:opacity-30"
+              title="Redo (Ctrl+Y)"
+            >
+              <RotateCw className="h-3 w-3" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setMinimized((v) => !v)}
+              className="text-muted-foreground hover:text-foreground ml-1"
+            >
+              {minimized ? (
+                <Maximize2 className="h-3.5 w-3.5" />
+              ) : (
+                <Minimize2 className="h-3.5 w-3.5" />
+              )}
+            </button>
+          </div>
         </div>
 
         {!minimized && (
           <div className="space-y-2.5">
             <div>
               <span className="text-muted-foreground mb-1 block font-mono text-[10px] uppercase">
-                Active Tool (Keys 1-6)
+                Active Tool (Keys 1-5)
               </span>
-              <div className="grid grid-cols-3 gap-1">
+              <div className="grid grid-cols-5 gap-1">
                 {TOOLS.map((tool, idx) => (
                   <button
                     key={tool}
@@ -152,11 +147,25 @@ export function DevEditor(): ReactNode {
                         : "border-foreground/15 bg-muted/40 hover:bg-muted"
                     }`}
                   >
-                    {idx + 1}. {tool}
+                    {idx + 1}.{tool.slice(0, 4)}
                   </button>
                 ))}
               </div>
             </div>
+
+            <PaletteBar
+              activeTool={activeTool}
+              activeMaterial={activeMaterial}
+              brushSize={brushSize}
+              onSelectMaterial={(mat) => {
+                setActiveMaterial(mat);
+                gameEvents.emit("editor:set-material", { material: mat });
+              }}
+              onChangeBrushSize={(size) => {
+                setBrushSize(size);
+                gameEvents.emit("editor:set-brush-size", { size });
+              }}
+            />
 
             {artData && (
               <ToolInspector
@@ -173,22 +182,26 @@ export function DevEditor(): ReactNode {
             <div>
               <span className="text-muted-foreground mb-1 flex items-center gap-1 font-mono text-[10px] uppercase">
                 <Layers className="h-3 w-3" />
-                <span>Layers Toggle</span>
+                <span>Layers (50% Overlay)</span>
               </span>
-              <div className="grid grid-cols-3 gap-1">
+              <div className="grid grid-cols-4 gap-1">
                 {(Object.keys(layers) as Array<keyof EditorLayerState>).map(
                   (layer) => (
                     <button
                       key={layer}
                       type="button"
                       onClick={() => handleToggleLayer(layer)}
-                      className={`flex items-center justify-between rounded-none border px-1.5 py-0.5 font-mono capitalize ${
+                      className={`flex items-center justify-between border px-1.5 py-0.5 font-mono text-[10px] capitalize ${
                         layers[layer]
                           ? "border-foreground/20 bg-muted/60 text-foreground"
                           : "border-foreground/10 text-muted-foreground/40 line-through"
                       }`}
                     >
-                      <span>{layer.slice(0, 5)}</span>
+                      <span>
+                        {layer === "materialOverlay"
+                          ? "mat 50%"
+                          : layer.slice(0, 5)}
+                      </span>
                       {layers[layer] ? (
                         <Eye className="text-accent h-2.5 w-2.5" />
                       ) : (
@@ -200,36 +213,7 @@ export function DevEditor(): ReactNode {
               </div>
             </div>
 
-            <div className="border-foreground/10 bg-muted/20 text-muted-foreground border p-2 font-mono text-[10px]">
-              <p>• Click island to add vertex</p>
-              <p>• Drag vertices to adjust</p>
-              <p>• Right-click vertex to delete</p>
-              <p className="text-accent mt-0.5">
-                • WASD / Arrows to walk & test
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleExport}
-              style={{
-                boxShadow:
-                  "0 -2px 0 0 #000, 0 2px 0 0 #000, -2px 0 0 0 #000, 2px 0 0 0 #000",
-              }}
-              className="focus-ring bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-none py-1.5 text-center font-bold tracking-wide hover:opacity-90 active:translate-y-0.5"
-            >
-              {copied ? (
-                <>
-                  <Check className="h-3.5 w-3.5" />
-                  <span>Copied to Clipboard!</span>
-                </>
-              ) : (
-                <>
-                  <Download className="h-3.5 w-3.5" />
-                  <span>Export island.json</span>
-                </>
-              )}
-            </button>
+            <ExportBar art={artData} />
           </div>
         )}
       </div>

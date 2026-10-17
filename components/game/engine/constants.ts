@@ -63,3 +63,16 @@ export function computeFitZoom(viewW: number, viewH: number): number {
   }
   return bestIdx;
 }
+
+export function findClosestZoomIndex(zoom: number): number {
+  let bestIdx = 4;
+  let bestDiff = Infinity;
+  for (let i = 0; i < ZOOM_LEVELS.length; i++) {
+    const diff = Math.abs((ZOOM_LEVELS[i] ?? 2) - zoom);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      bestIdx = i;
+    }
+  }
+  return bestIdx;
+}
