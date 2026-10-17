@@ -12,7 +12,7 @@ export function setupCameraAndZoom(
   getTargetZoom: () => number;
 } {
   const cam = scene.cameras.main;
-  cam.setBackgroundColor("#507ea8");
+  cam.setBackgroundColor("rgba(0,0,0,0)");
   cam.setBounds(0, 0, worldWidth, worldHeight);
   cam.startFollow(playerSprite, true, 0.06, 0.06);
 

@@ -25,8 +25,6 @@ export function createGame(
     scene: [WorldScene],
   };
 
-  container.style.background = "linear-gradient(to bottom, #467298, #deb38a)";
-
   const game = new PhaserLib.Game(config);
   game.scene.start("WorldScene", { charSheet: initialCharSheet });
   return game;
