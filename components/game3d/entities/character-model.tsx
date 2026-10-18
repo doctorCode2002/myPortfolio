@@ -121,9 +121,9 @@ function SkinnedCharacter({
       const speed = state.current?.speed ?? 0;
       action.setEffectiveTimeScale(
         want === "walk"
-          ? THREE.MathUtils.clamp(speed / 1.9, 0.6, 1.7)
+          ? THREE.MathUtils.clamp(speed / 1.9, 0.6, 2.3)
           : want === "run"
-            ? THREE.MathUtils.clamp(speed / 4.2, 0.7, 1.5)
+            ? THREE.MathUtils.clamp(speed / 4.2, 0.7, 2.1)
             : 1
       );
     }
