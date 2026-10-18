@@ -4,6 +4,10 @@ import { useEffect, type ReactNode } from "react";
 import Lenis from "lenis";
 import { features } from "@/lib/config";
 
+/** Window events that pause and resume smooth scrolling. */
+export const SMOOTH_SCROLL_PAUSE = "smoothscroll:pause";
+export const SMOOTH_SCROLL_RESUME = "smoothscroll:resume";
+
 const LENIS_OPTIONS = {
   duration: 1.6,
   easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -14,11 +18,7 @@ const LENIS_OPTIONS = {
   touchMultiplier: 2,
 };
 
-export function SmoothScroll({
-  children,
-}: {
-  children: ReactNode;
-}): ReactNode {
+export function SmoothScroll({ children }: { children: ReactNode }): ReactNode {
   useEffect(() => {
     if (!features.smoothScroll) return;
 
@@ -54,8 +54,16 @@ export function SmoothScroll({
 
     document.addEventListener("click", handleAnchorClick);
 
+    // Overlays (e.g. the mobile menu) pause page scrolling while they're open.
+    const pause = (): void => lenis.stop();
+    const resume = (): void => lenis.start();
+    window.addEventListener(SMOOTH_SCROLL_PAUSE, pause);
+    window.addEventListener(SMOOTH_SCROLL_RESUME, resume);
+
     return () => {
       document.removeEventListener("click", handleAnchorClick);
+      window.removeEventListener(SMOOTH_SCROLL_PAUSE, pause);
+      window.removeEventListener(SMOOTH_SCROLL_RESUME, resume);
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };

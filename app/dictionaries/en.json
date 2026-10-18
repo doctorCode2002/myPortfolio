@@ -36,7 +36,10 @@
     "toLight": "Switch to light theme",
     "toDark": "Switch to dark theme",
     "switchLanguage": "التبديل إلى العربية",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menuTitle": "Menu"
   },
 
   "hero": {

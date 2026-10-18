@@ -38,7 +38,10 @@
     "toLight": "التبديل إلى المظهر الفاتح",
     "toDark": "التبديل إلى المظهر الداكن",
     "switchLanguage": "Switch to English",
-    "skipToContent": "تخطٍّ إلى المحتوى"
+    "skipToContent": "تخطٍّ إلى المحتوى",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة",
+    "menuTitle": "القائمة"
   },
 
   "hero": {
