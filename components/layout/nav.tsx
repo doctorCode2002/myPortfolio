@@ -160,6 +160,7 @@ export function Nav({
 }): ReactNode {
   const pathname = usePathname();
   const listRef = useRef<HTMLUListElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
   const [pillRect, setPillRect] = useState<{ x: number; width: number } | null>(
     null
@@ -189,6 +190,18 @@ export function Nav({
   }, [activeIndex, pathname]);
 
   useEffect(() => {
+    const scroller = scrollRef.current;
+    const activeEl = activeIndex >= 0 ? itemRefs.current[activeIndex] : null;
+    if (!scroller || !activeEl || scroller.scrollWidth <= scroller.clientWidth)
+      return;
+    const s = scroller.getBoundingClientRect();
+    const a = activeEl.getBoundingClientRect();
+    if (a.left < s.left || a.right > s.right) {
+      scroller.scrollLeft += a.left - s.left - (s.width - a.width) / 2;
+    }
+  }, [activeIndex]);
+
+  useEffect(() => {
     if (!pillRect) return;
     const id = requestAnimationFrame(() => setHasMeasured(true));
     return () => cancelAnimationFrame(id);
@@ -197,58 +210,66 @@ export function Nav({
   return (
     <nav
       aria-label={labels.label}
-      className="fixed top-6 left-1/2 z-50 -translate-x-1/2"
+      className="pointer-events-none fixed inset-x-0 top-6 z-50 flex justify-center px-3"
     >
-      {/* max-w cap: the pill is centred with a translate, so without it a long
-          label set can push past the viewport and cause horizontal scroll on
-          small phones. */}
-      <div className="border-foreground/10 bg-background flex max-w-[calc(100vw-1.5rem)] items-center gap-1 rounded-full border p-1.5 shadow-sm">
-        <ul ref={listRef} className="relative flex items-center gap-1">
-          {pillRect && (
-            <motion.span
-              aria-hidden="true"
-              initial={false}
-              animate={{ x: pillRect.x, width: pillRect.width }}
-              transition={
-                hasMeasured
-                  ? { type: "spring", stiffness: 380, damping: 32 }
-                  : { duration: 0 }
-              }
-              style={{ left: 0, top: 0, bottom: 0 }}
-              className="bg-accent/10 ring-accent/25 absolute rounded-full ring-1"
-            />
-          )}
-          {NAV_ROUTES.map((route, index) => {
-            const isActive = index === activeIndex;
-            return (
-              <li
-                key={route.key}
-                ref={(el) => {
-                  itemRefs.current[index] = el;
-                }}
-                className="relative"
-              >
-                <Link
-                  href={localePath(locale, route.path)}
-                  aria-current={isActive ? "page" : undefined}
-                  className="focus-ring relative inline-flex cursor-pointer items-center justify-center rounded-full px-3 py-1.5 text-[13px] font-medium whitespace-nowrap transition-colors duration-300 sm:px-4 sm:text-sm"
+      {/* Centred by a full-width flex row (not left-50% + translate, which caps the
+          pill at half the viewport); max-w-full keeps it inside the padding. */}
+      <div className="border-foreground/10 bg-background pointer-events-auto flex max-w-full min-w-0 items-center gap-1 rounded-full border p-1.5 shadow-sm">
+        {/* On narrow phones the links scroll sideways inside the pill (no visible
+            scrollbar) so the language and theme buttons always stay on screen. */}
+        <div
+          ref={scrollRef}
+          className="min-w-0 [scrollbar-width:none] overflow-x-auto overscroll-x-contain rounded-full [mask-image:linear-gradient(to_right,transparent,#000_10px,#000_calc(100%-10px),transparent)] sm:[mask-image:none] [&::-webkit-scrollbar]:hidden"
+        >
+          <ul ref={listRef} className="relative flex w-max items-center gap-1">
+            {pillRect && (
+              <motion.span
+                aria-hidden="true"
+                initial={false}
+                animate={{ x: pillRect.x, width: pillRect.width }}
+                transition={
+                  hasMeasured
+                    ? { type: "spring", stiffness: 380, damping: 32 }
+                    : { duration: 0 }
+                }
+                style={{ left: 0, top: 0, bottom: 0 }}
+                className="bg-accent/10 ring-accent/25 absolute rounded-full ring-1"
+              />
+            )}
+            {NAV_ROUTES.map((route, index) => {
+              const isActive = index === activeIndex;
+              return (
+                <li
+                  key={route.key}
+                  ref={(el) => {
+                    itemRefs.current[index] = el;
+                  }}
+                  className="relative"
                 >
-                  <span
-                    className={
-                      isActive
-                        ? "text-foreground relative z-10"
-                        : "text-muted-foreground hover:text-foreground relative z-10"
-                    }
+                  <Link
+                    href={localePath(locale, route.path)}
+                    aria-current={isActive ? "page" : undefined}
+                    className="focus-ring relative inline-flex cursor-pointer items-center justify-center rounded-full px-2.5 py-1.5 text-[13px] font-medium whitespace-nowrap transition-colors duration-300 sm:px-4 sm:text-sm"
                   >
-                    {labels[route.key]}
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-        <LanguageSwitch locale={locale} labels={labels} />
-        <NavThemeToggle labels={labels} />
+                    <span
+                      className={
+                        isActive
+                          ? "text-foreground relative z-10"
+                          : "text-muted-foreground hover:text-foreground relative z-10"
+                      }
+                    >
+                      {labels[route.key]}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div className="flex shrink-0 items-center gap-1">
+          <LanguageSwitch locale={locale} labels={labels} />
+          <NavThemeToggle labels={labels} />
+        </div>
       </div>
     </nav>
   );

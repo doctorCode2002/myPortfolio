@@ -33,7 +33,7 @@ const size = 2 / Math.sqrt(3);
 
 const LAYOUT: Record<string, { center: [number, number]; radius: number }> = {
   home: { center: [0, 0], radius: 17 },
-  khidmty: { center: [0, -38], radius: 11 },
+  khidmty: { center: [0.42, -31.5], radius: 11 },
 };
 
 const mayors: Record<string, MayorInfo | undefined> = Object.fromEntries(

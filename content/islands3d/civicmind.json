@@ -1,6 +1,6 @@
 {
   "id": "civicmind",
-  "center": [38, -16],
+  "center": [27.4, -11.9],
   "baseY": 2,
   "biome": "civic",
   "_note": "CivicMind: a tidy civic district. The clock-tower town hall (b-town-hall) stands on a raised terrace above a paved plaza with a fountain, crystal lamps and benches; civic houses, a records tower and a reservoir pond ring it. Generated layout; procedural models in scripts/3d/procedural/b.mjs.",

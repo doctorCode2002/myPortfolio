@@ -18,8 +18,8 @@ import {
 import { islandBob, useRuntimeRef, type Runtime } from "../runtime";
 import { CharacterModel, type AnimState } from "./character-model";
 
-export const WALK_SPEED = 2.1;
-export const RUN_SPEED = 4.4;
+export const WALK_SPEED = 3.0;
+export const RUN_SPEED = 6.0;
 
 /** Put the player on an island's spawn (falls back to home for unknown ids). */
 function placeOnIsland(

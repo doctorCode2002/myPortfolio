@@ -30,8 +30,8 @@ const manifest = readManifestFromDisk();
 const R = 2 / Math.sqrt(3);
 
 const CASES = [
-  { json: civicmindJson, id: "civicmind", plan: [38, -16], baseY: 2 },
-  { json: onyxJson, id: "onyx", plan: [32, 26], baseY: -1 },
+  { json: civicmindJson, id: "civicmind", plan: [27.4, -11.9], baseY: 2 },
+  { json: onyxJson, id: "onyx", plan: [23.17, 19.3], baseY: -1 },
 ] as const;
 
 const mayors: Record<string, MayorInfo | undefined> = Object.fromEntries(
