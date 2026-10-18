@@ -134,7 +134,7 @@ export function Mayor({
       stepBrain(b, env, {
         dt,
         player: p,
-        playerActive: !rt.frozen && !rt.car.driving,
+        playerActive: !rt.frozen && rt.move.mode === "walk",
         talking: rt.frozen && dp < LISTEN_RADIUS,
       });
       // The collider, the talk prompt and the tour offer follow the mayor.

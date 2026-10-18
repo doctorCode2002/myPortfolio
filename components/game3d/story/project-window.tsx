@@ -214,7 +214,13 @@ export function ProjectWindow({
   const open = (e: ThreeEvent<MouseEvent>): void => {
     e.stopPropagation();
     const rt = rtRef.current;
-    if (rt.frozen || rt.car.driving || gameEvents.isUiLocked()) return;
+    if (
+      rt.frozen ||
+      rt.car.driving ||
+      rt.move.mode !== "walk" ||
+      gameEvents.isUiLocked()
+    )
+      return;
     rt.path = null;
     rt.target = null;
     gameEvents.emit("interact:building", { buildingId });

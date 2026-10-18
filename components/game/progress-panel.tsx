@@ -70,15 +70,20 @@ export function ProgressPanelView({
       )}
 
       <div className="flex flex-wrap items-center gap-1.5">
-        <span className="text-muted-foreground font-mono text-[11px] sm:text-xs">
-          {labels.statusLabel}
-        </span>
-        <span
-          style={{ boxShadow: PIXEL_BADGE }}
-          className={`px-2 py-0.5 font-mono text-[10px] font-bold uppercase ${(project.status && STATUS_TINT[project.status]) || "bg-muted"}`}
-        >
-          {project.statusLabel}
-        </span>
+        {/* No status yet (e.g. a TODO from the owner): the header badge already says "In progress". */}
+        {project.status && (
+          <>
+            <span className="text-muted-foreground font-mono text-[11px] sm:text-xs">
+              {labels.statusLabel}
+            </span>
+            <span
+              style={{ boxShadow: PIXEL_BADGE }}
+              className={`px-2 py-0.5 font-mono text-[10px] font-bold uppercase ${STATUS_TINT[project.status] ?? "bg-muted"}`}
+            >
+              {project.statusLabel}
+            </span>
+          </>
+        )}
         {project.demo && isDev && (
           <span
             style={{ boxShadow: PIXEL_BADGE }}
