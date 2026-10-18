@@ -55,7 +55,9 @@ export function Joystick({ rtRef }: { rtRef: RefObject<Runtime> }): ReactNode {
       onPointerCancel={end}
     >
       <div
-        className="bg-foreground/60 absolute top-1/2 left-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-md"
+        // Centred by the inline transform only: Tailwind's -translate-* use the separate
+        // `translate` property, so combining both shifted the knob twice (off-centre).
+        className="bg-foreground/60 absolute top-1/2 left-1/2 h-12 w-12 rounded-full shadow-md"
         style={{
           transform: `translate(calc(-50% + ${knob.x}px), calc(-50% + ${knob.y}px))`,
         }}

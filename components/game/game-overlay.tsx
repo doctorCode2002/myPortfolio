@@ -123,8 +123,13 @@ export function GameOverlay({
       {/* Controls HUD pill at bottom */}
       <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center px-4 sm:bottom-6">
         <div className="border-foreground/10 bg-background/80 text-muted-foreground flex items-center gap-2 rounded-full border px-4 py-1.5 text-[11px] font-medium shadow-sm backdrop-blur-md sm:text-xs">
-          <span className="hidden sm:inline">{dict.play.instructions}</span>
-          <span className="sm:hidden">{dict.play.touchInstructions}</span>
+          {/* By input type, not width: touch tablets get the touch hint too. */}
+          <span className="pointer-coarse:hidden">
+            {dict.play.instructions}
+          </span>
+          <span className="hidden pointer-coarse:inline">
+            {dict.play.touchInstructions}
+          </span>
         </div>
       </div>
     </div>

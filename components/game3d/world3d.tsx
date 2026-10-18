@@ -365,7 +365,13 @@ export function World3D({
   locale: Locale;
 }): ReactNode {
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
-  const touch = useMediaQuery("(pointer: coarse)");
+  const coarse = useMediaQuery("(pointer: coarse)");
+  // Dev only: ?touch=1 forces the touch UI (joystick, touch buttons) for testing on desktop.
+  const touch =
+    coarse ||
+    (process.env.NODE_ENV !== "production" &&
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("touch") === "1");
   const rtRef = useRef<Runtime>(createRuntime(false));
   const [manifest, setManifest] = useState<Manifest | null | undefined>(
     undefined
