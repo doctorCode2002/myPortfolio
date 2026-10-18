@@ -44,12 +44,12 @@ export const BALLOON = {
   envTop: 11.1,
   clearEnv: 0.5,
   /** Burner climb and vent descent (m/s), and the vertical response (1/s). */
-  climb: 1.3,
-  vent: 1.0,
-  vyRate: 0.9,
+  climb: 2.4,
+  vent: 1.8,
+  vyRate: 1.4,
   /** Horizontal drift: top speed (m/s) and its response (1/s, slow: inertia). */
-  maxSpeed: 4,
-  accel: 0.8,
+  maxSpeed: 7.5,
+  accel: 1.2,
   /** Wind push (m/s): calm, plus gusts and rain. */
   windBase: 0.3,
   windGust: 1.1,
@@ -64,13 +64,13 @@ export const BALLOON = {
   landRange: 3.5,
   /** Autopilot cruise clearance and horizontal speed. */
   autoClear: 1.2,
-  autoSpeed: 3.2,
+  autoSpeed: 6,
   /** Autopilot descent (m/s): a little brisker than the vent, still gentle. */
-  autoVent: 1.5,
+  autoVent: 2.2,
   /** Scenic tour: clearance over the height field, duration, vertical speed limit. */
   tourClear: 2.2,
-  tourSeconds: 105,
-  tourVert: 1.4,
+  tourSeconds: 60,
+  tourVert: 2.6,
 } as const;
 
 /** Wind direction (matches the foliage sway: mostly +x, a little +z). */
@@ -1031,11 +1031,19 @@ export function tourPoint(
 export function tourLabel(
   path: TourPath,
   t: number,
-  window = 6
+  window = 3.5
 ): string | null {
-  for (const p of path.passes)
-    if (Math.abs(t - p.t) < window) return p.islandId;
-  return null;
+  // The nearest pass wins: on a brisk tour the windows of neighbouring islands overlap.
+  let best: string | null = null;
+  let bestDt = window;
+  for (const p of path.passes) {
+    const dt = Math.abs(t - p.t);
+    if (dt < bestDt) {
+      bestDt = dt;
+      best = p.islandId;
+    }
+  }
+  return best;
 }
 
 /**

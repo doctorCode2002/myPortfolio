@@ -122,9 +122,9 @@ describe("scenic tour", () => {
     expect(tour.ys[n]).toBeCloseTo(field.y, 5);
   });
 
-  it("takes about 90-120 seconds, and time only moves forward", () => {
-    expect(tour.duration).toBeGreaterThanOrEqual(90);
-    expect(tour.duration).toBeLessThanOrEqual(120);
+  it("takes about a minute, and time only moves forward", () => {
+    expect(tour.duration).toBeGreaterThanOrEqual(50);
+    expect(tour.duration).toBeLessThanOrEqual(75);
     for (let i = 1; i < tour.n; i++)
       expect(tour.ts[i] as number).toBeGreaterThan(tour.ts[i - 1] as number);
   });
