@@ -42,6 +42,7 @@ import {
   startAutopilot,
   stepAutopilot,
   stepFree,
+  tourFrom,
   tourLabel,
   tourPoint,
   windAt,
@@ -49,6 +50,7 @@ import {
   type BalloonState,
   type FreeInput,
   type Parking,
+  type TourPath,
 } from "./balloon-logic";
 import {
   BalloonModel,
@@ -94,6 +96,10 @@ type Sim = {
   phase: BalloonPhase;
   s: BalloonState;
   park: Parking;
+  /** The tour being flown: from the field (precomputed) or from wherever the balloon was parked. */
+  tour: TourPath;
+  /** Where the current tour lands (the spot it started from). */
+  tourHome: Parking;
   tourT: number;
   hint: number;
   auto: Autopilot | null;
@@ -295,6 +301,8 @@ export function BalloonSystem({
         phase: "parked",
         s: createBalloonState(f.x, f.y, f.z, bw.fieldHeading),
         park: f,
+        tour: bw.tour,
+        tourHome: f,
         tourT: 0,
         hint: 0,
         auto: null,
@@ -349,16 +357,15 @@ export function BalloonSystem({
       balloonRequests.action = false;
       m.acc = 0;
       if (start === "free") m.phase = "free";
-      else if (m.park === bw.field) {
+      else {
+        // Tour from where the balloon is parked and land back there, rather than flying to
+        // the home field first (built once per spot; the field's tour is precomputed).
+        m.tour = m.park === bw.field ? bw.tour : tourFrom(bw, m.park);
+        m.tourHome = m.park;
         m.phase = "tour";
         m.tourT = 0;
         m.hint = 0;
         m.touring = true;
-      } else {
-        m.phase = "auto";
-        m.target = bw.field;
-        m.auto = startAutopilot(bw.env, s, bw.field);
-        m.then = "tour";
       }
       setBalloonUi({ phase: m.phase });
     }
@@ -393,7 +400,7 @@ export function BalloonSystem({
     if (flying && !rt.frozen) {
       if (m.phase === "tour") {
         m.tourT += dt * speed;
-        m.hint = tourPoint(bw.tour, m.tourT, tmp.current, m.hint);
+        m.hint = tourPoint(m.tour, m.tourT, tmp.current, m.hint);
         const t = tmp.current;
         const vy = (t.y - s.y) / Math.max(dt, 1e-4);
         const dx = t.x - s.x;
@@ -412,10 +419,10 @@ export function BalloonSystem({
         s.z = t.z;
         const flare = vy > 0.35 ? 1 : vy > 0.05 ? 0.55 : 0.12;
         s.burn += (flare - s.burn) * Math.min(1, dt * 5);
-        const label = tourLabel(bw.tour, m.tourT);
+        const label = tourLabel(m.tour, m.tourT);
         if (label !== getBalloonUi().label)
           setBalloonUi(label ? { label, lastLabel: label } : { label });
-        if (m.tourT >= bw.tour.duration) land(rt, m, bw.field, world.walk);
+        if (m.tourT >= m.tour.duration) land(rt, m, m.tourHome, world.walk);
       } else if (m.phase === "free") {
         freeInput(rt, input.current);
         windAt(atmosphere.gust, atmosphere.rain, wind.current);

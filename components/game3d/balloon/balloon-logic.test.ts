@@ -35,6 +35,7 @@ import {
   startAutopilot,
   stepAutopilot,
   stepFree,
+  tourFrom,
   tourLabel,
   tourPoint,
   windAt,
@@ -413,5 +414,58 @@ describe("above the clouds", () => {
     p.sky = true;
     expect(achievementMet(p, "aboveClouds", rules)).toBe(true);
     expect(parseProgress(JSON.stringify(p)).sky).toBe(true);
+  });
+});
+
+describe("scenic tour from another island", () => {
+  // Boarding a balloon that was parked away from home must not fly to the field first:
+  // the tour takes off from that spot, loops the archipelago and lands back there.
+  const spots = env.islands
+    .map((i) => i.landing)
+    .filter(
+      (l): l is NonNullable<typeof l> => !!l && l.islandId !== field.islandId
+    );
+
+  it("has other islands to start from", () => {
+    expect(spots.length).toBeGreaterThan(0);
+  });
+
+  it.each(spots.map((s) => [s.islandId, s] as const))(
+    "from %s: starts and ends on that spot, visits every island, keeps clear",
+    (_id, spot) => {
+      const t = tourFrom(built, spot);
+      const n = t.n - 1;
+      expect(t.xs[0]).toBeCloseTo(spot.x, 5);
+      expect(t.zs[0]).toBeCloseTo(spot.z, 5);
+      expect(t.xs[n]).toBeCloseTo(spot.x, 5);
+      expect(t.zs[n]).toBeCloseTo(spot.z, 5);
+      // It never detours to the home field to land and take off again.
+      let nearField = 0;
+      for (let i = 0; i < t.n; i++) {
+        const d = Math.hypot(
+          (t.xs[i] as number) - field.x,
+          (t.zs[i] as number) - field.z
+        );
+        const low = (t.ys[i] as number) < field.y + 3;
+        if (d < 2 && low) nearField++;
+      }
+      expect(nearField).toBe(0);
+      expect(t.passes.map((p) => p.islandId).sort()).toEqual(
+        [...ISLAND_IDS].sort()
+      );
+      const p = { x: 0, y: 0, z: 0 };
+      let hint = 0;
+      let worst = Infinity;
+      for (let time = 0; time <= t.duration; time += 0.05) {
+        hint = tourPoint(t, time, p, hint);
+        worst = Math.min(worst, p.y - need(env, p.x, p.z));
+      }
+      expect(worst).toBeGreaterThanOrEqual(-1e-6);
+      expect(tourFrom(built, spot)).toBe(t); // cached
+    }
+  );
+
+  it("from the field it is the precomputed tour", () => {
+    expect(tourFrom(built, field)).toBe(tour);
   });
 });

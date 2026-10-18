@@ -1162,3 +1162,20 @@ export function buildBalloonWorld(
     tour: buildTour(env, f.spot),
   };
 }
+
+const toursFrom = new WeakMap<Parking, TourPath>();
+
+/**
+ * A scenic tour that takes off from `spot` and lands back on it, still looping past every
+ * island and over home's middle. The field's tour is the precomputed one; any other spot's
+ * tour is built on first use and cached (a few tens of ms, once).
+ */
+export function tourFrom(bw: BalloonWorld, spot: Parking): TourPath {
+  if (spot === bw.field) return bw.tour;
+  let tour = toursFrom.get(spot);
+  if (!tour) {
+    tour = buildTour(bw.env, spot, bw.field.islandId);
+    toursFrom.set(spot, tour);
+  }
+  return tour;
+}
