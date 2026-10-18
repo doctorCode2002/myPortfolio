@@ -160,7 +160,9 @@ export function carFits(
   heading: number,
   fromY: number,
   smash = false,
-  hits?: Obstacle[]
+  hits?: Obstacle[],
+  /** Ignore obstacles (ground and rails still count): to drive out of an overlap. */
+  ghost = false
 ): FitResult | null {
   const { world } = env;
   const r = CAR.radius;
@@ -177,15 +179,16 @@ export function carFits(
     }
     for (const rail of queryIndex(env.rails, c.x, c.z, r))
       if (railDistance(rail, c.x, c.z) < r) return null;
-    for (const o of queryIndex(env.obstacles, c.x, c.z, r)) {
-      if (o.key !== undefined && world.broken.has(o.key)) continue;
-      if (obstacleDistance(o, c.x, c.z) >= r) continue;
-      if (smash && o.key !== undefined && env.breakable.has(o.key)) {
-        if (hits && !hits.includes(o)) hits.push(o);
-        continue;
+    if (!ghost)
+      for (const o of queryIndex(env.obstacles, c.x, c.z, r)) {
+        if (o.key !== undefined && world.broken.has(o.key)) continue;
+        if (obstacleDistance(o, c.x, c.z) >= r) continue;
+        if (smash && o.key !== undefined && env.breakable.has(o.key)) {
+          if (hits && !hits.includes(o)) hits.push(o);
+          continue;
+        }
+        return null;
       }
-      return null;
-    }
     ys.push(s.y);
     if (i === 1) mid = s;
   }
@@ -274,6 +277,9 @@ export function stepCar(
   const yaw = -s.steer * CAR.turnRate * grip * Math.sign(s.speed) * dt;
 
   const smash = v >= CAR.breakSpeed;
+  // Overlapping something already (a teleport, a prop regrown under a stuck car)?
+  // Then obstacles are ignored until the car is free again.
+  const ghost = !carFits(env, s.x, s.z, s.heading, s.y, true);
   const dist = v * dt;
   const steps = Math.max(
     1,
@@ -283,7 +289,7 @@ export function stepCar(
   for (let i = 0; i < steps; i++) {
     // Turn first (only if the rotated footprint still fits).
     const h = s.heading + yaw / steps;
-    const turned = carFits(env, s.x, s.z, h, s.y, smash, hits);
+    const turned = carFits(env, s.x, s.z, h, s.y, smash, hits, ghost);
     if (turned) {
       s.heading = h;
       fit = turned;
@@ -300,7 +306,8 @@ export function stepCar(
       s.heading,
       s.y,
       smash,
-      hits
+      hits,
+      ghost
     );
     if (direct) {
       s.x += fx;
@@ -325,7 +332,8 @@ export function stepCar(
             s.heading,
             s.y,
             smash,
-            hits
+            hits,
+            ghost
           );
           if (!slid) continue;
           s.x += dx;
@@ -336,7 +344,7 @@ export function stepCar(
           s.speed *= 1 - (1 - k) * 0.35;
           const align = Math.sign(s.speed) * sign * a * 0.18;
           const h2 = s.heading + align;
-          const ok = carFits(env, s.x, s.z, h2, s.y, smash, hits);
+          const ok = carFits(env, s.x, s.z, h2, s.y, smash, hits, ghost);
           if (ok) {
             s.heading = h2;
             fit = ok;
@@ -347,6 +355,13 @@ export function stepCar(
       }
     }
     if (!moved) {
+      // Only a breakable prop in the way at low speed: push against it (the speed keeps
+      // building until it gives) instead of bouncing off.
+      if (
+        !smash &&
+        carFits(env, s.x + fx, s.z + fz, s.heading, s.y, true, undefined, ghost)
+      )
+        break;
       bump = Math.max(bump, Math.abs(s.speed));
       s.speed = -s.speed * 0.15;
       break;
@@ -369,6 +384,19 @@ export function stepCar(
     s.bridgeId = fit.surface.bridgeId;
   }
   return { hits, bump };
+}
+
+/**
+ * Plug the runtime state into a (rebuilt) walk world: the break store's broken map, and
+ * the parked car as a dynamic obstacle (none while it is being driven).
+ */
+export function syncWalkWorld(
+  walk: WalkWorld,
+  broken: { has(key: string): boolean },
+  parked: Pick<CarState, "x" | "z" | "heading"> | null
+): void {
+  walk.broken = broken;
+  walk.dynamic = parked ? [carObstacle(parked)] : [];
 }
 
 /** A box obstacle for the parked car (so the player walks around it). */

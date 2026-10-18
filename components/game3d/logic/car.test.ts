@@ -31,7 +31,7 @@ import { hexSpiral } from "./hex";
 import { buildRails, railDistance } from "./rails";
 import type { Island3D } from "./types";
 import { islandProblems, parseIsland3D } from "./validate-island";
-import { buildWalkWorld } from "./walk-world";
+import { buildWalkWorld, surfaceAt } from "./walk-world";
 import { buildGameWorld, PLAYER_RADIUS_HEX } from "./world-layout";
 
 const manifest = readManifestFromDisk();
@@ -220,6 +220,26 @@ describe("rails", () => {
       for (const r of rails) expect(railDistance(r, x, 0)).toBeGreaterThan(0.5);
   });
 
+  it("builds 1.8-hex-wide bridges whose deck lands over the rim", () => {
+    for (const b of world.walk.bridges) {
+      expect(b.halfWidth, b.id).toBeCloseTo(
+        (world.hexWidth * 1.8) / 2 - 0.05,
+        5
+      );
+      // The landings start inside the anchor hexes, before the rim.
+      expect(b.t0 * b.length, b.id).toBeGreaterThan(0.2);
+      expect(b.t0 * b.length, b.id).toBeLessThan(world.hexWidth * 0.6);
+      expect((1 - b.t1) * b.length, b.id).toBeGreaterThan(0.2);
+      // Walkable 1.4 m off the centre line at mid-span (the car fits side by side).
+      const dx = b.b.x - b.a.x;
+      const dz = b.b.z - b.a.z;
+      const n = Math.hypot(dx, dz);
+      const mx = (b.a.x + b.b.x) / 2 + (-dz / n) * 1.4;
+      const mz = (b.a.z + b.b.z) / 2 + (dx / n) * 1.4;
+      expect(surfaceAt(world.walk, mx, mz)?.bridgeId, b.id).toBe(b.id);
+    }
+  });
+
   it("covers all five home bridges in the real world", () => {
     for (const b of world.walk.bridges)
       expect(
@@ -347,7 +367,7 @@ describe("car controller", () => {
     }
   });
 
-  it("smashes a breakable prop at speed but is blocked by it when slow", () => {
+  it("smashes a breakable prop at speed, and pushes through it from a standstill", () => {
     const island = disc("p", 6, [0, 0], {
       objects: [{ model: "tree-oak", q: 1, r: -2 }],
     });
@@ -359,16 +379,23 @@ describe("car controller", () => {
     for (let i = 0; i < 90; i++) hits.push(...stepCar(e, fast, GAS, DT).hits);
     expect(hits.map((o) => o.key)).toContain(key);
 
-    const slow = createCarState(0, 0, -1.6, Math.PI);
+    // Parked nose against the tree: the first frames push (no bounce), then it breaks.
+    const tree = w.islands[0]?.obstacles[0];
+    const r = tree?.shape === "circle" ? tree.radius : 0.25;
+    const touch = (tree?.z ?? 0) + CAR.offsets[2] + CAR.radius + r + 0.01;
+    const slow = createCarState(0, 0, touch, Math.PI);
+    const first = stepCar(e, slow, GAS, DT);
+    expect(first.hits).toHaveLength(0);
+    expect(first.bump).toBe(0);
+    const broken = new Set<string>();
+    w.broken = broken;
     let smashed = 0;
     for (let i = 0; i < 60; i++)
-      smashed += stepCar(
-        e,
-        slow,
-        { throttle: 0.12, steer: 0, handbrake: false },
-        DT
-      ).hits.length;
-    expect(smashed).toBe(0);
+      for (const o of stepCar(e, slow, GAS, DT).hits) {
+        smashed++;
+        broken.add(o.key ?? "");
+      }
+    expect(smashed).toBe(1);
   });
 
   it("is stopped by an indestructible building", () => {

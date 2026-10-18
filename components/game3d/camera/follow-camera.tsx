@@ -19,6 +19,9 @@ import { PLAYER_RADIUS_HEX, type GameWorld } from "../logic/world-layout";
 import { useRuntimeRef } from "../runtime";
 
 const TAP_MOVE_PX = 8;
+/** Camera distance multiplier and lead (metres at top speed) while driving. */
+const DRIVE_DISTANCE = 1.4;
+const DRIVE_LEAD = 4;
 const TAP_MS = 350;
 
 function roundZoom(z: number): number {
@@ -42,6 +45,7 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
     zoom: CAMERA.zoomDefault,
   });
   const first = useRef(true);
+  const drivePull = useRef({ k: 0 });
 
   // Zoom buttons and external zoom requests.
   useEffect(() => {
@@ -91,7 +95,7 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
 
     const tapToMove = (clientX: number, clientY: number): void => {
       const rt = rtRef.current;
-      if (rt.frozen) return;
+      if (rt.frozen || rt.car.driving) return;
       const rect = el.getBoundingClientRect();
       ndc.set(
         ((clientX - rect.left) / rect.width) * 2 - 1,
@@ -205,23 +209,44 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
     cam.pitch += (goal.current.pitch - cam.pitch) * k;
     cam.zoom += (goal.current.zoom - cam.zoom) * k;
     const t = smoothTarget.current;
-    const kt = first.current ? 1 : damp(8, dt);
-    // Lead slightly in the movement direction so the view opens up ahead.
+    const car = rt.car.driving ? rt.car.state : null;
+    const kt = first.current ? 1 : damp(car ? 5 : 8, dt);
+    // Lead in the travel direction so the view opens up ahead: a little for walking,
+    // a lot more for the car (it is fast and the orbit stays limited).
     const l = lead.current;
-    const run = Math.min(1, rt.player.speed / 4.4);
-    const kl = damp(2.5, dt);
-    l.x += (Math.sin(rt.player.heading) * CAMERA.lead * run - l.x) * kl;
-    l.z += (Math.cos(rt.player.heading) * CAMERA.lead * run - l.z) * kl;
+    const heading = car ? car.heading : rt.player.heading;
+    const run = car
+      ? (Math.min(1, Math.abs(car.speed) / 16) *
+          Math.sign(car.speed) *
+          DRIVE_LEAD) /
+        CAMERA.lead
+      : Math.min(1, rt.player.speed / 4.4);
+    const kl = damp(car ? 1.6 : 2.5, dt);
+    l.x += (Math.sin(heading) * CAMERA.lead * run - l.x) * kl;
+    l.z += (Math.cos(heading) * CAMERA.lead * run - l.z) * kl;
     t.x += (p.x + l.x - t.x) * kt;
     t.y +=
       (p.y + 0.55 - t.y) * damp(4, dt) + (first.current ? p.y + 0.55 - t.y : 0);
     t.z += (p.z + l.z - t.z) * kt;
     first.current = false;
-    const dist = zoomToDistance(cam.zoom);
+    // Pull back while driving (eased so getting in and out glides).
+    const pull = drivePull.current;
+    pull.k += ((car ? 1 : 0) - pull.k) * damp(2.5, dt);
+    const dist = zoomToDistance(cam.zoom) * (1 + (DRIVE_DISTANCE - 1) * pull.k);
     const horiz = Math.cos(cam.pitch) * dist;
+    // Impact shake (never with reduced motion: the car system leaves it at 0 then).
+    let sx = 0;
+    let sy = 0;
+    if (rt.shake > 0.001) {
+      const a = rt.shake * 0.18;
+      const tt = state.clock.elapsedTime * 47;
+      sx = Math.sin(tt) * a;
+      sy = Math.sin(tt * 1.3 + 1) * a * 0.6;
+      rt.shake *= Math.exp(-dt * 7);
+    } else rt.shake = 0;
     camera.position.set(
-      t.x + Math.sin(cam.yaw) * horiz,
-      t.y + Math.sin(cam.pitch) * dist,
+      t.x + Math.sin(cam.yaw) * horiz + sx,
+      t.y + Math.sin(cam.pitch) * dist + sy,
       t.z + Math.cos(cam.yaw) * horiz
     );
     camera.lookAt(t);

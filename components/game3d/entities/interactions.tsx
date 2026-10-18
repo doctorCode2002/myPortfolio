@@ -19,6 +19,8 @@ export type PromptLabels = {
   npcNames: Record<string, string>;
   talk: string;
   tap: string;
+  /** Vehicle prompt ("Drive"). */
+  drive: string;
   rtl: boolean;
 };
 
@@ -26,6 +28,7 @@ export type PromptLabels = {
 const REOPEN_GUARD_MS = 300;
 
 export function emitInteraction(item: Interactable): void {
+  if (item.kind === "vehicle") return;
   if (item.kind === "door") {
     gameEvents.emit("interact:building", { buildingId: item.id });
   } else {
@@ -65,7 +68,8 @@ export function Interactions({
     if (performance.now() - rt.unfrozenAt < REOPEN_GUARD_MS) return;
     rt.path = null;
     rt.target = null;
-    emitInteraction(item);
+    if (item.kind === "vehicle") rt.car.request = "enter";
+    else emitInteraction(item);
   }, [rtRef]);
 
   useEffect(() => {
@@ -88,9 +92,10 @@ export function Interactions({
   useFrame(() => {
     const rt = rtRef.current;
     const p = rt.player.pos;
-    const hit = rt.frozen
-      ? null
-      : nearestInteractable(world.interactables, p.x, p.y, p.z);
+    const hit =
+      rt.frozen || rt.car.driving
+        ? null
+        : nearestInteractable(world.interactables, p.x, p.y, p.z);
     const item = hit?.item ?? null;
     if (item !== rt.nearest) {
       rt.nearest = item;
@@ -100,14 +105,17 @@ export function Interactions({
 
   if (!nearest) return null;
   const isDoor = nearest.kind === "door";
+  const isVehicle = nearest.kind === "vehicle";
   const sign = isDoor
     ? shortSign(labels.signs[nearest.id] ?? nearest.id)
     : null;
-  const title = isDoor
-    ? (sign?.title ?? nearest.id)
-    : (labels.npcNames[nearest.id] ?? labels.talk);
-  const action = isDoor ? sign?.detail : labels.talk;
-  const y = nearest.y + (isDoor ? 1.6 : 1.45);
+  const title = isVehicle
+    ? labels.drive
+    : isDoor
+      ? (sign?.title ?? nearest.id)
+      : (labels.npcNames[nearest.id] ?? labels.talk);
+  const action = isVehicle ? undefined : isDoor ? sign?.detail : labels.talk;
+  const y = nearest.y + (isDoor ? 1.6 : isVehicle ? 1.3 : 1.45);
 
   return (
     <Html

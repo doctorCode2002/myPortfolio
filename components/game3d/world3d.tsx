@@ -5,7 +5,7 @@ import {
   PerformanceMonitor,
   useProgress,
 } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import {
   Suspense,
   useEffect,
@@ -42,13 +42,16 @@ import {
   type GameWorld,
   type MayorInfo,
 } from "./logic/world-layout";
+import * as carLogic from "./logic/car";
 import { createRuntime, RuntimeContext, type Runtime } from "./runtime";
 import { Birds } from "./scene/birds";
 import { ShaderClock } from "./scene/clock";
 import { Clouds } from "./scene/clouds";
 import { Lights } from "./scene/lights";
 import { SKY, SkyDome } from "./scene/sky";
+import { DriveHud } from "./ui/drive-hud";
 import { Joystick } from "./ui/joystick";
+import { CarSystem } from "./vehicle/car-system";
 
 const MOVE_KEYS = new Set([
   "KeyW",
@@ -61,6 +64,7 @@ const MOVE_KEYS = new Set([
   "ArrowRight",
   "ShiftLeft",
   "ShiftRight",
+  "Space",
 ]);
 
 function useMediaQuery(query: string): boolean {
@@ -101,6 +105,7 @@ function buildLabels(dict: Dictionary, locale: Locale): PromptLabels {
     npcNames,
     talk: dict.play.talk,
     tap: dict.play.tap,
+    drive: dict.play.drive,
     rtl: isRtl(locale),
   };
 }
@@ -154,6 +159,20 @@ function useInputAndFreeze(rtRef: RefObject<Runtime>): void {
       window.removeEventListener("blur", clear);
     };
   }, [rtRef]);
+}
+
+/** Dev only: the renderer and scene for automated checks (draw calls, timings). */
+function ExposeThree(): null {
+  const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
+  useEffect(() => {
+    const w = window as unknown as { __three?: unknown };
+    w.__three = { gl, scene };
+    return () => {
+      delete w.__three;
+    };
+  }, [gl, scene]);
+  return null;
 }
 
 function Scene({
@@ -223,6 +242,7 @@ function Scene({
             />
           );
         })}
+      <CarSystem world={world} manifest={manifest} />
       <Player world={world} manifest={manifest} charId={charId} />
       <TargetMarker />
       <Interactions world={world} labels={labels} touch={touch} />
@@ -230,6 +250,7 @@ function Scene({
       <Clouds center={center} reducedMotion={reducedMotion} />
       <Birds center={center} reducedMotion={reducedMotion} />
       {debug && <WalkGridViz world={world} />}
+      {process.env.NODE_ENV !== "production" && <ExposeThree />}
     </>
   );
 }
@@ -332,6 +353,7 @@ export function World3D({
     (window as unknown as { __game3d?: unknown }).__game3d = {
       rt: rtRef.current,
       world,
+      carLogic,
     };
     return () => {
       delete (window as unknown as { __game3d?: unknown }).__game3d;
@@ -390,6 +412,13 @@ export function World3D({
         }}
       />
       {touch && <Joystick rtRef={rtRef} />}
+      <DriveHud
+        rtRef={rtRef}
+        hint={touch ? dict.play.driveTouchHint : dict.play.driveHint}
+        exitLabel={dict.play.exitCar}
+        touch={touch}
+        rtl={isRtl(locale)}
+      />
       {debug && world && <DebugOverlay rtRef={rtRef} world={world} />}
       <LoadingVeil label={dict.play.loading} show={!world} />
     </div>

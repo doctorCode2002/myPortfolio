@@ -15,7 +15,7 @@ import {
   spawnPoint,
   type GameWorld,
 } from "../logic/world-layout";
-import { islandBob, useRuntimeRef, type Runtime } from "../runtime";
+import { islandBob, setDriving, useRuntimeRef, type Runtime } from "../runtime";
 import { CharacterModel, type AnimState } from "./character-model";
 
 export const WALK_SPEED = 4.2;
@@ -112,12 +112,39 @@ export function Player({
   useFrame(({ clock }, rawDt) => {
     const rt = rtRef.current;
     if (rt.teleport) {
+      // A teleport while driving leaves the car parked where it is.
+      if (rt.car.driving) {
+        if (rt.car.state) rt.car.state.speed = 0;
+        setDriving(rt, false);
+      }
       rt.spawnIsland = rt.teleport;
       rt.teleport = null;
       placeOnIsland(rt, world, rt.spawnIsland, radius);
     }
     const dt = Math.min(rawDt, 0.05);
     const p = rt.player.pos;
+    const g0 = group.current;
+    const car = rt.car.state;
+    if (rt.car.driving && car) {
+      // In the car: the player rides along (streaming, prompts and the camera follow
+      // rt.player.pos) but is hidden and does not walk.
+      p.x = car.x;
+      p.y = car.y;
+      p.z = car.z;
+      rt.player.heading = car.heading;
+      rt.player.speed = Math.abs(car.speed);
+      rt.player.islandId = car.islandId;
+      rt.player.bridgeId = car.bridgeId;
+      rt.path = null;
+      rt.target = null;
+      vel.current.x = 0;
+      vel.current.z = 0;
+      anim.current.anim = "idle";
+      anim.current.speed = 0;
+      if (g0) g0.visible = false;
+      return;
+    }
+    if (g0 && !g0.visible) g0.visible = true;
     let dirX = 0;
     let dirZ = 0;
     let run = false;

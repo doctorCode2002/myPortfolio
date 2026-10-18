@@ -283,6 +283,20 @@ export function buildGameWorld(
   };
 }
 
+/** Keep the vehicle prompts on the car as it moves. */
+export function moveVehiclePrompt(
+  items: Interactable[],
+  car: { x: number; y: number; z: number; islandId: string | null }
+): void {
+  for (const it of items) {
+    if (it.kind !== "vehicle") continue;
+    it.x = car.x;
+    it.y = car.y;
+    it.z = car.z;
+    if (car.islandId) it.islandId = car.islandId;
+  }
+}
+
 /** The interactable closest to (x, z) that is in range, if any. */
 export function nearestInteractable(
   items: readonly Interactable[],
