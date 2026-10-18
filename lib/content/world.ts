@@ -23,10 +23,11 @@ import {
   type EducationId,
   type ExperienceId,
 } from "./about";
+import { IN_PROGRESS, progressBuildingId, projectsOnLots } from "./in-progress";
 import type { TestimonialId } from "./people";
 import { PROJECTS, type ProjectId } from "./projects";
 
-export type IslandId = "home" | ProjectId;
+export type IslandId = "home" | "workshop" | ProjectId;
 
 export type CharacterId =
   "char_0" | "char_1" | "char_2" | "char_3" | "char_4" | "char_5";
@@ -41,7 +42,9 @@ export type Tile = { x: number; y: number };
 export type Building =
   | { id: string; kind: "portal"; projectId: ProjectId; at: Tile }
   | { id: string; kind: "info"; section: InfoSection; at: Tile }
-  | { id: string; kind: "board"; at: Tile };
+  | { id: string; kind: "board"; at: Tile }
+  /** A project still being built (lib/content/in-progress.ts) on workshop lot `lot` (1-based). */
+  | { id: string; kind: "progress"; projectId: string; lot: number; at: Tile };
 
 export type InfoSection =
   | { type: "education"; ids: readonly EducationId[] }
@@ -79,6 +82,8 @@ export type Island = {
   biome: Biome;
   buildings: Building[];
   mayor?: Mayor;
+  /** Only in the 3D world (the legacy 2D engine has no art for it). */
+  only3d?: boolean;
 };
 
 /** Footprint radius in tiles for each size tier, used for layout clearance and bounds. */
@@ -215,7 +220,33 @@ const PROJECT_ISLAND_CONFIGS: Record<ProjectId, ProjectIslandConfig> = {
 };
 
 /**
- * All islands in the sky realm: home life island + one island per project in `PROJECTS`.
+ * The workshop island ("Under construction"): one building per in-progress project,
+ * generated from IN_PROGRESS in lib/content/in-progress.ts (lot n for the n-th entry).
+ */
+const WORKSHOP_ISLAND: Island = {
+  id: "workshop",
+  at: { x: 0, y: 80 },
+  size: "m",
+  biome: "meadow",
+  only3d: true,
+  buildings: projectsOnLots(IN_PROGRESS).map((p, i) => ({
+    id: progressBuildingId(p.id),
+    kind: "progress",
+    projectId: p.id,
+    lot: i + 1,
+    at: { x: -6 + (i % 3) * 6, y: i < 3 ? -3 : 4 },
+  })),
+  mayor: {
+    id: "mayor_workshop",
+    sprite: "char_4",
+    at: { x: 0, y: 1 },
+    demo: true, // DEMO: replace with real content
+  },
+};
+
+/**
+ * All islands in the sky realm: home life island + one island per project in `PROJECTS`,
+ * plus the workshop island for projects still in progress.
  */
 export const ISLANDS: readonly Island[] = [
   HOME_ISLAND,
@@ -237,6 +268,7 @@ export const ISLANDS: readonly Island[] = [
       mayor: config.mayor,
     };
   }),
+  WORKSHOP_ISLAND,
 ] as const;
 
 /**
@@ -248,6 +280,7 @@ export const BRIDGES: readonly Bridge[] = [
   { from: "home", to: "onyx", style: "rope" },
   { from: "home", to: "saleh", style: "stone" },
   { from: "home", to: "eyad", style: "rope" },
+  { from: "home", to: "workshop", style: "rope" },
 ] as const;
 
 /**

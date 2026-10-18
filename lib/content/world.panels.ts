@@ -8,6 +8,14 @@
 import arDictionary from "@/app/dictionaries/ar.json";
 import enDictionary from "@/app/dictionaries/en.json";
 import { EDUCATION, EXPERIENCE, SKILL_IDS, STACK_CHIPS } from "./about";
+import {
+  clampProgress,
+  IN_PROGRESS,
+  progressBuildingId,
+  projectsOnLots,
+  type InProgressProject,
+  type InProgressStatus,
+} from "./in-progress";
 import { PROJECTS, type ProjectId } from "./projects";
 import { ISLANDS, type Island } from "./world";
 
@@ -103,8 +111,32 @@ export type PortalBuildingPanel = {
   project: PortalProject;
 };
 
+export type ProgressProject = {
+  id: string;
+  name: string;
+  pitch: string;
+  /** 0..100 */
+  progress: number;
+  status: InProgressStatus;
+  statusLabel: string;
+  href?: string | undefined;
+  demo?: boolean | undefined;
+};
+
+/** A project still being built, on the workshop island. */
+export type ProgressBuildingPanel = {
+  kind: "progress";
+  buildingId: string;
+  title: string;
+  sign?: string;
+  project: ProgressProject;
+};
+
 export type BuildingPanel =
-  InfoBuildingPanel | NewsBuildingPanel | PortalBuildingPanel;
+  | InfoBuildingPanel
+  | NewsBuildingPanel
+  | PortalBuildingPanel
+  | ProgressBuildingPanel;
 
 /** Map of friendly/legacy editor IDs or bare project IDs to canonical world building IDs */
 const BUILDING_ALIASES: Record<string, string> = {
@@ -298,6 +330,61 @@ const DEMO_NEWS: Record<"en" | "ar", NewsPanelItem[]> = {
     },
   ],
 };
+
+/** The workshop sign of an in-progress project: its name and the status. */
+function progressSign(p: InProgressProject, isAr: boolean): string {
+  const name = isAr ? p.name.ar : p.name.en;
+  const label = getDictionary(isAr ? "ar" : "en").play.buildingPanels
+    .inProgress;
+  return `${name} — ${label} ${clampProgress(p.progress)}%`;
+}
+
+/**
+ * Prompt signs for the in-progress buildings (they carry their own text, so they are
+ * not in the dictionaries' world.buildings).
+ */
+export function progressSigns(
+  lang: string = "en",
+  projects: readonly InProgressProject[] = IN_PROGRESS
+): Record<string, string> {
+  const isAr = lang === "ar";
+  return Object.fromEntries(
+    projectsOnLots(projects).map((p) => [
+      progressBuildingId(p.id),
+      progressSign(p, isAr),
+    ])
+  );
+}
+
+/** The panel of an in-progress project building, or null for an unknown id. */
+export function getProgressPanel(
+  buildingId: string,
+  lang: string = "en",
+  projects: readonly InProgressProject[] = IN_PROGRESS
+): ProgressBuildingPanel | null {
+  const p = projectsOnLots(projects).find(
+    (x) => progressBuildingId(x.id) === buildingId
+  );
+  if (!p) return null;
+  const isAr = lang === "ar";
+  const dict = getDictionary(isAr ? "ar" : "en");
+  const labels = dict.play.buildingPanels;
+  return {
+    kind: "progress",
+    buildingId,
+    title: isAr ? p.name.ar : p.name.en,
+    project: {
+      id: p.id,
+      name: isAr ? p.name.ar : p.name.en,
+      pitch: isAr ? p.pitch.ar : p.pitch.en,
+      progress: clampProgress(p.progress),
+      status: p.status,
+      statusLabel: labels.status[p.status],
+      href: p.href,
+      demo: p.demo,
+    },
+  };
+}
 
 /**
  * Resolves a BuildingPanel for the requested building ID and locale.
@@ -503,6 +590,11 @@ export function getBuildingPanel(
     };
   }
 
+  // 8. In-progress projects (workshop island)
+  if (normId.startsWith("progress_")) {
+    return getProgressPanel(normId, lang);
+  }
+
   // Check if it exists as an unknown building on islands
   const existsInWorld = islands.some((isl) =>
     isl.buildings.some((b) => b.id === normId || b.id === buildingId)
@@ -548,5 +640,13 @@ export function getAllDemoEntries(lang: "en" | "ar" = "en"): Array<{
     demo: true,
   }));
 
-  return [...hobbies, ...family, ...news];
+  const progress = IN_PROGRESS.filter((p) => p.demo).map((p) => ({
+    buildingId: progressBuildingId(p.id),
+    kind: "progress",
+    id: p.id,
+    title: isAr ? p.name.ar : p.name.en,
+    demo: true,
+  }));
+
+  return [...hobbies, ...family, ...news, ...progress];
 }

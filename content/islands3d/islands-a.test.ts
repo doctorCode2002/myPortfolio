@@ -32,7 +32,8 @@ const manifest = readManifestFromDisk();
 const size = 2 / Math.sqrt(3);
 
 const LAYOUT: Record<string, { center: [number, number]; radius: number }> = {
-  home: { center: [0, 0], radius: 17 },
+  // Grown in world v2 with two southern lobes (the workshop bridge head).
+  home: { center: [0, 0], radius: 18.5 },
   khidmty: { center: [0.42, -31.5], radius: 11 },
 };
 

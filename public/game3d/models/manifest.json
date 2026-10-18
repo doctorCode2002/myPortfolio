@@ -5210,5 +5210,10 @@
       "reason": ""
     }
   },
-  "fragments": ["custom-a.json", "custom-b.json", "custom-c.json"]
+  "fragments": [
+    "custom-a.json",
+    "custom-b.json",
+    "custom-c.json",
+    "custom-v2.json"
+  ]
 }

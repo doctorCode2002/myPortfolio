@@ -2,7 +2,10 @@ import fs from "fs";
 import path from "path";
 import sharp from "sharp";
 import { describe, expect, it } from "vitest";
-import { BRIDGES, ISLANDS } from "@/lib/content/world";
+import {
+  BRIDGES as ALL_BRIDGES,
+  ISLANDS as ALL_ISLANDS,
+} from "@/lib/content/world";
 import { ENGINE_CONSTANTS } from "../constants";
 import {
   computeWorldLayout,
@@ -17,6 +20,13 @@ import {
   isWorldPositionWalkable,
   type IslandWalkState,
 } from "./worldWalkability";
+
+// The legacy 2D engine skips 3D-only islands (the workshop) and their bridges.
+const ISLANDS = ALL_ISLANDS.filter((i) => !i.only3d);
+const BRIDGES = ALL_BRIDGES.filter(
+  (b) =>
+    ISLANDS.some((i) => i.id === b.from) && ISLANDS.some((i) => i.id === b.to)
+);
 
 interface IslandData extends IslandArtLike {
   version: number;

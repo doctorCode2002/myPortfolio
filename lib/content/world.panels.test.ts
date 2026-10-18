@@ -123,7 +123,7 @@ describe("Building Panels Selector (lib/content/world.panels.ts)", () => {
     for (const entry of [...demoEntriesEn, ...demoEntriesAr]) {
       expect(entry.demo).toBe(true);
       expect(entry.buildingId).toMatch(
-        /^(building_hobbies|building_family|board_news)$/
+        /^(building_hobbies|building_family|board_news|progress_.+)$/
       );
       expect(entry.title).toBeDefined();
     }

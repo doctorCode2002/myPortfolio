@@ -1,5 +1,15 @@
 import Phaser from "phaser";
-import { BRIDGES, ISLANDS } from "@/lib/content/world";
+import {
+  BRIDGES as ALL_BRIDGES,
+  ISLANDS as ALL_ISLANDS,
+} from "@/lib/content/world";
+
+// 3D-only islands (the workshop) have no 2D art: leave them and their bridges out.
+const ISLANDS = ALL_ISLANDS.filter((i) => !i.only3d);
+const BRIDGES = ALL_BRIDGES.filter(
+  (b) =>
+    ISLANDS.some((i) => i.id === b.from) && ISLANDS.some((i) => i.id === b.to)
+);
 import { ENGINE_CONSTANTS, findClosestZoomIndex } from "../constants";
 import type { Building } from "../entities/Building";
 import { Npc } from "../entities/Npc";

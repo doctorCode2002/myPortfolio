@@ -41,7 +41,8 @@ describe("Sky-islands world data model", () => {
       ).toHaveLength(1);
     }
 
-    expect(ISLANDS.length).toBe(projectIds.length + 1);
+    // Plus home and the workshop island (projects in progress).
+    expect(ISLANDS.length).toBe(projectIds.length + 2);
   });
 
   it("ensures home island is at (0, 0) and hosts all required life buildings", () => {
@@ -196,6 +197,8 @@ describe("Sky-islands world data model", () => {
 
       for (const island of ISLANDS) {
         for (const building of island.buildings) {
+          // In-progress projects carry their own text (lib/content/in-progress.ts).
+          if (building.kind === "progress") continue;
           const entry =
             dict.world.buildings[
               building.id as keyof typeof dict.world.buildings
@@ -369,6 +372,7 @@ describe("Sky-islands world data model", () => {
         "mayor_khidmty",
         "mayor_civicmind",
         "mayor_onyx",
+        "mayor_workshop",
       ]);
     });
 
