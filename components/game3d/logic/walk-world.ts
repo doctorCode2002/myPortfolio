@@ -40,6 +40,12 @@ export type BridgeCorridor = {
   toCell: { q: number; r: number };
   /** Half the walkable width, in metres. */
   halfWidth: number;
+  /**
+   * Where the deck starts and ends along the span (0..1): a little inside each anchor
+   * hex, so the landing overlaps the rim. Over the void, only this stretch is walkable.
+   */
+  t0: number;
+  t1: number;
   /** Vertical arch (+) or sag (-) at mid-span, in metres. */
   arch: number;
   length: number;
@@ -94,6 +100,26 @@ export function bridgeHeightAt(
   );
 }
 
+/** Default deck width in hex widths (wide enough for the car). */
+export const BRIDGE_WIDTH_HEX = 1.8;
+/** How far the deck reaches back over the rim onto the anchor hexes (metres). */
+export const LANDING_OVERLAP = 0.6;
+
+/** Distance from `from` towards `to` at which the straight line leaves the island's tiles. */
+export function rimDistance(
+  grid: IslandWalkGrid,
+  from: { x: number; z: number },
+  to: { x: number; z: number }
+): number {
+  const len = Math.hypot(to.x - from.x, to.z - from.z) || 1;
+  const ux = (to.x - from.x) / len;
+  const uz = (to.z - from.z) / len;
+  let d = 0;
+  while (d < len && cellAtWorld(grid, from.x + ux * d, from.z + uz * d))
+    d += 0.05;
+  return d;
+}
+
 /** Pick the anchor hex on `island` for a bridge towards `otherId`. */
 export function pickAnchor(
   island: Island3D,
@@ -141,7 +167,8 @@ export function buildWalkWorld(
   const hexWidth =
     grids[0]?.hexWidth ?? opts.hexWidth ?? opts.manifest?.hexSize ?? 2;
   const levelHeight = grids[0]?.levelHeight ?? 0.5;
-  const halfWidth = (opts.bridgeWidth ?? hexWidth * 1.0) / 2 - 0.05;
+  const halfWidth =
+    (opts.bridgeWidth ?? hexWidth * BRIDGE_WIDTH_HEX) / 2 - 0.05;
 
   const bridges: BridgeCorridor[] = [];
   for (const link of links) {
@@ -160,6 +187,10 @@ export function buildWalkWorld(
     const length = Math.hypot(b.x - a.x, b.z - a.z);
     const style: BridgeStyle = link.style ?? "rope";
     const span = Math.max(0, length - hexWidth);
+    // The deck lands this far inside each rim (measured along the centre line).
+    const rimA = rimDistance(gridA, a, b);
+    const rimB = rimDistance(gridB, b, a);
+    const land = Math.min(LANDING_OVERLAP, hexWidth * 0.4);
     const arch =
       style === "stone"
         ? Math.min(0.6, span * 0.03)
@@ -174,6 +205,8 @@ export function buildWalkWorld(
       fromCell: { q: anchorA.q, r: anchorA.r },
       toCell: { q: anchorB.q, r: anchorB.r },
       halfWidth,
+      t0: Math.max(0, (rimA - land) / (length || 1)),
+      t1: Math.min(1, 1 - (rimB - land) / (length || 1)),
       arch,
       length,
     });
@@ -234,7 +267,7 @@ export function surfaceAt(
   let best: Surface | null = null;
   for (const bridge of world.bridges) {
     const { t, dist } = projectOnBridge(bridge, x, z);
-    if (t < 0 || t > 1 || dist > bridge.halfWidth) continue;
+    if (t < bridge.t0 || t > bridge.t1 || dist > bridge.halfWidth) continue;
     const y = bridgeHeightAt(bridge, t);
     if (
       !best ||
