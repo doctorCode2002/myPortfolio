@@ -51,7 +51,8 @@
       ],
       "notes": "Kit-bashed from KayKit Adventurers 1.0 rigs (CC0) by scripts/3d/people.mjs: recoloured, extra procedural pieces, weapons/hats/capes removed. A stylized mayor for a real person, not a selectable player.",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "cb3131d866"
     },
     "character-bahaa": {
       "file": "character-bahaa.glb",
@@ -104,7 +105,8 @@
       ],
       "notes": "Kit-bashed from KayKit Adventurers 1.0 rigs (CC0) by scripts/3d/people.mjs: recoloured, extra procedural pieces, weapons/hats/capes removed. A stylized mayor for a real person, not a selectable player.",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "defc3e9eff"
     },
     "character-saleh": {
       "file": "character-saleh.glb",
@@ -157,7 +159,8 @@
       ],
       "notes": "Kit-bashed from KayKit Adventurers 1.0 rigs (CC0) by scripts/3d/people.mjs: recoloured, extra procedural pieces, weapons/hats/capes removed. A stylized mayor for a real person, not a selectable player.",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b68ba8ce4f"
     },
     "character-eyad": {
       "file": "character-eyad.glb",
@@ -210,7 +213,8 @@
       ],
       "notes": "Kit-bashed from KayKit Adventurers 1.0 rigs (CC0) by scripts/3d/people.mjs: recoloured, extra procedural pieces, weapons/hats/capes removed. A stylized mayor for a real person, not a selectable player.",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f2a4269e3d"
     },
     "character-anas": {
       "file": "character-anas.glb",
@@ -263,7 +267,8 @@
       ],
       "notes": "Kit-bashed from KayKit Adventurers 1.0 rigs (CC0) by scripts/3d/people.mjs: recoloured, extra procedural pieces, weapons/hats/capes removed. A stylized mayor for a real person, not a selectable player.",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "ef0171d283"
     }
   }
 }

@@ -16,7 +16,8 @@
       "lazy": true,
       "bytes": 29712,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "37b678a5c2"
     },
     "v2-crane-jib": {
       "file": "v2-crane-jib.glb",
@@ -34,7 +35,8 @@
       "lazy": true,
       "bytes": 32688,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c477debc3f"
     },
     "v2-crane-load": {
       "file": "v2-crane-load.glb",
@@ -52,7 +54,8 @@
       "lazy": true,
       "bytes": 6880,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b4b6bf6fa8"
     },
     "v2-barrier": {
       "file": "v2-barrier.glb",
@@ -70,7 +73,8 @@
       "lazy": true,
       "bytes": 6804,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "2a1d30b764"
     },
     "v2-cone": {
       "file": "v2-cone.glb",
@@ -88,7 +92,8 @@
       "lazy": true,
       "bytes": 6840,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "decc48c292"
     },
     "v2-site-office": {
       "file": "v2-site-office.glb",
@@ -106,7 +111,8 @@
       "lazy": true,
       "bytes": 14496,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "3c6f4c66da"
     },
     "v2-billboard-a": {
       "file": "v2-billboard-a.glb",
@@ -124,7 +130,8 @@
       "lazy": true,
       "bytes": 8360,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6905346a1d"
     },
     "v2-billboard-b": {
       "file": "v2-billboard-b.glb",
@@ -142,7 +149,8 @@
       "lazy": true,
       "bytes": 8360,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "513ff63295"
     },
     "v2-billboard-c": {
       "file": "v2-billboard-c.glb",
@@ -160,7 +168,8 @@
       "lazy": true,
       "bytes": 8360,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "79f99f9120"
     },
     "v2-house-walls": {
       "file": "v2-house-walls.glb",
@@ -178,7 +187,8 @@
       "lazy": true,
       "bytes": 29912,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6cf39cb8e0"
     },
     "v2-house-roofing": {
       "file": "v2-house-roofing.glb",
@@ -196,7 +206,8 @@
       "lazy": true,
       "bytes": 20904,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "852beaeb7f"
     },
     "v2-empty-plot": {
       "file": "v2-empty-plot.glb",
@@ -214,7 +225,8 @@
       "lazy": true,
       "bytes": 9168,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "77a49093e4"
     },
     "v2-cement-mixer": {
       "file": "v2-cement-mixer.glb",
@@ -232,7 +244,8 @@
       "lazy": true,
       "bytes": 12656,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c95cc7111e"
     },
     "v2-brick-pallet": {
       "file": "v2-brick-pallet.glb",
@@ -250,7 +263,8 @@
       "lazy": true,
       "bytes": 6872,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7a59fb9e24"
     },
     "v2-sand-pile": {
       "file": "v2-sand-pile.glb",
@@ -268,7 +282,8 @@
       "lazy": true,
       "bytes": 3804,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b6b74a47f4"
     }
   }
 }

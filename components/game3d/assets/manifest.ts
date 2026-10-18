@@ -63,7 +63,11 @@ export function modelUrl(
   name: string
 ): string | null {
   const m = allowedModel(manifest, name);
-  return m ? `${MODELS_BASE}${m.file}` : null;
+  if (!m) return null;
+  // The hash versions the URL, so /game3d/models can be cached as immutable.
+  return m.hash
+    ? `${MODELS_BASE}${m.file}?v=${m.hash}`
+    : `${MODELS_BASE}${m.file}`;
 }
 
 /** Fetch model-space bounds for the given models (small requests; the files are cached for useGLTF). */

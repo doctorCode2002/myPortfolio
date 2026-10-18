@@ -16,7 +16,8 @@
       "lazy": true,
       "bytes": 180236,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6dd2f0959b"
     },
     "b-crystal-lamp": {
       "file": "b-crystal-lamp.glb",
@@ -34,7 +35,8 @@
       "lazy": true,
       "bytes": 11632,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6377f3348b"
     },
     "b-crystal-cluster": {
       "file": "b-crystal-cluster.glb",
@@ -52,7 +54,8 @@
       "lazy": true,
       "bytes": 17156,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "feda9b0952"
     },
     "b-planter": {
       "file": "b-planter.glb",
@@ -70,7 +73,8 @@
       "lazy": true,
       "bytes": 44208,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1c584cc129"
     },
     "b-bench": {
       "file": "b-bench.glb",
@@ -88,7 +92,8 @@
       "lazy": true,
       "bytes": 6660,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "9576f327e6"
     },
     "b-notice-column": {
       "file": "b-notice-column.glb",
@@ -106,7 +111,8 @@
       "lazy": true,
       "bytes": 30236,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "eca05f3a37"
     },
     "b-palace": {
       "file": "b-palace.glb",
@@ -124,7 +130,8 @@
       "lazy": true,
       "bytes": 117744,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "83879281c2"
     },
     "b-hex-sand": {
       "file": "b-hex-sand.glb",
@@ -143,7 +150,8 @@
       "bytes": 5516,
       "banned": false,
       "reason": "",
-      "walkable": true
+      "walkable": true,
+      "hash": "472d68339f"
     },
     "b-hex-paving": {
       "file": "b-hex-paving.glb",
@@ -162,7 +170,8 @@
       "bytes": 7240,
       "banned": false,
       "reason": "",
-      "walkable": true
+      "walkable": true,
+      "hash": "56b5d84838"
     },
     "b-hex-mosaic": {
       "file": "b-hex-mosaic.glb",
@@ -181,7 +190,8 @@
       "bytes": 7840,
       "banned": false,
       "reason": "",
-      "walkable": true
+      "walkable": true,
+      "hash": "f0fca6bfda"
     },
     "b-rug-red": {
       "file": "b-rug-red.glb",
@@ -200,7 +210,8 @@
       "bytes": 15052,
       "banned": false,
       "reason": "",
-      "overlay": true
+      "overlay": true,
+      "hash": "211cbf60f4"
     },
     "b-rug-teal": {
       "file": "b-rug-teal.glb",
@@ -219,7 +230,8 @@
       "bytes": 15056,
       "banned": false,
       "reason": "",
-      "overlay": true
+      "overlay": true,
+      "hash": "b16d7f10db"
     },
     "b-rug-indigo": {
       "file": "b-rug-indigo.glb",
@@ -238,7 +250,8 @@
       "bytes": 15064,
       "banned": false,
       "reason": "",
-      "overlay": true
+      "overlay": true,
+      "hash": "4e83eebed2"
     },
     "b-lantern-gold": {
       "file": "b-lantern-gold.glb",
@@ -256,7 +269,8 @@
       "lazy": true,
       "bytes": 18276,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7e181f4b10"
     },
     "b-bazaar-stall": {
       "file": "b-bazaar-stall.glb",
@@ -274,7 +288,8 @@
       "lazy": true,
       "bytes": 29936,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4631ccc3b6"
     },
     "b-pavilion": {
       "file": "b-pavilion.glb",
@@ -292,7 +307,8 @@
       "lazy": true,
       "bytes": 32920,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "8d29c71ccf"
     },
     "b-urn": {
       "file": "b-urn.glb",
@@ -310,7 +326,8 @@
       "lazy": true,
       "bytes": 17896,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "cfe3759e82"
     },
     "b-mannequin": {
       "file": "b-mannequin.glb",
@@ -328,7 +345,8 @@
       "lazy": true,
       "bytes": 16504,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7d4b2d38f4"
     }
   }
 }

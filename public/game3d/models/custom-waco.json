@@ -22,7 +22,8 @@
       "lazy": true,
       "bytes": 10108,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a1f33a82bb"
     },
     "w-hq": {
       "file": "w-hq.glb",
@@ -40,7 +41,8 @@
       "lazy": true,
       "bytes": 18852,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1399e904da"
     },
     "w-factory-mist": {
       "file": "w-factory-mist.glb",
@@ -58,7 +60,8 @@
       "lazy": true,
       "bytes": 20048,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "e243c0f0f3"
     },
     "w-factory-stone": {
       "file": "w-factory-stone.glb",
@@ -76,7 +79,8 @@
       "lazy": true,
       "bytes": 20056,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4116d0455a"
     },
     "w-silos": {
       "file": "w-silos.glb",
@@ -94,7 +98,8 @@
       "lazy": true,
       "bytes": 29112,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "0fdc28e9b3"
     },
     "w-tank-lying": {
       "file": "w-tank-lying.glb",
@@ -112,7 +117,8 @@
       "lazy": true,
       "bytes": 13580,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "47a18c4a6d"
     },
     "w-tank-tall": {
       "file": "w-tank-tall.glb",
@@ -130,7 +136,8 @@
       "lazy": true,
       "bytes": 15496,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f84d25e0a5"
     },
     "w-pipes": {
       "file": "w-pipes.glb",
@@ -148,7 +155,8 @@
       "lazy": true,
       "bytes": 18780,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "449eb239e6"
     },
     "w-containers": {
       "file": "w-containers.glb",
@@ -166,7 +174,8 @@
       "lazy": true,
       "bytes": 26468,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "662d6cd2bc"
     },
     "w-blueprint-table": {
       "file": "w-blueprint-table.glb",
@@ -184,7 +193,8 @@
       "lazy": true,
       "bytes": 11296,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "396db6fdf3"
     },
     "w-drafting-pavilion": {
       "file": "w-drafting-pavilion.glb",
@@ -202,7 +212,8 @@
       "lazy": true,
       "bytes": 14428,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a8143bc11d"
     },
     "w-survey-tripod": {
       "file": "w-survey-tripod.glb",
@@ -220,7 +231,8 @@
       "lazy": true,
       "bytes": 5760,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "52fea9d736"
     },
     "w-lamp": {
       "file": "w-lamp.glb",
@@ -238,7 +250,8 @@
       "lazy": true,
       "bytes": 5728,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "185fb31017"
     },
     "w-monolith": {
       "file": "w-monolith.glb",
@@ -256,7 +269,8 @@
       "lazy": true,
       "bytes": 4012,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6c2c8144a1"
     },
     "w-shade-bench": {
       "file": "w-shade-bench.glb",
@@ -274,7 +288,8 @@
       "lazy": true,
       "bytes": 4556,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f118a8c153"
     },
     "w-planter": {
       "file": "w-planter.glb",
@@ -292,7 +307,8 @@
       "lazy": true,
       "bytes": 3200,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "ce0f914247"
     }
   }
 }
