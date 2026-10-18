@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { AtmosphereControls } from "@/components/game3d/atmosphere/atmosphere-controls";
 import { localePath, type Locale } from "@/lib/i18n";
 import { gameEvents } from "./engine/events";
 import { CharacterPortrait } from "./picker3d/character-portrait";
@@ -104,6 +105,9 @@ export function GameOverlay({
             <Plus className="h-3.5 w-3.5" />
           </button>
         </div>
+
+        {/* 3D only: ambient sound and time of day. */}
+        {portrait === "3d" && <AtmosphereControls dict={dict} />}
       </div>
 
       {/* Controls HUD pill at bottom */}

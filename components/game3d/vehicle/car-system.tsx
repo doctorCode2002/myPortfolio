@@ -31,6 +31,7 @@ import {
   VEHICLE_RANGE,
   type GameWorld,
 } from "../logic/world-layout";
+import { emitSoundCue } from "../audio/sound-store";
 import { surfaceBob } from "../entities/player";
 import { setDriving, useRuntimeRef, type Runtime } from "../runtime";
 import { CarModel, FallbackCar, type CarWheels } from "./car-model";
@@ -182,9 +183,16 @@ export function CarSystem({
             vz: Math.cos(car.heading) * car.speed,
           });
           if (!rt.reducedMotion) rt.shake = Math.max(rt.shake, 0.3);
+          emitSoundCue({ kind: "impact", strength: 0.7 });
         }
-        if (res.bump > 3 && !rt.reducedMotion)
-          rt.shake = Math.max(rt.shake, Math.min(1, res.bump / 12));
+        if (res.bump > 3) {
+          if (!rt.reducedMotion)
+            rt.shake = Math.max(rt.shake, Math.min(1, res.bump / 12));
+          emitSoundCue({
+            kind: "impact",
+            strength: Math.min(1, res.bump / 12),
+          });
+        }
       }
       // Without the physics module (still loading) nobody drains the chunk queue.
       if (rt.breaks.length > 24) rt.breaks.splice(0, rt.breaks.length - 24);

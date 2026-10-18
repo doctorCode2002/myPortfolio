@@ -4,6 +4,9 @@ import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef, type ReactNode } from "react";
 import * as THREE from "three";
 
+import { live } from "../atmosphere/live";
+import { setUniform } from "../fx/assign";
+
 /** Sunset palette, shared with the fog so the horizon melts into the sky. */
 export const SKY = {
   zenith: "#1d3766",
@@ -22,10 +25,9 @@ export const SKY = {
 /** Direction towards the sun (normalised): low behind the camera's right shoulder. */
 export const SUN_DIR = new THREE.Vector3(-0.56, 0.46, 0.69).normalize();
 
-const col = (hex: string): THREE.Color => new THREE.Color(hex);
-
 /**
- * Gradient sunset dome: deep blue zenith, peach-orange horizon glow around the sun,
+ * Gradient sky dome (its colours follow the atmosphere system's live look; the sunset
+ * look is the default): deep blue zenith, peach-orange horizon glow around the sun,
  * soft lavender opposite, and below the horizon a haze with drifting soft clouds
  * fading into blue depth. Follows the camera.
  */
@@ -37,15 +39,18 @@ export function SkyDome({
   const mesh = useRef<THREE.Mesh>(null);
   const uniforms = useMemo(
     () => ({
-      uZenith: { value: col(SKY.zenith) },
-      uUpper: { value: col(SKY.upper) },
-      uHorSun: { value: col(SKY.horizonSun) },
-      uHorAway: { value: col(SKY.horizonAway) },
-      uSunGlow: { value: col(SKY.sunGlow) },
-      uHaze: { value: col(SKY.haze) },
-      uDeep: { value: col(SKY.deep) },
-      uCloud: { value: col(SKY.cloud) },
-      uSunDir: { value: SUN_DIR.clone() },
+      // The live look's objects themselves: no per-frame copies.
+      uZenith: { value: live.zenith },
+      uUpper: { value: live.upper },
+      uHorSun: { value: live.horizonSun },
+      uHorAway: { value: live.horizonAway },
+      uSunGlow: { value: live.sunGlow },
+      uHaze: { value: live.haze },
+      uDeep: { value: live.deep },
+      uCloud: { value: live.cloud },
+      uSunDir: { value: live.sunDir },
+      uSunDisc: { value: 1 },
+      uStars: { value: 0 },
       uTime: { value: 0 },
     }),
     []
@@ -67,7 +72,7 @@ export function SkyDome({
         fragmentShader: /* glsl */ `
           uniform vec3 uZenith; uniform vec3 uUpper; uniform vec3 uHorSun; uniform vec3 uHorAway;
           uniform vec3 uSunGlow; uniform vec3 uHaze; uniform vec3 uDeep; uniform vec3 uCloud;
-          uniform vec3 uSunDir; uniform float uTime;
+          uniform vec3 uSunDir; uniform float uTime; uniform float uSunDisc; uniform float uStars;
           varying vec3 vDir;
           float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
           float vnoise(vec2 p) {
@@ -100,7 +105,23 @@ export function SkyDome({
               col = mix(col, mix(uCloud, horizon, 0.35), c * fade * 0.6);
             }
             col += uSunGlow * pow(sunDot, 6.0) * 0.35 * (1.0 - smoothstep(0.0, 0.5, abs(h)));
-            col += vec3(1.0, 0.93, 0.8) * (pow(sunDot, 600.0) * 1.2 + pow(sunDot, 60.0) * 0.18);
+            col += vec3(1.0, 0.93, 0.8) * (pow(sunDot, 600.0) * 1.2 + pow(sunDot, 60.0) * 0.18) * uSunDisc;
+            if (uStars > 0.001) {
+              // Stars: one per cell of a direction grid, twinkling slowly; fade near the horizon.
+              vec2 sp = vec2(atan(d.z, d.x) * 60.0, d.y * 120.0);
+              vec2 si = floor(sp);
+              float sh = hash(si);
+              vec2 so = fract(sp) - 0.5 - (vec2(hash(si + 3.1), hash(si + 7.7)) - 0.5) * 0.6;
+              float star = step(0.93, sh) * smoothstep(0.12, 0.0, length(so));
+              float tw = 0.65 + 0.35 * sin(uTime * (1.0 + sh * 3.0) + sh * 40.0);
+              col += vec3(0.85, 0.9, 1.0) * star * tw * smoothstep(0.04, 0.3, h) * uStars * 1.4;
+              // The moon (the night light comes from it): a soft disc with a halo.
+              float md = dot(d, uSunDir);
+              float disc = smoothstep(0.9985, 0.9991, md);
+              float shade = 0.85 + 0.15 * vnoise(d.xy * 90.0);
+              col = mix(col, vec3(0.93, 0.95, 1.0) * shade, disc * uStars);
+              col += vec3(0.45, 0.55, 0.85) * pow(max(md, 0.0), 80.0) * 0.35 * uStars;
+            }
             gl_FragColor = vec4(col, 1.0);
             #include <colorspace_fragment>
           }`,
@@ -109,9 +130,9 @@ export function SkyDome({
   );
   useFrame(({ camera, clock }) => {
     mesh.current?.position.copy(camera.position);
-    const mat = mesh.current?.material as THREE.ShaderMaterial | undefined;
-    const time = mat?.uniforms.uTime;
-    if (time && !reducedMotion) time.value = clock.elapsedTime;
+    if (!reducedMotion) setUniform(uniforms.uTime, clock.elapsedTime);
+    setUniform(uniforms.uSunDisc, live.sunDisc);
+    setUniform(uniforms.uStars, live.stars);
   });
   return (
     <mesh

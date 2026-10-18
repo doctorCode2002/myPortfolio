@@ -18,6 +18,7 @@ export function createWaterMaterial(): THREE.MeshStandardMaterial {
   mat.onBeforeCompile = (shader) => {
     shader.uniforms.uTime = sharedUniforms.uTime;
     shader.uniforms.uMotion = sharedUniforms.uMotion;
+    shader.uniforms.uRain = sharedUniforms.uRain;
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
@@ -34,7 +35,7 @@ export function createWaterMaterial(): THREE.MeshStandardMaterial {
     shader.fragmentShader = shader.fragmentShader
       .replace(
         "#include <common>",
-        "#include <common>\nuniform float uTime;\nuniform float uMotion;\nvarying float vFoam;\nvarying vec2 vWaterXZ;"
+        "#include <common>\nuniform float uTime;\nuniform float uMotion;\nuniform float uRain;\nvarying float vFoam;\nvarying vec2 vWaterXZ;"
       )
       .replace(
         "#include <color_fragment>",
@@ -50,6 +51,18 @@ export function createWaterMaterial(): THREE.MeshStandardMaterial {
           float foam = smoothstep(0.62, 0.95, vFoam + foamNoise * 0.18);
           diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.95, 0.97, 0.98), foam);
           diffuseColor.a = mix(diffuseColor.a, 1.0, foam);
+          // Rain: expanding rings from drops on a jittered grid.
+          if (uRain > 0.01) {
+            vec2 g = vWaterXZ * 2.2;
+            vec2 id = floor(g);
+            vec2 f = fract(g) - 0.5;
+            float h = fract(sin(dot(id, vec2(12.9898, 78.233))) * 43758.5453);
+            vec2 o = vec2(fract(h * 7.13), fract(h * 3.71)) - 0.5;
+            float life = fract(t * 0.9 + h);
+            float d = length(f - o * 0.5);
+            float ring = smoothstep(0.05, 0.0, abs(d - life * 0.45)) * (1.0 - life);
+            diffuseColor.rgb += vec3(0.75, 0.85, 0.9) * ring * uRain * 0.55;
+          }
         }`
       );
   };

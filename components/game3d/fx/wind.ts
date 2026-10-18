@@ -21,11 +21,12 @@ export function patchFoliage<T extends THREE.Material>(
     prev?.call(material, shader, renderer);
     shader.uniforms.uTime = sharedUniforms.uTime;
     shader.uniforms.uMotion = sharedUniforms.uMotion;
+    shader.uniforms.uGust = sharedUniforms.uGust;
     shader.uniforms.uWind = { value: 0.045 * strength };
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
-        "#include <common>\nuniform float uTime;\nuniform float uMotion;\nuniform float uWind;"
+        "#include <common>\nuniform float uTime;\nuniform float uMotion;\nuniform float uWind;\nuniform float uGust;"
       )
       .replace(
         "#include <begin_vertex>",
@@ -37,8 +38,9 @@ export function patchFoliage<T extends THREE.Material>(
           #endif
           windBase = modelMatrix * windBase;
           float windH = max(position.y, 0.0);
-          float windW = sin(uTime * 1.7 + windBase.x * 0.6 + windBase.z * 0.45)
-                      + 0.4 * sin(uTime * 3.1 + windBase.z * 1.3);
+          float windW = (sin(uTime * 1.7 + windBase.x * 0.6 + windBase.z * 0.45)
+                      + 0.4 * sin(uTime * 3.1 + windBase.z * 1.3)) * (1.0 + uGust * 1.6)
+                      + uGust * 0.9;
           transformed.x += windW * uWind * windH * windH * uMotion;
           transformed.z += windW * uWind * 0.6 * windH * windH * uMotion;
         }`
