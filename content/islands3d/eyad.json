@@ -419,13 +419,13 @@
       "model": "c-maquette",
       "q": -1,
       "r": -1,
-      "offset": [-0.1, -0.75]
+      "offset": [-0.1, -1.3]
     },
     {
       "model": "c-raised-bed",
       "q": -1,
       "r": -1,
-      "offset": [0.0, 0.72]
+      "offset": [0, 0.72]
     },
     {
       "model": "lantern",
@@ -442,7 +442,7 @@
       "model": "c-maquette",
       "q": -2,
       "r": -2,
-      "offset": [0.0, -0.1]
+      "offset": [0, -0.1]
     },
     {
       "model": "c-maquette",
@@ -468,7 +468,7 @@
       "model": "statue-block",
       "q": -3,
       "r": -1,
-      "offset": [0.1, 0.0]
+      "offset": [0.1, 0]
     },
     {
       "model": "c-easel-blossom",
@@ -534,7 +534,7 @@
       "model": "c-bench",
       "q": -1,
       "r": 1,
-      "offset": [0.0, 0.7]
+      "offset": [0, 0.7]
     },
     {
       "model": "lantern",
@@ -546,20 +546,20 @@
       "model": "lantern",
       "q": -2,
       "r": 4,
-      "offset": [0.3, 0.7]
+      "offset": [0.55, 0.95]
     },
     {
       "model": "c-easel-blossom",
       "q": -4,
       "r": 4,
       "rot": -60,
-      "offset": [-0.2, 0.3]
+      "offset": [-0.56, 1.18]
     },
     {
       "model": "c-paint-pots",
       "q": -4,
       "r": 4,
-      "offset": [0.4, 0.45]
+      "offset": [0.4, 1.3]
     },
     {
       "model": "rock-small-a",
@@ -628,7 +628,7 @@
       "model": "c-raised-bed",
       "q": 3,
       "r": -1,
-      "offset": [0.0, -0.7]
+      "offset": [0, -0.7]
     },
     {
       "model": "c-raised-bed",
@@ -744,7 +744,7 @@
       "model": "lantern",
       "q": 3,
       "r": 0,
-      "offset": [0.6, -0.5]
+      "offset": [0.78, -0.8]
     },
     {
       "model": "plant-bush-detailed",
@@ -756,7 +756,7 @@
       "model": "plant-bush-large",
       "q": 4,
       "r": -2,
-      "offset": [0.0, 0.4]
+      "offset": [0, 0.4]
     },
     {
       "model": "tree-oak-blossom",
@@ -812,7 +812,7 @@
       "q": -4,
       "r": 1,
       "rot": 312,
-      "offset": [0.0, 0.14]
+      "offset": [0, 0.14]
     },
     {
       "model": "tree-fat-blossom",
@@ -1099,7 +1099,7 @@
       "q": 3,
       "r": -4,
       "rot": 10,
-      "offset": [0.0, 0.0]
+      "offset": [0, 0]
     },
     {
       "model": "c-petals-decal",
@@ -1122,7 +1122,7 @@
       "model": "lantern",
       "q": 2,
       "r": 1,
-      "offset": [0.7, -0.3]
+      "offset": [0.5, -0.15]
     },
     {
       "model": "c-bench",

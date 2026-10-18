@@ -135,7 +135,7 @@
       "q": 1,
       "r": 0,
       "rot": 30,
-      "offset": [0.75, 0.15],
+      "offset": [0.29, 0.34],
       "solid": false
     },
     {
@@ -199,7 +199,7 @@
       "rot": 210,
       "offset": [-0.45, 0.45]
     },
-    { "model": "a-cable-spool", "q": 3, "r": -2, "offset": [0.2, 0.0] },
+    { "model": "a-cable-spool", "q": 3, "r": -2, "offset": [0.2, 0] },
     {
       "model": "a-cable-spool",
       "q": 3,
@@ -218,13 +218,7 @@
     },
     { "model": "a-pipe-stack", "q": 3, "r": 1 },
     { "model": "bucket-wood", "q": 3, "r": 1, "offset": [0.6, 0.45] },
-    {
-      "model": "a-pipe-stack",
-      "q": 4,
-      "r": -1,
-      "rot": 60,
-      "offset": [0.1, 0.0]
-    },
+    { "model": "a-pipe-stack", "q": 4, "r": -1, "rot": 60, "offset": [0.1, 0] },
     {
       "model": "workbench-grind",
       "q": 4,
@@ -232,7 +226,7 @@
       "rot": 270,
       "offset": [0.6, 0.55]
     },
-    { "model": "a-paint-pots", "q": -2, "r": 3, "offset": [0.0, 0.1] },
+    { "model": "a-paint-pots", "q": -2, "r": 3, "offset": [0, 0.1] },
     { "model": "bucket-wood", "q": -2, "r": 3, "offset": [0.6, -0.5] },
     { "model": "bucket-empty", "q": -2, "r": 3, "offset": [-0.55, 0.45] },
     {
@@ -240,7 +234,7 @@
       "q": -3,
       "r": 3,
       "rot": 120,
-      "offset": [0.1, 0.0]
+      "offset": [0.1, 0]
     },
     { "model": "crate-b-big", "q": -3, "r": 3, "offset": [-0.5, -0.4] },
     {
@@ -379,7 +373,7 @@
       "r": 5,
       "rot": 15,
       "scale": 0.87,
-      "offset": [-0.0, 0.0]
+      "offset": [0, 0]
     },
     {
       "model": "plant-bush-small",
