@@ -884,5 +884,13 @@
         "r": 2
       }
     ]
+  },
+  "movement": {
+    "launches": [
+      { "id": "civicmind-terrace", "q": -1, "r": -3, "offset": [-0.35, -0.5] }
+    ],
+    "pads": [
+      { "id": "civicmind-pad", "q": 2, "r": 0, "to": { "q": 2, "r": -2 } }
+    ]
   }
 }

@@ -60,6 +60,54 @@ export type IslandUnderside = {
   waterfalls?: { q: number; r: number }[];
 };
 
+/** A glider launch platform (E there starts a glide). */
+export type IslandLaunch = {
+  id: string;
+  q: number;
+  r: number;
+  /** Launch heading in degrees around +y (0 faces +z); default: away from the island centre. */
+  rot?: number;
+  /** Offset from the hex centre in metres: [dx, dz]. */
+  offset?: [number, number];
+};
+
+/** A flat-topped lookout tower on a hex, standable on top (reached only by a jump pad). */
+export type IslandLookout = {
+  id: string;
+  q: number;
+  r: number;
+  /** Deck height above the ground in metres (default 3). */
+  height?: number;
+  /** Where its return pad drops the player (a ground hex nearby). */
+  down: { q: number; r: number };
+};
+
+/** A springy jump pad on a hex: launches to a lookout or to another hex of the island. */
+export type IslandPad = {
+  id: string;
+  q: number;
+  r: number;
+  to: { lookout: string } | { q: number; r: number };
+};
+
+/** A zipline from a hex of this island down to a hex of another (E at the post to ride). */
+export type IslandZipline = {
+  id: string;
+  q: number;
+  r: number;
+  to: { island: string; q: number; r: number };
+  /** Cable height above the start hex (default 4.2 m); it ends hand-high above the far hex. */
+  height?: number;
+};
+
+/** Movement features of an island (gliding, jump pads, lookouts, ziplines). */
+export type IslandMovement = {
+  launches?: IslandLaunch[];
+  lookouts?: IslandLookout[];
+  pads?: IslandPad[];
+  ziplines?: IslandZipline[];
+};
+
 export type Island3D = {
   id: string;
   /** Marks starter content that the island designers should replace. */
@@ -87,6 +135,8 @@ export type Island3D = {
   /** Optional drivable vehicles parked on this island. */
   vehicles?: IslandVehicle[];
   underside?: IslandUnderside;
+  /** Optional glider launches, jump pads and lookouts. */
+  movement?: IslandMovement;
 };
 
 export type ModelKind =

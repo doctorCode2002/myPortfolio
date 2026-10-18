@@ -137,7 +137,13 @@ export function CarSystem({
     // Get in / out.
     const req = rt.car.request;
     rt.car.request = null;
-    if (req === "enter" && !rt.car.driving && !rt.frozen) {
+    // Getting in only from walking (never while gliding or mid-jump).
+    if (
+      req === "enter" &&
+      !rt.car.driving &&
+      !rt.frozen &&
+      rt.move.mode === "walk"
+    ) {
       if (Math.hypot(p.x - car.x, p.z - car.z) <= VEHICLE_RANGE + 0.6) {
         car.speed = 0;
         acc.current = 0;

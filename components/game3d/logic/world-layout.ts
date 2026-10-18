@@ -13,6 +13,8 @@ import {
   objectKind,
   type ModelLocalBounds,
 } from "./catalog";
+import { buildMovementLayout, type MovementLayout } from "./movement-layout";
+import { buildRoadNetwork, type RoadNetwork } from "./roads";
 import type { Island3D, Manifest } from "./types";
 import { circumradiusFromWidth, hexKey } from "./hex";
 import { buildRails, type Rail } from "./rails";
@@ -95,6 +97,8 @@ export type GameWorld = {
   rails: Rail[];
   /** Collision data for the car controller. */
   carEnv: CarEnv;
+  /** Glider launches, jump pads, lookouts and thermals. */
+  movement: MovementLayout;
 };
 
 /** Vehicle interaction range (metres from the car's centre). */
@@ -195,6 +199,8 @@ export function buildGameWorld(
     npcs,
     ...(opts.bounds ? { bounds: opts.bounds } : {}),
   });
+  // Lookout towers block their hexes and add their decks: before the nav graph.
+  const movement = buildMovementLayout(islands, walk, manifest);
   const nav = buildNavGraph(walk);
 
   const interactables: Interactable[] = [];
@@ -263,11 +269,23 @@ export function buildGameWorld(
   }
   const props = buildProps(islands, walk, manifest, opts.bounds);
   const rails = buildRails(walk);
+  const roads = new Map<string, RoadNetwork>();
+  for (const island of islands) {
+    const grid = walk.islands.find((g) => g.islandId === island.id);
+    if (grid)
+      roads.set(
+        island.id,
+        buildRoadNetwork(island, grid, {
+          heightJitter: island.heightJitter ?? 0,
+        })
+      );
+  }
   const carEnv = createCarEnv(
     walk,
     rails,
     new Set(props.keys()),
-    [...props.values()].filter((p) => p.sensor).map((p) => p.obstacle)
+    [...props.values()].filter((p) => p.sensor).map((p) => p.obstacle),
+    roads
   );
   return {
     islands,
@@ -280,6 +298,7 @@ export function buildGameWorld(
     vehicles,
     rails,
     carEnv,
+    movement,
   };
 }
 

@@ -98,7 +98,7 @@ export function Interactions({
     const rt = rtRef.current;
     const p = rt.player.pos;
     const hit =
-      rt.frozen || rt.car.driving
+      rt.frozen || rt.car.driving || rt.move.mode !== "walk"
         ? null
         : nearestInteractable(world.interactables, p.x, p.y, p.z);
     const item = hit?.item ?? null;

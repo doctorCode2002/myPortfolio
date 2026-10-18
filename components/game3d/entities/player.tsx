@@ -15,7 +15,13 @@ import {
   spawnPoint,
   type GameWorld,
 } from "../logic/world-layout";
-import { islandBob, setDriving, useRuntimeRef, type Runtime } from "../runtime";
+import {
+  islandBob,
+  setDriving,
+  setMoveMode,
+  useRuntimeRef,
+  type Runtime,
+} from "../runtime";
 import { CharacterModel, type AnimState } from "./character-model";
 
 export const WALK_SPEED = 4.2;
@@ -117,6 +123,8 @@ export function Player({
         if (rt.car.state) rt.car.state.speed = 0;
         setDriving(rt, false);
       }
+      // A teleport also ends a glide or a pad jump.
+      setMoveMode(rt, "walk");
       rt.spawnIsland = rt.teleport;
       rt.teleport = null;
       placeOnIsland(rt, world, rt.spawnIsland, radius);
@@ -145,6 +153,20 @@ export function Player({
       return;
     }
     if (g0 && !g0.visible) g0.visible = true;
+    const mode = rt.move.mode;
+    if (mode === "glide" || mode === "jump" || mode === "zip") {
+      // Flying (movement/movement-system moves rt.player.pos): pose only.
+      vel.current.x = 0;
+      vel.current.z = 0;
+      // Hanging from the zipline handle: arms up.
+      anim.current.anim = mode === "zip" ? "cheer" : "idle";
+      anim.current.speed = 0;
+      if (g0) {
+        g0.position.set(p.x, p.y, p.z);
+        g0.rotation.set(0, rt.player.heading, rt.move.roll, "YXZ");
+      }
+      return;
+    }
     let dirX = 0;
     let dirZ = 0;
     let run = false;
@@ -249,7 +271,7 @@ export function Player({
         p.y + surfaceBob(world, surface, clock.elapsedTime, rt.reducedMotion),
         p.z
       );
-      g.rotation.y = rt.player.heading;
+      g.rotation.set(0, rt.player.heading, 0);
     }
   });
 

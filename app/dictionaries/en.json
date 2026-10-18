@@ -297,6 +297,16 @@
   },
 
   "play": {
+    "movement": {
+      "glide": "Glide",
+      "glideAction": "Take off from the platform",
+      "bounce": "Bounce",
+      "jumpDown": "Jump down",
+      "glideHint": "A/D bank, W dive, S slow down, Space or E land",
+      "glideTouchHint": "Joystick: left/right to bank, up to dive, down to slow",
+      "land": "Land",
+      "zip": "Ride the zipline"
+    },
     "social": {
       "visitor": "Visitor",
       "visitors": "Visitors",

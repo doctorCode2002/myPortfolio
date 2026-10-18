@@ -74,7 +74,25 @@ export type Runtime = {
   breaks: BreakEvent[];
   /** Camera shake amount (0..1), decays; never set with reduced motion. */
   shake: number;
+  /**
+   * The movement mode: walking, driving, gliding, a pad jump or a zipline ride, never two
+   * at once. Other systems (fast travel, ghosts) read `move.mode`; change it only with
+   * setMoveMode (or setDriving, which keeps it in step).
+   */
+  move: {
+    mode: MoveMode;
+    /** Glider bank (radians), for the player model's roll. */
+    roll: number;
+    /** A pending glide cancel (Space / E / the Land button). */
+    cancel: boolean;
+    /** Bumped on each soft respawn (the HUD flashes a whoosh). */
+    whoosh: number;
+    /** Subscribers to `mode` and `whoosh` (the HUD). */
+    listeners: Set<() => void>;
+  };
 };
+
+export type MoveMode = "walk" | "drive" | "glide" | "jump" | "zip";
 
 export function createRuntime(reducedMotion: boolean): Runtime {
   return {
@@ -102,6 +120,29 @@ export function createRuntime(reducedMotion: boolean): Runtime {
     props: createBreakStore(),
     breaks: [],
     shake: 0,
+    move: {
+      mode: "walk",
+      roll: 0,
+      cancel: false,
+      whoosh: 0,
+      listeners: new Set(),
+    },
+  };
+}
+
+/** Switch the movement mode, and tell the subscribers. */
+export function setMoveMode(rt: Runtime, mode: MoveMode): void {
+  if (rt.move.mode === mode) return;
+  rt.move.mode = mode;
+  rt.move.cancel = false;
+  if (mode !== "glide") rt.move.roll = 0;
+  for (const cb of rt.move.listeners) cb();
+}
+
+export function subscribeMove(rt: Runtime, cb: () => void): () => void {
+  rt.move.listeners.add(cb);
+  return () => {
+    rt.move.listeners.delete(cb);
   };
 }
 
@@ -109,6 +150,7 @@ export function createRuntime(reducedMotion: boolean): Runtime {
 export function setDriving(rt: Runtime, driving: boolean): void {
   if (rt.car.driving === driving) return;
   rt.car.driving = driving;
+  setMoveMode(rt, driving ? "drive" : "walk");
   for (const cb of rt.car.listeners) cb();
 }
 

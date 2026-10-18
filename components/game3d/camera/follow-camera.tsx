@@ -21,6 +21,8 @@ import { useRuntimeRef } from "../runtime";
 const TAP_MOVE_PX = 8;
 /** Camera distance multiplier and lead (metres at top speed) while driving. */
 const DRIVE_DISTANCE = 1.4;
+/** Pull-back while gliding, in units of the driving pull-back (1 + 0.4 * 1.8 = 1.72x). */
+const GLIDE_PULL = 1.8;
 const DRIVE_LEAD = 4;
 const TAP_MS = 350;
 
@@ -95,7 +97,7 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
 
     const tapToMove = (clientX: number, clientY: number): void => {
       const rt = rtRef.current;
-      if (rt.frozen || rt.car.driving) return;
+      if (rt.frozen || rt.move.mode !== "walk") return;
       const rect = el.getBoundingClientRect();
       ndc.set(
         ((clientX - rect.left) / rect.width) * 2 - 1,
@@ -231,7 +233,8 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
     first.current = false;
     // Pull back while driving (eased so getting in and out glides).
     const pull = drivePull.current;
-    pull.k += ((car ? 1 : 0) - pull.k) * damp(2.5, dt);
+    const pullTo = car ? 1 : rt.move.mode === "glide" ? GLIDE_PULL : 0;
+    pull.k += (pullTo - pull.k) * damp(2.5, dt);
     const dist = zoomToDistance(cam.zoom) * (1 + (DRIVE_DISTANCE - 1) * pull.k);
     const horiz = Math.cos(cam.pitch) * dist;
     // Impact shake (never with reduced motion: the car system leaves it at 0 then).

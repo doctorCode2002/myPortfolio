@@ -51,8 +51,23 @@ export type BridgeCorridor = {
   length: number;
 };
 
+/**
+ * A small standable patch above the ground (a lookout deck), reachable only by a jump pad:
+ * it sits over a blocked hex, and a walker coming from the ground is far below its height.
+ */
+export type RoofPatch = {
+  id: string;
+  islandId: string;
+  x: number;
+  z: number;
+  radius: number;
+  y: number;
+};
+
 export type WalkWorld = {
   islands: IslandWalkGrid[];
+  /** Raised standable patches (lookout decks); see RoofPatch. */
+  roofs?: RoofPatch[];
   bridges: BridgeCorridor[];
   /**
    * Keys of island objects that are currently broken (smashed by the car): their
@@ -247,6 +262,21 @@ export function surfaceAt(
   z: number,
   nearY?: number
 ): Surface | null {
+  // Lookout decks: only for a query near their height (or with no height at all).
+  for (const roof of world.roofs ?? []) {
+    const dx = x - roof.x;
+    const dz = z - roof.z;
+    if (dx * dx + dz * dz > roof.radius * roof.radius) continue;
+    if (nearY !== undefined && Math.abs(nearY - roof.y) > world.maxStep * 2)
+      continue;
+    return {
+      y: roof.y,
+      islandId: roof.islandId,
+      bridgeId: null,
+      cell: null,
+      t: 0,
+    };
+  }
   let blockedByIsland = false;
   for (const grid of world.islands) {
     const cell = cellAtWorld(grid, x, z);

@@ -19,6 +19,7 @@ import {
   type Rail,
   type SpatialIndex,
 } from "./rails";
+import { onRoad, type RoadNetwork } from "./roads";
 import { obstacleDistance, obstacleReach, type Obstacle } from "./walk-grid";
 import { surfaceAt, type Surface, type WalkWorld } from "./walk-world";
 
@@ -47,6 +48,11 @@ export const CAR = {
   breakSpeed: 2.5,
   /** Speed kept per smashed prop. */
   smashKeep: 0.9,
+  /** On a road ribbon: top speed and acceleration factor, and extra steering grip. */
+  roadBoost: 1.15,
+  roadGrip: 1.12,
+  /** Slows for a walker ahead: starts this far (plus the braking distance) from them. */
+  yieldGap: 0.9,
 } as const;
 
 export type CarState = {
@@ -73,13 +79,33 @@ export type CarInput = {
   handbrake: boolean;
 };
 
-/** Static collision data for the car, built once per world. */
+/**
+ * A walker the car must not drive through, read live each step: the mayors' colliders
+ * (moved in place as they walk) and, via `bodies`, the player or other walkers. Pushable
+ * bodies are nudged aside gently if there is room, others make the car stop.
+ */
+export type CarBody = {
+  x: number;
+  z: number;
+  radius: number;
+  /** Push it aside (the player) instead of stopping for it. */
+  push?: boolean;
+};
+
+/** Collision data for the car: static parts built once per world, walkers read live. */
 export type CarEnv = {
   world: WalkWorld;
   rails: SpatialIndex<Rail>;
+  /** Static obstacles (props, buildings): never the walkers. */
   obstacles: SpatialIndex<Obstacle>;
   /** Obstacle keys that break on impact. */
   breakable: ReadonlySet<string>;
+  /** The mayors' live colliders (the same objects the walk world moves). */
+  movers: Obstacle[];
+  /** Other walkers, refreshed by the car system before each step (the player on foot). */
+  bodies: CarBody[];
+  /** Road networks by island (a little faster and grippier on the ribbons). */
+  roads: ReadonlyMap<string, RoadNetwork>;
 };
 
 export function createCarEnv(
@@ -87,10 +113,17 @@ export function createCarEnv(
   rails: readonly Rail[],
   breakable: ReadonlySet<string>,
   /** Car-only colliders of non-solid breakable props. */
-  sensors: readonly Obstacle[] = []
+  sensors: readonly Obstacle[] = [],
+  roads: ReadonlyMap<string, RoadNetwork> = new Map()
 ): CarEnv {
-  const all = [...world.islands.flatMap((g) => g.obstacles), ...sensors];
+  // Island objects carry a key; keyless grid obstacles are the walking mayors, whose
+  // colliders move, so they are checked live instead of from the bucket index.
+  const grid = world.islands.flatMap((g) => g.obstacles);
+  const all = [...grid.filter((o) => o.key !== undefined), ...sensors];
   return {
+    movers: grid.filter((o) => o.key === undefined),
+    bodies: [],
+    roads,
     world,
     rails: createSpatialIndex(rails, railBounds),
     obstacles: createSpatialIndex(all, (o) => {
@@ -162,7 +195,12 @@ export function carFits(
   smash = false,
   hits?: Obstacle[],
   /** Ignore obstacles (ground and rails still count): to drive out of an overlap. */
-  ghost = false
+  ghost = false,
+  /**
+   * Smallest allowed gap to the walkers (0: no overlap). While already overlapping one,
+   * pass the current (negative) gap: the car may only move away.
+   */
+  walkerFloor = 0
 ): FitResult | null {
   const { world } = env;
   const r = CAR.radius;
@@ -193,6 +231,7 @@ export function carFits(
     if (i === 1) mid = s;
   }
   if (!mid) return null;
+  if (walkerGap(env, x, z, heading) < walkerFloor - 1e-6) return null;
   // Side heights for the roll (half a width out from the middle).
   const sx = Math.cos(heading) * (CAR.width / 2);
   const sz = -Math.sin(heading) * (CAR.width / 2);
@@ -205,6 +244,105 @@ export function carFits(
     left,
     right,
   };
+}
+
+/**
+ * The smallest gap between the car's footprint at a pose and the walkers (the mayors and
+ * the bodies); negative when overlapping, Infinity with nobody around.
+ */
+export function walkerGap(
+  env: Pick<CarEnv, "movers" | "bodies">,
+  x: number,
+  z: number,
+  heading: number
+): number {
+  let gap = Infinity;
+  if (!env.movers.length && !env.bodies.length) return gap;
+  for (const c of carCircles(x, z, heading)) {
+    for (const o of env.movers) {
+      if (o.shape === "circle" && o.radius <= 0) continue;
+      gap = Math.min(gap, obstacleDistance(o, c.x, c.z) - CAR.radius);
+    }
+    for (const b of env.bodies)
+      gap = Math.min(
+        gap,
+        Math.hypot(b.x - c.x, b.z - c.z) - b.radius - CAR.radius
+      );
+  }
+  return gap;
+}
+
+/**
+ * Free distance ahead of (or behind, when reversing) the car to the nearest walker in its
+ * lane (centre to their rim), Infinity when the lane is clear. The car slows for it.
+ */
+export function walkerAhead(
+  env: Pick<CarEnv, "movers" | "bodies">,
+  s: Pick<CarState, "x" | "z" | "heading">,
+  dir: 1 | -1,
+  lane: number = CAR.width / 2 + 0.25
+): number {
+  const fx = Math.sin(s.heading) * dir;
+  const fz = Math.cos(s.heading) * dir;
+  let best = Infinity;
+  const test = (x: number, z: number, radius: number): void => {
+    const dx = x - s.x;
+    const dz = z - s.z;
+    const along = dx * fx + dz * fz;
+    if (along <= 0) return;
+    const side = Math.abs(dx * fz - dz * fx);
+    if (side > lane + radius) return;
+    best = Math.min(best, along - radius);
+  };
+  for (const o of env.movers) {
+    if (o.shape !== "circle" || o.radius <= 0) continue;
+    test(o.x, o.z, o.radius);
+  }
+  for (const b of env.bodies) test(b.x, b.z, b.radius);
+  return best;
+}
+
+/**
+ * Nudge pushable bodies out of the car's footprint at a pose (each only to a spot where
+ * it can stand). Returns false if one could not make room (the car then stops).
+ */
+export function pushBodies(
+  env: CarEnv,
+  x: number,
+  z: number,
+  heading: number,
+  fromY: number
+): boolean {
+  let ok = true;
+  for (const b of env.bodies) {
+    if (!b.push) continue;
+    for (const c of carCircles(x, z, heading)) {
+      const dx = b.x - c.x;
+      const dz = b.z - c.z;
+      const d = Math.hypot(dx, dz);
+      const need = CAR.radius + b.radius + 0.02;
+      if (d >= need) continue;
+      // Out sideways from the car's axis when dead ahead.
+      const ux = d > 1e-4 ? dx / d : Math.cos(heading);
+      const uz = d > 1e-4 ? dz / d : -Math.sin(heading);
+      const px = c.x + ux * need;
+      const pz = c.z + uz * need;
+      if (canStand(env.world, px, pz, b.radius, fromY)) {
+        b.x = px;
+        b.z = pz;
+      } else ok = false;
+    }
+  }
+  return ok;
+}
+
+/** Whether the car is on one of its island's road ribbons. */
+export function carOnRoad(
+  env: Pick<CarEnv, "roads">,
+  s: Pick<CarState, "x" | "z" | "islandId">
+): boolean {
+  const net = s.islandId ? env.roads.get(s.islandId) : undefined;
+  return net ? onRoad(net, s.x, s.z, 0.1) : false;
 }
 
 function approach(v: number, target: number, step: number): number {
@@ -235,6 +373,9 @@ export function stepCar(
 ): StepResult {
   const hits: Obstacle[] = [];
   let bump = 0;
+  const road = carOnRoad(env, s);
+  const top = CAR.maxSpeed * (road ? CAR.roadBoost : 1);
+  const accel = CAR.accel * (road ? CAR.roadBoost : 1);
 
   // Speed.
   const throttle = Math.max(-1, Math.min(1, input.throttle));
@@ -243,13 +384,13 @@ export function stepCar(
   } else if (throttle > 0.01) {
     if (s.speed < -0.2) s.speed = approach(s.speed, 0, CAR.brake * dt);
     else {
-      const taper = 1 - 0.5 * Math.min(1, Math.max(0, s.speed) / CAR.maxSpeed);
+      const taper = 1 - 0.5 * Math.min(1, Math.max(0, s.speed) / top);
       s.speed = Math.min(
-        CAR.maxSpeed * throttle,
-        s.speed + CAR.accel * throttle * taper * dt
+        top * throttle,
+        s.speed + accel * throttle * taper * dt
       );
-      if (s.speed > CAR.maxSpeed * throttle)
-        s.speed = approach(s.speed, CAR.maxSpeed * throttle, CAR.coast * dt);
+      if (s.speed > top * throttle)
+        s.speed = approach(s.speed, top * throttle, CAR.coast * dt);
     }
   } else if (throttle < -0.01) {
     if (s.speed > 0.2) s.speed = approach(s.speed, 0, CAR.brake * dt);
@@ -262,6 +403,14 @@ export function stepCar(
     s.speed = approach(s.speed, 0, CAR.coast * dt);
   }
 
+  // Yield to walkers in the lane: never faster than what still stops short of them.
+  if (Math.abs(s.speed) > 1e-3) {
+    const gap =
+      walkerAhead(env, s, s.speed > 0 ? 1 : -1) - CAR.length / 2 - CAR.yieldGap;
+    const allowed = Math.sqrt(Math.max(0, gap) * CAR.brake);
+    if (Math.abs(s.speed) > allowed) s.speed = Math.sign(s.speed) * allowed;
+  }
+
   // Steering: yaw rate grows with speed (no turning on the spot) and eases off a little
   // at top speed; reversing turns the other way like a real car.
   s.steer = approach(
@@ -272,14 +421,26 @@ export function stepCar(
   const v = Math.abs(s.speed);
   const grip =
     Math.min(1, v / 3) *
-    (1 - 0.4 * Math.min(1, v / CAR.maxSpeed)) *
-    (input.handbrake ? 1.35 : 1);
+    (1 - 0.4 * Math.min(1, v / top)) *
+    (input.handbrake ? 1.35 : 1) *
+    (road ? CAR.roadGrip : 1);
   const yaw = -s.steer * CAR.turnRate * grip * Math.sign(s.speed) * dt;
 
   const smash = v >= CAR.breakSpeed;
   // Overlapping something already (a teleport, a prop regrown under a stuck car)?
   // Then obstacles are ignored until the car is free again.
-  const ghost = !carFits(env, s.x, s.z, s.heading, s.y, true);
+  const floor = Math.min(0, walkerGap(env, s.x, s.z, s.heading));
+  const ghost = !carFits(
+    env,
+    s.x,
+    s.z,
+    s.heading,
+    s.y,
+    true,
+    undefined,
+    false,
+    -Infinity
+  );
   const dist = v * dt;
   const steps = Math.max(
     1,
@@ -289,7 +450,7 @@ export function stepCar(
   for (let i = 0; i < steps; i++) {
     // Turn first (only if the rotated footprint still fits).
     const h = s.heading + yaw / steps;
-    const turned = carFits(env, s.x, s.z, h, s.y, smash, hits, ghost);
+    const turned = carFits(env, s.x, s.z, h, s.y, smash, hits, ghost, floor);
     if (turned) {
       s.heading = h;
       fit = turned;
@@ -299,6 +460,7 @@ export function stepCar(
     const fx = Math.sin(s.heading) * step;
     const fz = Math.cos(s.heading) * step;
     let moved = false;
+    if (env.bodies.length) pushBodies(env, s.x + fx, s.z + fz, s.heading, s.y);
     const direct = carFits(
       env,
       s.x + fx,
@@ -307,7 +469,8 @@ export function stepCar(
       s.y,
       smash,
       hits,
-      ghost
+      ghost,
+      floor
     );
     if (direct) {
       s.x += fx;
@@ -333,7 +496,8 @@ export function stepCar(
             s.y,
             smash,
             hits,
-            ghost
+            ghost,
+            floor
           );
           if (!slid) continue;
           s.x += dx;
@@ -344,7 +508,7 @@ export function stepCar(
           s.speed *= 1 - (1 - k) * 0.35;
           const align = Math.sign(s.speed) * sign * a * 0.18;
           const h2 = s.heading + align;
-          const ok = carFits(env, s.x, s.z, h2, s.y, smash, hits, ghost);
+          const ok = carFits(env, s.x, s.z, h2, s.y, smash, hits, ghost, floor);
           if (ok) {
             s.heading = h2;
             fit = ok;
@@ -359,9 +523,36 @@ export function stepCar(
       // building until it gives) instead of bouncing off.
       if (
         !smash &&
-        carFits(env, s.x + fx, s.z + fz, s.heading, s.y, true, undefined, ghost)
+        carFits(
+          env,
+          s.x + fx,
+          s.z + fz,
+          s.heading,
+          s.y,
+          true,
+          undefined,
+          ghost,
+          floor
+        )
       )
         break;
+      // A walker in the way: just stop (no bounce, no shake).
+      if (
+        carFits(
+          env,
+          s.x + fx,
+          s.z + fz,
+          s.heading,
+          s.y,
+          smash,
+          undefined,
+          ghost,
+          -Infinity
+        )
+      ) {
+        s.speed = 0;
+        break;
+      }
       bump = Math.max(bump, Math.abs(s.speed));
       s.speed = -s.speed * 0.15;
       break;
@@ -369,7 +560,17 @@ export function stepCar(
   }
   if (hits.length) s.speed *= Math.pow(CAR.smashKeep, hits.length);
 
-  fit ??= carFits(env, s.x, s.z, s.heading, s.y, false);
+  fit ??= carFits(
+    env,
+    s.x,
+    s.z,
+    s.heading,
+    s.y,
+    false,
+    undefined,
+    false,
+    -Infinity
+  );
   if (fit) {
     // Height and tilt follow the ground under the wheels (smoothed, never flips).
     const target = (fit.front + fit.back) / 2;

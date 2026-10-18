@@ -56,6 +56,11 @@ import { SKY, SkyDome } from "./scene/sky";
 import { DriveHud } from "./ui/drive-hud";
 import { Joystick } from "./ui/joystick";
 import { CarSystem } from "./vehicle/car-system";
+import { GlideHud } from "./movement/glide-hud";
+import {
+  MovementSystem,
+  type MovementLabels,
+} from "./movement/movement-system";
 import { GuestbookStone } from "./social/guestbook-stone";
 import { GUESTBOOK_STONE_ID } from "./social/stone-layout";
 import { VisitorGhosts } from "./social/visitor-ghosts";
@@ -196,6 +201,7 @@ function Scene({
   shadowSize,
   reducedMotion,
   visitorLabel,
+  moveLabels,
 }: {
   world: GameWorld;
   manifest: Manifest | null;
@@ -206,6 +212,7 @@ function Scene({
   shadowSize: number;
   reducedMotion: boolean;
   visitorLabel: string;
+  moveLabels: MovementLabels;
 }): ReactNode {
   const center = useMemo(() => {
     const n = world.islands.length || 1;
@@ -259,6 +266,12 @@ function Scene({
         })}
       <CarSystem world={world} manifest={manifest} />
       <WorkshopLife world={world} manifest={manifest} />
+      <MovementSystem
+        world={world}
+        labels={moveLabels}
+        touch={touch}
+        reducedMotion={reducedMotion}
+      />
       <Player world={world} manifest={manifest} charId={charId} />
       <GuestbookStone world={world} />
       <VisitorGhosts
@@ -379,6 +392,18 @@ export function World3D({
     [manifest, bounds]
   );
   const labels = useMemo(() => buildLabels(dict, locale), [dict, locale]);
+  const moveLabels = useMemo<MovementLabels>(
+    () => ({
+      glide: dict.play.movement.glide,
+      glideAction: dict.play.movement.glideAction,
+      bounce: dict.play.movement.bounce,
+      jumpDown: dict.play.movement.jumpDown,
+      zip: dict.play.movement.zip,
+      tap: dict.play.tap,
+      rtl: isRtl(locale),
+    }),
+    [dict, locale]
+  );
 
   // Expose the runtime for automated checks in development.
   useEffect(() => {
@@ -430,6 +455,7 @@ export function World3D({
                   shadowSize={touch ? Math.min(shadowSize, 1024) : shadowSize}
                   reducedMotion={reducedMotion}
                   visitorLabel={dict.play.social.visitor}
+                  moveLabels={moveLabels}
                 />
               )}
             </Suspense>
@@ -446,6 +472,17 @@ export function World3D({
         }}
       />
       {touch && <Joystick rtRef={rtRef} />}
+      <GlideHud
+        rtRef={rtRef}
+        hint={
+          touch
+            ? dict.play.movement.glideTouchHint
+            : dict.play.movement.glideHint
+        }
+        landLabel={dict.play.movement.land}
+        touch={touch}
+        rtl={isRtl(locale)}
+      />
       <DriveHud
         rtRef={rtRef}
         hint={touch ? dict.play.driveTouchHint : dict.play.driveHint}
