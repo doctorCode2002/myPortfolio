@@ -23,5 +23,9 @@ and encoded to MP3 with ffmpeg. They load only after the visitor turns sound on.
 | impact-0.mp3, impact-1.mp3       | [Kenney Impact Sounds](https://kenney.nl/assets/impact-sounds) (`impactWood_heavy_000.ogg`, `impactWood_heavy_002.ogg`)               | Kenney            | CC0     |
 | impact-2.mp3                     | [Kenney Impact Sounds](https://kenney.nl/assets/impact-sounds) (`impactPunch_heavy_000.ogg`)                                          | Kenney            | CC0     |
 
+The balloon's burner whoosh is not a file: it is synthesized at runtime (filtered noise,
+`components/game3d/balloon/burner-sound.ts`), original work released as CC0. The wind at
+height reuses `wind.mp3` above.
+
 Licence text: <https://creativecommons.org/publicdomain/zero/1.0/>. Kenney's packs ship a
 `License.txt` stating "Creative Commons Zero, CC0".

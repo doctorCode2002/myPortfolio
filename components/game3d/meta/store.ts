@@ -238,6 +238,14 @@ export function markWeather(kind: "night" | "rain"): void {
   commit();
 }
 
+/** Above the clouds: a scenic balloon tour flown to the end, or the balloon's ceiling. */
+export function markAboveClouds(): void {
+  ensureLoaded();
+  if (progress.sky) return;
+  progress.sky = true;
+  commit();
+}
+
 export function setSetting<K extends keyof MetaSettings>(
   key: K,
   value: MetaSettings[K]

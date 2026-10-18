@@ -123,7 +123,7 @@ export function Player({
         if (rt.car.state) rt.car.state.speed = 0;
         setDriving(rt, false);
       }
-      // A teleport also ends a glide or a pad jump.
+      // A teleport also ends a glide, a pad jump or a balloon flight.
       setMoveMode(rt, "walk");
       rt.spawnIsland = rt.teleport;
       rt.teleport = null;
@@ -154,8 +154,13 @@ export function Player({
     }
     if (g0 && !g0.visible) g0.visible = true;
     const mode = rt.move.mode;
-    if (mode === "glide" || mode === "jump" || mode === "zip") {
-      // Flying (movement/movement-system moves rt.player.pos): pose only.
+    if (
+      mode === "glide" ||
+      mode === "jump" ||
+      mode === "zip" ||
+      mode === "balloon"
+    ) {
+      // Flying or riding (movement/ and balloon/ move rt.player.pos): pose only.
       vel.current.x = 0;
       vel.current.z = 0;
       // Hanging from the zipline handle: arms up.

@@ -20,6 +20,7 @@ import {
 } from "./mix";
 import { onSoundCue } from "./sound-store";
 import { playChime } from "../meta/chime";
+import { playBurner } from "../balloon/burner-sound";
 
 const BASE = "/game3d/audio/";
 const STEP_FILES: Record<FootSurface, string[]> = {
@@ -199,7 +200,8 @@ class AudioEngine {
 /**
  * Ambient sound (loaded only after the visitor turns sound on): music crossfading per
  * island, birdsong by day, crickets at night, wind with the gusts, rain, positioned
- * waterfalls, footsteps by surface, and the car's engine and impacts.
+ * waterfalls, footsteps by surface, the car's engine and impacts, and the balloon's
+ * burner and the wind at height.
  */
 export default function AudioSystem({
   world,
@@ -261,6 +263,10 @@ export default function AudioSystem({
     const offCue = onSoundCue((cue) => {
       if (cue.kind === "chime") {
         playChime(engine.ctx, engine.master, cue.strength, cue.pitch);
+        return;
+      }
+      if (cue.kind === "burner") {
+        playBurner(engine.ctx, engine.master, cue.strength);
         return;
       }
       if (cue.kind !== "impact") return;
@@ -353,9 +359,12 @@ export default function AudioSystem({
       0.32 * Math.max(0, night - 0.35) * (1 - rain * 0.6),
       2
     );
+    // Higher up in the balloon the wind grows (soft, it is a gentle ride).
+    const aloft =
+      rt.move.mode === "balloon" ? Math.min(1, Math.max(0, (p.y - 4) / 18)) : 0;
     engine.setLevel(
       beds.wind,
-      0.05 + atmosphere.gust * 0.22 + rain * 0.06,
+      0.05 + atmosphere.gust * 0.22 + rain * 0.06 + aloft * 0.16,
       0.8
     );
     engine.setLevel(beds.rain, rain * 0.45, 1.5);

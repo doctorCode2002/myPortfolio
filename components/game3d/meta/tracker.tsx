@@ -8,7 +8,7 @@ import { gameEvents } from "@/components/game/engine/events";
 import { atmosphere } from "../atmosphere/store";
 import { nearestStandable } from "../logic/collision";
 import { PLAYER_RADIUS_HEX, type GameWorld } from "../logic/world-layout";
-import { useRuntimeRef } from "../runtime";
+import { onFoot, useRuntimeRef } from "../runtime";
 import { setGoldCloak, setGoldPaint } from "./gold";
 import { placeFires } from "./placement";
 import { crossedBridge } from "./progress";
@@ -86,7 +86,7 @@ export function MetaTracker({ world }: { world: GameWorld }): ReactNode {
     if (req && !s.travel) {
       metaRequests.travel = null;
       if (
-        !rt.car.driving &&
+        onFoot(rt) &&
         liveProgress().fires.includes(req) &&
         fires.some((f) => f.islandId === req)
       ) {

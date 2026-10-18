@@ -304,7 +304,28 @@
       "glideHint": "A/D bank, W dive, S slow down, Space or E land",
       "glideTouchHint": "Joystick: left/right to bank, up to dive, down to slow",
       "land": "Land",
-      "zip": "Ride the zipline"
+      "zip": "Ride the zipline",
+      "balloon": {
+        "board": "Board balloon",
+        "boardAction": "Take to the sky",
+        "chooserTitle": "Hot-air balloon",
+        "tour": "Scenic tour",
+        "tourDesc": "A slow loop over all eight islands (about 2 min)",
+        "free": "Free flight",
+        "freeDesc": "Steer it yourself",
+        "cancel": "Not now",
+        "tourHint": "E or Esc to leave the tour early",
+        "tourTouchHint": "Tap Leave to land early",
+        "freeHint": "Space burner (up), Shift vent (down), WASD drift, E land",
+        "freeTouchHint": "Joystick to drift, Up / Down for height, Land when low",
+        "up": "Up",
+        "down": "Down",
+        "land": "Land",
+        "leave": "Leave tour",
+        "lower": "Fly lower over open ground to land",
+        "noRoom": "No room to land here",
+        "landing": "Landing…"
+      }
     },
     "social": {
       "visitor": "Visitor",
@@ -545,6 +566,10 @@
         "rain": {
           "name": "Caught in the rain",
           "desc": "Stood out in a rain shower"
+        },
+        "aboveClouds": {
+          "name": "Above the clouds",
+          "desc": "Finished a scenic balloon tour or flew the balloon to the top"
         }
       },
       "toastShard": "Sky shard found ({n} of {total})",
@@ -562,6 +587,7 @@
       "travel": "Travel here",
       "travelNeedsFire": "Light this island's signal fire to travel here",
       "travelNotDriving": "Get out of the car to travel",
+      "travelNotFlying": "Land first to travel",
       "travelling": "Travelling to {island}",
       "youAreHere": "You are here",
       "unvisited": "not visited",

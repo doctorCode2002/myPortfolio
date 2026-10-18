@@ -44,7 +44,9 @@ export function subscribeSound(cb: Listener): () => void {
 export type SoundCue =
   | { kind: "impact"; strength: number }
   /** A synthesized chime (sky shard pickups; `pitch` < 1 for lighting a fire). */
-  | { kind: "chime"; strength: number; pitch?: number };
+  | { kind: "chime"; strength: number; pitch?: number }
+  /** A synthesized burner whoosh (the hot-air balloon climbing). */
+  | { kind: "burner"; strength: number };
 type CueListener = (cue: SoundCue) => void;
 const cueListeners = new Set<CueListener>();
 

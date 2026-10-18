@@ -16,6 +16,7 @@ import {
 } from "../logic/camera-math";
 import { findPath, raycastWalk } from "../logic/pathfinding";
 import { PLAYER_RADIUS_HEX, type GameWorld } from "../logic/world-layout";
+import { getBalloonUi } from "../balloon/balloon-store";
 import { useRuntimeRef } from "../runtime";
 
 const TAP_MOVE_PX = 8;
@@ -24,6 +25,21 @@ const DRIVE_DISTANCE = 1.4;
 /** Pull-back while gliding, in units of the driving pull-back (1 + 0.4 * 1.8 = 1.72x). */
 const GLIDE_PULL = 1.8;
 const DRIVE_LEAD = 4;
+/** Pull-back in the balloon (1 + 0.4 * 3.2 = 2.28x): wider than the glider, for the view. */
+const BALLOON_PULL = 3.2;
+/** The balloon view looks at the middle of the rig, not the pilot's feet. */
+const BALLOON_LIFT = 3.6;
+/** Scenic tour: a slow drift around the balloon (rad/s) once the pointer has rested. */
+const TOUR_ORBIT = 0.05;
+const TOUR_ORBIT_IDLE_MS = 4000;
+
+function wrapAngle(a: number): number {
+  const TAU = Math.PI * 2;
+  let r = a % TAU;
+  if (r > Math.PI) r -= TAU;
+  if (r < -Math.PI) r += TAU;
+  return r;
+}
 const TAP_MS = 350;
 
 function roundZoom(z: number): number {
@@ -48,6 +64,8 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
   });
   const first = useRef(true);
   const drivePull = useRef({ k: 0 });
+  const lift = useRef({ y: 0, wasBalloon: false });
+  const lastDrag = useRef(0);
 
   // Zoom buttons and external zoom requests.
   useEffect(() => {
@@ -150,7 +168,11 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
       p.y = e.clientY;
       if (pointers.size === 1) {
         if (Math.hypot(p.x - p.sx, p.y - p.sy) < TAP_MOVE_PX) return;
-        goal.current.yaw = clampYaw(goal.current.yaw - dx * 0.006);
+        lastDrag.current = performance.now();
+        // The full orbit is free in the balloon (the view is the point).
+        const yaw = goal.current.yaw - dx * 0.006;
+        goal.current.yaw =
+          rtRef.current.move.mode === "balloon" ? yaw : clampYaw(yaw);
         goal.current.pitch = clampPitch(goal.current.pitch + dy * 0.005);
       } else if (pointers.size === 2) {
         const [a, b] = [...pointers.values()];
@@ -206,7 +228,25 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
     const dt = Math.min(rawDt, 0.05);
     const p = rt.player.pos;
     const cam = rt.camera;
-    const k = first.current ? 1 : damp(6, dt);
+    // Back from the balloon's free orbit: come round the short way into the limits.
+    const inBalloon = rt.move.mode === "balloon";
+    const lf = lift.current;
+    if (inBalloon) {
+      if (
+        !rt.reducedMotion &&
+        getBalloonUi().phase === "tour" &&
+        performance.now() - lastDrag.current > TOUR_ORBIT_IDLE_MS
+      )
+        goal.current.yaw += TOUR_ORBIT * dt;
+    } else if (lf.wasBalloon) {
+      const w = wrapAngle(goal.current.yaw);
+      cam.yaw += w - goal.current.yaw;
+      goal.current.yaw = clampYaw(w);
+    }
+    lf.wasBalloon = inBalloon;
+    const k = first.current
+      ? 1
+      : damp(inBalloon ? (rt.reducedMotion ? 1.5 : 2.5) : 6, dt);
     cam.yaw += (goal.current.yaw - cam.yaw) * k;
     cam.pitch += (goal.current.pitch - cam.pitch) * k;
     cam.zoom += (goal.current.zoom - cam.zoom) * k;
@@ -227,14 +267,21 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
     l.x += (Math.sin(heading) * CAMERA.lead * run - l.x) * kl;
     l.z += (Math.cos(heading) * CAMERA.lead * run - l.z) * kl;
     t.x += (p.x + l.x - t.x) * kt;
-    t.y +=
-      (p.y + 0.55 - t.y) * damp(4, dt) + (first.current ? p.y + 0.55 - t.y : 0);
+    lf.y += ((inBalloon ? BALLOON_LIFT : 0) - lf.y) * damp(2, dt);
+    const ty = p.y + 0.55 + lf.y;
+    t.y += (ty - t.y) * damp(4, dt) + (first.current ? ty - t.y : 0);
     t.z += (p.z + l.z - t.z) * kt;
     first.current = false;
     // Pull back while driving (eased so getting in and out glides).
     const pull = drivePull.current;
-    const pullTo = car ? 1 : rt.move.mode === "glide" ? GLIDE_PULL : 0;
-    pull.k += (pullTo - pull.k) * damp(2.5, dt);
+    const pullTo = car
+      ? 1
+      : rt.move.mode === "glide"
+        ? GLIDE_PULL
+        : inBalloon
+          ? BALLOON_PULL
+          : 0;
+    pull.k += (pullTo - pull.k) * damp(inBalloon ? 1.2 : 2.5, dt);
     const dist = zoomToDistance(cam.zoom) * (1 + (DRIVE_DISTANCE - 1) * pull.k);
     const horiz = Math.cos(cam.pitch) * dist;
     // Impact shake (never with reduced motion: the car system leaves it at 0 then).
@@ -256,8 +303,10 @@ export function FollowCamera({ world }: { world: GameWorld }): ReactNode {
     // Fog starts past the player at any zoom, so far islands sink into the haze.
     const fog = state.scene.fog as THREE.Fog | null;
     if (fog && "near" in fog) {
-      fog.near = dist * 0.9 + 14;
-      fog.far = dist * 0.9 + 95;
+      // Up in the balloon the haze thins, so the whole archipelago shows.
+      const clear = Math.min(1, lf.y / BALLOON_LIFT) * 60;
+      fog.near = dist * 0.9 + 14 + clear * 0.5;
+      fog.far = dist * 0.9 + 95 + clear;
     }
   });
 
