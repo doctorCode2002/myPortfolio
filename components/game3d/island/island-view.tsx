@@ -41,6 +41,7 @@ import { buildUnderside } from "../logic/underside";
 import {
   cellHeightAt,
   groundLift,
+  objectKey,
   type IslandWalkGrid,
   type WalkCell,
 } from "../logic/walk-grid";
@@ -318,7 +319,7 @@ export function IslandView({
       }
       p.items.push(it);
     };
-    for (const obj of island.objects ?? []) {
+    for (const [index, obj] of (island.objects ?? []).entries()) {
       const cell = grid.cells.get(hexKey(obj.q, obj.r));
       if (!cell) continue;
       const model = allowedModel(manifest, obj.model);
@@ -344,6 +345,7 @@ export function IslandView({
         z: cell.z + (obj.offset?.[1] ?? 0),
         rotY: ((obj.rot ?? 0) * Math.PI) / 180,
         scale: (model?.scale ?? 1) * (obj.scale ?? 1),
+        key: objectKey(island.id, index),
       };
       const url = modelUrl(manifest, obj.model);
       if (url && model) {
@@ -360,6 +362,7 @@ export function IslandView({
             x: t.x,
             y: t.y + (model.height ?? 1.5) * (obj.scale ?? 1) * 0.86,
             z: t.z,
+            key: objectKey(island.id, index),
           });
         }
       } else if (!manifest?.models[obj.model]?.banned) {
