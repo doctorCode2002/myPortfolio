@@ -3,7 +3,7 @@
   "center": [0, 0],
   "baseY": 0,
   "biome": "meadow",
-  "_note": "Home: the life island. Castle (experience) on the north plateau, academy (education) on the west terrace, forge (stack) on the east terrace, garden pavilion (hobbies), cottage (family), plaza with fountain, statue and notice board (news), pond with two waterfalls off the south rim. Built by scripts in group a. Grown in world v2 with two southern lobes: the south-east one carries a road from the onyx road to the to_workshop anchor (the workshop bridge), the south-west one is a meadow lookout with room for another bridge. A road branches from the eyad road up the north-west slope to the to_waco anchor (the WACO bridge).",
+  "_note": "Home: the life island. Castle (experience) on the north plateau, academy (education) on the west terrace, forge (stack) on the east terrace, garden pavilion (hobbies), cottage (family), plaza with fountain, statue and notice board (news), pond with two waterfalls off the south rim. Built by scripts in group a. Grown in world v2 with two southern lobes: the south-east one carries a road from the onyx road to the to_workshop anchor (the workshop bridge), the south-west one is a meadow lookout with room for another bridge, and at its tip the balloon launch field (movement.balloon, two extra grass hexes). A road branches from the eyad road up the north-west slope to the to_waco anchor (the WACO bridge).",
   "hexes": [
     { "q": 2, "r": -8, "tile": "hex-grass", "h": 2 },
     { "q": 3, "r": -8, "tile": "hex-grass", "h": 2 },
@@ -194,7 +194,9 @@
     { "q": -7, "r": 7, "tile": "hex-grass" },
     { "q": -6, "r": 7, "tile": "hex-grass" },
     { "q": -8, "r": 8, "tile": "hex-grass" },
-    { "q": -7, "r": 8, "tile": "hex-grass" }
+    { "q": -7, "r": 8, "tile": "hex-grass" },
+    { "q": -8, "r": 9, "tile": "hex-grass" },
+    { "q": -7, "r": 9, "tile": "hex-grass" }
   ],
   "objects": [
     { "model": "building-castle-red", "q": 2, "r": -6 },
@@ -1647,6 +1649,7 @@
     ]
   },
   "movement": {
+    "balloon": { "id": "home-balloon", "q": -8, "r": 9, "rot": 200 },
     "launches": [{ "id": "home-castle", "q": 6, "r": -8, "rot": 150 }],
     "lookouts": [
       {

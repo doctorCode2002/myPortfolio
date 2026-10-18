@@ -1,6 +1,7 @@
 /**
  * Exploration progress (the passport): islands visited, mayors met, tours taken, shards
- * found, fires lit, bridges driven, props smashed, weather and time seen, plus the
+ * found, fires lit, bridges driven, props smashed, weather and time seen, the balloon's
+ * view from above the clouds, plus the
  * achievements and unlocks they earn. Pure: no browser, three or react imports; the
  * store (store.ts) persists it.
  */
@@ -18,6 +19,7 @@ export const ACHIEVEMENTS = [
   "bridgesAll",
   "nightOwl",
   "rain",
+  "aboveClouds",
 ] as const;
 
 export type AchievementId = (typeof ACHIEVEMENTS)[number];
@@ -44,6 +46,8 @@ export type Progress = {
   smashed: number;
   night: boolean;
   rain: boolean;
+  /** Finished a scenic balloon tour or reached the balloon's ceiling. */
+  sky: boolean;
   achievements: AchievementId[];
   settings: MetaSettings;
 };
@@ -66,6 +70,7 @@ export function emptyProgress(): Progress {
     smashed: 0,
     night: false,
     rain: false,
+    sky: false,
     achievements: [],
     settings: { compassShards: true, goldCar: true, goldCloak: false },
   };
@@ -116,6 +121,7 @@ export function parseProgress(raw: string | null): Progress {
         : 0,
     night: d.night === true,
     rain: d.rain === true,
+    sky: d.sky === true,
     achievements: strings(d.achievements, ACH_IDS) as AchievementId[],
     settings: {
       compassShards:
@@ -158,6 +164,8 @@ export function achievementMet(
       return p.night;
     case "rain":
       return p.rain;
+    case "aboveClouds":
+      return p.sky;
   }
 }
 
