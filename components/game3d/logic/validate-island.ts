@@ -37,7 +37,7 @@ export function parseIsland3D(json: unknown, label = "island"): Island3D {
       throw new Error(`${label}: hexes[${i}] needs q, r and tile`);
     }
   });
-  for (const key of ["objects", "doors", "anchors"] as const) {
+  for (const key of ["objects", "doors", "anchors", "vehicles"] as const) {
     const list = json[key];
     if (list === undefined) continue;
     if (!Array.isArray(list))
@@ -46,6 +46,15 @@ export function parseIsland3D(json: unknown, label = "island"): Island3D {
       if (!hasQR(o)) throw new Error(`${label}: ${key}[${i}] needs q and r`);
     });
   }
+  const vehicles = json["vehicles"];
+  if (Array.isArray(vehicles))
+    vehicles.forEach((v, i) => {
+      const rec = v as Record<string, unknown>;
+      if (typeof rec["id"] !== "string" || !rec["id"])
+        throw new Error(`${label}: vehicles[${i}] needs an id`);
+      if (rec["rot"] !== undefined && !isNum(rec["rot"]))
+        throw new Error(`${label}: vehicles[${i}].rot must be a number`);
+    });
   return json as unknown as Island3D;
 }
 
@@ -71,6 +80,15 @@ export function islandProblems(island: Island3D): string[] {
   for (const a of island.anchors ?? []) {
     if (!keys.has(hexKey(a.q, a.r)))
       problems.push(`anchor ${a.id} is off the grid`);
+  }
+  const vehicleIds = new Set<string>();
+  for (const v of island.vehicles ?? []) {
+    if (vehicleIds.has(v.id)) problems.push(`duplicate vehicle ${v.id}`);
+    vehicleIds.add(v.id);
+    const hex = island.hexes.find((h) => h.q === v.q && h.r === v.r);
+    if (!hex) problems.push(`vehicle ${v.id} is off the grid`);
+    else if (/water/i.test(hex.tile))
+      problems.push(`vehicle ${v.id} is parked on water`);
   }
   const s = island.spawns?.player;
   if (!s) problems.push("missing spawns.player");

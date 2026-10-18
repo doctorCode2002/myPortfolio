@@ -48,6 +48,13 @@ export type BridgeCorridor = {
 export type WalkWorld = {
   islands: IslandWalkGrid[];
   bridges: BridgeCorridor[];
+  /**
+   * Keys of island objects that are currently broken (smashed by the car): their
+   * obstacles are skipped until they regrow. The break store's map is plugged in here.
+   */
+  broken: { has(key: string): boolean };
+  /** Moving obstacles (the parked car), replaced at runtime. */
+  dynamic: Obstacle[];
   /** The largest height difference a step may climb (one level plus slack). */
   maxStep: number;
   hexWidth: number;
@@ -172,7 +179,14 @@ export function buildWalkWorld(
     });
   }
 
-  return { islands: grids, bridges, maxStep: levelHeight * 1.25, hexWidth };
+  return {
+    islands: grids,
+    bridges,
+    broken: new Set<string>(),
+    dynamic: [],
+    maxStep: levelHeight * 1.25,
+    hexWidth,
+  };
 }
 
 /** Project a point onto a bridge's centre line. */
@@ -232,7 +246,10 @@ export function surfaceAt(
   return best;
 }
 
-/** All obstacles near a point (cheap pre-filter by island bounds is unnecessary at this size). */
+/**
+ * All obstacles near a point (cheap pre-filter by island bounds is unnecessary at this
+ * size), without broken objects and with the dynamic ones (the parked car).
+ */
 export function obstaclesNear(
   world: WalkWorld,
   x: number,
@@ -240,12 +257,18 @@ export function obstaclesNear(
   range: number
 ): Obstacle[] {
   const out: Obstacle[] = [];
+  const near = (o: Obstacle): boolean => {
+    const reach = obstacleReach(o) + range;
+    return Math.abs(o.x - x) <= reach && Math.abs(o.z - z) <= reach;
+  };
   for (const grid of world.islands) {
     for (const o of grid.obstacles) {
-      const reach = obstacleReach(o) + range;
-      if (Math.abs(o.x - x) <= reach && Math.abs(o.z - z) <= reach) out.push(o);
+      if (!near(o)) continue;
+      if (o.key !== undefined && world.broken.has(o.key)) continue;
+      out.push(o);
     }
   }
+  for (const o of world.dynamic) if (near(o)) out.push(o);
   return out;
 }
 

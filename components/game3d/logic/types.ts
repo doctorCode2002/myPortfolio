@@ -44,6 +44,15 @@ export type IslandDoor = {
 
 export type IslandAnchor = { id: string; q: number; r: number };
 
+/** A drivable vehicle parked on an island (the car spawn). */
+export type IslandVehicle = {
+  id: string;
+  q: number;
+  r: number;
+  /** Heading in degrees around +y (0 faces +z, like object rotations). */
+  rot?: number;
+};
+
 export type IslandUnderside = {
   depth?: number;
   style?: "rock" | "sand";
@@ -75,6 +84,8 @@ export type Island3D = {
     mayor?: { q: number; r: number; rot?: number };
   };
   anchors?: IslandAnchor[];
+  /** Optional drivable vehicles parked on this island. */
+  vehicles?: IslandVehicle[];
   underside?: IslandUnderside;
 };
 

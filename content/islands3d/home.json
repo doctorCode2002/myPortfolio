@@ -1639,7 +1639,8 @@
       "rot": 330,
       "scale": 1.15,
       "offset": [-0.08, -0.75]
-    }
+    },
+    { "model": "a-plaza-stone", "q": 2, "r": 5 }
   ],
   "doors": [
     { "buildingId": "building_experience", "q": 1, "r": -4, "radius": 0.9 },
@@ -1660,6 +1661,7 @@
     { "id": "to_onyx", "q": 3, "r": 5 },
     { "id": "to_saleh", "q": -8, "r": 5 }
   ],
+  "vehicles": [{ "id": "car", "q": 2, "r": 5, "rot": 240 }],
   "underside": {
     "depth": 10,
     "style": "rock",
