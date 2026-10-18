@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, X } from "lucide-react";
+import { Check, Lock, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import {
   createRef,
@@ -19,6 +19,19 @@ import { AVAILABLE_CHARACTERS, type CharacterId } from "../character-picker";
 import { gameEvents } from "../engine/events";
 import { usePickerControls } from "./use-picker-controls";
 import { usePickerModels } from "./use-picker-manifest";
+import {
+  getMetaSnapshot,
+  getServerMetaSnapshot,
+  setSetting,
+  subscribeMeta,
+} from "@/components/game3d/meta/store";
+import { allShardsFound } from "@/components/game3d/meta/progress";
+
+/** The hidden 7th option: a golden-cloaked rogue, earned by finding every sky shard. */
+const GOLDEN = "char_gold";
+const GOLDEN_BASE: CharacterId = "char_4";
+type PickerId = CharacterId | typeof GOLDEN;
+const PICKER_IDS: readonly PickerId[] = [...AVAILABLE_CHARACTERS, GOLDEN];
 
 const PreviewCanvas = dynamic(
   () => import("./preview-canvas").then((m) => m.PreviewCanvas),
@@ -99,13 +112,23 @@ function PickerDialog({
   locale: Locale;
 }): ReactNode {
   const rtl = isRtl(locale);
-  const [highlighted, setHighlighted] = useState<CharacterId>(
-    (AVAILABLE_CHARACTERS as readonly string[]).includes(selectedChar)
-      ? (selectedChar as CharacterId)
-      : "char_0"
+  const meta = useSyncExternalStore(
+    subscribeMeta,
+    getMetaSnapshot,
+    getServerMetaSnapshot
   );
-  const [hovered, setHovered] = useState<CharacterId | null>(null);
-  const [focused, setFocused] = useState<CharacterId | null>(null);
+  const goldUnlocked = allShardsFound(meta.progress);
+  const [highlighted, setHighlighted] = useState<PickerId>(() =>
+    goldUnlocked &&
+    meta.progress.settings.goldCloak &&
+    selectedChar === GOLDEN_BASE
+      ? GOLDEN
+      : (AVAILABLE_CHARACTERS as readonly string[]).includes(selectedChar)
+        ? (selectedChar as CharacterId)
+        : "char_0"
+  );
+  const [hovered, setHovered] = useState<PickerId | null>(null);
+  const [focused, setFocused] = useState<PickerId | null>(null);
   const [ready, setReady] = useState<ReadonlySet<string>>(() => new Set());
 
   const wide = useMediaQuery("(min-width: 640px)");
@@ -117,31 +140,34 @@ function PickerDialog({
   const [previewRefs] = useState(
     () =>
       Object.fromEntries(
-        AVAILABLE_CHARACTERS.map((id) => [id, createRef<HTMLDivElement>()])
-      ) as Record<CharacterId, RefObject<HTMLDivElement | null>>
+        PICKER_IDS.map((id) => [id, createRef<HTMLDivElement>()])
+      ) as Record<PickerId, RefObject<HTMLDivElement | null>>
   );
-  const cardRefs = useRef<Partial<Record<CharacterId, HTMLButtonElement>>>({});
+  const cardRefs = useRef<Partial<Record<PickerId, HTMLButtonElement>>>({});
 
   const { ready: manifestReady, models } =
     usePickerModels(AVAILABLE_CHARACTERS);
 
+  const locked = highlighted === GOLDEN && !goldUnlocked;
   const handleConfirm = useCallback((): void => {
+    if (highlighted === GOLDEN && !goldUnlocked) return;
+    setSetting("goldCloak", highlighted === GOLDEN);
     gameEvents.unlockUi("picker");
-    onSelect(highlighted);
-  }, [highlighted, onSelect]);
+    onSelect(highlighted === GOLDEN ? GOLDEN_BASE : highlighted);
+  }, [highlighted, onSelect, goldUnlocked]);
 
   const handleClose = useCallback((): void => {
     gameEvents.unlockUi("picker");
     onClose?.();
   }, [onClose]);
 
-  const focusCard = useCallback((id: CharacterId): void => {
+  const focusCard = useCallback((id: PickerId): void => {
     cardRefs.current[id]?.focus();
   }, []);
 
   usePickerControls({
     isOpen: true,
-    ids: AVAILABLE_CHARACTERS,
+    ids: PICKER_IDS,
     highlighted,
     setHighlighted,
     columns,
@@ -163,13 +189,17 @@ function PickerDialog({
 
   const slots = useMemo(
     () =>
-      AVAILABLE_CHARACTERS.map((charId) => ({
-        charId,
-        track: previewRefs[charId],
-        model: models[charId] ?? null,
-        active: hovered === charId || focused === charId,
-      })),
-    [previewRefs, hovered, focused, models]
+      // The golden option stays hidden (no preview) until it is earned.
+      PICKER_IDS.filter((id) => id !== GOLDEN || goldUnlocked).map(
+        (charId) => ({
+          charId,
+          track: previewRefs[charId],
+          model: models[charId === GOLDEN ? GOLDEN_BASE : charId] ?? null,
+          active: hovered === charId || focused === charId,
+          ...(charId === GOLDEN ? { golden: true } : {}),
+        })
+      ),
+    [previewRefs, hovered, focused, models, goldUnlocked]
   );
 
   return (
@@ -220,9 +250,13 @@ function PickerDialog({
               aria-label={dict.play.chooseCharacter}
               className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4"
             >
-              {AVAILABLE_CHARACTERS.map((charId, index) => {
+              {PICKER_IDS.map((charId, index) => {
                 const isSelected = highlighted === charId;
-                const name = dict.play.charNames[charId] ?? `#${index + 1}`;
+                const isGolden = charId === GOLDEN;
+                const isLocked = isGolden && !goldUnlocked;
+                const name = isGolden
+                  ? dict.play.meta.pickerGolden
+                  : (dict.play.charNames[charId] ?? `#${index + 1}`);
                 const loaded = manifestReady && ready.has(charId);
                 return (
                   <button
@@ -234,6 +268,10 @@ function PickerDialog({
                     type="button"
                     role="radio"
                     aria-checked={isSelected}
+                    aria-disabled={isLocked || undefined}
+                    aria-describedby={
+                      isLocked ? "char-picker-gold-locked" : undefined
+                    }
                     data-char-card={charId}
                     tabIndex={isSelected ? 0 : -1}
                     onClick={() => setHighlighted(charId)}
@@ -266,7 +304,7 @@ function PickerDialog({
                         aria-hidden
                         className="absolute inset-0"
                       />
-                      {!loaded && (
+                      {!loaded && !isLocked && (
                         <div
                           aria-hidden
                           className="picker-shimmer absolute inset-0 flex items-end justify-center pb-[8%]"
@@ -276,7 +314,22 @@ function PickerDialog({
                       )}
                     </div>
 
-                    {isSelected && (
+                    {isLocked && (
+                      <div className="absolute inset-2 bottom-8 z-[2] flex flex-col items-center justify-center gap-1 bg-[#261f18]/80 text-center text-[#f3e2b3]">
+                        <Lock aria-hidden className="h-6 w-6" />
+                        <span className="text-xs font-semibold">
+                          {dict.play.meta.pickerLocked}
+                        </span>
+                        <span
+                          id="char-picker-gold-locked"
+                          className="px-2 text-[10px] leading-tight opacity-90"
+                        >
+                          {dict.play.meta.pickerLockedHint}
+                        </span>
+                      </div>
+                    )}
+
+                    {isSelected && !isLocked && (
                       <div className="bg-accent text-accent-foreground absolute end-1.5 top-1.5 z-[2] flex h-5 w-5 items-center justify-center rounded-none">
                         <Check className="h-3 w-3 stroke-[3]" />
                       </div>
@@ -301,11 +354,46 @@ function PickerDialog({
         </div>
 
         <div className="px-4 pt-3 pb-4 sm:px-6 sm:pb-6">
+          <div
+            role="radiogroup"
+            aria-label={dict.play.meta.carPaint}
+            className="mb-3 flex items-center justify-center gap-2 text-xs"
+          >
+            <span className="text-muted-foreground">
+              {dict.play.meta.carPaint}
+            </span>
+            {(["standard", "gold"] as const).map((paint) => {
+              const on =
+                paint === "gold"
+                  ? goldUnlocked && meta.progress.settings.goldCar
+                  : !(goldUnlocked && meta.progress.settings.goldCar);
+              const disabled = paint === "gold" && !goldUnlocked;
+              return (
+                <button
+                  key={paint}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  disabled={disabled}
+                  title={disabled ? dict.play.meta.goldLocked : undefined}
+                  onClick={() => setSetting("goldCar", paint === "gold")}
+                  style={{ boxShadow: on ? PIXEL_SEL : PIXEL_UNSEL }}
+                  className={`focus-ring inline-flex cursor-pointer items-center gap-1 rounded-none px-2.5 py-1 font-semibold disabled:cursor-default disabled:opacity-50 ${on ? "bg-accent/15" : "bg-muted/40"}`}
+                >
+                  {disabled && <Lock aria-hidden className="h-3 w-3" />}
+                  {paint === "gold"
+                    ? dict.play.meta.paintGold
+                    : dict.play.meta.paintStandard}
+                </button>
+              );
+            })}
+          </div>
           <button
             type="button"
             onClick={handleConfirm}
+            disabled={locked}
             style={{ boxShadow: PIXEL_CONFIRM }}
-            className="focus-ring bg-accent text-accent-foreground w-full cursor-pointer rounded-none px-4 py-3 text-center text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 active:translate-y-0.5"
+            className="focus-ring bg-accent text-accent-foreground w-full cursor-pointer rounded-none px-4 py-3 text-center text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 active:translate-y-0.5 disabled:cursor-default disabled:opacity-50"
           >
             {dict.play.startExploring}
           </button>

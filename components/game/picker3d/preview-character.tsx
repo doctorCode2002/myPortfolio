@@ -19,6 +19,7 @@ import {
 } from "@/components/game3d/assets/characters";
 import { CapsuleCharacter } from "@/components/game3d/entities/character-model";
 import { SKY, SUN_DIR } from "@/components/game3d/scene/sky";
+import { setGoldCloak } from "@/components/game3d/meta/gold";
 import type { PreviewModel } from "./use-picker-manifest";
 
 /** Hand-held items are stripped by the curator; hide any that slip through (no crossguards). */
@@ -114,9 +115,11 @@ function AnimatedCharacter({
   still,
   poseTime,
   onReady,
+  golden,
 }: {
   url: string;
   scale: number;
+  golden: boolean;
   active: boolean;
   still: boolean;
   poseTime: number;
@@ -124,6 +127,9 @@ function AnimatedCharacter({
 }): ReactNode {
   const gltf = useGLTF(url);
   const scene = useCleanClone(gltf.scene);
+  useEffect(() => {
+    if (golden) setGoldCloak(scene, true);
+  }, [scene, golden]);
   const root = useRef<THREE.Group>(null);
   const turn = useRef<THREE.Group>(null);
   const { actions, names, mixer } = useAnimations(gltf.animations, root);
@@ -213,9 +219,11 @@ export function PreviewCharacter({
   still = false,
   poseTime = 0,
   onReady,
+  golden = false,
 }: {
   charId: string;
   model: PreviewModel;
+  golden?: boolean;
   active?: boolean;
   still?: boolean;
   poseTime?: number;
@@ -234,6 +242,7 @@ export function PreviewCharacter({
         <AnimatedCharacter
           url={model.url}
           scale={model.scale}
+          golden={golden}
           active={active}
           still={still}
           poseTime={poseTime}

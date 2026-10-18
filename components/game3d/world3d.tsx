@@ -65,6 +65,9 @@ import { GuestbookStone } from "./social/guestbook-stone";
 import { GUESTBOOK_STONE_ID } from "./social/stone-layout";
 import { VisitorGhosts } from "./social/visitor-ghosts";
 import { WorkshopLife } from "./workshop/workshop-life";
+import { MetaHud } from "@/components/game/meta-ui/meta-hud";
+import { MetaLayer } from "./meta/meta-layer";
+import type { FireLabels } from "./meta/fires";
 
 const MOVE_KEYS = new Set([
   "KeyW",
@@ -202,6 +205,7 @@ function Scene({
   reducedMotion,
   visitorLabel,
   moveLabels,
+  metaLabels,
 }: {
   world: GameWorld;
   manifest: Manifest | null;
@@ -213,6 +217,7 @@ function Scene({
   reducedMotion: boolean;
   visitorLabel: string;
   moveLabels: MovementLabels;
+  metaLabels: FireLabels;
 }): ReactNode {
   const center = useMemo(() => {
     const n = world.islands.length || 1;
@@ -295,6 +300,12 @@ function Scene({
       <Clouds center={center} reducedMotion={reducedMotion} />
       <Birds center={center} reducedMotion={reducedMotion} />
       <Atmosphere world={world} phone={touch} reducedMotion={reducedMotion} />
+      <MetaLayer
+        world={world}
+        labels={metaLabels}
+        touch={touch}
+        reducedMotion={reducedMotion}
+      />
       {debug && <WalkGridViz world={world} />}
       {process.env.NODE_ENV !== "production" && <ExposeThree />}
     </>
@@ -392,6 +403,16 @@ export function World3D({
     [manifest, bounds]
   );
   const labels = useMemo(() => buildLabels(dict, locale), [dict, locale]);
+  const metaLabels = useMemo<FireLabels>(
+    () => ({
+      light: dict.play.meta.fireLight,
+      lit: dict.play.meta.fireLit,
+      litHint: dict.play.meta.fireLitHint,
+      tap: dict.play.tap,
+      rtl: isRtl(locale),
+    }),
+    [dict, locale]
+  );
   const moveLabels = useMemo<MovementLabels>(
     () => ({
       glide: dict.play.movement.glide,
@@ -456,6 +477,7 @@ export function World3D({
                   reducedMotion={reducedMotion}
                   visitorLabel={dict.play.social.visitor}
                   moveLabels={moveLabels}
+                  metaLabels={metaLabels}
                 />
               )}
             </Suspense>
@@ -490,6 +512,15 @@ export function World3D({
         touch={touch}
         rtl={isRtl(locale)}
       />
+      {world && (
+        <MetaHud
+          rtRef={rtRef}
+          world={world}
+          dict={dict}
+          touch={touch}
+          rtl={isRtl(locale)}
+        />
+      )}
       {debug && world && <DebugOverlay rtRef={rtRef} world={world} />}
       <LoadingVeil label={dict.play.loading} show={!world} />
     </div>

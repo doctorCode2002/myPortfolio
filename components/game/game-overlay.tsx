@@ -6,6 +6,7 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { AtmosphereControls } from "@/components/game3d/atmosphere/atmosphere-controls";
 import { localePath, type Locale } from "@/lib/i18n";
 import { gameEvents } from "./engine/events";
+import { MetaButtons, usePhotoMode } from "./meta-ui/meta-buttons";
 import { CharacterPortrait } from "./picker3d/character-portrait";
 import { GuestbookDialog } from "./social-ui/guestbook-dialog";
 import { SocialControls } from "./social-ui/social-controls";
@@ -31,9 +32,13 @@ export function GameOverlay({
       setCurrentZoom(zoom);
     });
   }, []);
+  // Photo mode hides the whole HUD.
+  const photo = usePhotoMode();
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-40 overflow-hidden select-none">
+    <div
+      className={`pointer-events-none absolute inset-0 z-40 overflow-hidden select-none ${photo ? "hidden" : ""}`}
+    >
       {/* Top controls, stacked: "Back to portfolio", then "Change character", then zoom */}
       <div className="pointer-events-auto absolute start-4 top-4 flex flex-col items-start gap-2 sm:start-6 sm:top-6">
         <Link
@@ -111,6 +116,7 @@ export function GameOverlay({
         {/* 3D only: ambient sound and time of day. */}
         {portrait === "3d" && <AtmosphereControls dict={dict} />}
         {portrait === "3d" && <SocialControls dict={dict} />}
+        {portrait === "3d" && <MetaButtons dict={dict} />}
       </div>
       {portrait === "3d" && <GuestbookDialog dict={dict} locale={locale} />}
 

@@ -489,6 +489,112 @@
           "Next milestone: illustrated bridges and live project pavilions connecting to Khidmty and CivicMind."
         ]
       }
+    },
+    "meta": {
+      "passport": "Passport",
+      "passportHint": "Open the sky passport (P)",
+      "passportTitle": "Sky passport",
+      "close": "Close",
+      "prevPage": "Previous page",
+      "nextPage": "Next page",
+      "page": "Page {n} of {total}",
+      "visited": "Visited",
+      "notVisited": "Not visited yet",
+      "mayor": "Mayor met",
+      "noMayor": "No mayor here",
+      "tour": "Tour taken",
+      "noTour": "No tour here",
+      "shards": "Sky shards",
+      "fire": "Signal fire lit",
+      "done": "Done",
+      "notYet": "Not yet",
+      "achievementsTitle": "Achievements",
+      "settingsTitle": "Settings",
+      "compassShards": "Compass points to the nearest sky shard",
+      "goldCar": "Golden car paint",
+      "goldLocked": "Find every sky shard to unlock",
+      "smashCount": "Props smashed: {n} of {goal}",
+      "achievements": {
+        "visitAll": {
+          "name": "Island hopper",
+          "desc": "Visited every island"
+        },
+        "mayorsAll": {
+          "name": "Friend of the mayors",
+          "desc": "Met every mayor"
+        },
+        "tour": {
+          "name": "Tourist",
+          "desc": "Took a tour"
+        },
+        "shardsAll": {
+          "name": "Shard seeker",
+          "desc": "Found all sky shards"
+        },
+        "smash50": {
+          "name": "Wrecking crew",
+          "desc": "Smashed 50 props with the car"
+        },
+        "bridgesAll": {
+          "name": "Bridge runner",
+          "desc": "Drove across every bridge"
+        },
+        "nightOwl": {
+          "name": "Night owl",
+          "desc": "Played at night"
+        },
+        "rain": {
+          "name": "Caught in the rain",
+          "desc": "Stood out in a rain shower"
+        }
+      },
+      "toastShard": "Sky shard found ({n} of {total})",
+      "toastStamp": "Passport stamp: {island}",
+      "toastFire": "Signal fire lit: {island}",
+      "toastAchievement": "Achievement unlocked",
+      "toastGoldCar": "Unlocked: golden car paint",
+      "toastGoldCloak": "Unlocked: the Golden Wanderer (in the character picker)",
+      "map": "Map",
+      "mapShow": "Show the map",
+      "mapHide": "Hide the map",
+      "mapLabel": "Island map. Choose an island to set it as the compass target.",
+      "target": "Compass target",
+      "clearTarget": "Clear target",
+      "travel": "Travel here",
+      "travelNeedsFire": "Light this island's signal fire to travel here",
+      "travelNotDriving": "Get out of the car to travel",
+      "travelling": "Travelling to {island}",
+      "youAreHere": "You are here",
+      "unvisited": "not visited",
+      "compass": "Compass",
+      "nearestShard": "Nearest sky shard",
+      "north": "N",
+      "east": "E",
+      "south": "S",
+      "west": "W",
+      "fireLight": "Light the signal fire",
+      "fireLit": "Signal fire lit",
+      "fireLitHint": "Travel here from the map",
+      "photo": "Photo",
+      "photoHint": "Photo mode (C)",
+      "photoTitle": "Photo mode",
+      "photoExit": "Exit photo mode (Esc)",
+      "photoDownload": "Download PNG",
+      "photoCaption": "Caption",
+      "photoFilter": "Filter",
+      "filters": {
+        "none": "None",
+        "warm": "Warm",
+        "cool": "Cool",
+        "mono": "Mono"
+      },
+      "photoHelp": "Drag to orbit, scroll or pinch to zoom, arrow keys to turn, + and - to zoom",
+      "pickerGolden": "Golden Wanderer",
+      "pickerLocked": "Locked",
+      "pickerLockedHint": "Find every sky shard to unlock",
+      "carPaint": "Car paint",
+      "paintStandard": "Standard",
+      "paintGold": "Gold"
     }
   },
 

@@ -13,6 +13,8 @@ export type PreviewSlot = {
   track: RefObject<HTMLElement | null>;
   model: PreviewModel;
   active: boolean;
+  /** The golden-cloak variant (a material recolour). */
+  golden?: boolean;
 };
 
 /** In demand mode (reduced motion) the views only redraw when the page scrolls or resizes. */
@@ -125,6 +127,7 @@ export function PreviewCanvas({
             charId={slot.charId}
             model={slot.model}
             active={slot.active}
+            golden={slot.golden ?? false}
             still={reducedMotion}
             poseTime={0.35}
             onReady={() => onReady(slot.charId)}

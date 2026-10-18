@@ -19,6 +19,7 @@ import {
   type MusicTrack,
 } from "./mix";
 import { onSoundCue } from "./sound-store";
+import { playChime } from "../meta/chime";
 
 const BASE = "/game3d/audio/";
 const STEP_FILES: Record<FootSurface, string[]> = {
@@ -258,6 +259,10 @@ export default function AudioSystem({
     window.addEventListener("keydown", resume);
     let lastImpact = 0;
     const offCue = onSoundCue((cue) => {
+      if (cue.kind === "chime") {
+        playChime(engine.ctx, engine.master, cue.strength, cue.pitch);
+        return;
+      }
       if (cue.kind !== "impact") return;
       const now = performance.now();
       if (now - lastImpact < 140) return;

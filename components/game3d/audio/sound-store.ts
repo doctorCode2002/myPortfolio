@@ -41,7 +41,10 @@ export function subscribeSound(cb: Listener): () => void {
 }
 
 /** One-shot sound requests (strength 0..1). */
-export type SoundCue = { kind: "impact"; strength: number };
+export type SoundCue =
+  | { kind: "impact"; strength: number }
+  /** A synthesized chime (sky shard pickups; `pitch` < 1 for lighting a fire). */
+  | { kind: "chime"; strength: number; pitch?: number };
 type CueListener = (cue: SoundCue) => void;
 const cueListeners = new Set<CueListener>();
 

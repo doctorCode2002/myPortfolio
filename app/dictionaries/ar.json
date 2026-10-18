@@ -491,6 +491,112 @@
           "المحطة القادمة: الجسور المعلقة ومباني المشاريع الحية التي تربط بجزر خدمتي و CivicMind."
         ]
       }
+    },
+    "meta": {
+      "passport": "جواز السفر",
+      "passportHint": "افتح جواز سفر السماء (P)",
+      "passportTitle": "جواز سفر السماء",
+      "close": "إغلاق",
+      "prevPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "page": "الصفحة {n} من {total}",
+      "visited": "تمت الزيارة",
+      "notVisited": "لم تتم الزيارة بعد",
+      "mayor": "تم لقاء العمدة",
+      "noMayor": "لا يوجد عمدة هنا",
+      "tour": "تمت الجولة",
+      "noTour": "لا توجد جولة هنا",
+      "shards": "شظايا السماء",
+      "fire": "شعلة الإشارة مضاءة",
+      "done": "تم",
+      "notYet": "ليس بعد",
+      "achievementsTitle": "الإنجازات",
+      "settingsTitle": "الإعدادات",
+      "compassShards": "البوصلة تشير إلى أقرب شظية سماء",
+      "goldCar": "طلاء السيارة الذهبي",
+      "goldLocked": "اعثر على كل شظايا السماء لفتحه",
+      "smashCount": "الأغراض المحطمة: {n} من {goal}",
+      "achievements": {
+        "visitAll": {
+          "name": "متنقل الجزر",
+          "desc": "زرت كل الجزر"
+        },
+        "mayorsAll": {
+          "name": "صديق العمد",
+          "desc": "قابلت كل العمد"
+        },
+        "tour": {
+          "name": "سائح",
+          "desc": "أخذت جولة"
+        },
+        "shardsAll": {
+          "name": "صائد الشظايا",
+          "desc": "وجدت كل شظايا السماء"
+        },
+        "smash50": {
+          "name": "فريق الهدم",
+          "desc": "حطمت 50 غرضًا بالسيارة"
+        },
+        "bridgesAll": {
+          "name": "عابر الجسور",
+          "desc": "قدت عبر كل الجسور"
+        },
+        "nightOwl": {
+          "name": "بومة الليل",
+          "desc": "لعبت في الليل"
+        },
+        "rain": {
+          "name": "تحت المطر",
+          "desc": "وقفت تحت زخة مطر"
+        }
+      },
+      "toastShard": "وجدت شظية سماء ({n} من {total})",
+      "toastStamp": "ختم جواز السفر: {island}",
+      "toastFire": "أضيئت شعلة الإشارة: {island}",
+      "toastAchievement": "إنجاز جديد",
+      "toastGoldCar": "تم فتح: طلاء السيارة الذهبي",
+      "toastGoldCloak": "تم فتح: الرحالة الذهبي (في اختيار الشخصية)",
+      "map": "الخريطة",
+      "mapShow": "إظهار الخريطة",
+      "mapHide": "إخفاء الخريطة",
+      "mapLabel": "خريطة الجزر. اختر جزيرة لتجعلها هدف البوصلة.",
+      "target": "هدف البوصلة",
+      "clearTarget": "إلغاء الهدف",
+      "travel": "انتقل إلى هنا",
+      "travelNeedsFire": "أشعل شعلة الإشارة في هذه الجزيرة لتنتقل إليها",
+      "travelNotDriving": "انزل من السيارة لتنتقل",
+      "travelling": "جارٍ الانتقال إلى {island}",
+      "youAreHere": "أنت هنا",
+      "unvisited": "لم تُزر",
+      "compass": "البوصلة",
+      "nearestShard": "أقرب شظية سماء",
+      "north": "ش",
+      "east": "ق",
+      "south": "ج",
+      "west": "غ",
+      "fireLight": "أشعل شعلة الإشارة",
+      "fireLit": "شعلة الإشارة مضاءة",
+      "fireLitHint": "انتقل إلى هنا من الخريطة",
+      "photo": "صورة",
+      "photoHint": "وضع التصوير (C)",
+      "photoTitle": "وضع التصوير",
+      "photoExit": "الخروج من وضع التصوير (Esc)",
+      "photoDownload": "تنزيل PNG",
+      "photoCaption": "تعليق",
+      "photoFilter": "مرشح",
+      "filters": {
+        "none": "بدون",
+        "warm": "دافئ",
+        "cool": "بارد",
+        "mono": "أحادي"
+      },
+      "photoHelp": "اسحب للدوران، مرّر أو اقرص للتكبير، الأسهم للالتفاف، + و - للتكبير",
+      "pickerGolden": "الرحالة الذهبي",
+      "pickerLocked": "مقفل",
+      "pickerLockedHint": "اعثر على كل شظايا السماء لفتحه",
+      "carPaint": "طلاء السيارة",
+      "paintStandard": "عادي",
+      "paintGold": "ذهبي"
     }
   },
 
