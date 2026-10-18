@@ -22,6 +22,7 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { gameEvents } from "@/components/game/engine/events";
 import { ISLANDS_3D } from "@/content/islands3d";
 import { BRIDGES, ISLANDS } from "@/lib/content/world";
+import { progressSigns } from "@/lib/content/world.panels";
 import { getMayorDialogue } from "@/lib/content/world.selectors";
 import { isRtl, type Locale } from "@/lib/i18n";
 import { fetchManifest, fetchModelBounds } from "./assets/manifest";
@@ -46,6 +47,7 @@ import {
 } from "./logic/world-layout";
 import * as carLogic from "./logic/car";
 import { createRuntime, RuntimeContext, type Runtime } from "./runtime";
+import { Atmosphere } from "./atmosphere/atmosphere";
 import { Birds } from "./scene/birds";
 import { ShaderClock } from "./scene/clock";
 import { Clouds } from "./scene/clouds";
@@ -54,6 +56,7 @@ import { SKY, SkyDome } from "./scene/sky";
 import { DriveHud } from "./ui/drive-hud";
 import { Joystick } from "./ui/joystick";
 import { CarSystem } from "./vehicle/car-system";
+import { WorkshopLife } from "./workshop/workshop-life";
 
 const MOVE_KEYS = new Set([
   "KeyW",
@@ -97,6 +100,7 @@ function buildLabels(dict: Dictionary, locale: Locale): PromptLabels {
   const signs: Record<string, string> = {};
   for (const [id, entry] of Object.entries(buildings))
     if (entry?.sign) signs[id] = entry.sign;
+  Object.assign(signs, progressSigns(locale));
   const npcNames: Record<string, string> = {};
   for (const island of ISLANDS) {
     if (island.mayor)
@@ -248,6 +252,7 @@ function Scene({
           );
         })}
       <CarSystem world={world} manifest={manifest} />
+      <WorkshopLife world={world} manifest={manifest} />
       <Player world={world} manifest={manifest} charId={charId} />
       <TargetMarker />
       <Interactions world={world} labels={labels} touch={touch} />
@@ -262,6 +267,7 @@ function Scene({
       <FollowCamera world={world} />
       <Clouds center={center} reducedMotion={reducedMotion} />
       <Birds center={center} reducedMotion={reducedMotion} />
+      <Atmosphere world={world} phone={touch} reducedMotion={reducedMotion} />
       {debug && <WalkGridViz world={world} />}
       {process.env.NODE_ENV !== "production" && <ExposeThree />}
     </>

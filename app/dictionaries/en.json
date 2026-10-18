@@ -314,6 +314,19 @@
     "driveHint": "W/S drive, A/D steer, Space brake, E exit",
     "driveTouchHint": "Joystick: up/down to drive, left/right to steer",
     "exitCar": "Exit car",
+    "atmosphere": {
+      "soundOn": "Sound on",
+      "soundOff": "Sound off",
+      "soundHint": "Turn ambient sound on or off",
+      "timeHint": "Change the time of day",
+      "time": {
+        "auto": "Local time",
+        "dawn": "Dawn",
+        "day": "Day",
+        "sunset": "Sunset",
+        "night": "Night"
+      }
+    },
     "dialogueNext": "Next",
     "dialogueClose": "Close",
     "demoNpcName": "Island Mayor",
@@ -359,7 +372,16 @@
       "hobbies": "Hobbies",
       "family": "Family",
       "news": "News",
-      "portal": "Portal"
+      "portal": "Portal",
+      "inProgress": "In progress",
+      "progressLabel": "Progress",
+      "statusLabel": "Status",
+      "status": {
+        "planning": "Planning",
+        "building": "Building",
+        "testing": "Testing",
+        "polishing": "Polishing"
+      }
     },
     "buildings": {
       "castle": {
@@ -455,6 +477,10 @@
       "eyad": {
         "name": "Eyad Island",
         "sign": "Eyad Studio — Modern portfolio and client portal for a brand designer."
+      },
+      "workshop": {
+        "name": "Workshop Island",
+        "sign": "Under construction — Projects still being built. Walk up to a site to see how far along it is."
       }
     },
     "buildings": {
@@ -536,6 +562,14 @@
       "mayor_eyad": {
         "lines": [
           "Eyad is the mayor of this island. Talk to hear what he said about working with Mohammed."
+        ]
+      },
+      "mayor_workshop": {
+        "name": "Site Foreman (Demo)",
+        "title": "Workshop Foreman",
+        "lines": [
+          "Hard hats on! Everything on this island is still being built.",
+          "Each site has a door. Step up to one to see the project and how far along it is."
         ]
       }
     },
