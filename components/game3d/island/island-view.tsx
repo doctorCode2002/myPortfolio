@@ -35,6 +35,7 @@ import {
 } from "../logic/ground";
 import { HEX_DIRECTIONS, hexKey } from "../logic/hex";
 import { createRng, seedFromString } from "../logic/noise";
+import { buildRoadNetwork, isRoadTile, onRoad } from "../logic/roads";
 import { scatterDecor } from "../logic/scatter";
 import type { Island3D, Manifest } from "../logic/types";
 import { buildUnderside } from "../logic/underside";
@@ -54,6 +55,7 @@ import {
   type TerraceWall,
 } from "./geometry";
 import { LampGlows, type Glow } from "./lamp-glows";
+import { buildRoadGeometry } from "./road-geometry";
 import { Roots } from "./roots";
 import { Waterfall } from "./waterfall";
 
@@ -72,7 +74,14 @@ type Placement = {
   grade: GradeMode | null;
 };
 
-type SkinCell = { x: number; z: number; y: number; palette: GroundPalette };
+type SkinCell = {
+  x: number;
+  z: number;
+  y: number;
+  palette: GroundPalette;
+  /** Road ramps: the skin follows the cell's slope. */
+  slope?: WalkCell;
+};
 
 /** Ground decoration candidates (only those present and allowed in the manifest are used). */
 const SCATTER_MODELS = [
@@ -90,11 +99,17 @@ const DESERT_SCATTER = [
   { name: "cactus-short", weight: 0.6 },
 ];
 
-/** Flat grass and sand tiles get the continuous skin; slopes, roads, coasts and water keep their tile top. */
+/**
+ * Flat grass and sand tiles get the continuous skin; slopes, coasts and water keep their
+ * tile top. Road tiles (ramps included) are skinned too: the wide road ribbons are drawn
+ * over them, and a road ramp's skin follows the walk grid's slope profile (the KayKit
+ * ramp's raised verges would poke through the ribbon).
+ */
 function isSkinTile(name: string, manifest: Manifest | null): boolean {
   const m = manifest?.models[name];
   const text = [name, ...(m?.tags ?? [])].join(" ");
   if (m && m.kind !== "terrain") return false;
+  if (isRoadTile(name)) return true;
   return (
     /grass|sand|dune/i.test(text) &&
     !/slope|ramp|coast|water|river|road|bottom|stone|path/i.test(text)
@@ -221,8 +236,16 @@ export function IslandView({
       if (skinned.has(key)) {
         // The skin replaces the tile top; terrace walls replace its bevelled sides.
         const top = cell.y;
-        skinCells.push({ x: cell.x, z: cell.z, y: flatY, palette: pal });
+        skinCells.push({
+          x: cell.x,
+          z: cell.z,
+          y: flatY,
+          palette: pal,
+          ...(cell.slope ? { slope: cell } : {}),
+        });
         const side = groundSide(pal);
+        const hAt = (c: WalkCell, x: number, z: number): number =>
+          c.slope ? cellHeightAt(c, x, z, grid.hexWidth) : c.y;
         for (let i = 0; i < 6; i++) {
           const dir = HEX_DIRECTIONS[(6 - i) % 6] as { q: number; r: number };
           const nKey = hexKey(cell.q + dir.q, cell.r + dir.r);
@@ -233,7 +256,8 @@ export function IslandView({
           const mz = (az + bz) / 2;
           let bottom: number;
           if (!n) bottom = baseY - tileThickness;
-          else if (skinned.has(nKey)) bottom = n.y;
+          else if (skinned.has(nKey))
+            bottom = n.slope ? Math.min(hAt(n, ax, az), hAt(n, bx, bz)) : n.y;
           else if (n.water && !n.deck)
             bottom = tileTop(n, island, levelHeight) - 0.2;
           else
@@ -241,13 +265,16 @@ export function IslandView({
               cellHeightAt(n, mx, mz, grid.hexWidth),
               tileTop(n, island, levelHeight)
             );
-          if (top - bottom > 0.02)
+          const topA = cell.slope ? hAt(cell, ax, az) : top;
+          const topB = cell.slope ? hAt(cell, bx, bz) : top;
+          if (Math.max(topA, topB) - bottom > 0.02)
             walls.push({
               ax,
               az,
               bx,
               bz,
-              top: top + 0.012,
+              top: topA + 0.012,
+              ...(cell.slope ? { topB: topB + 0.012 } : {}),
               bottom: bottom - 0.01,
               lip: side.lip,
               soil: side.soil,
@@ -300,6 +327,14 @@ export function IslandView({
     islandPal,
   ]);
 
+  const roads = useMemo(
+    () =>
+      buildRoadNetwork(island, grid, {
+        heightJitter: island.heightJitter ?? 0,
+      }),
+    [island, grid]
+  );
+
   const objects = useMemo(() => {
     const objectMap = new Map<string, Placement>();
     const objectFallback: (ColoredInstance & { kind: ObjectKind })[] = [];
@@ -327,11 +362,14 @@ export function IslandView({
       const kind = objectKind(obj.model, manifest);
       // Bridge models sit on the tile (their deck is the raised walk surface); props on a
       // skinned hex follow the skin; props on water float at the water line.
-      // Ground decals (crop rows, path stones) are lifted just above the grass skin.
+      // Ground decals (crop rows, path stones) are lifted just above the grass skin,
+      // or above the road ribbon on road hexes.
       const decalLift =
         terrain.skinnedKeys.has(hexKey(obj.q, obj.r)) &&
         isGroundDecal(obj.model, manifest)
-          ? 0.03
+          ? isRoadTile(cell.tile)
+            ? 0.085
+            : 0.03
           : 0;
       const y =
         kind === "bridge" || cell.deck
@@ -376,8 +414,8 @@ export function IslandView({
     }
 
     // Ground decoration on open skinned hexes (count-capped, one instanced mesh per model).
-    const scatterCells = [...grid.cells.values()].filter((c) =>
-      terrain.skinnedKeys.has(hexKey(c.q, c.r))
+    const scatterCells = [...grid.cells.values()].filter(
+      (c) => terrain.skinnedKeys.has(hexKey(c.q, c.r)) && !c.slope
     );
     const models = (
       islandPal === "sand" ? DESERT_SCATTER : SCATTER_MODELS
@@ -386,6 +424,8 @@ export function IslandView({
       models,
       size,
       maxTotal: 200,
+      // Keep the road ribbons clear (plus a margin for the item's own size).
+      isClear: (x, z) => !onRoad(roads, x, z, 0.15),
     })) {
       const model = allowedModel(manifest, it.model);
       const url = modelUrl(manifest, it.model);
@@ -419,6 +459,7 @@ export function IslandView({
     levelHeight,
     islandPal,
     terrain.skinnedKeys,
+    roads,
   ]);
 
   const underside = useMemo(() => {
@@ -457,13 +498,25 @@ export function IslandView({
       terrain.skinCells,
       size,
       (x, z, cell) => groundColor(cell.palette, x, z),
-      (x, z, flatY) => flatY + 0.012 + groundLift(x, z, amp)
+      (x, z, flatY, cell) =>
+        cell.slope
+          ? cellHeightAt(cell.slope, x, z, grid.hexWidth) + 0.012
+          : flatY + 0.012 + groundLift(x, z, amp)
     );
     return {
       geometry,
       material: new THREE.MeshLambertMaterial({ vertexColors: true }),
     };
-  }, [terrain.skinCells, size, island.heightJitter]);
+  }, [terrain.skinCells, size, island.heightJitter, grid.hexWidth]);
+
+  const roadGeometry = useMemo(
+    () =>
+      buildRoadGeometry(roads, grid, {
+        palette: islandPal,
+        heightJitter: island.heightJitter ?? 0,
+      }),
+    [roads, grid, islandPal, island.heightJitter]
+  );
 
   const walls = useMemo(
     () => (terrain.walls.length ? buildTerraceWalls(terrain.walls) : null),
@@ -529,6 +582,14 @@ export function IslandView({
         <mesh geometry={skin.geometry} material={skin.material} receiveShadow />
       )}
       {walls && <mesh geometry={walls} material={flatMaterial} receiveShadow />}
+      {roadGeometry && (
+        <mesh
+          geometry={roadGeometry}
+          material={flatMaterial}
+          receiveShadow
+          name={`roads-${island.id}`}
+        />
+      )}
       <mesh
         geometry={underside.geometry}
         material={flatMaterial}

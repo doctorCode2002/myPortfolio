@@ -137,7 +137,7 @@ export function buildGrassSkin<C extends { x: number; z: number; y: number }>(
   cells: readonly C[],
   size: number,
   colorAt: (x: number, z: number, cell: C) => [number, number, number],
-  heightAt: (x: number, z: number, cellY: number) => number
+  heightAt: (x: number, z: number, cellY: number, cell: C) => number
 ): THREE.BufferGeometry {
   const pos: number[] = [];
   const col: number[] = [];
@@ -146,7 +146,7 @@ export function buildGrassSkin<C extends { x: number; z: number; y: number }>(
     return [Math.cos(a) * size * 1.002, Math.sin(a) * size * 1.002];
   };
   const push = (x: number, z: number, cell: C): void => {
-    pos.push(x, heightAt(x, z, cell.y), z);
+    pos.push(x, heightAt(x, z, cell.y, cell), z);
     const c = colorAt(x, z, cell);
     col.push(c[0], c[1], c[2]);
   };
@@ -196,6 +196,8 @@ export type TerraceWall = {
   bx: number;
   bz: number;
   top: number;
+  /** Top at the b end when it differs from `top` (the sides of a ramp). */
+  topB?: number;
   bottom: number;
   lip: [number, number, number];
   soil: [number, number, number];
@@ -213,29 +215,42 @@ export function buildTerraceWalls(
 ): THREE.BufferGeometry {
   const pos: number[] = [];
   const col: number[] = [];
+  /** Quad between heights y0 (top) and y1 at a, and y0b and y1b at b. */
   const quad = (
     a: [number, number],
     b: [number, number],
     y0: number,
     y1: number,
     c: [number, number, number],
-    jitter: number
+    jitter: number,
+    y0b = y0,
+    y1b = y1
   ): void => {
-    if (y0 - y1 < 1e-3) return;
+    if (y0 - y1 < 1e-3 && y0b - y1b < 1e-3) return;
     const k = 0.92 + jitter * 0.14;
     const cc: [number, number, number] = [c[0] * k, c[1] * k, c[2] * k];
     const A = [a[0], y0, a[1]];
-    const B = [b[0], y0, b[1]];
-    const C = [b[0], y1, b[1]];
-    const D = [a[0], y1, a[1]];
+    const B = [b[0], y0b, b[1]];
+    const C = [b[0], Math.min(y1b, y0b), b[1]];
+    const D = [a[0], Math.min(y1, y0), a[1]];
     pos.push(...A, ...B, ...D, ...B, ...C, ...D);
     for (let i = 0; i < 6; i++) col.push(cc[0], cc[1], cc[2]);
   };
   walls.forEach((w, i) => {
     const a: [number, number] = [w.ax, w.az];
     const b: [number, number] = [w.bx, w.bz];
-    const h = w.top - w.bottom;
     const j = ((i * 7919) % 13) / 13;
+    if (w.topB !== undefined && Math.abs(w.topB - w.top) > 1e-3) {
+      // A sloped top (ramp sides): lip and soil only, each following the slope.
+      const ta = w.top;
+      const tb = w.topB;
+      const la = Math.max(w.bottom, ta - 0.12);
+      const lb = Math.max(w.bottom, tb - 0.12);
+      quad(a, b, ta, la, w.lip, j, tb, lb);
+      quad(a, b, la, w.bottom, w.soil, j, lb, w.bottom);
+      return;
+    }
+    const h = w.top - w.bottom;
     const lipBottom = w.top - Math.min(0.12, h);
     quad(a, b, w.top, lipBottom, w.lip, j);
     const soilBottom = h > 0.75 ? w.top - 0.55 : w.bottom;
