@@ -32,16 +32,20 @@ import {
 } from "../logic/walk-world";
 import type { Zipline } from "../logic/zipline";
 
+/** The balloon's overall scale: the model and every size below it (unit sizes x SIZE). */
+export const BALLOON_SIZE = 0.62;
+
 export const BALLOON = {
-  /** Basket half-width (corner radius ~0.92). */
-  basketHalf: 0.65,
+  size: BALLOON_SIZE,
+  /** Basket half-width (corner radius ~0.92 at full size). */
+  basketHalf: 0.65 * BALLOON_SIZE,
   /** Collision radius of the basket and its clearance over props, decks and cables. */
-  basketR: 0.9,
+  basketR: 0.9 * BALLOON_SIZE,
   clearObj: 0.45,
   /** The envelope column: from this far above the floor, this wide, up to `envTop`. */
-  envBottom: 3.3,
-  envR: 3.6,
-  envTop: 11.1,
+  envBottom: 3.3 * BALLOON_SIZE,
+  envR: 3.6 * BALLOON_SIZE,
+  envTop: 11.1 * BALLOON_SIZE,
   clearEnv: 0.5,
   /** Burner climb and vent descent (m/s), and the vertical response (1/s). */
   climb: 2.4,
@@ -1186,4 +1190,38 @@ export function tourFrom(bw: BalloonWorld, spot: Parking): TourPath {
     toursFrom.set(spot, tour);
   }
   return tour;
+}
+
+/** How far (horizontally, m) from a marked landing pad the balloon may land on it. */
+export const PAD_RANGE = 4.5;
+
+/** Every island's marked landing pad (home's is the launch field). */
+export function landingPads(env: BalloonEnv): Parking[] {
+  const pads: Parking[] = [];
+  for (const isl of env.islands) if (isl.landing) pads.push(isl.landing);
+  return pads;
+}
+
+/**
+ * The marked pad the balloon could land on from here: the nearest within PAD_RANGE.
+ * `low` says whether the basket is also low enough over it to land now.
+ */
+export function padNear(
+  env: BalloonEnv,
+  s: { x: number; y: number; z: number }
+): { pad: Parking; low: boolean } | null {
+  let best: Parking | null = null;
+  let bestD = PAD_RANGE;
+  for (const isl of env.islands) {
+    const l = isl.landing;
+    if (!l) continue;
+    const d = Math.hypot(s.x - l.x, s.z - l.z);
+    if (d < bestD) {
+      bestD = d;
+      best = l;
+    }
+  }
+  if (!best) return null;
+  const low = s.y - best.y <= BALLOON.landHeight && s.y >= best.y - 0.1;
+  return { pad: best, low };
 }

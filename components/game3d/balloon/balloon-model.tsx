@@ -19,9 +19,11 @@ import {
   useRef,
   type ReactNode,
 } from "react";
+import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
+import { assign } from "../fx/assign";
 import { BALLOON } from "./balloon-logic";
 
 const GORES = 12;
@@ -33,10 +35,13 @@ const ROPE = "#4a3a2c";
 const METAL = "#3c3a3a";
 const PENNANT = "#fff1d6";
 
-const HALF = BALLOON.basketHalf;
+// The model is built at unit size and scaled by BALLOON.size as a whole (collision sizes in
+// BALLOON are the same unit sizes times BALLOON.size).
+const S = BALLOON.size;
+const HALF = 0.65;
 const BASKET_H = 1.0;
 const FRAME_Y = 2.25;
-const THROAT_Y = BALLOON.envBottom;
+const THROAT_Y = 3.3;
 const THROAT_R = Math.hypot(HALF, HALF);
 const BURNER_TOP = FRAME_Y + 0.15;
 
@@ -342,53 +347,63 @@ export const BalloonModel = forwardRef<BalloonHandles>(
     }));
     return (
       <group ref={root} name="balloon">
-        <group ref={sway}>
-          <mesh geometry={geos.envelope} material={mats.envelope} castShadow />
-          <mesh
-            geometry={geos.body}
-            material={mats.body}
-            castShadow
-            receiveShadow
-          />
-          <mesh
-            ref={flameOuter}
-            geometry={geos.flame}
-            material={mats.outer}
-            position={[0, BURNER_TOP, 0]}
-            renderOrder={2}
-          />
-          <mesh
-            ref={flameInner}
-            geometry={geos.flame}
-            material={mats.inner}
-            position={[0, BURNER_TOP, 0]}
-            scale={[0.55, 0.6, 0.55]}
-            renderOrder={3}
-          />
-          <sprite
-            ref={glow}
-            material={mats.glowMat}
-            position={[0, BURNER_TOP + 0.5, 0]}
-            renderOrder={4}
-          />
+        <group scale={S}>
+          <group ref={sway}>
+            <mesh
+              geometry={geos.envelope}
+              material={mats.envelope}
+              castShadow
+            />
+            <mesh
+              geometry={geos.body}
+              material={mats.body}
+              castShadow
+              receiveShadow
+            />
+            <mesh
+              ref={flameOuter}
+              geometry={geos.flame}
+              material={mats.outer}
+              position={[0, BURNER_TOP, 0]}
+              renderOrder={2}
+            />
+            <mesh
+              ref={flameInner}
+              geometry={geos.flame}
+              material={mats.inner}
+              position={[0, BURNER_TOP, 0]}
+              scale={[0.55, 0.6, 0.55]}
+              renderOrder={3}
+            />
+            <sprite
+              ref={glow}
+              material={mats.glowMat}
+              position={[0, BURNER_TOP + 0.5, 0]}
+              renderOrder={4}
+            />
+          </group>
+          <Tethers ref={tethers} />
         </group>
-        <Tethers ref={tethers} />
       </group>
     );
   }
 );
 
-/** Peg offsets of the tethers (local, the basket's +z side): spread apart, never crossing. */
-export const TETHER_PEGS: readonly (readonly [number, number])[] = [
+/** Tether peg offsets at unit size (local, the basket's +z side): spread apart, never crossing. */
+const UNIT_PEGS: readonly (readonly [number, number])[] = [
   [HALF + 1.1, HALF + 1.4],
   [-HALF - 1.1, HALF + 1.4],
 ];
+
+/** The same pegs in world metres (scaled), for placing the field on the ground. */
+export const TETHER_PEGS: readonly (readonly [number, number])[] =
+  UNIT_PEGS.map(([x, z]) => [x * S, z * S] as const);
 
 /** Two tethers from the basket's two +z corners, splayed out to ground pegs. */
 const Tethers = forwardRef<THREE.Group>(function Tethers(_, ref): ReactNode {
   const geo = useMemo(() => {
     const parts: THREE.BufferGeometry[] = [];
-    for (const [px, pz] of TETHER_PEGS) {
+    for (const [px, pz] of UNIT_PEGS) {
       const a = new THREE.Vector3(Math.sign(px) * HALF, 0.55, HALF);
       const b = new THREE.Vector3(px, 0.06, pz);
       parts.push(strut(a, b, 0.03, ROPE));
@@ -440,16 +455,18 @@ export const GhostBalloon = forwardRef<THREE.Group>(
     }, []);
     return (
       <group ref={ref} visible={false}>
-        <mesh
-          geometry={geos.envelope}
-          material={mat}
-          userData={{ keepMaterial: true }}
-        />
-        <mesh
-          geometry={geos.body}
-          material={mat}
-          userData={{ keepMaterial: true }}
-        />
+        <group scale={S}>
+          <mesh
+            geometry={geos.envelope}
+            material={mat}
+            userData={{ keepMaterial: true }}
+          />
+          <mesh
+            geometry={geos.body}
+            material={mat}
+            userData={{ keepMaterial: true }}
+          />
+        </group>
       </group>
     );
   }
@@ -510,6 +527,75 @@ export function FieldSign({
       {emblem ? (
         <mesh geometry={emblem} material={mat} position={[0, 1.0, 0.035]} />
       ) : null}
+    </group>
+  );
+}
+
+const PAD_RING = "#e0703c";
+const PAD_DOT = "#f7e2b8";
+
+/**
+ * The marked landing pads: a flat orange ring with a cream dot in the middle on each island's
+ * landing spot (a target, nothing cross-shaped). Subtle on foot; brighter, with a slow pulse,
+ * while ballooning (no pulse under reduced motion).
+ */
+export function LandingPads({
+  pads,
+  active,
+  reducedMotion,
+}: {
+  pads: readonly { x: number; y: number; z: number }[];
+  active: boolean;
+  reducedMotion: boolean;
+}): ReactNode {
+  const outer = BALLOON.basketR + 0.55; // world metres, a little wider than the basket
+  const geos = useMemo(() => {
+    const ring = new THREE.RingGeometry(outer - 0.28, outer, 40, 1);
+    ring.rotateX(-Math.PI / 2);
+    const dot = new THREE.CircleGeometry(0.32, 24);
+    dot.rotateX(-Math.PI / 2);
+    return { ring, dot };
+  }, [outer]);
+  const mats = useMemo(() => {
+    const make = (hex: string): THREE.MeshBasicMaterial =>
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(hex),
+        transparent: true,
+        opacity: 0.55,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2,
+        toneMapped: false,
+      });
+    return { ring: make(PAD_RING), dot: make(PAD_DOT) };
+  }, []);
+  useEffect(
+    () => () => {
+      geos.ring.dispose();
+      geos.dot.dispose();
+      mats.ring.dispose();
+      mats.dot.dispose();
+    },
+    [geos, mats]
+  );
+  useFrame(({ clock }) => {
+    const pulse =
+      active && !reducedMotion
+        ? 0.5 + 0.5 * Math.sin(clock.elapsedTime * 2.4)
+        : 0.5;
+    const base = active ? 0.7 : 0.45;
+    assign(mats.ring, "opacity", base + (active ? 0.25 * pulse : 0));
+    assign(mats.dot, "opacity", base * 0.9);
+  });
+  return (
+    <group name="balloon-landing-pads">
+      {pads.map((p, i) => (
+        <group key={i} position={[p.x, p.y + 0.04, p.z]}>
+          <mesh geometry={geos.ring} material={mats.ring} renderOrder={1} />
+          <mesh geometry={geos.dot} material={mats.dot} renderOrder={1} />
+        </group>
+      ))}
     </group>
   );
 }

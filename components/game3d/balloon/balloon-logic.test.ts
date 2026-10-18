@@ -35,6 +35,9 @@ import {
   startAutopilot,
   stepAutopilot,
   stepFree,
+  landingPads,
+  PAD_RANGE,
+  padNear,
   tourFrom,
   tourLabel,
   tourPoint,
@@ -467,5 +470,40 @@ describe("scenic tour from another island", () => {
 
   it("from the field it is the precomputed tour", () => {
     expect(tourFrom(built, field)).toBe(tour);
+  });
+});
+
+describe("marked landing pads", () => {
+  const pads = landingPads(env);
+
+  it("marks a pad on (nearly) every island, home's being the launch field", () => {
+    expect(pads).toContain(field);
+    const islands = new Set(pads.map((p) => p.islandId));
+    expect(islands.size).toBeGreaterThanOrEqual(7);
+    for (const p of pads) {
+      // The basket fits there, and the walker can step out onto the ground.
+      expect(need(env, p.x, p.z)).toBeLessThanOrEqual(p.y + 0.02);
+      expect(
+        canStand(world.walk, p.exit.x, p.exit.z, radius, p.exit.y)
+      ).not.toBeNull();
+    }
+  });
+
+  it("free flight lands only near a pad, and only when low enough over it", () => {
+    const pad = pads.find((p) => p !== field) ?? field;
+    const low = padNear(env, { x: pad.x + 1, y: pad.y + 1, z: pad.z });
+    expect(low?.pad).toBe(pad);
+    expect(low?.low).toBe(true);
+    const high = padNear(env, { x: pad.x, y: pad.y + 12, z: pad.z });
+    expect(high?.pad).toBe(pad);
+    expect(high?.low).toBe(false);
+    const away = padNear(env, {
+      x: pad.x + PAD_RANGE + 0.5,
+      y: pad.y + 1,
+      z: pad.z,
+    });
+    expect(away?.pad === pad).toBe(false);
+    const v = voidPoint();
+    expect(padNear(env, { x: v.x, y: env.voidFloor + 1, z: v.z })).toBeNull();
   });
 });

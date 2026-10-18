@@ -322,8 +322,8 @@
         "down": "Down",
         "land": "Land",
         "leave": "Leave tour",
-        "lower": "Fly lower over open ground to land",
-        "noRoom": "No room to land here",
+        "lower": "Fly lower over the landing pad to land",
+        "noRoom": "Fly to a marked landing pad to land",
         "landing": "Landing…"
       }
     },

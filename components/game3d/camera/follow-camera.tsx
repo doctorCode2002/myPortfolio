@@ -16,6 +16,7 @@ import {
 } from "../logic/camera-math";
 import { findPath, raycastWalk } from "../logic/pathfinding";
 import { PLAYER_RADIUS_HEX, type GameWorld } from "../logic/world-layout";
+import { BALLOON_SIZE } from "../balloon/balloon-logic";
 import { getBalloonUi } from "../balloon/balloon-store";
 import { useRuntimeRef } from "../runtime";
 
@@ -28,7 +29,7 @@ const DRIVE_LEAD = 4;
 /** Pull-back in the balloon (1 + 0.4 * 3.2 = 2.28x): wider than the glider, for the view. */
 const BALLOON_PULL = 3.2;
 /** The balloon view looks at the middle of the rig, not the pilot's feet. */
-const BALLOON_LIFT = 3.6;
+const BALLOON_LIFT = 3.6 * BALLOON_SIZE;
 /** Scenic tour: a slow drift around the balloon (rad/s) once the pointer has rested. */
 const TOUR_ORBIT = 0.05;
 const TOUR_ORBIT_IDLE_MS = 4000;

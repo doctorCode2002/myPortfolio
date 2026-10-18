@@ -30,15 +30,20 @@ import type { Manifest } from "../logic/types";
 import { surfaceAt } from "../logic/walk-world";
 import { PLAYER_RADIUS_HEX, type GameWorld } from "../logic/world-layout";
 import { markAboveClouds } from "../meta/store";
-import { setMoveMode, useRuntimeRef, type Runtime } from "../runtime";
+import {
+  setMoveMode,
+  subscribeMove,
+  useRuntimeRef,
+  type Runtime,
+} from "../runtime";
 import {
   buildBalloonWorld,
   syncBalloonObstacle,
   canBoard,
-  canTryLanding,
   createBalloonState,
   exitTarget,
-  findParking,
+  landingPads,
+  padNear,
   startAutopilot,
   stepAutopilot,
   stepFree,
@@ -55,6 +60,7 @@ import {
 import {
   BalloonModel,
   FieldSign,
+  LandingPads,
   TETHER_PEGS,
   type BalloonHandles,
 } from "./balloon-model";
@@ -200,6 +206,14 @@ export function BalloonSystem({
   const sim = useRef<Sim | null>(null);
   const nearRef = useRef(false);
   const [near, setNear] = useState(false);
+  // The pads glow while ballooning.
+  const [aloft, setAloft] = useState(false);
+  useEffect(() => {
+    const rt = rtRef.current;
+    const sync = (): void => setAloft(rt.move.mode === "balloon");
+    sync();
+    return subscribeMove(rt, sync);
+  }, [rtRef]);
   const [parkAt, setParkAt] = useState<Parking | null>(null);
   const input = useRef<FreeInput>({ lift: 0, dx: 0, dz: 0 });
   const wind = useRef({ x: 0, z: 0 });
@@ -381,17 +395,16 @@ export function BalloonSystem({
         m.auto = startAutopilot(bw.env, s, m.target);
         setBalloonUi({ phase: "auto", label: null });
       } else if (m.phase === "free") {
-        if (!canTryLanding(bw.env, s)) flashBalloonHint("lower");
+        // Free flight lands only on a marked landing pad (the rings on each island).
+        const near = padNear(bw.env, s);
+        if (!near) flashBalloonHint("noRoom");
+        else if (!near.low) flashBalloonHint("lower");
         else {
-          const spot = findParking(bw.env, s.x, s.z);
-          if (!spot) flashBalloonHint("noRoom");
-          else {
-            m.phase = "auto";
-            m.then = "land";
-            m.target = spot;
-            m.auto = startAutopilot(bw.env, s, spot);
-            setBalloonUi({ phase: "auto" });
-          }
+          m.phase = "auto";
+          m.then = "land";
+          m.target = near.pad;
+          m.auto = startAutopilot(bw.env, s, near.pad);
+          setBalloonUi({ phase: "auto" });
         }
       }
     }
@@ -537,6 +550,7 @@ export function BalloonSystem({
   if (!bw) return null;
   const f = bw.field;
   // The sign stands a little in front of the basket, towards home's middle.
+  const pads = landingPads(bw.env);
   const home = bw.env.islands.find((i) => i.id === f.islandId);
   const dirX = (home?.x ?? 0) - f.x;
   const dirZ = (home?.z ?? 0) - f.z;
@@ -547,6 +561,7 @@ export function BalloonSystem({
   return (
     <>
       <BalloonModel ref={model} />
+      <LandingPads pads={pads} active={aloft} reducedMotion={reducedMotion} />
       <FieldSign
         x={signX}
         y={surfaceAt(world.walk, signX, signZ)?.y ?? f.y}
