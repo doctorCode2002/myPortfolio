@@ -297,6 +297,47 @@
   },
 
   "play": {
+    "social": {
+      "visitor": "Visitor",
+      "visitors": "Visitors",
+      "settingsHint": "Other visitors",
+      "showOthers": "Show other visitors",
+      "shareMine": "Share my position (anonymous)",
+      "presenceNote": "Only an anonymous position and your character are shared. No names, no tracking.",
+      "stoneSign": "Guestbook — Leave a message",
+      "guestbook": {
+        "title": "Guestbook",
+        "intro": "Leave a note for the owner and the visitors who come after you.",
+        "name": "Your name",
+        "namePlaceholder": "e.g. Sam",
+        "message": "Message",
+        "messagePlaceholder": "Say hello…",
+        "language": "Language",
+        "langEn": "English",
+        "langAr": "العربية",
+        "island": "Island",
+        "note": "Messages appear on the notice board only after the owner approves them.",
+        "privacy": "What's stored: your name and message, plus a hashed sender id (from your network address) for rate limiting. Ghosts send only anonymous positions.",
+        "send": "Send",
+        "sending": "Sending…",
+        "sent": "Thanks! Your message is pending and will appear once the owner approves it.",
+        "writeAnother": "Write another",
+        "close": "Close",
+        "errors": {
+          "rate_limited": "That's a lot of messages. Please wait a few minutes and try again.",
+          "offline": "The guestbook can't be reached right now. Please try again later.",
+          "invalid": "Please add a name (up to 40 characters) and a message (up to 240).",
+          "unknown": "Something went wrong. Please try again."
+        },
+        "tabNews": "News",
+        "tabGuestbook": "Guestbook",
+        "loading": "Loading messages…",
+        "empty": "No approved messages yet. Find the guestbook stone on the plaza and be the first.",
+        "loadError": "The guestbook can't be reached right now.",
+        "retry": "Retry",
+        "from": "from"
+      }
+    },
     "backToPortfolio": "Back to portfolio",
     "instructions": "WASD or Arrow keys to move",
     "touchInstructions": "Drag to steer or tap to move",

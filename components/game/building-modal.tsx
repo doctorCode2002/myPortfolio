@@ -34,6 +34,7 @@ import type {
 } from "@/lib/content/world.panels";
 import { gameEvents } from "./engine/events";
 import { ProgressPanelView } from "./progress-panel";
+import { NoticeBoardTabs } from "./social-ui/notice-board-tabs";
 
 export type BuildingModalData = BuildingPanel;
 
@@ -184,7 +185,11 @@ export function BuildingModal({
             <InfoPanelView panel={building} dict={dict} />
           )}
           {building.kind === "news" && (
-            <NewsPanelView panel={building} dict={dict} />
+            <NoticeBoardTabs
+              dict={dict}
+              locale={locale}
+              news={<NewsPanelView panel={building} dict={dict} />}
+            />
           )}
           {building.kind === "portal" && (
             <PortalPanelView panel={building} dict={dict} />

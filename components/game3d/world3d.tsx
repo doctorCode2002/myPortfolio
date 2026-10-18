@@ -56,6 +56,9 @@ import { SKY, SkyDome } from "./scene/sky";
 import { DriveHud } from "./ui/drive-hud";
 import { Joystick } from "./ui/joystick";
 import { CarSystem } from "./vehicle/car-system";
+import { GuestbookStone } from "./social/guestbook-stone";
+import { GUESTBOOK_STONE_ID } from "./social/stone-layout";
+import { VisitorGhosts } from "./social/visitor-ghosts";
 import { WorkshopLife } from "./workshop/workshop-life";
 
 const MOVE_KEYS = new Set([
@@ -101,6 +104,7 @@ function buildLabels(dict: Dictionary, locale: Locale): PromptLabels {
   for (const [id, entry] of Object.entries(buildings))
     if (entry?.sign) signs[id] = entry.sign;
   Object.assign(signs, progressSigns(locale));
+  signs[GUESTBOOK_STONE_ID] = dict.play.social.stoneSign;
   const npcNames: Record<string, string> = {};
   for (const island of ISLANDS) {
     if (island.mayor)
@@ -191,6 +195,7 @@ function Scene({
   debug,
   shadowSize,
   reducedMotion,
+  visitorLabel,
 }: {
   world: GameWorld;
   manifest: Manifest | null;
@@ -200,6 +205,7 @@ function Scene({
   debug: boolean;
   shadowSize: number;
   reducedMotion: boolean;
+  visitorLabel: string;
 }): ReactNode {
   const center = useMemo(() => {
     const n = world.islands.length || 1;
@@ -254,6 +260,14 @@ function Scene({
       <CarSystem world={world} manifest={manifest} />
       <WorkshopLife world={world} manifest={manifest} />
       <Player world={world} manifest={manifest} charId={charId} />
+      <GuestbookStone world={world} />
+      <VisitorGhosts
+        manifest={manifest}
+        charId={charId}
+        reducedMotion={reducedMotion}
+        label={visitorLabel}
+        rtl={labels.rtl}
+      />
       <TargetMarker />
       <Interactions world={world} labels={labels} touch={touch} />
       {labels.story && (
@@ -415,6 +429,7 @@ export function World3D({
                   debug={debug}
                   shadowSize={touch ? Math.min(shadowSize, 1024) : shadowSize}
                   reducedMotion={reducedMotion}
+                  visitorLabel={dict.play.social.visitor}
                 />
               )}
             </Suspense>
