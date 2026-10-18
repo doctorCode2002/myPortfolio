@@ -14,11 +14,14 @@ import {
 import * as THREE from "three";
 import { clone as cloneSkinned } from "three/examples/jsm/utils/SkeletonUtils.js";
 
-import { pickClips } from "../assets/characters";
+import { pickCheerClip, pickClips } from "../assets/characters";
 import { allowedModel, modelUrl } from "../assets/manifest";
 import type { Manifest } from "../logic/types";
 
-export type AnimState = { anim: "idle" | "walk" | "run"; speed: number };
+export type AnimState = {
+  anim: "idle" | "walk" | "run" | "cheer";
+  speed: number;
+};
 
 /** Hand-held items are stripped by the curator; hide any that slip through (no crossguards). */
 const HELD_ITEM =
@@ -97,6 +100,7 @@ function SkinnedCharacter({
   }, [gltf.scene]);
   const { actions, names } = useAnimations(gltf.animations, root);
   const clips = useMemo(() => pickClips(names), [names]);
+  const cheer = useMemo(() => pickCheerClip(names), [names]);
   const current = useRef<string | null>(null);
 
   useEffect(() => {
@@ -105,7 +109,10 @@ function SkinnedCharacter({
 
   useFrame(() => {
     const want = state.current?.anim ?? "idle";
-    const name = clips[want] ?? clips.walk ?? clips.idle;
+    const name =
+      want === "cheer"
+        ? (cheer ?? clips.idle)
+        : (clips[want] ?? clips.walk ?? clips.idle);
     if (!name) return;
     if (name !== current.current) {
       const prev = current.current ? actions[current.current] : null;

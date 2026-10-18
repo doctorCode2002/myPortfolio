@@ -539,6 +539,49 @@
         ]
       }
     },
+    "tours": {
+      "ask": "Want a tour?",
+      "askNarrator": "Want a tour of the island?",
+      "yes": "Yes",
+      "no": "No",
+      "narrator": "Narrator",
+      "demo": "Demo",
+      "follow": "Follow {name} to the next stop.",
+      "progress": "Stop {n} of {total}",
+      "done": "That's the tour. The portal is open whenever you are.",
+      "end": "End tour",
+      "escHint": "Esc ends the tour",
+      "screen": "Live site",
+      "screenUnavailable": "Preview unavailable",
+      "nextImage": "Next screenshot",
+      "prevImage": "Previous screenshot",
+      "rack": "Tech rack",
+      "khidmty": {
+        "window": "This screen shows the live Khidmty site: verified pros, booked without an account.",
+        "portal": "Step up to the portal door and press E to open the project.",
+        "landmark": "Our stalls stand for the trades on Khidmty: electricians, plumbers, carpenters and painters."
+      },
+      "civicmind": {
+        "window": "This screen shows CivicMind, where citizens file reports and AI models sort them.",
+        "portal": "The portal opens the live demo. Press E at the door.",
+        "landmark": "Like water from this fountain, each report flows to the department that should handle it."
+      },
+      "onyx": {
+        "window": "This screen shows the Onyx storefront, built around motion.",
+        "portal": "The portal opens the storefront. Press E at the door.",
+        "landmark": "The bazaar echoes the shop: smooth product transitions and a cart that keeps your rhythm."
+      },
+      "saleh": {
+        "window": "This screen shows the live site: a portfolio for a graphic designer.",
+        "portal": "The portal opens the project. Press E at the door.",
+        "landmark": "The easels and frames on this island stand for the work the site was built to show."
+      },
+      "eyad": {
+        "window": "This screen shows the live site: a portfolio and services site for a designer.",
+        "portal": "The portal opens the project. Press E at the door.",
+        "landmark": "The garden beds stand for a site built to be updated without a developer in the loop."
+      }
+    },
     "hobbies": {
       "title": "Hobbies & Interests",
       "body": "TODO: user to fill"

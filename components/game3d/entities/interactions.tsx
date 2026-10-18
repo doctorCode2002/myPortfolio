@@ -11,6 +11,8 @@ import {
   type Interactable,
 } from "../logic/world-layout";
 import { useRuntimeRef } from "../runtime";
+import type { StoryLabels } from "../story/labels";
+import { canOfferTour, promptLift } from "../story/registry";
 
 export type PromptLabels = {
   /** Sign text per building id (dict.world.buildings[id].sign). */
@@ -22,6 +24,8 @@ export type PromptLabels = {
   /** Vehicle prompt ("Drive"). */
   drive: string;
   rtl: boolean;
+  /** Island stories (tours, project windows, forge rack). */
+  story?: StoryLabels;
 };
 
 /** Keys repeat and the overlays close on the same E / Space press; ignore presses right after unfreezing. */
@@ -35,6 +39,7 @@ export function emitInteraction(item: Interactable): void {
     gameEvents.emit("interact:npc", {
       npcId: item.id,
       charSheet: item.charSheet ?? "char_0",
+      offerTour: canOfferTour(item.id),
     });
   }
 }
@@ -115,7 +120,9 @@ export function Interactions({
       ? (sign?.title ?? nearest.id)
       : (labels.npcNames[nearest.id] ?? labels.talk);
   const action = isVehicle ? undefined : isDoor ? sign?.detail : labels.talk;
-  const y = nearest.y + (isDoor ? 1.6 : isVehicle ? 1.3 : 1.45);
+  const y =
+    nearest.y +
+    (promptLift(nearest) ?? (isDoor ? 1.6 : isVehicle ? 1.3 : 1.45));
 
   return (
     <Html

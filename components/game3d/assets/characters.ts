@@ -93,3 +93,17 @@ export function pickClips(names: readonly string[]): {
     run: find(/^running_a$/i, /^sprint$/i, /^run$/i, /run|sprint/i),
   };
 }
+
+/** A greeting clip (KayKit "Cheer", or a Kenney mini character's wave-like emote), if any. */
+export function pickCheerClip(names: readonly string[]): string | null {
+  for (const p of [
+    /^cheer$/i,
+    /cheer|wave/i,
+    /^interact-right$/i,
+    /^emote-yes$/i,
+  ]) {
+    const hit = names.find((n) => p.test(n));
+    if (hit) return hit;
+  }
+  return null;
+}

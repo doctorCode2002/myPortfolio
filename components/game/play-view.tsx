@@ -161,6 +161,7 @@ export function PlayView({
         lines,
         nameKey,
         roleKey,
+        offerTour,
       }) => {
         const island = ISLANDS.find((isl) => isl.mayor?.id === npcId);
         if (island?.mayor) {
@@ -168,11 +169,24 @@ export function PlayView({
             island.mayor,
             dict as unknown as Record<string, unknown>
           );
+          const tours = dict.world.tours;
+          // Mayors who are real clients never get invented words: the narrator asks.
+          const narrated = Boolean(island.mayor.testimonialId);
           setActiveDialogue({
             title: mayorDiag.name,
             subtitle: mayorDiag.title,
             portraitCharSheet: charSheet,
             lines: [...mayorDiag.lines],
+            choice: offerTour
+              ? {
+                  prompt: narrated ? tours.askNarrator : tours.ask,
+                  speaker: narrated ? tours.narrator : undefined,
+                  yes: tours.yes,
+                  no: tours.no,
+                  onChoose: (accept) =>
+                    gameEvents.emit("tour:answer", { npcId, accept }),
+                }
+              : undefined,
           });
           return;
         }

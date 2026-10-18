@@ -12,6 +12,17 @@ export interface DialogueData {
   subtitle?: string | undefined;
   portraitCharSheet?: string | undefined;
   lines: string[];
+  /** A yes/no question after the last line (the 3D mayors' tour offer). */
+  choice?: DialogueChoice | undefined;
+}
+
+export interface DialogueChoice {
+  prompt: string;
+  /** Shown as a tag before the prompt when someone else asks it (e.g. "Narrator"). */
+  speaker?: string | undefined;
+  yes: string;
+  no: string;
+  onChoose: (accept: boolean) => void;
 }
 
 export function DialogueBox({
@@ -53,9 +64,13 @@ function DialogueModal({
   const [charCount, setCharCount] = useState(0);
 
   const rtl = isRtl(locale);
-  const lines = dialogue.lines;
+  const choice = dialogue.choice;
+  const lines = choice ? [...dialogue.lines, choice.prompt] : dialogue.lines;
+  const [focusYes, setFocusYes] = useState(true);
   const currentFullLine = lines[lineIndex] ?? "";
   const isTyping = charCount < currentFullLine.length;
+  const onChoiceLine = Boolean(choice) && lineIndex >= lines.length - 1;
+  const showChoice = onChoiceLine && !isTyping;
   const displayedText = currentFullLine.slice(0, charCount);
 
   // Freeze player movement while dialogue is open
@@ -82,6 +97,14 @@ function DialogueModal({
   }, [currentFullLine]);
 
   // Advance or skip typewriter
+  const choose = useCallback(
+    (accept: boolean): void => {
+      choice?.onChoose(accept);
+      onClose();
+    },
+    [choice, onClose]
+  );
+
   const handleAdvance = useCallback((): void => {
     if (isTyping) {
       setCharCount(currentFullLine.length);
@@ -89,15 +112,40 @@ function DialogueModal({
       if (lineIndex < lines.length - 1) {
         setLineIndex((prev) => prev + 1);
         setCharCount(0);
-      } else {
+      } else if (!choice) {
         onClose();
       }
     }
-  }, [isTyping, currentFullLine.length, lineIndex, lines.length, onClose]);
+  }, [
+    isTyping,
+    currentFullLine.length,
+    lineIndex,
+    lines.length,
+    onClose,
+    choice,
+  ]);
 
   // Keyboard navigation: Space, Enter, or E advances; Escape closes
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {
+      if (showChoice) {
+        const k = e.key.toLowerCase();
+        if (k === "arrowleft" || k === "arrowright" || k === "tab") {
+          e.preventDefault();
+          setFocusYes((v) => !v);
+          return;
+        }
+        if (k === "y" || k === "n" || k === "escape") {
+          e.preventDefault();
+          choose(k === "y");
+          return;
+        }
+        if (k === " " || k === "enter" || k === "e") {
+          e.preventDefault();
+          choose(focusYes);
+          return;
+        }
+      }
       if (e.key === " " || e.key === "Enter" || e.key.toLowerCase() === "e") {
         e.preventDefault();
         handleAdvance();
@@ -109,7 +157,7 @@ function DialogueModal({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleAdvance, onClose]);
+  }, [handleAdvance, onClose, showChoice, choose, focusYes]);
 
   const isLastLine = lineIndex >= lines.length - 1;
 
@@ -187,23 +235,53 @@ function DialogueModal({
 
           {/* Typewriter text line */}
           <p className="text-foreground/90 mt-2 min-h-12 text-sm leading-relaxed sm:text-base">
+            {onChoiceLine && choice?.speaker ? (
+              <span className="bg-muted text-muted-foreground me-2 inline-block rounded-sm px-1.5 py-0.5 align-middle font-mono text-[10px] tracking-wide uppercase">
+                {choice.speaker}
+              </span>
+            ) : null}
             {displayedText}
             {isTyping && (
               <span className="bg-accent ms-1 inline-block h-3.5 w-1.5 animate-pulse" />
             )}
           </p>
 
-          {/* Action indicator at bottom */}
-          <div className="text-muted-foreground mt-3 flex items-center justify-end gap-2 text-xs">
-            <span className="font-medium">
-              {isTyping
-                ? dict.play.dialogueNext
-                : isLastLine
-                  ? dict.play.dialogueClose
-                  : dict.play.dialogueNext}
-            </span>
-            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-          </div>
+          {showChoice && choice ? (
+            <div className="mt-3 flex items-center justify-end gap-2 text-xs">
+              {[true, false].map((accept) => (
+                <button
+                  key={String(accept)}
+                  type="button"
+                  autoFocus={accept}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    choose(accept);
+                  }}
+                  onFocus={() => setFocusYes(accept)}
+                  data-dialogue-choice={accept ? "yes" : "no"}
+                  className={`focus-ring rounded-none px-3 py-1.5 font-semibold transition-colors ${
+                    focusYes === accept
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-accent/70"
+                  }`}
+                >
+                  {accept ? choice.yes : choice.no}
+                </button>
+              ))}
+            </div>
+          ) : (
+            /* Action indicator at bottom */
+            <div className="text-muted-foreground mt-3 flex items-center justify-end gap-2 text-xs">
+              <span className="font-medium">
+                {isTyping
+                  ? dict.play.dialogueNext
+                  : isLastLine
+                    ? dict.play.dialogueClose
+                    : dict.play.dialogueNext}
+              </span>
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import type { Manifest } from "../logic/types";
-import { mayorModelFor, pickClips, playerModelFor } from "./characters";
+import {
+  mayorModelFor,
+  pickCheerClip,
+  pickClips,
+  playerModelFor,
+} from "./characters";
 
 const manifest: Manifest = {
   version: 1,
@@ -52,5 +57,15 @@ describe("character table", () => {
       run: "sprint",
     });
     expect(pickClips(["Walking_Backwards"]).walk).toBeNull();
+  });
+});
+
+describe("pickCheerClip", () => {
+  it("prefers the KayKit Cheer clip, then a Kenney emote", () => {
+    expect(pickCheerClip(["Idle", "Cheer", "Interact"])).toBe("Cheer");
+    expect(pickCheerClip(["idle", "emote-yes", "interact-right"])).toBe(
+      "interact-right"
+    );
+    expect(pickCheerClip(["idle", "walk"])).toBeNull();
   });
 });

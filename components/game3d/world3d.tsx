@@ -32,6 +32,8 @@ import { WalkGridViz } from "./debug/walk-grid-viz";
 import { BridgeView } from "./entities/bridge-view";
 import { Interactions, type PromptLabels } from "./entities/interactions";
 import { Mayor } from "./entities/mayor";
+import { buildStoryLabels } from "./story/labels";
+import { StoryLayer } from "./story/story-layer";
 import { Player } from "./entities/player";
 import { TargetMarker } from "./entities/target-marker";
 import { IslandView } from "./island/island-view";
@@ -107,6 +109,7 @@ function buildLabels(dict: Dictionary, locale: Locale): PromptLabels {
     tap: dict.play.tap,
     drive: dict.play.drive,
     rtl: isRtl(locale),
+    story: buildStoryLabels(dict),
   };
 }
 
@@ -239,6 +242,8 @@ function Scene({
               npc={npc}
               manifest={manifest}
               restHeading={rest}
+              world={world}
+              labels={labels}
             />
           );
         })}
@@ -246,6 +251,14 @@ function Scene({
       <Player world={world} manifest={manifest} charId={charId} />
       <TargetMarker />
       <Interactions world={world} labels={labels} touch={touch} />
+      {labels.story && (
+        <StoryLayer
+          world={world}
+          labels={labels.story}
+          reducedMotion={reducedMotion}
+          rtl={labels.rtl}
+        />
+      )}
       <FollowCamera world={world} />
       <Clouds center={center} reducedMotion={reducedMotion} />
       <Birds center={center} reducedMotion={reducedMotion} />
