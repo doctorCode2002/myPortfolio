@@ -12,6 +12,14 @@ import saleh from "./saleh.json";
 import eyad from "./eyad.json";
 import civicmind from "./civicmind.json";
 import onyx from "./onyx.json";
+import waco from "./waco.json";
+import workshopJson from "./workshop.json";
+import { buildWorkshopIsland, type WorkshopSource } from "./workshop";
+
+/** The workshop island with its lots filled from lib/content/in-progress.ts. */
+export const WORKSHOP = buildWorkshopIsland(
+  parseIsland3D(workshopJson, "workshop.json") as WorkshopSource
+);
 
 export const ISLANDS_3D: readonly Island3D[] = [
   parseIsland3D(home, "home.json"),
@@ -20,4 +28,6 @@ export const ISLANDS_3D: readonly Island3D[] = [
   parseIsland3D(eyad, "eyad.json"),
   parseIsland3D(civicmind, "civicmind.json"),
   parseIsland3D(onyx, "onyx.json"),
+  parseIsland3D(waco, "waco.json"),
+  WORKSHOP.island,
 ];

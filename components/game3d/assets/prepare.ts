@@ -1,6 +1,7 @@
 import * as THREE from "three";
 
 import { patchGrade, type GradeMode } from "../fx/grade";
+import { nightGlowFor, patchNightGlow } from "../fx/night-glow";
 import { patchFoliage } from "../fx/wind";
 
 /**
@@ -32,6 +33,9 @@ export function prepareMaterial(
   // Patch every material of a foliage model (trunk included) so the crown never detaches.
   if (foliage) patchFoliage(mat);
   if (grade) patchGrade(mat, grade);
+  // Windows, glass and crystals light up at night.
+  const glow = foliage || grade ? null : nightGlowFor(mat);
+  if (glow) patchNightGlow(mat, glow.cells);
   return mat;
 }
 

@@ -8,7 +8,11 @@ export type GameEventMap = {
     title?: string | undefined;
     subtitle?: string | undefined;
     lines?: string[] | undefined;
+    /** 3D world: the mayor can give a tour, so the dialogue ends with "Want a tour?". */
+    offerTour?: boolean | undefined;
   };
+  /** The player's answer to a mayor's tour offer. */
+  "tour:answer": { npcId: string; accept: boolean };
   "interact:building": {
     buildingId: string;
     titleKey?: string;

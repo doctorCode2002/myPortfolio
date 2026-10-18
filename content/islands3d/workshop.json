@@ -1,0 +1,298 @@
+{
+  "id": "workshop",
+  "center": [1.73, 30.9],
+  "baseY": 0,
+  "biome": "meadow",
+  "heightJitter": 0.04,
+  "_note": "Workshop: the under-construction island for projects in progress (lib/content/in-progress.ts). Lots 1-6 below get a half-built house, a billboard and a door per project (content/islands3d/workshop.ts); unused lots show an empty plot. Tower crane, site office, lumber mill and materials around a dirt yard. Generated layout; procedural models in scripts/3d/procedural/v2-construction.mjs.",
+  "hexes": [
+    { "q": 1, "r": -4, "tile": "hex-grass" },
+    { "q": 2, "r": -4, "tile": "hex-grass" },
+    { "q": 3, "r": -4, "tile": "hex-road-a", "rot": 60 },
+    { "q": -1, "r": -3, "tile": "hex-grass" },
+    { "q": 0, "r": -3, "tile": "hex-grass" },
+    { "q": 1, "r": -3, "tile": "hex-grass", "tint": "sand" },
+    { "q": 2, "r": -3, "tile": "hex-road-a", "rot": 60 },
+    { "q": 3, "r": -3, "tile": "hex-grass" },
+    { "q": 4, "r": -3, "tile": "hex-grass" },
+    { "q": -2, "r": -2, "tile": "hex-grass", "tint": "sand" },
+    { "q": -1, "r": -2, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": -2, "tile": "hex-grass", "tint": "sand" },
+    { "q": 1, "r": -2, "tile": "hex-road-a", "rot": 60 },
+    { "q": 2, "r": -2, "tile": "hex-grass", "tint": "sand" },
+    { "q": 3, "r": -2, "tile": "hex-grass", "tint": "sand" },
+    { "q": 4, "r": -2, "tile": "hex-grass" },
+    { "q": -3, "r": -1, "tile": "hex-grass" },
+    { "q": -2, "r": -1, "tile": "hex-grass", "tint": "sand" },
+    { "q": -1, "r": -1, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": -1, "tile": "hex-road-a", "rot": 60 },
+    { "q": 1, "r": -1, "tile": "hex-grass", "tint": "sand" },
+    { "q": 2, "r": -1, "tile": "hex-grass", "tint": "sand" },
+    { "q": 3, "r": -1, "tile": "hex-grass" },
+    { "q": 4, "r": -1, "tile": "hex-grass" },
+    { "q": -4, "r": 0, "tile": "hex-grass" },
+    { "q": -3, "r": 0, "tile": "hex-grass", "tint": "sand" },
+    { "q": -2, "r": 0, "tile": "hex-grass", "tint": "sand" },
+    { "q": -1, "r": 0, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": 0, "tile": "hex-grass", "tint": "sand" },
+    { "q": 1, "r": 0, "tile": "hex-grass", "tint": "sand" },
+    { "q": 2, "r": 0, "tile": "hex-grass", "tint": "sand" },
+    { "q": 3, "r": 0, "tile": "hex-grass", "tint": "sand" },
+    { "q": 4, "r": 0, "tile": "hex-grass" },
+    { "q": -4, "r": 1, "tile": "hex-grass" },
+    { "q": -3, "r": 1, "tile": "hex-grass" },
+    { "q": -2, "r": 1, "tile": "hex-grass", "tint": "sand" },
+    { "q": -1, "r": 1, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": 1, "tile": "hex-grass", "tint": "sand" },
+    { "q": 1, "r": 1, "tile": "hex-grass", "tint": "sand" },
+    { "q": 2, "r": 1, "tile": "hex-grass" },
+    { "q": 3, "r": 1, "tile": "hex-grass" },
+    { "q": -5, "r": 2, "tile": "hex-grass" },
+    { "q": -4, "r": 2, "tile": "hex-grass" },
+    { "q": -3, "r": 2, "tile": "hex-grass", "tint": "sand" },
+    { "q": -2, "r": 2, "tile": "hex-grass" },
+    { "q": -1, "r": 2, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": 2, "tile": "hex-grass", "tint": "sand" },
+    { "q": 1, "r": 2, "tile": "hex-grass", "tint": "sand" },
+    { "q": 2, "r": 2, "tile": "hex-grass" },
+    { "q": -5, "r": 3, "tile": "hex-grass" },
+    { "q": -4, "r": 3, "tile": "hex-grass" },
+    { "q": -3, "r": 3, "tile": "hex-grass" },
+    { "q": -2, "r": 3, "tile": "hex-grass" },
+    { "q": -1, "r": 3, "tile": "hex-grass" },
+    { "q": 0, "r": 3, "tile": "hex-grass" },
+    { "q": 1, "r": 3, "tile": "hex-grass" },
+    { "q": 2, "r": 3, "tile": "hex-grass" },
+    { "q": -3, "r": 4, "tile": "hex-grass" },
+    { "q": -2, "r": 4, "tile": "hex-grass" },
+    { "q": -1, "r": 4, "tile": "hex-grass" },
+    { "q": 0, "r": 4, "tile": "hex-grass" },
+    { "q": -2, "r": 5, "tile": "hex-grass" },
+    { "q": -1, "r": 5, "tile": "hex-grass" }
+  ],
+  "objects": [
+    { "model": "v2-site-office", "q": 1, "r": -3, "rot": 90 },
+    { "model": "lantern", "q": 2, "r": -4, "offset": [-0.9, 0.2] },
+    { "model": "flag-pennant", "q": 1, "r": -3, "offset": [-0.75, -0.6] },
+    { "model": "v2-crane-mast", "q": 1, "r": -4, "scale": 0.8 },
+    { "model": "log-stack", "q": -1, "r": 3, "rot": 30, "offset": [-0.1, 0.1] },
+    {
+      "model": "v2-brick-pallet",
+      "q": -1,
+      "r": 3,
+      "rot": 30,
+      "offset": [0.65, 0.55]
+    },
+    { "model": "crate-a-big", "q": -1, "r": 3, "offset": [-0.6, 0.6] },
+    { "model": "building-lumbermill-blue", "q": -1, "r": -3, "rot": 30 },
+    {
+      "model": "log-stack",
+      "q": -2,
+      "r": -2,
+      "rot": 90,
+      "offset": [-0.4, -0.3]
+    },
+    {
+      "model": "resource-lumber",
+      "q": -2,
+      "r": -1,
+      "rot": 30,
+      "offset": [-0.45, -0.1]
+    },
+    { "model": "tool-axe", "q": -2, "r": -2, "offset": [0.25, -0.55] },
+    {
+      "model": "building-scaffolding",
+      "q": 4,
+      "r": -1,
+      "rot": 0,
+      "scale": 0.55
+    },
+    { "model": "building-stage-c", "q": -2, "r": 4, "rot": 210, "scale": 0.8 },
+    {
+      "model": "v2-cement-mixer",
+      "q": 0,
+      "r": 3,
+      "rot": 200,
+      "offset": [0.1, 0.5]
+    },
+    { "model": "v2-sand-pile", "q": 0, "r": 1, "offset": [0.4, 0.6] },
+    {
+      "model": "tool-shovel",
+      "q": 0,
+      "r": 1,
+      "rot": 20,
+      "offset": [0.95, 0.35]
+    },
+    {
+      "model": "wheelbarrow",
+      "q": -1,
+      "r": 1,
+      "rot": 140,
+      "offset": [-0.4, 0.5]
+    },
+    { "model": "barrel", "q": 2, "r": -1, "offset": [0.55, 0.6] },
+    { "model": "barrel", "q": 2, "r": -1, "offset": [0.85, 0.25] },
+    { "model": "crate-open", "q": 0, "r": 2, "rot": 15, "offset": [0.4, 0.55] },
+    { "model": "crate-a-small", "q": 0, "r": 2, "offset": [-0.2, 0.75] },
+    { "model": "sack", "q": 0, "r": 2, "rot": 40, "offset": [0.85, 0.15] },
+    { "model": "pallet", "q": -2, "r": -1, "rot": 10, "offset": [0.4, 0.55] },
+    {
+      "model": "v2-brick-pallet",
+      "q": -2,
+      "r": -1,
+      "rot": 10,
+      "offset": [0.4, 0.55],
+      "solid": false
+    },
+    {
+      "model": "crate-long-a",
+      "q": 3,
+      "r": 1,
+      "rot": 60,
+      "offset": [0.1, 0.3]
+    },
+    { "model": "bucket-wood", "q": 3, "r": 1, "offset": [-0.5, -0.3] },
+    { "model": "tent-canvas", "q": -4, "r": 0, "rot": 90 },
+    {
+      "model": "v2-barrier",
+      "q": 3,
+      "r": -3,
+      "rot": 420,
+      "offset": [0.55, 0.32]
+    },
+    {
+      "model": "v2-barrier",
+      "q": 0,
+      "r": 3,
+      "rot": 90,
+      "offset": [0.55, 0.45]
+    },
+    { "model": "v2-cone", "q": 2, "r": -3, "offset": [-1.1, -0.64] },
+    { "model": "v2-cone", "q": 1, "r": -2, "offset": [-1.1, -0.64] },
+    { "model": "v2-cone", "q": 0, "r": -1, "offset": [-1.1, -0.64] },
+    {
+      "model": "v2-barrier",
+      "q": -1,
+      "r": 2,
+      "rot": 60,
+      "offset": [0.1, 0.65]
+    },
+    { "model": "v2-barrier", "q": -2, "r": 3, "rot": 0, "offset": [0.75, 0.3] },
+    { "model": "v2-cone", "q": 0, "r": 3, "offset": [-0.6, -0.2] },
+    { "model": "v2-cone", "q": -2, "r": 2, "offset": [0.6, 0.55] },
+    { "model": "tree-single-a", "q": 4, "r": -3, "offset": [-0.03, 0.04] },
+    { "model": "tree-town", "q": 2, "r": 3, "offset": [0.25, -0.02] },
+    { "model": "tree-pine-round-a", "q": -4, "r": 1, "offset": [0.0, 0.05] },
+    { "model": "tree-oak", "q": -5, "r": 2, "offset": [-0.19, 0.01] },
+    { "model": "tree-single-b", "q": -5, "r": 3, "offset": [0.08, 0.18] },
+    { "model": "tree-detailed", "q": -1, "r": 5, "offset": [-0.24, -0.12] },
+    { "model": "tree-default", "q": -2, "r": 5, "offset": [-0.25, 0.19] },
+    { "model": "tree-fat", "q": -4, "r": 3, "offset": [0.12, -0.27] },
+    { "model": "tree-oak", "q": 1, "r": 3, "offset": [0.29, 0.28] },
+    { "model": "tree-single-a", "q": -3, "r": -1, "offset": [0.09, 0.07] },
+    { "model": "tree-town", "q": 0, "r": 4, "offset": [-0.21, -0.29] },
+    { "model": "flower-purple-a", "q": 4, "r": -3, "offset": [-0.52, -0.56] },
+    { "model": "flower-yellow-a", "q": -3, "r": 3, "offset": [0.12, 0.33] },
+    { "model": "grass-tuft", "q": -4, "r": 2, "offset": [-0.07, 0.41] },
+    { "model": "flower-purple-a", "q": 3, "r": 1, "offset": [-0.32, -0.25] },
+    { "model": "grass-tuft-large", "q": -1, "r": 4, "offset": [0.19, -0.05] },
+    { "model": "grass-tuft", "q": 4, "r": -2, "offset": [-0.11, 0.06] },
+    { "model": "grass-tuft-large", "q": -3, "r": -1, "offset": [0.25, -0.22] },
+    { "model": "rock-single-a", "q": 4, "r": -2, "offset": [0.3, 0.2] },
+    { "model": "rock-small-a", "q": -4, "r": 3, "offset": [-0.5, 0.5] }
+  ],
+  "lots": [
+    {
+      "lot": 1,
+      "q": 3,
+      "r": -2,
+      "rot": 270,
+      "door": { "q": 2, "r": -2 },
+      "owner": { "q": 2, "r": -3, "rot": 30 },
+      "sign": {
+        "q": 3,
+        "r": -2,
+        "rot": 270,
+        "scale": 0.7,
+        "offset": [-0.74, -0.62]
+      }
+    },
+    {
+      "lot": 2,
+      "q": 3,
+      "r": 0,
+      "rot": 270,
+      "door": { "q": 2, "r": 0 },
+      "sign": {
+        "q": 3,
+        "r": 0,
+        "rot": 270,
+        "scale": 0.7,
+        "offset": [-0.74, -0.62]
+      }
+    },
+    {
+      "lot": 3,
+      "q": 1,
+      "r": 2,
+      "rot": 210,
+      "door": { "q": 1, "r": 1 },
+      "sign": {
+        "q": 1,
+        "r": 2,
+        "rot": 210,
+        "scale": 0.7,
+        "offset": [0.17, -0.95]
+      }
+    },
+    {
+      "lot": 4,
+      "q": -1,
+      "r": -2,
+      "rot": 90,
+      "door": { "q": 0, "r": -2 },
+      "sign": {
+        "q": -1,
+        "r": -2,
+        "rot": 90,
+        "scale": 0.7,
+        "offset": [0.74, 0.62]
+      }
+    },
+    {
+      "lot": 5,
+      "q": -3,
+      "r": 0,
+      "rot": 90,
+      "door": { "q": -2, "r": 0 },
+      "sign": {
+        "q": -3,
+        "r": 0,
+        "rot": 90,
+        "scale": 0.7,
+        "offset": [0.74, 0.62]
+      }
+    },
+    {
+      "lot": 6,
+      "q": -3,
+      "r": 2,
+      "rot": 150,
+      "door": { "q": -2, "r": 1 },
+      "sign": {
+        "q": -3,
+        "r": 2,
+        "rot": 150,
+        "scale": 0.7,
+        "offset": [0.91, -0.33]
+      }
+    }
+  ],
+  "doors": [],
+  "spawns": {
+    "player": { "q": 1, "r": -1 },
+    "mayor": { "q": 0, "r": 0, "rot": 150 }
+  },
+  "anchors": [{ "id": "to_home", "q": 3, "r": -4 }],
+  "underside": { "depth": 7, "style": "rock", "seed": 21 }
+}

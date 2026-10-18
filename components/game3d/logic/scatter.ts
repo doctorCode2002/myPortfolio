@@ -27,6 +27,8 @@ export type ScatterOptions = {
   maxTotal?: number;
   /** Probability that a hex gets at least one item. */
   density?: number;
+  /** Rejects item positions that must stay clear (e.g. road ribbons). */
+  isClear?: (x: number, z: number) => boolean;
 };
 
 /** Hexes that must stay clear: objects, doors, anchors and spawns, plus their own hex only. */
@@ -70,14 +72,16 @@ export function scatterDecor(
     for (let i = 0; i < n && out.length < maxTotal; i++) {
       const a = rng() * Math.PI * 2;
       const d = Math.sqrt(rng()) * opts.size * 0.62;
-      out.push({
+      const item = {
         model: pick(rng()),
         x: cell.x + Math.cos(a) * d,
         y: cell.y,
         z: cell.z + Math.sin(a) * d,
         rotY: rng() * Math.PI * 2,
         scale: 0.65 + rng() * 0.4,
-      });
+      };
+      if (opts.isClear && !opts.isClear(item.x, item.z)) continue;
+      out.push(item);
     }
   }
   return out;

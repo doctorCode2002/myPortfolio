@@ -1,6 +1,6 @@
 {
   "id": "onyx",
-  "center": [32, 26],
+  "center": [23.17, 19.3],
   "baseY": -1,
   "biome": "desert",
   "_note": "Onyx: an elegant desert bazaar. A black-and-gold boutique palace (b-palace) with a gold dome and a plain ball finial sits on a mosaic terrace; a bazaar lane of stalls, rugs and lanterns runs from the bridge to a pavilion square, with dunes and cacti to the west and a palm oasis that spills over the east edge. Procedural models in scripts/3d/procedural/b.mjs.",

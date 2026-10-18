@@ -9,6 +9,7 @@ import {
   isTileWalkable,
   isWaterTile,
   type ModelLocalBounds,
+  type ObjectCollision,
 } from "./catalog";
 import {
   DEFAULT_HEX_WIDTH,
@@ -18,7 +19,7 @@ import {
   worldToHex,
   type Point2,
 } from "./hex";
-import type { Island3D, Manifest } from "./types";
+import type { Island3D, IslandObject, Manifest } from "./types";
 
 export const DEFAULT_LEVEL_HEIGHT = 0.5;
 
@@ -90,6 +91,8 @@ export type CircleObstacle = {
   z: number;
   radius: number;
   source: string;
+  /** Island object key (`<islandId>:<object index>`), see `objectKey`. */
+  key?: string;
 };
 
 /** An oriented box: half extents along its local axes, rotated by `rot` radians around +y. */
@@ -101,7 +104,14 @@ export type BoxObstacle = {
   hz: number;
   rot: number;
   source: string;
+  /** Island object key (`<islandId>:<object index>`), see `objectKey`. */
+  key?: string;
 };
+
+/** Stable key of an island object: the island id and its index in `objects`. */
+export function objectKey(islandId: string, index: number): string {
+  return `${islandId}:${index}`;
+}
 
 export type Obstacle = CircleObstacle | BoxObstacle;
 
@@ -165,6 +175,37 @@ export function islandHexToWorld(
   return { x: island.center[0] + p.x, z: island.center[1] + p.z };
 }
 
+/**
+ * The plan-view obstacle of an object's collision at its world position (x, z): a circle,
+ * or a box turned by the object's rotation around its local bounds centre.
+ */
+export function collisionObstacle(
+  col: ObjectCollision,
+  obj: Pick<IslandObject, "model" | "rot">,
+  x: number,
+  z: number,
+  key: string
+): Obstacle | null {
+  if (col.type === "circle")
+    return col.radius > 0
+      ? { shape: "circle", x, z, radius: col.radius, source: obj.model, key }
+      : null;
+  if (col.type !== "box") return null;
+  const rot = ((obj.rot ?? 0) * Math.PI) / 180;
+  const c = Math.cos(rot);
+  const s = Math.sin(rot);
+  return {
+    shape: "box",
+    x: x + c * col.cx + s * col.cz,
+    z: z - s * col.cx + c * col.cz,
+    hx: col.hx,
+    hz: col.hz,
+    rot,
+    source: obj.model,
+    key,
+  };
+}
+
 export function buildIslandWalkGrid(
   island: Island3D,
   opts: WalkGridOptions = {}
@@ -206,7 +247,8 @@ export function buildIslandWalkGrid(
   }
 
   const obstacles: Obstacle[] = [];
-  for (const obj of island.objects ?? []) {
+  for (const [index, obj] of (island.objects ?? []).entries()) {
+    const key = objectKey(island.id, index);
     const col = objectCollision(
       obj,
       manifest,
@@ -217,9 +259,6 @@ export function buildIslandWalkGrid(
     const p = islandHexToWorld(island, obj.q, obj.r, size);
     const x = p.x + (obj.offset?.[0] ?? 0);
     const z = p.z + (obj.offset?.[1] ?? 0);
-    const rot = ((obj.rot ?? 0) * Math.PI) / 180;
-    const c = Math.cos(rot);
-    const s = Math.sin(rot);
     if (col.type === "deck") {
       // The deck makes its whole hex walkable at the deck top (bridges are placed at
       // varying angles to their roads, so no rails that could cut the crossing).
@@ -232,31 +271,12 @@ export function buildIslandWalkGrid(
       }
       continue;
     }
-    if (col.type === "circle") {
-      if (col.radius > 0)
-        obstacles.push({
-          shape: "circle",
-          x,
-          z,
-          radius: col.radius,
-          source: obj.model,
-        });
-      continue;
-    }
-    if (col.blockHex) {
+    if (col.type === "box" && col.blockHex) {
       const cell = cells.get(hexKey(obj.q, obj.r));
       if (cell) cell.blocked = true;
     }
-    // Box centre: the object origin plus its local bounds centre, turned by the rotation.
-    obstacles.push({
-      shape: "box",
-      x: x + c * col.cx + s * col.cz,
-      z: z - s * col.cx + c * col.cz,
-      hx: col.hx,
-      hz: col.hz,
-      rot,
-      source: obj.model,
-    });
+    const o = collisionObstacle(col, obj, x, z, key);
+    if (o) obstacles.push(o);
   }
   for (const extra of opts.extraObstacles ?? []) {
     const p = islandHexToWorld(island, extra.q, extra.r, size);

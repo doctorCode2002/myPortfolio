@@ -44,11 +44,80 @@ export type IslandDoor = {
 
 export type IslandAnchor = { id: string; q: number; r: number };
 
+/** A talkable NPC besides the mayor (e.g. a project owner at a workshop lot). */
+export type IslandResident = {
+  /** NPC id: its name, title and lines are world.mayors.<id> in the dictionaries. */
+  id: string;
+  q: number;
+  r: number;
+  /** Resting heading in degrees (0 faces +z). */
+  rot?: number;
+  /** Character sheet id for the portrait and the fallback model. */
+  sprite?: string;
+};
+
+/** A drivable vehicle parked on an island (the car spawn). */
+export type IslandVehicle = {
+  id: string;
+  q: number;
+  r: number;
+  /** Heading in degrees around +y (0 faces +z, like object rotations). */
+  rot?: number;
+};
+
 export type IslandUnderside = {
   depth?: number;
   style?: "rock" | "sand";
   seed?: number;
   waterfalls?: { q: number; r: number }[];
+};
+
+/** A glider launch platform (E there starts a glide). */
+export type IslandLaunch = {
+  id: string;
+  q: number;
+  r: number;
+  /** Launch heading in degrees around +y (0 faces +z); default: away from the island centre. */
+  rot?: number;
+  /** Offset from the hex centre in metres: [dx, dz]. */
+  offset?: [number, number];
+};
+
+/** A flat-topped lookout tower on a hex, standable on top (reached only by a jump pad). */
+export type IslandLookout = {
+  id: string;
+  q: number;
+  r: number;
+  /** Deck height above the ground in metres (default 3). */
+  height?: number;
+  /** Where its return pad drops the player (a ground hex nearby). */
+  down: { q: number; r: number };
+};
+
+/** A springy jump pad on a hex: launches to a lookout or to another hex of the island. */
+export type IslandPad = {
+  id: string;
+  q: number;
+  r: number;
+  to: { lookout: string } | { q: number; r: number };
+};
+
+/** A zipline from a hex of this island down to a hex of another (E at the post to ride). */
+export type IslandZipline = {
+  id: string;
+  q: number;
+  r: number;
+  to: { island: string; q: number; r: number };
+  /** Cable height above the start hex (default 4.2 m); it ends hand-high above the far hex. */
+  height?: number;
+};
+
+/** Movement features of an island (gliding, jump pads, lookouts, ziplines). */
+export type IslandMovement = {
+  launches?: IslandLaunch[];
+  lookouts?: IslandLookout[];
+  pads?: IslandPad[];
+  ziplines?: IslandZipline[];
 };
 
 export type Island3D = {
@@ -75,7 +144,13 @@ export type Island3D = {
     mayor?: { q: number; r: number; rot?: number };
   };
   anchors?: IslandAnchor[];
+  /** Extra talkable NPCs (residents) besides the mayor. */
+  residents?: IslandResident[];
+  /** Optional drivable vehicles parked on this island. */
+  vehicles?: IslandVehicle[];
   underside?: IslandUnderside;
+  /** Optional glider launches, jump pads and lookouts. */
+  movement?: IslandMovement;
 };
 
 export type ModelKind =
@@ -90,6 +165,8 @@ export type ModelKind =
 
 export type ManifestModel = {
   file: string;
+  /** Short content hash of the file (scripts/3d/hash-models.mjs); versions the URL so it can be cached forever. */
+  hash?: string;
   source?: string;
   license?: string;
   kind: ModelKind;

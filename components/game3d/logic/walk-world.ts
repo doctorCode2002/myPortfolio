@@ -40,14 +40,42 @@ export type BridgeCorridor = {
   toCell: { q: number; r: number };
   /** Half the walkable width, in metres. */
   halfWidth: number;
+  /**
+   * Where the deck starts and ends along the span (0..1): a little inside each anchor
+   * hex, so the landing overlaps the rim. Over the void, only this stretch is walkable.
+   */
+  t0: number;
+  t1: number;
   /** Vertical arch (+) or sag (-) at mid-span, in metres. */
   arch: number;
   length: number;
 };
 
+/**
+ * A small standable patch above the ground (a lookout deck), reachable only by a jump pad:
+ * it sits over a blocked hex, and a walker coming from the ground is far below its height.
+ */
+export type RoofPatch = {
+  id: string;
+  islandId: string;
+  x: number;
+  z: number;
+  radius: number;
+  y: number;
+};
+
 export type WalkWorld = {
   islands: IslandWalkGrid[];
+  /** Raised standable patches (lookout decks); see RoofPatch. */
+  roofs?: RoofPatch[];
   bridges: BridgeCorridor[];
+  /**
+   * Keys of island objects that are currently broken (smashed by the car): their
+   * obstacles are skipped until they regrow. The break store's map is plugged in here.
+   */
+  broken: { has(key: string): boolean };
+  /** Moving obstacles (the parked car), replaced at runtime. */
+  dynamic: Obstacle[];
   /** The largest height difference a step may climb (one level plus slack). */
   maxStep: number;
   hexWidth: number;
@@ -85,6 +113,26 @@ export function bridgeHeightAt(
     (bridge.b.y - bridge.a.y) * c +
     bridge.arch * Math.sin(Math.PI * c)
   );
+}
+
+/** Default deck width in hex widths (wide enough for the car). */
+export const BRIDGE_WIDTH_HEX = 1.8;
+/** How far the deck reaches back over the rim onto the anchor hexes (metres). */
+export const LANDING_OVERLAP = 0.6;
+
+/** Distance from `from` towards `to` at which the straight line leaves the island's tiles. */
+export function rimDistance(
+  grid: IslandWalkGrid,
+  from: { x: number; z: number },
+  to: { x: number; z: number }
+): number {
+  const len = Math.hypot(to.x - from.x, to.z - from.z) || 1;
+  const ux = (to.x - from.x) / len;
+  const uz = (to.z - from.z) / len;
+  let d = 0;
+  while (d < len && cellAtWorld(grid, from.x + ux * d, from.z + uz * d))
+    d += 0.05;
+  return d;
 }
 
 /** Pick the anchor hex on `island` for a bridge towards `otherId`. */
@@ -134,7 +182,8 @@ export function buildWalkWorld(
   const hexWidth =
     grids[0]?.hexWidth ?? opts.hexWidth ?? opts.manifest?.hexSize ?? 2;
   const levelHeight = grids[0]?.levelHeight ?? 0.5;
-  const halfWidth = (opts.bridgeWidth ?? hexWidth * 1.0) / 2 - 0.05;
+  const halfWidth =
+    (opts.bridgeWidth ?? hexWidth * BRIDGE_WIDTH_HEX) / 2 - 0.05;
 
   const bridges: BridgeCorridor[] = [];
   for (const link of links) {
@@ -153,6 +202,10 @@ export function buildWalkWorld(
     const length = Math.hypot(b.x - a.x, b.z - a.z);
     const style: BridgeStyle = link.style ?? "rope";
     const span = Math.max(0, length - hexWidth);
+    // The deck lands this far inside each rim (measured along the centre line).
+    const rimA = rimDistance(gridA, a, b);
+    const rimB = rimDistance(gridB, b, a);
+    const land = Math.min(LANDING_OVERLAP, hexWidth * 0.4);
     const arch =
       style === "stone"
         ? Math.min(0.6, span * 0.03)
@@ -167,12 +220,21 @@ export function buildWalkWorld(
       fromCell: { q: anchorA.q, r: anchorA.r },
       toCell: { q: anchorB.q, r: anchorB.r },
       halfWidth,
+      t0: Math.max(0, (rimA - land) / (length || 1)),
+      t1: Math.min(1, 1 - (rimB - land) / (length || 1)),
       arch,
       length,
     });
   }
 
-  return { islands: grids, bridges, maxStep: levelHeight * 1.25, hexWidth };
+  return {
+    islands: grids,
+    bridges,
+    broken: new Set<string>(),
+    dynamic: [],
+    maxStep: levelHeight * 1.25,
+    hexWidth,
+  };
 }
 
 /** Project a point onto a bridge's centre line. */
@@ -200,6 +262,21 @@ export function surfaceAt(
   z: number,
   nearY?: number
 ): Surface | null {
+  // Lookout decks: only for a query near their height (or with no height at all).
+  for (const roof of world.roofs ?? []) {
+    const dx = x - roof.x;
+    const dz = z - roof.z;
+    if (dx * dx + dz * dz > roof.radius * roof.radius) continue;
+    if (nearY !== undefined && Math.abs(nearY - roof.y) > world.maxStep * 2)
+      continue;
+    return {
+      y: roof.y,
+      islandId: roof.islandId,
+      bridgeId: null,
+      cell: null,
+      t: 0,
+    };
+  }
   let blockedByIsland = false;
   for (const grid of world.islands) {
     const cell = cellAtWorld(grid, x, z);
@@ -220,7 +297,7 @@ export function surfaceAt(
   let best: Surface | null = null;
   for (const bridge of world.bridges) {
     const { t, dist } = projectOnBridge(bridge, x, z);
-    if (t < 0 || t > 1 || dist > bridge.halfWidth) continue;
+    if (t < bridge.t0 || t > bridge.t1 || dist > bridge.halfWidth) continue;
     const y = bridgeHeightAt(bridge, t);
     if (
       !best ||
@@ -232,7 +309,10 @@ export function surfaceAt(
   return best;
 }
 
-/** All obstacles near a point (cheap pre-filter by island bounds is unnecessary at this size). */
+/**
+ * All obstacles near a point (cheap pre-filter by island bounds is unnecessary at this
+ * size), without broken objects and with the dynamic ones (the parked car).
+ */
 export function obstaclesNear(
   world: WalkWorld,
   x: number,
@@ -240,12 +320,18 @@ export function obstaclesNear(
   range: number
 ): Obstacle[] {
   const out: Obstacle[] = [];
+  const near = (o: Obstacle): boolean => {
+    const reach = obstacleReach(o) + range;
+    return Math.abs(o.x - x) <= reach && Math.abs(o.z - z) <= reach;
+  };
   for (const grid of world.islands) {
     for (const o of grid.obstacles) {
-      const reach = obstacleReach(o) + range;
-      if (Math.abs(o.x - x) <= reach && Math.abs(o.z - z) <= reach) out.push(o);
+      if (!near(o)) continue;
+      if (o.key !== undefined && world.broken.has(o.key)) continue;
+      out.push(o);
     }
   }
+  for (const o of world.dynamic) if (near(o)) out.push(o);
   return out;
 }
 

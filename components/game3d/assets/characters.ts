@@ -17,11 +17,22 @@ export const PLAYER_CHARACTERS: Record<string, readonly string[]> = {
 };
 
 export const MAYOR_CHARACTERS: Record<string, readonly string[]> = {
-  mayor_khidmty: ["character-mini-male-b", "character-barbarian-bare"],
+  // The real island owners have their own stylized characters (scripts/3d/people.mjs).
+  mayor_khidmty: [
+    "character-bahaa",
+    "character-mini-male-b",
+    "character-barbarian-bare",
+  ],
   mayor_civicmind: ["character-mini-female-a", "character-mage-bare"],
   mayor_onyx: ["character-mini-female-c", "character-rogue-hooded"],
-  mayor_saleh: ["character-mini-male-d", "character-knight-bare"],
-  mayor_eyad: ["character-mini-male-e", "character-rogue"],
+  mayor_saleh: [
+    "character-saleh",
+    "character-mini-male-d",
+    "character-knight-bare",
+  ],
+  mayor_eyad: ["character-eyad", "character-mini-male-e", "character-rogue"],
+  mayor_waco: ["character-wejdan", "character-mini-female-b"],
+  npc_teryaq_owner: ["character-anas", "character-mini-male-c"],
 };
 
 /** Placeholder capsule colours per character id (used until the model loads or if it is missing). */
@@ -92,4 +103,18 @@ export function pickClips(names: readonly string[]): {
     walk: find(/^walking_a$/i, /^walk$/i, /walk(?!.*back)/i),
     run: find(/^running_a$/i, /^sprint$/i, /^run$/i, /run|sprint/i),
   };
+}
+
+/** A greeting clip (KayKit "Cheer", or a Kenney mini character's wave-like emote), if any. */
+export function pickCheerClip(names: readonly string[]): string | null {
+  for (const p of [
+    /^cheer$/i,
+    /cheer|wave/i,
+    /^interact-right$/i,
+    /^emote-yes$/i,
+  ]) {
+    const hit = names.find((n) => p.test(n));
+    if (hit) return hit;
+  }
+  return null;
 }

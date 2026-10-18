@@ -5,6 +5,7 @@ import {
   Code2,
   ExternalLink,
   GraduationCap,
+  Hammer,
   Heart,
   Newspaper,
   Sparkles,
@@ -32,6 +33,8 @@ import type {
   StackInfoItem,
 } from "@/lib/content/world.panels";
 import { gameEvents } from "./engine/events";
+import { ProgressPanelView } from "./progress-panel";
+import { NoticeBoardTabs } from "./social-ui/notice-board-tabs";
 
 export type BuildingModalData = BuildingPanel;
 
@@ -182,10 +185,17 @@ export function BuildingModal({
             <InfoPanelView panel={building} dict={dict} />
           )}
           {building.kind === "news" && (
-            <NewsPanelView panel={building} dict={dict} />
+            <NoticeBoardTabs
+              dict={dict}
+              locale={locale}
+              news={<NewsPanelView panel={building} dict={dict} />}
+            />
           )}
           {building.kind === "portal" && (
             <PortalPanelView panel={building} dict={dict} />
+          )}
+          {building.kind === "progress" && (
+            <ProgressPanelView panel={building} dict={dict} />
           )}
         </div>
 
@@ -262,6 +272,9 @@ function HeaderSection({
     if (building.kind === "news") {
       return dict.play.buildingPanels.news;
     }
+    if (building.kind === "progress") {
+      return dict.play.buildingPanels.inProgress;
+    }
     switch (building.section) {
       case "education":
         return dict.play.buildingPanels.education;
@@ -284,6 +297,9 @@ function HeaderSection({
     }
     if (building.kind === "news") {
       return <Newspaper className="h-5 w-5 stroke-[2.2] sm:h-6 sm:w-6" />;
+    }
+    if (building.kind === "progress") {
+      return <Hammer className="h-5 w-5 stroke-[2.2] sm:h-6 sm:w-6" />;
     }
     switch (building.section) {
       case "education":

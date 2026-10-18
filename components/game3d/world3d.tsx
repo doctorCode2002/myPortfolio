@@ -5,7 +5,7 @@ import {
   PerformanceMonitor,
   useProgress,
 } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import {
   Suspense,
   useEffect,
@@ -21,7 +21,8 @@ import * as THREE from "three";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { gameEvents } from "@/components/game/engine/events";
 import { ISLANDS_3D } from "@/content/islands3d";
-import { BRIDGES, ISLANDS } from "@/lib/content/world";
+import { BRIDGES, ISLANDS, RESIDENTS } from "@/lib/content/world";
+import { progressSigns } from "@/lib/content/world.panels";
 import { getMayorDialogue } from "@/lib/content/world.selectors";
 import { isRtl, type Locale } from "@/lib/i18n";
 import { fetchManifest, fetchModelBounds } from "./assets/manifest";
@@ -32,6 +33,8 @@ import { WalkGridViz } from "./debug/walk-grid-viz";
 import { BridgeView } from "./entities/bridge-view";
 import { Interactions, type PromptLabels } from "./entities/interactions";
 import { Mayor } from "./entities/mayor";
+import { buildStoryLabels } from "./story/labels";
+import { StoryLayer } from "./story/story-layer";
 import { Player } from "./entities/player";
 import { TargetMarker } from "./entities/target-marker";
 import { IslandView } from "./island/island-view";
@@ -42,13 +45,29 @@ import {
   type GameWorld,
   type MayorInfo,
 } from "./logic/world-layout";
+import * as carLogic from "./logic/car";
 import { createRuntime, RuntimeContext, type Runtime } from "./runtime";
+import { Atmosphere } from "./atmosphere/atmosphere";
 import { Birds } from "./scene/birds";
 import { ShaderClock } from "./scene/clock";
 import { Clouds } from "./scene/clouds";
 import { Lights } from "./scene/lights";
 import { SKY, SkyDome } from "./scene/sky";
+import { DriveHud } from "./ui/drive-hud";
 import { Joystick } from "./ui/joystick";
+import { CarSystem } from "./vehicle/car-system";
+import { GlideHud } from "./movement/glide-hud";
+import {
+  MovementSystem,
+  type MovementLabels,
+} from "./movement/movement-system";
+import { GuestbookStone } from "./social/guestbook-stone";
+import { GUESTBOOK_STONE_ID } from "./social/stone-layout";
+import { VisitorGhosts } from "./social/visitor-ghosts";
+import { WorkshopLife } from "./workshop/workshop-life";
+import { MetaHud } from "@/components/game/meta-ui/meta-hud";
+import { MetaLayer } from "./meta/meta-layer";
+import type { FireLabels } from "./meta/fires";
 
 const MOVE_KEYS = new Set([
   "KeyW",
@@ -61,6 +80,7 @@ const MOVE_KEYS = new Set([
   "ArrowRight",
   "ShiftLeft",
   "ShiftRight",
+  "Space",
 ]);
 
 function useMediaQuery(query: string): boolean {
@@ -91,17 +111,23 @@ function buildLabels(dict: Dictionary, locale: Locale): PromptLabels {
   const signs: Record<string, string> = {};
   for (const [id, entry] of Object.entries(buildings))
     if (entry?.sign) signs[id] = entry.sign;
+  Object.assign(signs, progressSigns(locale));
+  signs[GUESTBOOK_STONE_ID] = dict.play.social.stoneSign;
   const npcNames: Record<string, string> = {};
   for (const island of ISLANDS) {
     if (island.mayor)
       npcNames[island.mayor.id] = getMayorDialogue(island.mayor, raw).name;
   }
+  for (const res of RESIDENTS)
+    npcNames[res.id] = getMayorDialogue(res, raw).name;
   return {
     signs,
     npcNames,
     talk: dict.play.talk,
     tap: dict.play.tap,
+    drive: dict.play.drive,
     rtl: isRtl(locale),
+    story: buildStoryLabels(dict),
   };
 }
 
@@ -156,6 +182,20 @@ function useInputAndFreeze(rtRef: RefObject<Runtime>): void {
   }, [rtRef]);
 }
 
+/** Dev only: the renderer and scene for automated checks (draw calls, timings). */
+function ExposeThree(): null {
+  const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
+  useEffect(() => {
+    const w = window as unknown as { __three?: unknown };
+    w.__three = { gl, scene };
+    return () => {
+      delete w.__three;
+    };
+  }, [gl, scene]);
+  return null;
+}
+
 function Scene({
   world,
   manifest,
@@ -165,6 +205,9 @@ function Scene({
   debug,
   shadowSize,
   reducedMotion,
+  visitorLabel,
+  moveLabels,
+  metaLabels,
 }: {
   world: GameWorld;
   manifest: Manifest | null;
@@ -174,6 +217,9 @@ function Scene({
   debug: boolean;
   shadowSize: number;
   reducedMotion: boolean;
+  visitorLabel: string;
+  moveLabels: MovementLabels;
+  metaLabels: FireLabels;
 }): ReactNode {
   const center = useMemo(() => {
     const n = world.islands.length || 1;
@@ -206,7 +252,9 @@ function Scene({
         .filter((i) => i.kind === "npc")
         .map((npc) => {
           const island = world.islands.find((i) => i.id === npc.islandId);
-          const rot = island?.spawns?.mayor?.rot;
+          const rot =
+            island?.residents?.find((r) => r.id === npc.id)?.rot ??
+            island?.spawns?.mayor?.rot;
           const rest =
             rot !== undefined
               ? (rot * Math.PI) / 180
@@ -220,16 +268,50 @@ function Scene({
               npc={npc}
               manifest={manifest}
               restHeading={rest}
+              world={world}
+              labels={labels}
             />
           );
         })}
+      <CarSystem world={world} manifest={manifest} />
+      <WorkshopLife world={world} manifest={manifest} />
+      <MovementSystem
+        world={world}
+        labels={moveLabels}
+        touch={touch}
+        reducedMotion={reducedMotion}
+      />
       <Player world={world} manifest={manifest} charId={charId} />
+      <GuestbookStone world={world} />
+      <VisitorGhosts
+        manifest={manifest}
+        charId={charId}
+        reducedMotion={reducedMotion}
+        label={visitorLabel}
+        rtl={labels.rtl}
+      />
       <TargetMarker />
       <Interactions world={world} labels={labels} touch={touch} />
+      {labels.story && (
+        <StoryLayer
+          world={world}
+          labels={labels.story}
+          reducedMotion={reducedMotion}
+          rtl={labels.rtl}
+        />
+      )}
       <FollowCamera world={world} />
       <Clouds center={center} reducedMotion={reducedMotion} />
       <Birds center={center} reducedMotion={reducedMotion} />
+      <Atmosphere world={world} phone={touch} reducedMotion={reducedMotion} />
+      <MetaLayer
+        world={world}
+        labels={metaLabels}
+        touch={touch}
+        reducedMotion={reducedMotion}
+      />
       {debug && <WalkGridViz world={world} />}
+      {process.env.NODE_ENV !== "production" && <ExposeThree />}
     </>
   );
 }
@@ -325,6 +407,28 @@ export function World3D({
     [manifest, bounds]
   );
   const labels = useMemo(() => buildLabels(dict, locale), [dict, locale]);
+  const metaLabels = useMemo<FireLabels>(
+    () => ({
+      light: dict.play.meta.fireLight,
+      lit: dict.play.meta.fireLit,
+      litHint: dict.play.meta.fireLitHint,
+      tap: dict.play.tap,
+      rtl: isRtl(locale),
+    }),
+    [dict, locale]
+  );
+  const moveLabels = useMemo<MovementLabels>(
+    () => ({
+      glide: dict.play.movement.glide,
+      glideAction: dict.play.movement.glideAction,
+      bounce: dict.play.movement.bounce,
+      jumpDown: dict.play.movement.jumpDown,
+      zip: dict.play.movement.zip,
+      tap: dict.play.tap,
+      rtl: isRtl(locale),
+    }),
+    [dict, locale]
+  );
 
   // Expose the runtime for automated checks in development.
   useEffect(() => {
@@ -332,6 +436,7 @@ export function World3D({
     (window as unknown as { __game3d?: unknown }).__game3d = {
       rt: rtRef.current,
       world,
+      carLogic,
     };
     return () => {
       delete (window as unknown as { __game3d?: unknown }).__game3d;
@@ -374,6 +479,9 @@ export function World3D({
                   debug={debug}
                   shadowSize={touch ? Math.min(shadowSize, 1024) : shadowSize}
                   reducedMotion={reducedMotion}
+                  visitorLabel={dict.play.social.visitor}
+                  moveLabels={moveLabels}
+                  metaLabels={metaLabels}
                 />
               )}
             </Suspense>
@@ -390,6 +498,33 @@ export function World3D({
         }}
       />
       {touch && <Joystick rtRef={rtRef} />}
+      <GlideHud
+        rtRef={rtRef}
+        hint={
+          touch
+            ? dict.play.movement.glideTouchHint
+            : dict.play.movement.glideHint
+        }
+        landLabel={dict.play.movement.land}
+        touch={touch}
+        rtl={isRtl(locale)}
+      />
+      <DriveHud
+        rtRef={rtRef}
+        hint={touch ? dict.play.driveTouchHint : dict.play.driveHint}
+        exitLabel={dict.play.exitCar}
+        touch={touch}
+        rtl={isRtl(locale)}
+      />
+      {world && (
+        <MetaHud
+          rtRef={rtRef}
+          world={world}
+          dict={dict}
+          touch={touch}
+          rtl={isRtl(locale)}
+        />
+      )}
       {debug && world && <DebugOverlay rtRef={rtRef} world={world} />}
       <LoadingVeil label={dict.play.loading} show={!world} />
     </div>

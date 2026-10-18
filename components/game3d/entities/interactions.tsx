@@ -11,6 +11,8 @@ import {
   type Interactable,
 } from "../logic/world-layout";
 import { useRuntimeRef } from "../runtime";
+import type { StoryLabels } from "../story/labels";
+import { canOfferTour, promptLift } from "../story/registry";
 
 export type PromptLabels = {
   /** Sign text per building id (dict.world.buildings[id].sign). */
@@ -19,19 +21,25 @@ export type PromptLabels = {
   npcNames: Record<string, string>;
   talk: string;
   tap: string;
+  /** Vehicle prompt ("Drive"). */
+  drive: string;
   rtl: boolean;
+  /** Island stories (tours, project windows, forge rack). */
+  story?: StoryLabels;
 };
 
 /** Keys repeat and the overlays close on the same E / Space press; ignore presses right after unfreezing. */
 const REOPEN_GUARD_MS = 300;
 
 export function emitInteraction(item: Interactable): void {
+  if (item.kind === "vehicle") return;
   if (item.kind === "door") {
     gameEvents.emit("interact:building", { buildingId: item.id });
   } else {
     gameEvents.emit("interact:npc", {
       npcId: item.id,
       charSheet: item.charSheet ?? "char_0",
+      offerTour: canOfferTour(item.id),
     });
   }
 }
@@ -65,7 +73,8 @@ export function Interactions({
     if (performance.now() - rt.unfrozenAt < REOPEN_GUARD_MS) return;
     rt.path = null;
     rt.target = null;
-    emitInteraction(item);
+    if (item.kind === "vehicle") rt.car.request = "enter";
+    else emitInteraction(item);
   }, [rtRef]);
 
   useEffect(() => {
@@ -88,9 +97,10 @@ export function Interactions({
   useFrame(() => {
     const rt = rtRef.current;
     const p = rt.player.pos;
-    const hit = rt.frozen
-      ? null
-      : nearestInteractable(world.interactables, p.x, p.y, p.z);
+    const hit =
+      rt.frozen || rt.car.driving || rt.move.mode !== "walk"
+        ? null
+        : nearestInteractable(world.interactables, p.x, p.y, p.z);
     const item = hit?.item ?? null;
     if (item !== rt.nearest) {
       rt.nearest = item;
@@ -100,14 +110,19 @@ export function Interactions({
 
   if (!nearest) return null;
   const isDoor = nearest.kind === "door";
+  const isVehicle = nearest.kind === "vehicle";
   const sign = isDoor
     ? shortSign(labels.signs[nearest.id] ?? nearest.id)
     : null;
-  const title = isDoor
-    ? (sign?.title ?? nearest.id)
-    : (labels.npcNames[nearest.id] ?? labels.talk);
-  const action = isDoor ? sign?.detail : labels.talk;
-  const y = nearest.y + (isDoor ? 1.6 : 1.45);
+  const title = isVehicle
+    ? labels.drive
+    : isDoor
+      ? (sign?.title ?? nearest.id)
+      : (labels.npcNames[nearest.id] ?? labels.talk);
+  const action = isVehicle ? undefined : isDoor ? sign?.detail : labels.talk;
+  const y =
+    nearest.y +
+    (promptLift(nearest) ?? (isDoor ? 1.6 : isVehicle ? 1.3 : 1.45));
 
   return (
     <Html

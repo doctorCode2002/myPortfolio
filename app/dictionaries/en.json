@@ -36,7 +36,10 @@
     "toLight": "Switch to light theme",
     "toDark": "Switch to dark theme",
     "switchLanguage": "التبديل إلى العربية",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menuTitle": "Menu"
   },
 
   "hero": {
@@ -99,6 +102,10 @@
       "eyad": {
         "title": "Eyad Portfolio",
         "description": "A portfolio and services site for a professional designer, built to be updated without a developer in the loop."
+      },
+      "waco": {
+        "title": "WACO",
+        "description": "A trilingual site for an industrial and engineering consultancy in Riyadh: Arabic-first and right-to-left with full English and Chinese, light and dark themes, two structured lead forms, and a Filament admin where the team manages services, projects, partners, the team, the blog, news and testimonials."
       }
     }
   },
@@ -204,7 +211,6 @@
     "bio2": "My work runs from React, Next.js, and Tailwind on the front through Supabase, Convex, and PostgreSQL behind it. What I care about most is the unglamorous half: database schema design, authentication and access control, and the performance details users actually feel.",
     "bio3": "I came to engineering from medicine. I studied it at the Islamic University of Gaza before switching to Computer Systems Engineering at Al-Azhar, and the habits carried over — read carefully, work from evidence, and don't guess when you can check.",
     "bio4": "Alongside client work I teach frontend at Zero to Hero. In April 2026 I joined Palestine AI Week with Palestine TechnoPark and Gaza Sky Geeks, working across two AI product teams — CivicMind, and Bookshelf, a reading app that summarises books and recommends what to read next. I'm currently extending my backend range with Laravel.",
-
     "experienceHeading": "Experience",
     "educationHeading": "Education",
     "skillsHeading": "What I work with",
@@ -213,7 +219,6 @@
     "stackReset": "Reset",
     "showMore": "Show {count} more",
     "showLess": "Show less",
-
     "experience": {
       "instructor": {
         "org": "Zero to Hero",
@@ -236,7 +241,6 @@
         "period": "Nov 2025 – Feb 2026"
       }
     },
-
     "education": {
       "alAzhar": {
         "school": "Al-Azhar University",
@@ -264,7 +268,6 @@
         "period": "Aug 2025"
       }
     },
-
     "skills": {
       "react": "React",
       "next": "Next.js",
@@ -282,7 +285,6 @@
       "prompt": "Prompt Engineering",
       "mentorship": "Technical Mentorship"
     },
-
     "polaroids": {
       "portrait": "Mohammed Ashraf holding a laptop",
       "desk": "A desk with a keyboard, coffee, and an open notebook listing the day's work",
@@ -294,6 +296,57 @@
   },
 
   "play": {
+    "movement": {
+      "glide": "Glide",
+      "glideAction": "Take off from the platform",
+      "bounce": "Bounce",
+      "jumpDown": "Jump down",
+      "glideHint": "A/D bank, W dive, S slow down, Space or E land",
+      "glideTouchHint": "Joystick: left/right to bank, up to dive, down to slow",
+      "land": "Land",
+      "zip": "Ride the zipline"
+    },
+    "social": {
+      "visitor": "Visitor",
+      "visitors": "Visitors",
+      "settingsHint": "Other visitors",
+      "showOthers": "Show other visitors",
+      "shareMine": "Share my position (anonymous)",
+      "presenceNote": "Only an anonymous position and your character are shared. No names, no tracking.",
+      "stoneSign": "Guestbook — Leave a message",
+      "guestbook": {
+        "title": "Guestbook",
+        "intro": "Leave a note for the owner and the visitors who come after you.",
+        "name": "Your name",
+        "namePlaceholder": "e.g. Sam",
+        "message": "Message",
+        "messagePlaceholder": "Say hello…",
+        "language": "Language",
+        "langEn": "English",
+        "langAr": "العربية",
+        "island": "Island",
+        "note": "Messages appear on the notice board only after the owner approves them.",
+        "privacy": "What's stored: your name and message, plus a hashed sender id (from your network address) for rate limiting. Ghosts send only anonymous positions.",
+        "send": "Send",
+        "sending": "Sending…",
+        "sent": "Thanks! Your message is pending and will appear once the owner approves it.",
+        "writeAnother": "Write another",
+        "close": "Close",
+        "errors": {
+          "rate_limited": "That's a lot of messages. Please wait a few minutes and try again.",
+          "offline": "The guestbook can't be reached right now. Please try again later.",
+          "invalid": "Please add a name (up to 40 characters) and a message (up to 240).",
+          "unknown": "Something went wrong. Please try again."
+        },
+        "tabNews": "News",
+        "tabGuestbook": "Guestbook",
+        "loading": "Loading messages…",
+        "empty": "No approved messages yet. Find the guestbook stone on the plaza and be the first.",
+        "loadError": "The guestbook can't be reached right now.",
+        "retry": "Retry",
+        "from": "from"
+      }
+    },
     "backToPortfolio": "Back to portfolio",
     "instructions": "WASD or Arrow keys to move",
     "touchInstructions": "Drag to steer or tap to move",
@@ -307,6 +360,23 @@
     "tapToInteract": "Tap to interact",
     "talk": "Talk",
     "tap": "Tap",
+    "drive": "Drive",
+    "driveHint": "W/S drive, A/D steer, Space brake, E exit",
+    "driveTouchHint": "Joystick: up/down to drive, left/right to steer",
+    "exitCar": "Exit car",
+    "atmosphere": {
+      "soundOn": "Sound on",
+      "soundOff": "Sound off",
+      "soundHint": "Turn ambient sound on or off",
+      "timeHint": "Change the time of day",
+      "time": {
+        "auto": "Local time",
+        "dawn": "Dawn",
+        "day": "Day",
+        "sunset": "Sunset",
+        "night": "Night"
+      }
+    },
     "dialogueNext": "Next",
     "dialogueClose": "Close",
     "demoNpcName": "Island Mayor",
@@ -352,7 +422,16 @@
       "hobbies": "Hobbies",
       "family": "Family",
       "news": "News",
-      "portal": "Portal"
+      "portal": "Portal",
+      "inProgress": "In progress",
+      "progressLabel": "Progress",
+      "statusLabel": "Status",
+      "status": {
+        "planning": "Planning",
+        "building": "Building",
+        "testing": "Testing",
+        "polishing": "Polishing"
+      }
     },
     "buildings": {
       "castle": {
@@ -409,6 +488,112 @@
           "Next milestone: illustrated bridges and live project pavilions connecting to Khidmty and CivicMind."
         ]
       }
+    },
+    "meta": {
+      "passport": "Passport",
+      "passportHint": "Open the sky passport (P)",
+      "passportTitle": "Sky passport",
+      "close": "Close",
+      "prevPage": "Previous page",
+      "nextPage": "Next page",
+      "page": "Page {n} of {total}",
+      "visited": "Visited",
+      "notVisited": "Not visited yet",
+      "mayor": "Mayor met",
+      "noMayor": "No mayor here",
+      "tour": "Tour taken",
+      "noTour": "No tour here",
+      "shards": "Sky shards",
+      "fire": "Signal fire lit",
+      "done": "Done",
+      "notYet": "Not yet",
+      "achievementsTitle": "Achievements",
+      "settingsTitle": "Settings",
+      "compassShards": "Compass points to the nearest sky shard",
+      "goldCar": "Golden car paint",
+      "goldLocked": "Find every sky shard to unlock",
+      "smashCount": "Props smashed: {n} of {goal}",
+      "achievements": {
+        "visitAll": {
+          "name": "Island hopper",
+          "desc": "Visited every island"
+        },
+        "mayorsAll": {
+          "name": "Friend of the mayors",
+          "desc": "Met every mayor"
+        },
+        "tour": {
+          "name": "Tourist",
+          "desc": "Took a tour"
+        },
+        "shardsAll": {
+          "name": "Shard seeker",
+          "desc": "Found all sky shards"
+        },
+        "smash50": {
+          "name": "Wrecking crew",
+          "desc": "Smashed 50 props with the car"
+        },
+        "bridgesAll": {
+          "name": "Bridge runner",
+          "desc": "Drove across every bridge"
+        },
+        "nightOwl": {
+          "name": "Night owl",
+          "desc": "Played at night"
+        },
+        "rain": {
+          "name": "Caught in the rain",
+          "desc": "Stood out in a rain shower"
+        }
+      },
+      "toastShard": "Sky shard found ({n} of {total})",
+      "toastStamp": "Passport stamp: {island}",
+      "toastFire": "Signal fire lit: {island}",
+      "toastAchievement": "Achievement unlocked",
+      "toastGoldCar": "Unlocked: golden car paint",
+      "toastGoldCloak": "Unlocked: the Golden Wanderer (in the character picker)",
+      "map": "Map",
+      "mapShow": "Show the map",
+      "mapHide": "Hide the map",
+      "mapLabel": "Island map. Choose an island to set it as the compass target.",
+      "target": "Compass target",
+      "clearTarget": "Clear target",
+      "travel": "Travel here",
+      "travelNeedsFire": "Light this island's signal fire to travel here",
+      "travelNotDriving": "Get out of the car to travel",
+      "travelling": "Travelling to {island}",
+      "youAreHere": "You are here",
+      "unvisited": "not visited",
+      "compass": "Compass",
+      "nearestShard": "Nearest sky shard",
+      "north": "N",
+      "east": "E",
+      "south": "S",
+      "west": "W",
+      "fireLight": "Light the signal fire",
+      "fireLit": "Signal fire lit",
+      "fireLitHint": "Travel here from the map",
+      "photo": "Photo",
+      "photoHint": "Photo mode (C)",
+      "photoTitle": "Photo mode",
+      "photoExit": "Exit photo mode (Esc)",
+      "photoDownload": "Download PNG",
+      "photoCaption": "Caption",
+      "photoFilter": "Filter",
+      "filters": {
+        "none": "None",
+        "warm": "Warm",
+        "cool": "Cool",
+        "mono": "Mono"
+      },
+      "photoHelp": "Drag to orbit, scroll or pinch to zoom, arrow keys to turn, + and - to zoom",
+      "pickerGolden": "Golden Wanderer",
+      "pickerLocked": "Locked",
+      "pickerLockedHint": "Find every sky shard to unlock",
+      "carPaint": "Car paint",
+      "paintStandard": "Standard",
+      "paintGold": "Gold"
     }
   },
 
@@ -448,6 +633,14 @@
       "eyad": {
         "name": "Eyad Island",
         "sign": "Eyad Studio — Modern portfolio and client portal for a brand designer."
+      },
+      "workshop": {
+        "name": "Workshop Island",
+        "sign": "Under construction — Projects still being built. Walk up to a site to see how far along it is."
+      },
+      "waco": {
+        "name": "WACO Island",
+        "sign": "WACO — Wejdan Abdulhadi Business Solutions, an industrial and engineering consultancy in Riyadh."
       }
     },
     "buildings": {
@@ -494,15 +687,19 @@
       "portal_eyad": {
         "sign": "Eyad Studio Portal — Step through to explore the showcase.",
         "enterPrompt": "Press Enter to open Eyad's studio in a new tab"
+      },
+      "portal_waco": {
+        "sign": "WACO Headquarters — Step through to open the live site.",
+        "enterPrompt": "Press Enter to open WACO in a new tab"
       }
     },
     "mayors": {
       "mayor_khidmty": {
-        "name": "Mayor Khidmty (Demo)",
-        "title": "Services Guildmaster",
+        "name": "Bahaa",
+        "title": "Founder of Khidmty",
         "lines": [
-          "Welcome to Khidmty! We connect verified pros with clients for seamless home maintenance.",
-          "Check out our project portal to see how booking without accounts works!"
+          "Narrator: Khidmty was founded by Bahaa to connect customers with verified electricians, plumbers, carpenters and painters.",
+          "Narrator: Khidmty works in Arabic and English, and booking needs no account. The portal opens the live site."
         ]
       },
       "mayor_civicmind": {
@@ -530,6 +727,79 @@
         "lines": [
           "Eyad is the mayor of this island. Talk to hear what he said about working with Mohammed."
         ]
+      },
+      "mayor_workshop": {
+        "name": "Site Foreman (Demo)",
+        "title": "Workshop Foreman",
+        "lines": [
+          "Hard hats on! Everything on this island is still being built.",
+          "Each site has a door. Step up to one to see the project and how far along it is."
+        ]
+      },
+      "npc_teryaq_owner": {
+        "name": "Anas",
+        "title": "Teryaq project owner",
+        "lines": [
+          "Narrator: Anas is building Teryaq, a learning platform for medical students.",
+          "Narrator: Teryaq is bilingual, Arabic-first with full English. Any signed-in account can watch the course videos for free, and each course sells a study package."
+        ]
+      },
+      "mayor_waco": {
+        "name": "Wejdan Abdulhadi",
+        "title": "Owner of WACO",
+        "lines": [
+          "Narrator: This is WACO, the consultancy of Wejdan Abdulhadi.",
+          "Narrator: WACO is an industrial and engineering consultancy in Riyadh. The headquarters portal opens its live site."
+        ]
+      }
+    },
+    "tours": {
+      "ask": "Want a tour?",
+      "askNarrator": "Want a tour of the island?",
+      "yes": "Yes",
+      "no": "No",
+      "narrator": "Narrator",
+      "demo": "Demo",
+      "follow": "Follow {name} to the next stop.",
+      "progress": "Stop {n} of {total}",
+      "done": "That's the tour. The portal is open whenever you are.",
+      "end": "End tour",
+      "escHint": "Esc ends the tour",
+      "screen": "Live site",
+      "screenUnavailable": "Preview unavailable",
+      "nextImage": "Next screenshot",
+      "prevImage": "Previous screenshot",
+      "rack": "Tech rack",
+      "khidmty": {
+        "window": "This screen shows the live Khidmty site: verified pros, booked without an account.",
+        "portal": "Step up to the portal door and press E to open the project.",
+        "landmark": "The stalls here stand for the trades on Khidmty: electricians, plumbers, carpenters and painters."
+      },
+      "civicmind": {
+        "window": "This screen shows CivicMind, where citizens file reports and AI models sort them.",
+        "portal": "The portal opens the live demo. Press E at the door.",
+        "landmark": "Like water from this fountain, each report flows to the department that should handle it."
+      },
+      "onyx": {
+        "window": "This screen shows the Onyx storefront, built around motion.",
+        "portal": "The portal opens the storefront. Press E at the door.",
+        "landmark": "The bazaar echoes the shop: smooth product transitions and a cart that keeps your rhythm."
+      },
+      "saleh": {
+        "window": "This screen shows the live site: a portfolio for a graphic designer.",
+        "portal": "The portal opens the project. Press E at the door.",
+        "landmark": "The easels and frames on this island stand for the work the site was built to show."
+      },
+      "eyad": {
+        "window": "This screen shows the live site: a portfolio and services site for a designer.",
+        "portal": "The portal opens the project. Press E at the door.",
+        "landmark": "The garden beds stand for a site built to be updated without a developer in the loop."
+      },
+      "waco": {
+        "window": "This screen shows the live site: Arabic-first, with full English and Chinese, in light and dark themes.",
+        "portal": "The portal opens the project. Press E at the door.",
+        "yard": "The factories, tanks and pipes on this island stand for the industrial and engineering work of the consultancy.",
+        "pavilion": "Behind the site, a Filament admin lets the team manage services, projects, partners, the team, the blog and news."
       }
     },
     "hobbies": {

@@ -1,0 +1,12 @@
+Real island owners as mayor characters (public/game3d/models), registered in custom-people.json.
+
+- character-wejdan.glb (WACO), character-bahaa.glb (Khidmty), character-saleh.glb (Saleh),
+  character-eyad.glb (Eyad), character-anas.glb (Teryaq, workshop island):
+  kit-bashed by scripts/3d/people.mjs from KayKit Adventurers 1.0 by Kay Lousberg
+  (https://kaylousberg.itch.io/kaykit-adventurers, CC0 1.0): the Rogue, Rogue_Hooded,
+  Knight and Barbarian rigs (one shared skeleton and its animation clips), recoloured with
+  a new palette texture, plus our own procedural pieces (headscarf drape and fringe, long
+  skirt, tie, pocket square, lapels, hoodie drawstrings, round sunglasses, smiles).
+  Licence: CC0 1.0 (public domain dedication).
+- Stylized, recognisable-not-photo-real portraits made by eye from reference photos the
+  owner supplied. No photo is stored in the repository or used as a texture.

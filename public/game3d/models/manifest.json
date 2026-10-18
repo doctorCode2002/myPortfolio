@@ -11,10 +11,10 @@
   "licenses": {
     "kaykit-adventurers": "CC0 1.0 (KayKit : Adventurers Character Pack 1.0, Kay Lousberg, LICENSE.txt)",
     "kaykit-hexagon": "CC0 1.0 (KayKit : Medieval Hexagon Pack 1.0, Kay Lousberg, LICENSE.txt)",
-    "kenney": "CC0 1.0 (Kenney castle, fantasy-town, nature, survival, mini-characters; www.kenney.nl, LICENSE.txt)"
+    "kenney": "CC0 1.0 (Kenney castle, fantasy-town, nature, survival, mini-characters, car; www.kenney.nl, LICENSE.txt)"
   },
   "firstLoadBytes": 6674316,
-  "totalBytes": 11104888,
+  "totalBytes": 11156568,
   "models": {
     "hex-grass": {
       "file": "hex-grass.glb",
@@ -33,7 +33,8 @@
       "bytes": 21608,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "369f419552"
     },
     "hex-grass-bottom": {
       "file": "hex-grass-bottom.glb",
@@ -52,7 +53,8 @@
       "bytes": 20860,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b3c596f609"
     },
     "hex-grass-sloped-low": {
       "file": "hex-grass-sloped-low.glb",
@@ -72,7 +74,8 @@
       "walkable": true,
       "rise": 0.5,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1a999cf2de"
     },
     "hex-grass-sloped-high": {
       "file": "hex-grass-sloped-high.glb",
@@ -92,7 +95,8 @@
       "walkable": true,
       "rise": 1,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7560648bbc"
     },
     "hex-water": {
       "file": "hex-water.glb",
@@ -111,7 +115,8 @@
       "bytes": 20988,
       "walkable": false,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "76151d0515"
     },
     "hex-coast-a": {
       "file": "hex-coast-a.glb",
@@ -130,7 +135,8 @@
       "bytes": 23840,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a10e78ba81"
     },
     "hex-coast-a-waterless": {
       "file": "hex-coast-a-waterless.glb",
@@ -149,7 +155,8 @@
       "bytes": 23692,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "812e5f8707"
     },
     "hex-coast-b": {
       "file": "hex-coast-b.glb",
@@ -168,7 +175,8 @@
       "bytes": 23608,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "577aec731c"
     },
     "hex-coast-b-waterless": {
       "file": "hex-coast-b-waterless.glb",
@@ -187,7 +195,8 @@
       "bytes": 23676,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "73597599b1"
     },
     "hex-coast-c": {
       "file": "hex-coast-c.glb",
@@ -206,7 +215,8 @@
       "bytes": 23708,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "36a77d093e"
     },
     "hex-coast-c-waterless": {
       "file": "hex-coast-c-waterless.glb",
@@ -225,7 +235,8 @@
       "bytes": 23552,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7bb1b4b0e9"
     },
     "hex-coast-d": {
       "file": "hex-coast-d.glb",
@@ -244,7 +255,8 @@
       "bytes": 23216,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "3becf30410"
     },
     "hex-coast-d-waterless": {
       "file": "hex-coast-d-waterless.glb",
@@ -263,7 +275,8 @@
       "bytes": 23080,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a6ddfd63ea"
     },
     "hex-coast-e": {
       "file": "hex-coast-e.glb",
@@ -282,7 +295,8 @@
       "bytes": 22832,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "8898601380"
     },
     "hex-coast-e-waterless": {
       "file": "hex-coast-e-waterless.glb",
@@ -301,7 +315,8 @@
       "bytes": 22852,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a0b131766b"
     },
     "hex-road-a": {
       "file": "hex-road-a.glb",
@@ -320,7 +335,8 @@
       "bytes": 22460,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "40f24b9a35"
     },
     "hex-road-b": {
       "file": "hex-road-b.glb",
@@ -339,7 +355,8 @@
       "bytes": 24220,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6fef226107"
     },
     "hex-road-c": {
       "file": "hex-road-c.glb",
@@ -358,7 +375,8 @@
       "bytes": 24412,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "028238b7fd"
     },
     "hex-road-d": {
       "file": "hex-road-d.glb",
@@ -377,7 +395,8 @@
       "bytes": 25508,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b95da28567"
     },
     "hex-road-e": {
       "file": "hex-road-e.glb",
@@ -396,7 +415,8 @@
       "bytes": 24884,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "8b0710c21f"
     },
     "hex-road-f": {
       "file": "hex-road-f.glb",
@@ -415,7 +435,8 @@
       "bytes": 24884,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "94150a2481"
     },
     "hex-road-g": {
       "file": "hex-road-g.glb",
@@ -434,7 +455,8 @@
       "bytes": 25276,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c8112fafed"
     },
     "hex-road-h": {
       "file": "hex-road-h.glb",
@@ -453,7 +475,8 @@
       "bytes": 26712,
       "walkable": true,
       "banned": true,
-      "reason": "4+ road arms meeting in the middle read as an X/cross from the top-down camera"
+      "reason": "4+ road arms meeting in the middle read as an X/cross from the top-down camera",
+      "hash": "d38b1f48df"
     },
     "hex-road-i": {
       "file": "hex-road-i.glb",
@@ -472,7 +495,8 @@
       "bytes": 26656,
       "walkable": true,
       "banned": true,
-      "reason": "4+ road arms meeting in the middle read as an X/cross from the top-down camera"
+      "reason": "4+ road arms meeting in the middle read as an X/cross from the top-down camera",
+      "hash": "e3d9afcc07"
     },
     "hex-road-j": {
       "file": "hex-road-j.glb",
@@ -491,7 +515,8 @@
       "bytes": 25844,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f957cfb1fa"
     },
     "hex-road-k": {
       "file": "hex-road-k.glb",
@@ -510,7 +535,8 @@
       "bytes": 27632,
       "walkable": true,
       "banned": true,
-      "reason": "4+ road arms meeting in the middle read as an X/cross from the top-down camera"
+      "reason": "4+ road arms meeting in the middle read as an X/cross from the top-down camera",
+      "hash": "2c7cf9f0af"
     },
     "hex-road-l": {
       "file": "hex-road-l.glb",
@@ -529,7 +555,8 @@
       "bytes": 29040,
       "walkable": true,
       "banned": true,
-      "reason": "4+ road arms meeting in the middle read as an X/cross from the top-down camera"
+      "reason": "4+ road arms meeting in the middle read as an X/cross from the top-down camera",
+      "hash": "198b46e608"
     },
     "hex-road-m": {
       "file": "hex-road-m.glb",
@@ -548,7 +575,8 @@
       "bytes": 23212,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1d63a350cf"
     },
     "hex-road-a-sloped-low": {
       "file": "hex-road-a-sloped-low.glb",
@@ -568,7 +596,8 @@
       "walkable": true,
       "rise": 0.5,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "0c2718eccf"
     },
     "hex-road-a-sloped-high": {
       "file": "hex-road-a-sloped-high.glb",
@@ -588,7 +617,8 @@
       "walkable": true,
       "rise": 1,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "0c8c3e3565"
     },
     "hex-river-a": {
       "file": "hex-river-a.glb",
@@ -607,7 +637,8 @@
       "bytes": 23168,
       "walkable": false,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c8089ded1b"
     },
     "hex-river-a-curvy": {
       "file": "hex-river-a-curvy.glb",
@@ -626,7 +657,8 @@
       "bytes": 26188,
       "walkable": false,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "54f5ab5afd"
     },
     "hex-river-b": {
       "file": "hex-river-b.glb",
@@ -645,7 +677,8 @@
       "bytes": 25732,
       "walkable": false,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "dff4364800"
     },
     "hex-river-c": {
       "file": "hex-river-c.glb",
@@ -664,7 +697,8 @@
       "bytes": 25744,
       "walkable": false,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "fd80163513"
     },
     "hex-river-d": {
       "file": "hex-river-d.glb",
@@ -683,7 +717,8 @@
       "bytes": 26848,
       "walkable": false,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6b6ace771d"
     },
     "hex-river-e": {
       "file": "hex-river-e.glb",
@@ -702,7 +737,8 @@
       "bytes": 25984,
       "walkable": false,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "5b5d6a0675"
     },
     "hex-river-f": {
       "file": "hex-river-f.glb",
@@ -721,7 +757,8 @@
       "bytes": 25984,
       "walkable": false,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "371b81b7f4"
     },
     "hex-river-crossing-a": {
       "file": "hex-river-crossing-a.glb",
@@ -739,7 +776,8 @@
       "lazy": true,
       "bytes": 25336,
       "banned": true,
-      "reason": "A road crossing a river at right angles forms a cross shape seen from above"
+      "reason": "A road crossing a river at right angles forms a cross shape seen from above",
+      "hash": "ca38c90664"
     },
     "building-castle-red": {
       "file": "building-castle-red.glb",
@@ -757,7 +795,8 @@
       "lazy": false,
       "bytes": 231368,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "ca643d8889"
     },
     "building-castle-blue": {
       "file": "building-castle-blue.glb",
@@ -775,7 +814,8 @@
       "lazy": true,
       "bytes": 231372,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "83c2e795dc"
     },
     "building-blacksmith-red": {
       "file": "building-blacksmith-red.glb",
@@ -793,7 +833,8 @@
       "lazy": false,
       "bytes": 102408,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6b1f19cb1f"
     },
     "building-home-a-red": {
       "file": "building-home-a-red.glb",
@@ -811,7 +852,8 @@
       "lazy": false,
       "bytes": 56940,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "ca8a51d54b"
     },
     "building-home-b-red": {
       "file": "building-home-b-red.glb",
@@ -829,7 +871,8 @@
       "lazy": false,
       "bytes": 74532,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "184a6830a7"
     },
     "building-tavern-red": {
       "file": "building-tavern-red.glb",
@@ -855,7 +898,8 @@
       "lazy": false,
       "bytes": 133592,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4b6e807d3a"
     },
     "building-tower-a-red": {
       "file": "building-tower-a-red.glb",
@@ -873,7 +917,8 @@
       "lazy": true,
       "bytes": 96196,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "644d761401"
     },
     "building-market-yellow": {
       "file": "building-market-yellow.glb",
@@ -891,7 +936,8 @@
       "lazy": false,
       "bytes": 122216,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "07dc230121"
     },
     "building-market-blue": {
       "file": "building-market-blue.glb",
@@ -909,7 +955,8 @@
       "lazy": true,
       "bytes": 122212,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "3316ec93a2"
     },
     "building-tavern-blue": {
       "file": "building-tavern-blue.glb",
@@ -927,7 +974,8 @@
       "lazy": false,
       "bytes": 133596,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "2ff1654ae5"
     },
     "building-well-blue": {
       "file": "building-well-blue.glb",
@@ -945,7 +993,8 @@
       "lazy": false,
       "bytes": 48152,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1a6408657d"
     },
     "building-lumbermill-blue": {
       "file": "building-lumbermill-blue.glb",
@@ -963,7 +1012,8 @@
       "lazy": true,
       "bytes": 132876,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f22a915ca4"
     },
     "building-tower-b-blue": {
       "file": "building-tower-b-blue.glb",
@@ -988,7 +1038,8 @@
       "lazy": false,
       "bytes": 108148,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "729bd278c5"
     },
     "building-tower-a-blue": {
       "file": "building-tower-a-blue.glb",
@@ -1006,7 +1057,8 @@
       "lazy": true,
       "bytes": 96200,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b41db27069"
     },
     "building-home-b-blue": {
       "file": "building-home-b-blue.glb",
@@ -1024,7 +1076,8 @@
       "lazy": false,
       "bytes": 74536,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "186ddcc5b7"
     },
     "building-home-a-blue": {
       "file": "building-home-a-blue.glb",
@@ -1042,7 +1095,8 @@
       "lazy": true,
       "bytes": 56940,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "5fee5acb78"
     },
     "building-castle-yellow": {
       "file": "building-castle-yellow.glb",
@@ -1060,7 +1114,8 @@
       "lazy": true,
       "bytes": 231376,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "9faa7a2c46"
     },
     "building-tower-b-yellow": {
       "file": "building-tower-b-yellow.glb",
@@ -1078,7 +1133,8 @@
       "lazy": false,
       "bytes": 108156,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "82afc5c6f2"
     },
     "building-home-a-yellow": {
       "file": "building-home-a-yellow.glb",
@@ -1096,7 +1152,8 @@
       "lazy": false,
       "bytes": 56944,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "39fdc07bfb"
     },
     "building-home-b-yellow": {
       "file": "building-home-b-yellow.glb",
@@ -1114,7 +1171,8 @@
       "lazy": true,
       "bytes": 74540,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f7857852dd"
     },
     "building-well-yellow": {
       "file": "building-well-yellow.glb",
@@ -1132,7 +1190,8 @@
       "lazy": true,
       "bytes": 48156,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "05c6083e48"
     },
     "building-tavern-green": {
       "file": "building-tavern-green.glb",
@@ -1150,7 +1209,8 @@
       "lazy": false,
       "bytes": 133596,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c5b06c54a8"
     },
     "building-home-a-green": {
       "file": "building-home-a-green.glb",
@@ -1168,7 +1228,8 @@
       "lazy": false,
       "bytes": 56944,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "2eb96eeb7f"
     },
     "building-home-b-green": {
       "file": "building-home-b-green.glb",
@@ -1186,7 +1247,8 @@
       "lazy": true,
       "bytes": 74536,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "58232ba15c"
     },
     "building-watermill-green": {
       "file": "building-watermill-green.glb",
@@ -1204,7 +1266,8 @@
       "lazy": true,
       "bytes": 94868,
       "banned": true,
-      "reason": "Spoked water wheel: seen side-on its spokes cross at the hub"
+      "reason": "Spoked water wheel: seen side-on its spokes cross at the hub",
+      "hash": "76bc1ecc9f"
     },
     "building-well-green": {
       "file": "building-well-green.glb",
@@ -1222,7 +1285,8 @@
       "lazy": true,
       "bytes": 48156,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "923909fcf0"
     },
     "building-stage-a": {
       "file": "building-stage-a.glb",
@@ -1240,7 +1304,8 @@
       "lazy": true,
       "bytes": 47948,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "bb7d81d3e3"
     },
     "building-stage-b": {
       "file": "building-stage-b.glb",
@@ -1258,7 +1323,8 @@
       "lazy": true,
       "bytes": 52920,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "0a7981d527"
     },
     "building-stage-c": {
       "file": "building-stage-c.glb",
@@ -1276,7 +1342,8 @@
       "lazy": true,
       "bytes": 65876,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "8cbaab0558"
     },
     "building-scaffolding": {
       "file": "building-scaffolding.glb",
@@ -1294,7 +1361,8 @@
       "lazy": true,
       "bytes": 129552,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "418f23da12"
     },
     "building-grain": {
       "file": "building-grain.glb",
@@ -1312,7 +1380,8 @@
       "lazy": true,
       "bytes": 29084,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "ada702d5e8"
     },
     "building-dirt": {
       "file": "building-dirt.glb",
@@ -1332,7 +1401,8 @@
       "walkable": true,
       "overlay": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "9998d2a0cb"
     },
     "building-church-blue": {
       "file": "building-church-blue.glb",
@@ -1350,7 +1420,8 @@
       "lazy": true,
       "bytes": 79768,
       "banned": true,
-      "reason": "Church with a cross on top of the steeple"
+      "reason": "Church with a cross on top of the steeple",
+      "hash": "6350f9418b"
     },
     "building-windmill-blue": {
       "file": "building-windmill-blue.glb",
@@ -1368,7 +1439,8 @@
       "lazy": true,
       "bytes": 116364,
       "banned": true,
-      "reason": "Windmill: its four blades form a cross"
+      "reason": "Windmill: its four blades form a cross",
+      "hash": "1f0ffe1012"
     },
     "building-barracks-blue": {
       "file": "building-barracks-blue.glb",
@@ -1386,7 +1458,8 @@
       "lazy": true,
       "bytes": 172644,
       "banned": true,
-      "reason": "Crossed-swords emblem on the facade (single mesh, cannot be stripped)"
+      "reason": "Crossed-swords emblem on the facade (single mesh, cannot be stripped)",
+      "hash": "e4e78f890f"
     },
     "fence-wood-straight": {
       "file": "fence-wood-straight.glb",
@@ -1404,7 +1477,8 @@
       "lazy": false,
       "bytes": 29940,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "51080ca2c6"
     },
     "fence-wood-straight-gate": {
       "file": "fence-wood-straight-gate.glb",
@@ -1422,7 +1496,8 @@
       "lazy": false,
       "bytes": 33732,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4aaf58f1b5"
     },
     "fence-stone-straight": {
       "file": "fence-stone-straight.glb",
@@ -1440,7 +1515,8 @@
       "lazy": false,
       "bytes": 29332,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "0534d573ef"
     },
     "fence-stone-straight-gate": {
       "file": "fence-stone-straight-gate.glb",
@@ -1458,7 +1534,8 @@
       "lazy": false,
       "bytes": 31664,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1f19bf5862"
     },
     "wall-straight": {
       "file": "wall-straight.glb",
@@ -1476,7 +1553,8 @@
       "lazy": true,
       "bytes": 40516,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b9dcebd17e"
     },
     "wall-straight-gate": {
       "file": "wall-straight-gate.glb",
@@ -1494,7 +1572,8 @@
       "lazy": true,
       "bytes": 53072,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "ebcad62102"
     },
     "wall-corner-a-inside": {
       "file": "wall-corner-a-inside.glb",
@@ -1512,7 +1591,8 @@
       "lazy": true,
       "bytes": 34236,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "3c3c91f591"
     },
     "wall-corner-a-outside": {
       "file": "wall-corner-a-outside.glb",
@@ -1530,7 +1610,8 @@
       "lazy": true,
       "bytes": 36500,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f24436d8f4"
     },
     "building-bridge-a": {
       "file": "building-bridge-a.glb",
@@ -1548,7 +1629,8 @@
       "lazy": false,
       "bytes": 37404,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "dfe1356485"
     },
     "building-bridge-b": {
       "file": "building-bridge-b.glb",
@@ -1566,7 +1648,8 @@
       "lazy": false,
       "bytes": 37408,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "83a996ca84"
     },
     "barrel": {
       "file": "barrel.glb",
@@ -1584,7 +1667,8 @@
       "lazy": false,
       "bytes": 30312,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "d8b9dc34d7"
     },
     "bucket-water": {
       "file": "bucket-water.glb",
@@ -1602,7 +1686,8 @@
       "lazy": false,
       "bytes": 24684,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c8d6855143"
     },
     "bucket-empty": {
       "file": "bucket-empty.glb",
@@ -1620,7 +1705,8 @@
       "lazy": true,
       "bytes": 24688,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c11f7cebfa"
     },
     "crate-a-big": {
       "file": "crate-a-big.glb",
@@ -1638,7 +1724,8 @@
       "lazy": false,
       "bytes": 24688,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "df9aa775f9"
     },
     "crate-a-small": {
       "file": "crate-a-small.glb",
@@ -1656,7 +1743,8 @@
       "lazy": false,
       "bytes": 24692,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "713a86033b"
     },
     "crate-b-big": {
       "file": "crate-b-big.glb",
@@ -1674,7 +1762,8 @@
       "lazy": false,
       "bytes": 24688,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "974e0bed9b"
     },
     "crate-b-small": {
       "file": "crate-b-small.glb",
@@ -1692,7 +1781,8 @@
       "lazy": true,
       "bytes": 24692,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "bfe0a72f22"
     },
     "crate-long-a": {
       "file": "crate-long-a.glb",
@@ -1710,7 +1800,8 @@
       "lazy": false,
       "bytes": 30072,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "18455c9549"
     },
     "crate-long-b": {
       "file": "crate-long-b.glb",
@@ -1728,7 +1819,8 @@
       "lazy": true,
       "bytes": 30072,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "d27b4bfd2b"
     },
     "crate-long-c": {
       "file": "crate-long-c.glb",
@@ -1746,7 +1838,8 @@
       "lazy": true,
       "bytes": 27092,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "19df62d18d"
     },
     "crate-open": {
       "file": "crate-open.glb",
@@ -1764,7 +1857,8 @@
       "lazy": false,
       "bytes": 28156,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c225c99f39"
     },
     "sack": {
       "file": "sack.glb",
@@ -1782,7 +1876,8 @@
       "lazy": false,
       "bytes": 22272,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "439381d908"
     },
     "pallet": {
       "file": "pallet.glb",
@@ -1800,7 +1895,8 @@
       "lazy": true,
       "bytes": 23316,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "dfd057ab70"
     },
     "wheelbarrow": {
       "file": "wheelbarrow.glb",
@@ -1818,7 +1914,8 @@
       "lazy": false,
       "bytes": 32832,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a7b2e47b00"
     },
     "resource-lumber": {
       "file": "resource-lumber.glb",
@@ -1836,7 +1933,8 @@
       "lazy": false,
       "bytes": 27976,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "07285a13fd"
     },
     "resource-stone": {
       "file": "resource-stone.glb",
@@ -1854,7 +1952,8 @@
       "lazy": true,
       "bytes": 27780,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "bdcdfbe4e7"
     },
     "ladder": {
       "file": "ladder.glb",
@@ -1872,7 +1971,8 @@
       "lazy": true,
       "bytes": 23908,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "8687bd6e1a"
     },
     "tent": {
       "file": "tent.glb",
@@ -1898,7 +1998,8 @@
       "lazy": false,
       "bytes": 24032,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1224fa7b6d"
     },
     "target": {
       "file": "target.glb",
@@ -1916,7 +2017,8 @@
       "lazy": true,
       "bytes": 24840,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "089bc11eab"
     },
     "flag-red": {
       "file": "flag-red.glb",
@@ -1934,7 +2036,8 @@
       "lazy": false,
       "bytes": 21692,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "916ddcc8f5"
     },
     "flag-blue": {
       "file": "flag-blue.glb",
@@ -1952,7 +2055,8 @@
       "lazy": false,
       "bytes": 21696,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "d2a16fbd21"
     },
     "flag-green": {
       "file": "flag-green.glb",
@@ -1970,7 +2074,8 @@
       "lazy": false,
       "bytes": 21696,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "64ec5b3589"
     },
     "flag-yellow": {
       "file": "flag-yellow.glb",
@@ -1988,7 +2093,8 @@
       "lazy": false,
       "bytes": 21700,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1612d7aa8a"
     },
     "weaponrack": {
       "file": "weaponrack.glb",
@@ -2006,7 +2112,8 @@
       "lazy": true,
       "bytes": 21980,
       "banned": true,
-      "reason": "Rack of swords with crossguards"
+      "reason": "Rack of swords with crossguards",
+      "hash": "275938d0ee"
     },
     "tree-single-a": {
       "file": "tree-single-a.glb",
@@ -2024,7 +2131,8 @@
       "lazy": false,
       "bytes": 22256,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "445c84a21c"
     },
     "tree-single-b": {
       "file": "tree-single-b.glb",
@@ -2042,7 +2150,8 @@
       "lazy": false,
       "bytes": 25152,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c878a35963"
     },
     "rock-single-a": {
       "file": "rock-single-a.glb",
@@ -2060,7 +2169,8 @@
       "lazy": false,
       "bytes": 20860,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6874c484e2"
     },
     "rock-single-c": {
       "file": "rock-single-c.glb",
@@ -2078,7 +2188,8 @@
       "lazy": false,
       "bytes": 21512,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "5f2f075ed4"
     },
     "rock-single-e": {
       "file": "rock-single-e.glb",
@@ -2096,7 +2207,8 @@
       "lazy": false,
       "bytes": 22908,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "8cb4ad45f9"
     },
     "waterlily-a": {
       "file": "waterlily-a.glb",
@@ -2114,7 +2226,8 @@
       "lazy": false,
       "bytes": 21820,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1ea25fed3b"
     },
     "waterlily-b": {
       "file": "waterlily-b.glb",
@@ -2132,7 +2245,8 @@
       "lazy": false,
       "bytes": 21984,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c4ab330afc"
     },
     "waterplant-a": {
       "file": "waterplant-a.glb",
@@ -2150,7 +2264,8 @@
       "lazy": false,
       "bytes": 22072,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6de6040e76"
     },
     "waterplant-c": {
       "file": "waterplant-c.glb",
@@ -2168,7 +2283,8 @@
       "lazy": true,
       "bytes": 28228,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "679a2aef89"
     },
     "hills-a-trees": {
       "file": "hills-a-trees.glb",
@@ -2186,7 +2302,8 @@
       "lazy": true,
       "bytes": 40628,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "5d75659934"
     },
     "mountain-a-grass-trees": {
       "file": "mountain-a-grass-trees.glb",
@@ -2204,7 +2321,8 @@
       "lazy": true,
       "bytes": 38208,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "910aa22625"
     },
     "cloud-big": {
       "file": "cloud-big.glb",
@@ -2222,7 +2340,8 @@
       "lazy": true,
       "bytes": 30840,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7e0f2ca1af"
     },
     "cloud-small": {
       "file": "cloud-small.glb",
@@ -2240,7 +2359,8 @@
       "lazy": false,
       "bytes": 25952,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4843911807"
     },
     "fountain-round": {
       "file": "fountain-round.glb",
@@ -2258,7 +2378,8 @@
       "lazy": false,
       "bytes": 38320,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b9dd11e97c"
     },
     "fountain-round-detail": {
       "file": "fountain-round-detail.glb",
@@ -2276,7 +2397,8 @@
       "lazy": true,
       "bytes": 52472,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "e8ac575e7b"
     },
     "fountain-square-detail": {
       "file": "fountain-square-detail.glb",
@@ -2294,7 +2416,8 @@
       "lazy": true,
       "bytes": 23824,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "18b8c70d1f"
     },
     "fountain-center": {
       "file": "fountain-center.glb",
@@ -2312,7 +2435,8 @@
       "lazy": false,
       "bytes": 13084,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "929c44978c"
     },
     "lantern": {
       "file": "lantern.glb",
@@ -2330,7 +2454,8 @@
       "lazy": false,
       "bytes": 17176,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "8f2d4a669b"
     },
     "cart": {
       "file": "cart.glb",
@@ -2348,7 +2473,8 @@
       "lazy": true,
       "bytes": 27256,
       "banned": true,
-      "reason": "Spoked wheels: four spokes form a cross"
+      "reason": "Spoked wheels: four spokes form a cross",
+      "hash": "52cbc4ae01"
     },
     "cart-high": {
       "file": "cart-high.glb",
@@ -2366,7 +2492,8 @@
       "lazy": true,
       "bytes": 37276,
       "banned": true,
-      "reason": "Spoked wheels: four spokes form a cross"
+      "reason": "Spoked wheels: four spokes form a cross",
+      "hash": "52b6c03c89"
     },
     "stall": {
       "file": "stall.glb",
@@ -2384,7 +2511,8 @@
       "lazy": false,
       "bytes": 16940,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f28c39d101"
     },
     "stall-red": {
       "file": "stall-red.glb",
@@ -2402,7 +2530,8 @@
       "lazy": false,
       "bytes": 22144,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "43af370482"
     },
     "stall-green": {
       "file": "stall-green.glb",
@@ -2420,7 +2549,8 @@
       "lazy": false,
       "bytes": 23660,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "5057c9b60f"
     },
     "stall-bench": {
       "file": "stall-bench.glb",
@@ -2438,7 +2568,8 @@
       "lazy": false,
       "bytes": 18440,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1e7d59c97c"
     },
     "stall-stool": {
       "file": "stall-stool.glb",
@@ -2456,7 +2587,8 @@
       "lazy": true,
       "bytes": 18448,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "2a900b1dcf"
     },
     "hedge": {
       "file": "hedge.glb",
@@ -2474,7 +2606,8 @@
       "lazy": false,
       "bytes": 14172,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f7cf304138"
     },
     "hedge-large": {
       "file": "hedge-large.glb",
@@ -2492,7 +2625,8 @@
       "lazy": false,
       "bytes": 15240,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f8f00daf41"
     },
     "hedge-curved": {
       "file": "hedge-curved.glb",
@@ -2510,7 +2644,8 @@
       "lazy": true,
       "bytes": 19108,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "e5a31d07c3"
     },
     "hedge-gate": {
       "file": "hedge-gate.glb",
@@ -2528,7 +2663,8 @@
       "lazy": true,
       "bytes": 15196,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "59eef154b8"
     },
     "banner-red": {
       "file": "banner-red.glb",
@@ -2546,7 +2682,8 @@
       "lazy": false,
       "bytes": 16168,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "cb537ce640"
     },
     "banner-green": {
       "file": "banner-green.glb",
@@ -2564,7 +2701,8 @@
       "lazy": false,
       "bytes": 16276,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "e3e8de0a81"
     },
     "fence": {
       "file": "fence.glb",
@@ -2582,7 +2720,8 @@
       "lazy": false,
       "bytes": 15580,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "e3169b0086"
     },
     "fence-gate": {
       "file": "fence-gate.glb",
@@ -2600,7 +2739,8 @@
       "lazy": false,
       "bytes": 30300,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "61eff272ac"
     },
     "overhang": {
       "file": "overhang.glb",
@@ -2618,7 +2758,8 @@
       "lazy": true,
       "bytes": 15492,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a054770f9f"
     },
     "pillar-stone": {
       "file": "pillar-stone.glb",
@@ -2636,7 +2777,8 @@
       "lazy": true,
       "bytes": 16364,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "be04d6f1e0"
     },
     "rock-town-large": {
       "file": "rock-town-large.glb",
@@ -2654,7 +2796,8 @@
       "lazy": true,
       "bytes": 19560,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "8701cac4f3"
     },
     "tree-town": {
       "file": "tree-town.glb",
@@ -2672,7 +2815,8 @@
       "lazy": false,
       "bytes": 16912,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "be262c11e0"
     },
     "tree-town-high": {
       "file": "tree-town-high.glb",
@@ -2690,7 +2834,8 @@
       "lazy": true,
       "bytes": 18080,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "bba5efd3c8"
     },
     "tree-town-crooked": {
       "file": "tree-town-crooked.glb",
@@ -2708,7 +2853,8 @@
       "lazy": true,
       "bytes": 17400,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "34da5f56e5"
     },
     "wheel": {
       "file": "wheel.glb",
@@ -2726,7 +2872,8 @@
       "lazy": true,
       "bytes": 18200,
       "banned": true,
-      "reason": "Wheel with four spokes forming a cross"
+      "reason": "Wheel with four spokes forming a cross",
+      "hash": "a4dd44039d"
     },
     "windmill": {
       "file": "windmill.glb",
@@ -2744,7 +2891,8 @@
       "lazy": true,
       "bytes": 38672,
       "banned": true,
-      "reason": "Windmill: its four blades form a cross"
+      "reason": "Windmill: its four blades form a cross",
+      "hash": "dc427759c0"
     },
     "wall-wood-detail-cross": {
       "file": "wall-wood-detail-cross.glb",
@@ -2762,7 +2910,8 @@
       "lazy": true,
       "bytes": 15972,
       "banned": true,
-      "reason": "X-braced half-timber wall panel"
+      "reason": "X-braced half-timber wall panel",
+      "hash": "c4a2c8efd7"
     },
     "flag-castle": {
       "file": "flag-castle.glb",
@@ -2780,7 +2929,8 @@
       "lazy": false,
       "bytes": 13612,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1628a5f2eb"
     },
     "flag-pennant": {
       "file": "flag-pennant.glb",
@@ -2798,7 +2948,8 @@
       "lazy": false,
       "bytes": 12880,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a3be5129ae"
     },
     "flag-banner-long": {
       "file": "flag-banner-long.glb",
@@ -2816,7 +2967,8 @@
       "lazy": false,
       "bytes": 11520,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "0e92226c12"
     },
     "flag-banner-short": {
       "file": "flag-banner-short.glb",
@@ -2834,7 +2986,8 @@
       "lazy": true,
       "bytes": 11532,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7cd4008ffb"
     },
     "tower-square": {
       "file": "tower-square.glb",
@@ -2852,7 +3005,8 @@
       "lazy": true,
       "bytes": 15952,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b2e6b04bc8"
     },
     "tower-square-top-roof-high-windows": {
       "file": "tower-square-top-roof-high-windows.glb",
@@ -2870,7 +3024,8 @@
       "lazy": true,
       "bytes": 17664,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b837dbd449"
     },
     "tower-hexagon-base": {
       "file": "tower-hexagon-base.glb",
@@ -2888,7 +3043,8 @@
       "lazy": true,
       "bytes": 11236,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c74e4a7816"
     },
     "tower-hexagon-roof": {
       "file": "tower-hexagon-roof.glb",
@@ -2906,7 +3062,8 @@
       "lazy": true,
       "bytes": 11724,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "141730b836"
     },
     "bridge-castle-straight": {
       "file": "bridge-castle-straight.glb",
@@ -2924,7 +3081,8 @@
       "lazy": true,
       "bytes": 15656,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "d1a42d2e0d"
     },
     "tree-autumn": {
       "file": "tree-autumn.glb",
@@ -2942,7 +3100,8 @@
       "lazy": false,
       "bytes": 14288,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "98e6282168"
     },
     "tree-autumn-tall": {
       "file": "tree-autumn-tall.glb",
@@ -2960,7 +3119,8 @@
       "lazy": false,
       "bytes": 14304,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7f0c12f85a"
     },
     "tree-autumn-trunk": {
       "file": "tree-autumn-trunk.glb",
@@ -2978,7 +3138,8 @@
       "lazy": true,
       "bytes": 10804,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "83c9cf511e"
     },
     "chest": {
       "file": "chest.glb",
@@ -2996,7 +3157,8 @@
       "lazy": true,
       "bytes": 20428,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "9fb7e53a6e"
     },
     "workbench": {
       "file": "workbench.glb",
@@ -3014,7 +3176,8 @@
       "lazy": false,
       "bytes": 18776,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b187123873"
     },
     "workbench-anvil": {
       "file": "workbench-anvil.glb",
@@ -3032,7 +3195,8 @@
       "lazy": false,
       "bytes": 20424,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "db08af3780"
     },
     "workbench-grind": {
       "file": "workbench-grind.glb",
@@ -3050,7 +3214,8 @@
       "lazy": true,
       "bytes": 17720,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6f9668b8d0"
     },
     "tool-hammer": {
       "file": "tool-hammer.glb",
@@ -3068,7 +3233,8 @@
       "lazy": true,
       "bytes": 10784,
       "banned": true,
-      "reason": "T-shaped hammer head on a handle reads as a cross"
+      "reason": "T-shaped hammer head on a handle reads as a cross",
+      "hash": "9e752d49ff"
     },
     "tool-shovel": {
       "file": "tool-shovel.glb",
@@ -3086,7 +3252,8 @@
       "lazy": true,
       "bytes": 12980,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "575d87ddcc"
     },
     "tool-pickaxe": {
       "file": "tool-pickaxe.glb",
@@ -3104,7 +3271,8 @@
       "lazy": true,
       "bytes": 11888,
       "banned": true,
-      "reason": "Pickaxe head across the handle reads as a cross"
+      "reason": "Pickaxe head across the handle reads as a cross",
+      "hash": "6cf5f94656"
     },
     "tool-axe": {
       "file": "tool-axe.glb",
@@ -3122,7 +3290,8 @@
       "lazy": true,
       "bytes": 12112,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7e0d7e9b06"
     },
     "campfire-pit": {
       "file": "campfire-pit.glb",
@@ -3140,7 +3309,8 @@
       "lazy": true,
       "bytes": 20784,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "56e2af7fbd"
     },
     "tent-canvas": {
       "file": "tent-canvas.glb",
@@ -3158,7 +3328,8 @@
       "lazy": true,
       "bytes": 14904,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1e92ce39d8"
     },
     "rock-sand-a": {
       "file": "rock-sand-a.glb",
@@ -3176,7 +3347,8 @@
       "lazy": false,
       "bytes": 12708,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "0df9f1242e"
     },
     "rock-sand-b": {
       "file": "rock-sand-b.glb",
@@ -3194,7 +3366,8 @@
       "lazy": true,
       "bytes": 16236,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4d8e3fa7bc"
     },
     "bucket-wood": {
       "file": "bucket-wood.glb",
@@ -3212,7 +3385,8 @@
       "lazy": true,
       "bytes": 10944,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "8ad7e7f117"
     },
     "signpost-single": {
       "file": "signpost-single.glb",
@@ -3230,7 +3404,8 @@
       "lazy": true,
       "bytes": 10332,
       "banned": true,
-      "reason": "Board across a post that sticks out above it: cross-shaped sign"
+      "reason": "Board across a post that sticks out above it: cross-shaped sign",
+      "hash": "50c9ce3815"
     },
     "tree-oak": {
       "file": "tree-oak.glb",
@@ -3248,7 +3423,8 @@
       "lazy": false,
       "bytes": 8160,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6e837204c9"
     },
     "tree-default": {
       "file": "tree-default.glb",
@@ -3266,7 +3442,8 @@
       "lazy": false,
       "bytes": 5540,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "2683f909f8"
     },
     "tree-detailed": {
       "file": "tree-detailed.glb",
@@ -3284,7 +3461,8 @@
       "lazy": true,
       "bytes": 16884,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "5135a734f2"
     },
     "tree-fat": {
       "file": "tree-fat.glb",
@@ -3302,7 +3480,8 @@
       "lazy": false,
       "bytes": 3608,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "10a7b319dc"
     },
     "tree-oak-fall": {
       "file": "tree-oak-fall.glb",
@@ -3320,7 +3499,8 @@
       "lazy": false,
       "bytes": 8156,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4589cfd597"
     },
     "tree-default-fall": {
       "file": "tree-default-fall.glb",
@@ -3338,7 +3518,8 @@
       "lazy": false,
       "bytes": 9296,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4849c22c07"
     },
     "tree-fat-fall": {
       "file": "tree-fat-fall.glb",
@@ -3356,7 +3537,8 @@
       "lazy": false,
       "bytes": 3604,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7e95d205fe"
     },
     "tree-detailed-fall": {
       "file": "tree-detailed-fall.glb",
@@ -3374,7 +3556,8 @@
       "lazy": true,
       "bytes": 16880,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1af25a89d0"
     },
     "tree-oak-blossom": {
       "file": "tree-oak-blossom.glb",
@@ -3393,7 +3576,8 @@
       "bytes": 8136,
       "notes": "Recoloured from tree_oak.glb (leafsGreen)",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "352410845c"
     },
     "tree-default-blossom": {
       "file": "tree-default-blossom.glb",
@@ -3412,7 +3596,8 @@
       "bytes": 5516,
       "notes": "Recoloured from tree_default.glb (leafsGreen)",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "ed200a16e2"
     },
     "tree-fat-blossom": {
       "file": "tree-fat-blossom.glb",
@@ -3431,7 +3616,8 @@
       "bytes": 3584,
       "notes": "Recoloured from tree_fat.glb (leafsGreen)",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "612b334899"
     },
     "tree-pine-round-a": {
       "file": "tree-pine-round-a.glb",
@@ -3449,7 +3635,8 @@
       "lazy": true,
       "bytes": 8068,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "26cb9cd9a8"
     },
     "tree-palm": {
       "file": "tree-palm.glb",
@@ -3467,7 +3654,8 @@
       "lazy": false,
       "bytes": 7628,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "9fbc9c0146"
     },
     "tree-palm-tall": {
       "file": "tree-palm-tall.glb",
@@ -3485,7 +3673,8 @@
       "lazy": false,
       "bytes": 8664,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "9923557a33"
     },
     "tree-palm-bend": {
       "file": "tree-palm-bend.glb",
@@ -3503,7 +3692,8 @@
       "lazy": false,
       "bytes": 8236,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7883b546b1"
     },
     "tree-palm-short": {
       "file": "tree-palm-short.glb",
@@ -3521,7 +3711,8 @@
       "lazy": true,
       "bytes": 8664,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "d401277321"
     },
     "plant-bush": {
       "file": "plant-bush.glb",
@@ -3539,7 +3730,8 @@
       "lazy": false,
       "bytes": 2648,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "eccbf25f8f"
     },
     "plant-bush-large": {
       "file": "plant-bush-large.glb",
@@ -3557,7 +3749,8 @@
       "lazy": false,
       "bytes": 3664,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "79317433bd"
     },
     "plant-bush-detailed": {
       "file": "plant-bush-detailed.glb",
@@ -3575,7 +3768,8 @@
       "lazy": true,
       "bytes": 5536,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "490e99d0d3"
     },
     "plant-bush-small": {
       "file": "plant-bush-small.glb",
@@ -3593,7 +3787,8 @@
       "lazy": false,
       "bytes": 2044,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "423d6a4bc9"
     },
     "flower-red-a": {
       "file": "flower-red-a.glb",
@@ -3611,7 +3806,8 @@
       "lazy": false,
       "bytes": 4396,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "adfe2dea20"
     },
     "flower-red-b": {
       "file": "flower-red-b.glb",
@@ -3629,7 +3825,8 @@
       "lazy": false,
       "bytes": 4888,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b2a9d5cb2a"
     },
     "flower-yellow-a": {
       "file": "flower-yellow-a.glb",
@@ -3647,7 +3844,8 @@
       "lazy": false,
       "bytes": 4416,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7c6f928d41"
     },
     "flower-yellow-b": {
       "file": "flower-yellow-b.glb",
@@ -3665,7 +3863,8 @@
       "lazy": false,
       "bytes": 6488,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "181711d321"
     },
     "flower-purple-a": {
       "file": "flower-purple-a.glb",
@@ -3683,7 +3882,8 @@
       "lazy": false,
       "bytes": 4400,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "44de1292f6"
     },
     "flower-purple-b": {
       "file": "flower-purple-b.glb",
@@ -3701,7 +3901,8 @@
       "lazy": true,
       "bytes": 4888,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "e159b14423"
     },
     "grass-tuft": {
       "file": "grass-tuft.glb",
@@ -3719,7 +3920,8 @@
       "lazy": false,
       "bytes": 6224,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "518e2689bf"
     },
     "grass-tuft-large": {
       "file": "grass-tuft-large.glb",
@@ -3737,7 +3939,8 @@
       "lazy": false,
       "bytes": 9736,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "bee56e8ea4"
     },
     "grass-leafs": {
       "file": "grass-leafs.glb",
@@ -3755,7 +3958,8 @@
       "lazy": true,
       "bytes": 2396,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a014fe74eb"
     },
     "crops-dirt-row": {
       "file": "crops-dirt-row.glb",
@@ -3773,7 +3977,8 @@
       "lazy": false,
       "bytes": 3168,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "321344d6f3"
     },
     "crops-dirt-double-row": {
       "file": "crops-dirt-double-row.glb",
@@ -3791,7 +3996,8 @@
       "lazy": true,
       "bytes": 4600,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "73b6d31265"
     },
     "crop-pumpkin": {
       "file": "crop-pumpkin.glb",
@@ -3809,7 +4015,8 @@
       "lazy": false,
       "bytes": 6340,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "083f732f76"
     },
     "crop-melon": {
       "file": "crop-melon.glb",
@@ -3827,7 +4034,8 @@
       "lazy": true,
       "bytes": 9556,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "e54325630c"
     },
     "cactus-short": {
       "file": "cactus-short.glb",
@@ -3845,7 +4053,8 @@
       "lazy": false,
       "bytes": 4900,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7d53c52dd0"
     },
     "cactus-tall": {
       "file": "cactus-tall.glb",
@@ -3863,7 +4072,8 @@
       "lazy": false,
       "bytes": 5264,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "258837f4df"
     },
     "mushroom-red-group": {
       "file": "mushroom-red-group.glb",
@@ -3881,7 +4091,8 @@
       "lazy": false,
       "bytes": 6676,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1b56701e14"
     },
     "lily-large": {
       "file": "lily-large.glb",
@@ -3899,7 +4110,8 @@
       "lazy": false,
       "bytes": 5240,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c5bbfd7b3b"
     },
     "hanging-moss": {
       "file": "hanging-moss.glb",
@@ -3917,7 +4129,8 @@
       "lazy": false,
       "bytes": 2856,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f5318ba49d"
     },
     "rock-large-a": {
       "file": "rock-large-a.glb",
@@ -3935,7 +4148,8 @@
       "lazy": false,
       "bytes": 4528,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "3561501840"
     },
     "rock-large-b": {
       "file": "rock-large-b.glb",
@@ -3953,7 +4167,8 @@
       "lazy": true,
       "bytes": 5160,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "69a77c4e8d"
     },
     "rock-small-a": {
       "file": "rock-small-a.glb",
@@ -3971,7 +4186,8 @@
       "lazy": false,
       "bytes": 2348,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "13a6f2ee22"
     },
     "rock-small-c": {
       "file": "rock-small-c.glb",
@@ -3989,7 +4205,8 @@
       "lazy": false,
       "bytes": 2348,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "53d4059cac"
     },
     "rock-tall-a": {
       "file": "rock-tall-a.glb",
@@ -4007,7 +4224,8 @@
       "lazy": true,
       "bytes": 6792,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "5457d4a69b"
     },
     "stump-round": {
       "file": "stump-round.glb",
@@ -4025,7 +4243,8 @@
       "lazy": false,
       "bytes": 3656,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "21bd8e9600"
     },
     "log-stack": {
       "file": "log-stack.glb",
@@ -4043,7 +4262,8 @@
       "lazy": false,
       "bytes": 6876,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "81b445c9de"
     },
     "statue-column": {
       "file": "statue-column.glb",
@@ -4061,7 +4281,8 @@
       "lazy": false,
       "bytes": 6324,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "e58b3fdff7"
     },
     "statue-obelisk": {
       "file": "statue-obelisk.glb",
@@ -4079,7 +4300,8 @@
       "lazy": false,
       "bytes": 3152,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "291a0deb8d"
     },
     "statue-head": {
       "file": "statue-head.glb",
@@ -4097,7 +4319,8 @@
       "lazy": false,
       "bytes": 8520,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a22de7f91e"
     },
     "statue-ring": {
       "file": "statue-ring.glb",
@@ -4115,7 +4338,8 @@
       "lazy": false,
       "bytes": 4124,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "94716d3eaf"
     },
     "statue-block": {
       "file": "statue-block.glb",
@@ -4133,7 +4357,8 @@
       "lazy": true,
       "bytes": 6464,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "fec788b19a"
     },
     "pot-large": {
       "file": "pot-large.glb",
@@ -4151,7 +4376,8 @@
       "lazy": false,
       "bytes": 3896,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "3ca96da2ef"
     },
     "pot-small": {
       "file": "pot-small.glb",
@@ -4169,7 +4395,8 @@
       "lazy": false,
       "bytes": 4456,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "ea72cc916b"
     },
     "sign": {
       "file": "sign.glb",
@@ -4187,7 +4414,8 @@
       "lazy": true,
       "bytes": 3724,
       "banned": true,
-      "reason": "Board across a post that sticks out above it: cross-shaped sign"
+      "reason": "Board across a post that sticks out above it: cross-shaped sign",
+      "hash": "193326ecc5"
     },
     "bridge-wood": {
       "file": "bridge-wood.glb",
@@ -4205,7 +4433,8 @@
       "lazy": false,
       "bytes": 9128,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7da6f35bf4"
     },
     "bridge-wood-round": {
       "file": "bridge-wood-round.glb",
@@ -4223,7 +4452,8 @@
       "lazy": false,
       "bytes": 12428,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "0f9147d9eb"
     },
     "bridge-stone-round": {
       "file": "bridge-stone-round.glb",
@@ -4241,7 +4471,8 @@
       "lazy": false,
       "bytes": 12280,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "144924c71b"
     },
     "path-stone": {
       "file": "path-stone.glb",
@@ -4261,7 +4492,8 @@
       "walkable": true,
       "overlay": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "c4ee1b758d"
     },
     "path-stone-circle": {
       "file": "path-stone-circle.glb",
@@ -4281,7 +4513,8 @@
       "walkable": true,
       "overlay": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "3ea8d628b7"
     },
     "tent-detailed-open": {
       "file": "tent-detailed-open.glb",
@@ -4299,7 +4532,8 @@
       "lazy": false,
       "bytes": 8512,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "9e50d25f8a"
     },
     "tent-small-open": {
       "file": "tent-small-open.glb",
@@ -4317,7 +4551,8 @@
       "lazy": true,
       "bytes": 8036,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "868dd0702a"
     },
     "cliff-waterfall-rock": {
       "file": "cliff-waterfall-rock.glb",
@@ -4335,7 +4570,8 @@
       "lazy": true,
       "bytes": 3440,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "7c6eb524d3"
     },
     "campfire-stones": {
       "file": "campfire-stones.glb",
@@ -4353,7 +4589,8 @@
       "lazy": true,
       "bytes": 9128,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "195315fedd"
     },
     "fence-simple": {
       "file": "fence-simple.glb",
@@ -4371,7 +4608,8 @@
       "lazy": true,
       "bytes": 3660,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "033c480a10"
     },
     "fence-planks": {
       "file": "fence-planks.glb",
@@ -4389,7 +4627,8 @@
       "lazy": true,
       "bytes": 4280,
       "banned": true,
-      "reason": "Rails run past the posts, so every post/rail joint is a small cross"
+      "reason": "Rails run past the posts, so every post/rail joint is a small cross",
+      "hash": "fec33641f1"
     },
     "character-knight": {
       "file": "character-knight.glb",
@@ -4443,7 +4682,8 @@
       ],
       "notes": "All hand-held items removed (swords with crossguards, axes, shields, crossbows, knives, wands, books, mug)",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "51f4aefa91"
     },
     "character-barbarian": {
       "file": "character-barbarian.glb",
@@ -4495,7 +4735,8 @@
       ],
       "notes": "All hand-held items removed (swords with crossguards, axes, shields, crossbows, knives, wands, books, mug)",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "bfec97ebeb"
     },
     "character-mage": {
       "file": "character-mage.glb",
@@ -4541,7 +4782,8 @@
       "stripped": ["Spellbook", "Spellbook_open", "1H_Wand", "2H_Staff"],
       "notes": "All hand-held items removed (swords with crossguards, axes, shields, crossbows, knives, wands, books, mug)",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "3bf421c9b9"
     },
     "character-rogue": {
       "file": "character-rogue.glb",
@@ -4593,7 +4835,8 @@
       ],
       "notes": "All hand-held items removed (swords with crossguards, axes, shields, crossbows, knives, wands, books, mug)",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4cfe80cfae"
     },
     "character-rogue-hooded": {
       "file": "character-rogue-hooded.glb",
@@ -4645,7 +4888,8 @@
       ],
       "notes": "All hand-held items removed (swords with crossguards, axes, shields, crossbows, knives, wands, books, mug)",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "2a1873a659"
     },
     "character-knight-bare": {
       "file": "character-knight-bare.glb",
@@ -4700,7 +4944,8 @@
       ],
       "notes": "All hand-held items removed (swords with crossguards, axes, shields, crossbows, knives, wands, books, mug); Knight_Helmet removed",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "ecb56018bd"
     },
     "character-barbarian-bare": {
       "file": "character-barbarian-bare.glb",
@@ -4753,7 +4998,8 @@
       ],
       "notes": "All hand-held items removed (swords with crossguards, axes, shields, crossbows, knives, wands, books, mug); Barbarian_Hat removed",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4db169be19"
     },
     "character-mage-bare": {
       "file": "character-mage-bare.glb",
@@ -4805,7 +5051,8 @@
       ],
       "notes": "All hand-held items removed (swords with crossguards, axes, shields, crossbows, knives, wands, books, mug); Mage_Hat removed",
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "98b115de0c"
     },
     "character-mini-male-a": {
       "file": "character-mini-male-a.glb",
@@ -4837,7 +5084,8 @@
       "lazy": true,
       "bytes": 59816,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "84b25cab85"
     },
     "character-mini-male-b": {
       "file": "character-mini-male-b.glb",
@@ -4869,7 +5117,8 @@
       "lazy": true,
       "bytes": 59592,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "963688cbc6"
     },
     "character-mini-male-c": {
       "file": "character-mini-male-c.glb",
@@ -4901,7 +5150,8 @@
       "lazy": true,
       "bytes": 63096,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "685d428684"
     },
     "character-mini-male-d": {
       "file": "character-mini-male-d.glb",
@@ -4933,7 +5183,8 @@
       "lazy": true,
       "bytes": 59348,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "66d7a6f97e"
     },
     "character-mini-male-e": {
       "file": "character-mini-male-e.glb",
@@ -4965,7 +5216,8 @@
       "lazy": true,
       "bytes": 60048,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "308c26a157"
     },
     "character-mini-male-f": {
       "file": "character-mini-male-f.glb",
@@ -4997,7 +5249,8 @@
       "lazy": true,
       "bytes": 60024,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "99f5ccf2e4"
     },
     "character-mini-female-a": {
       "file": "character-mini-female-a.glb",
@@ -5029,7 +5282,8 @@
       "lazy": true,
       "bytes": 65688,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4cde9e2d4e"
     },
     "character-mini-female-b": {
       "file": "character-mini-female-b.glb",
@@ -5061,7 +5315,8 @@
       "lazy": true,
       "bytes": 59516,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "9b211d5eba"
     },
     "character-mini-female-c": {
       "file": "character-mini-female-c.glb",
@@ -5093,7 +5348,8 @@
       "lazy": true,
       "bytes": 59952,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "e4dd2b0cb8"
     },
     "character-mini-female-d": {
       "file": "character-mini-female-d.glb",
@@ -5125,7 +5381,8 @@
       "lazy": true,
       "bytes": 61888,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "ac6e07c06e"
     },
     "character-mini-female-e": {
       "file": "character-mini-female-e.glb",
@@ -5157,7 +5414,8 @@
       "lazy": true,
       "bytes": 60492,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "0fcd074e89"
     },
     "character-mini-female-f": {
       "file": "character-mini-female-f.glb",
@@ -5189,8 +5447,35 @@
       "lazy": true,
       "bytes": 62644,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "aad26b2719"
+    },
+    "vehicle-car": {
+      "file": "vehicle-car.glb",
+      "source": "kenney-car-kits",
+      "license": "CC0",
+      "kind": "prop",
+      "footprint": [1, 1.71],
+      "footprintUnit": "m",
+      "height": 0.871,
+      "scale": 0.67,
+      "size": [1.005, 0.871, 1.708],
+      "minY": 0,
+      "tags": ["vehicle", "car", "toy"],
+      "solid": true,
+      "lazy": true,
+      "bytes": 51680,
+      "banned": false,
+      "reason": "",
+      "hash": "ef377d39c7"
     }
   },
-  "fragments": ["custom-a.json", "custom-b.json", "custom-c.json"]
+  "fragments": [
+    "custom-a.json",
+    "custom-b.json",
+    "custom-c.json",
+    "custom-v2.json",
+    "custom-people.json",
+    "custom-waco.json"
+  ]
 }

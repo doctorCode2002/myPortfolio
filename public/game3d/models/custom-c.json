@@ -16,7 +16,8 @@
       "lazy": true,
       "bytes": 88016,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "91ade98aac"
     },
     "c-studio": {
       "file": "c-studio.glb",
@@ -34,7 +35,8 @@
       "lazy": true,
       "bytes": 38300,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "47cd69041e"
     },
     "c-easel-autumn": {
       "file": "c-easel-autumn.glb",
@@ -52,7 +54,8 @@
       "lazy": true,
       "bytes": 16676,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a07899d5bb"
     },
     "c-easel-sea": {
       "file": "c-easel-sea.glb",
@@ -70,7 +73,8 @@
       "lazy": true,
       "bytes": 9944,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "b18789012e"
     },
     "c-easel-abstract": {
       "file": "c-easel-abstract.glb",
@@ -88,7 +92,8 @@
       "lazy": true,
       "bytes": 9580,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "2b2dda2d2f"
     },
     "c-easel-blossom": {
       "file": "c-easel-blossom.glb",
@@ -106,7 +111,8 @@
       "lazy": true,
       "bytes": 15144,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "9c8e2bbd3c"
     },
     "c-easel-blueprint": {
       "file": "c-easel-blueprint.glb",
@@ -124,7 +130,8 @@
       "lazy": true,
       "bytes": 12080,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f3097e71c8"
     },
     "c-frame-autumn": {
       "file": "c-frame-autumn.glb",
@@ -142,7 +149,8 @@
       "lazy": true,
       "bytes": 17244,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "3ed67042de"
     },
     "c-frame-abstract": {
       "file": "c-frame-abstract.glb",
@@ -160,7 +168,8 @@
       "lazy": true,
       "bytes": 10144,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f887551a8b"
     },
     "c-drafting-table": {
       "file": "c-drafting-table.glb",
@@ -178,7 +187,8 @@
       "lazy": true,
       "bytes": 11888,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "69fda5e7e3"
     },
     "c-bench": {
       "file": "c-bench.glb",
@@ -196,7 +206,8 @@
       "lazy": true,
       "bytes": 6284,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "070c61eba5"
     },
     "c-leaves-decal-a": {
       "file": "c-leaves-decal-a.glb",
@@ -216,7 +227,8 @@
       "overlay": true,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "d63d7ccf58"
     },
     "c-leaves-decal-b": {
       "file": "c-leaves-decal-b.glb",
@@ -236,7 +248,8 @@
       "overlay": true,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "31b02481bd"
     },
     "c-petals-decal": {
       "file": "c-petals-decal.glb",
@@ -256,7 +269,8 @@
       "overlay": true,
       "walkable": true,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "3cbe7dc1ce"
     },
     "c-hay-bale": {
       "file": "c-hay-bale.glb",
@@ -274,7 +288,8 @@
       "lazy": true,
       "bytes": 7428,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "1a1ce922b5"
     },
     "c-sculpture-spiral": {
       "file": "c-sculpture-spiral.glb",
@@ -292,7 +307,8 @@
       "lazy": true,
       "bytes": 8420,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "d0c9f07176"
     },
     "c-paint-pots": {
       "file": "c-paint-pots.glb",
@@ -310,7 +326,8 @@
       "lazy": true,
       "bytes": 16116,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "265ccc76b6"
     },
     "c-raised-bed": {
       "file": "c-raised-bed.glb",
@@ -328,7 +345,8 @@
       "lazy": true,
       "bytes": 42772,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "31aa51187e"
     },
     "c-blooms-pink": {
       "file": "c-blooms-pink.glb",
@@ -346,7 +364,8 @@
       "lazy": true,
       "bytes": 28408,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "5a181eeb26"
     },
     "c-blooms-mixed": {
       "file": "c-blooms-mixed.glb",
@@ -364,7 +383,8 @@
       "lazy": true,
       "bytes": 28416,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "62f8fbb932"
     },
     "c-blooms-tulips": {
       "file": "c-blooms-tulips.glb",
@@ -382,7 +402,8 @@
       "lazy": true,
       "bytes": 40900,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "a0ffc21024"
     },
     "c-maquette": {
       "file": "c-maquette.glb",
@@ -400,7 +421,8 @@
       "lazy": true,
       "bytes": 7044,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "652cec2042"
     }
   }
 }

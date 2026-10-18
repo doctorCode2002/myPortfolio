@@ -5,7 +5,9 @@ import { useLayoutEffect, useMemo, useRef, type ReactNode } from "react";
 import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
+import { live } from "../atmosphere/live";
 import { createRng } from "../logic/noise";
+import { assign } from "../fx/assign";
 
 const COUNT = 18;
 const SPAN = 180;
@@ -110,6 +112,10 @@ export function Clouds({
     placeClouds(0, clouds, [ref0.current, ref1.current], center);
   }, [clouds, center]);
   useFrame(({ clock }) => {
+    // Tinted by the time of day and the weather.
+    material.color.copy(live.cloudColor);
+    material.emissive.copy(live.cloudEmissive);
+    assign(material, "emissiveIntensity", live.cloudGlow);
     if (!reducedMotion)
       placeClouds(
         clock.elapsedTime,

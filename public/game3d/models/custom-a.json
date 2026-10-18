@@ -16,7 +16,8 @@
       "lazy": false,
       "bytes": 19616,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "997723d703"
     },
     "a-pavilion": {
       "file": "a-pavilion.glb",
@@ -34,7 +35,8 @@
       "lazy": false,
       "bytes": 37932,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "cfe085edfa"
     },
     "a-cart": {
       "file": "a-cart.glb",
@@ -52,7 +54,8 @@
       "lazy": true,
       "bytes": 21420,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "8485564d54"
     },
     "a-paint-pots": {
       "file": "a-paint-pots.glb",
@@ -70,7 +73,8 @@
       "lazy": true,
       "bytes": 27008,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "497ba38cee"
     },
     "a-pipe-stack": {
       "file": "a-pipe-stack.glb",
@@ -88,7 +92,8 @@
       "lazy": true,
       "bytes": 22828,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "f3ba72c85d"
     },
     "a-cable-spool": {
       "file": "a-cable-spool.glb",
@@ -106,7 +111,8 @@
       "lazy": true,
       "bytes": 13324,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "6a0b162686"
     },
     "a-plank-bench": {
       "file": "a-plank-bench.glb",
@@ -124,7 +130,8 @@
       "lazy": true,
       "bytes": 12860,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "25ba67caff"
     },
     "a-flower-bed": {
       "file": "a-flower-bed.glb",
@@ -142,7 +149,8 @@
       "lazy": false,
       "bytes": 56008,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "5e936bde2e"
     },
     "a-plaza-stone": {
       "file": "a-plaza-stone.glb",
@@ -162,7 +170,8 @@
       "lazy": false,
       "bytes": 22128,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "db7922d9df"
     },
     "a-statue": {
       "file": "a-statue.glb",
@@ -180,7 +189,8 @@
       "lazy": false,
       "bytes": 17868,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "8dc34a9e22"
     },
     "a-hedge": {
       "file": "a-hedge.glb",
@@ -198,7 +208,8 @@
       "lazy": false,
       "bytes": 9008,
       "banned": false,
-      "reason": ""
+      "reason": "",
+      "hash": "4a09f97563"
     }
   }
 }

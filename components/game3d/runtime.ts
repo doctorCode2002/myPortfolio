@@ -6,9 +6,26 @@
 
 import { createContext, useContext, type RefObject } from "react";
 
+import { createBreakStore, type BreakStore } from "./logic/breakables";
 import { CAMERA } from "./logic/camera-math";
+import type { CarState } from "./logic/car";
 import type { Vec3 } from "./logic/walk-world";
 import type { Interactable } from "./logic/world-layout";
+
+/** A smashed prop for the physics module to shatter into chunks. */
+export type BreakEvent = {
+  key: string;
+  x: number;
+  y: number;
+  z: number;
+  rotY: number;
+  size: [number, number, number];
+  palette: string[];
+  tall: boolean;
+  /** Car velocity at impact (m/s). */
+  vx: number;
+  vz: number;
+};
 
 export type Runtime = {
   input: {
@@ -42,7 +59,40 @@ export type Runtime = {
   unfrozenAt: number;
   fps: number;
   reducedMotion: boolean;
+  car: {
+    /** The car's pose and speed (null until a world with a vehicle is built). */
+    state: CarState | null;
+    driving: boolean;
+    /** Pending enter / exit request, handled in the car system's frame. */
+    request: "enter" | "exit" | null;
+    /** Subscribers to `driving` (the HUD). */
+    listeners: Set<() => void>;
+  };
+  /** Broken / regrowing props (the walk world reads its `broken` map). */
+  props: BreakStore;
+  /** Smashes waiting for the physics module to spawn chunks. */
+  breaks: BreakEvent[];
+  /** Camera shake amount (0..1), decays; never set with reduced motion. */
+  shake: number;
+  /**
+   * The movement mode: walking, driving, gliding, a pad jump or a zipline ride, never two
+   * at once. Other systems (fast travel, ghosts) read `move.mode`; change it only with
+   * setMoveMode (or setDriving, which keeps it in step).
+   */
+  move: {
+    mode: MoveMode;
+    /** Glider bank (radians), for the player model's roll. */
+    roll: number;
+    /** A pending glide cancel (Space / E / the Land button). */
+    cancel: boolean;
+    /** Bumped on each soft respawn (the HUD flashes a whoosh). */
+    whoosh: number;
+    /** Subscribers to `mode` and `whoosh` (the HUD). */
+    listeners: Set<() => void>;
+  };
 };
+
+export type MoveMode = "walk" | "drive" | "glide" | "jump" | "zip";
 
 export function createRuntime(reducedMotion: boolean): Runtime {
   return {
@@ -66,6 +116,48 @@ export function createRuntime(reducedMotion: boolean): Runtime {
     unfrozenAt: 0,
     fps: 0,
     reducedMotion,
+    car: { state: null, driving: false, request: null, listeners: new Set() },
+    props: createBreakStore(),
+    breaks: [],
+    shake: 0,
+    move: {
+      mode: "walk",
+      roll: 0,
+      cancel: false,
+      whoosh: 0,
+      listeners: new Set(),
+    },
+  };
+}
+
+/** Switch the movement mode, and tell the subscribers. */
+export function setMoveMode(rt: Runtime, mode: MoveMode): void {
+  if (rt.move.mode === mode) return;
+  rt.move.mode = mode;
+  rt.move.cancel = false;
+  if (mode !== "glide") rt.move.roll = 0;
+  for (const cb of rt.move.listeners) cb();
+}
+
+export function subscribeMove(rt: Runtime, cb: () => void): () => void {
+  rt.move.listeners.add(cb);
+  return () => {
+    rt.move.listeners.delete(cb);
+  };
+}
+
+/** Switch between walking and driving, and tell the subscribers. */
+export function setDriving(rt: Runtime, driving: boolean): void {
+  if (rt.car.driving === driving) return;
+  rt.car.driving = driving;
+  setMoveMode(rt, driving ? "drive" : "walk");
+  for (const cb of rt.car.listeners) cb();
+}
+
+export function subscribeDriving(rt: Runtime, cb: () => void): () => void {
+  rt.car.listeners.add(cb);
+  return () => {
+    rt.car.listeners.delete(cb);
   };
 }
 
@@ -74,6 +166,11 @@ export function createRuntime(reducedMotion: boolean): Runtime {
  * handlers (never during render).
  */
 export const RuntimeContext = createContext<RefObject<Runtime> | null>(null);
+
+/** The runtime when inside World3D, else null (shared components like the gallery). */
+export function useOptionalRuntimeRef(): RefObject<Runtime> | null {
+  return useContext(RuntimeContext);
+}
 
 export function useRuntimeRef(): RefObject<Runtime> {
   const ref = useContext(RuntimeContext);

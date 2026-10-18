@@ -4,12 +4,14 @@ import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef, type ReactNode } from "react";
 import * as THREE from "three";
 
+import { live } from "../atmosphere/live";
 import { useRuntimeRef } from "../runtime";
-import { SKY, SUN_DIR } from "./sky";
+import { SKY } from "./sky";
 
 /**
  * Sun (directional, PCF soft shadows from a tight shadow camera that follows the player),
- * a hemisphere fill and a touch of ambient.
+ * a hemisphere fill and a touch of ambient. Colours, intensities and the light direction
+ * follow the atmosphere system's live look (the moon lights the night).
  */
 export function Lights({
   shadowMapSize,
@@ -18,6 +20,8 @@ export function Lights({
 }): ReactNode {
   const rtRef = useRuntimeRef();
   const sun = useRef<THREE.DirectionalLight>(null);
+  const hemi = useRef<THREE.HemisphereLight>(null);
+  const ambient = useRef<THREE.AmbientLight>(null);
 
   useEffect(() => {
     const light = sun.current;
@@ -54,18 +58,28 @@ export function Lights({
     const x = Math.round(p.x / texel) * texel;
     const z = Math.round(p.z / texel) * texel;
     light.target.position.set(x, p.y, z);
-    light.position.set(
-      x + SUN_DIR.x * 55,
-      p.y + SUN_DIR.y * 55,
-      z + SUN_DIR.z * 55
-    );
+    const dir = live.sunDir;
+    light.position.set(x + dir.x * 55, p.y + dir.y * 55, z + dir.z * 55);
     light.target.updateMatrixWorld();
+    light.color.copy(live.sunColor);
+    light.intensity = live.sunIntensity;
+    const h = hemi.current;
+    if (h) {
+      h.color.copy(live.hemiSky);
+      h.groundColor.copy(live.hemiGround);
+      h.intensity = live.hemiIntensity;
+    }
+    const a = ambient.current;
+    if (a) {
+      a.color.copy(live.ambientColor);
+      a.intensity = live.ambientIntensity;
+    }
   });
 
   return (
     <>
-      <hemisphereLight args={["#a9c8ec", "#c08d63", 1.05]} />
-      <ambientLight intensity={0.12} color="#f3c9b0" />
+      <hemisphereLight ref={hemi} args={["#a9c8ec", "#c08d63", 1.05]} />
+      <ambientLight ref={ambient} intensity={0.12} color="#f3c9b0" />
       <directionalLight
         ref={sun}
         color={SKY.sunColor}

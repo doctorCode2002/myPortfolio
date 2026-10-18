@@ -48,8 +48,11 @@ export function ActionRow({
           >
             <Link
               href={action.href}
-              {...(action.download === true ? { download: true } : {})}
-              className="focus-ring group inline-flex cursor-pointer items-center gap-2 rounded-xl border border-foreground/10 bg-background px-5 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:border-accent/40 hover:bg-accent/5"
+              {...(action.download === true
+                ? // A file, not a page: no RSC prefetch for it.
+                  { download: true, prefetch: false }
+                : {})}
+              className="focus-ring group border-foreground/10 bg-background text-foreground hover:border-accent/40 hover:bg-accent/5 inline-flex cursor-pointer items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-medium shadow-sm transition-colors"
             >
               {action.label}
               {action.icon === "download" ? (

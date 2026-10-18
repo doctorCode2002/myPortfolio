@@ -196,7 +196,9 @@ function validateLocaleDict(
       loc,
       errs
     );
-    for (const b of i.buildings)
+    for (const b of i.buildings) {
+      // In-progress projects carry their own text (lib/content/in-progress.ts).
+      if (b.kind === "progress") continue;
       checkKeys(
         wBuildings[b.id],
         `world.buildings.${b.id}`,
@@ -204,6 +206,7 @@ function validateLocaleDict(
         loc,
         errs
       );
+    }
     if (i.mayor) {
       const m = i.mayor;
       const entry = checkKeys(

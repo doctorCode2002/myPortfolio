@@ -1,0 +1,213 @@
+{
+  "id": "waco",
+  "center": [-18.5, -25.12],
+  "baseY": 1,
+  "biome": "desert",
+  "_note": "WACO: an industrial and engineering consultancy in Riyadh (Wejdan Abdulhadi Business Solutions). A steel-blue consultancy HQ (the portal) at the head of the road from the bridge, an engineering yard with blueprint tables, containers and a drafting pavilion, factory blocks with chimneys, silos, tanks and pipe runs around the west road, sand dunes on the south-west rim, and a paved date-palm courtyard with a fountain east of the road. Procedural models in scripts/3d/procedural/waco.mjs (brand palette).",
+  "hexes": [
+    { "q": 0, "r": -4, "tile": "b-hex-paving" },
+    { "q": 1, "r": -4, "tile": "b-hex-paving" },
+    { "q": 2, "r": -4, "tile": "hex-grass", "tint": "sand" },
+    { "q": -1, "r": -3, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": -3, "tile": "hex-grass", "tint": "sand" },
+    { "q": 1, "r": -3, "tile": "b-hex-paving" },
+    { "q": 2, "r": -3, "tile": "hex-grass", "tint": "sand" },
+    { "q": -3, "r": -2, "tile": "hex-grass", "tint": "sand" },
+    { "q": -2, "r": -2, "tile": "hex-grass", "tint": "sand" },
+    { "q": -1, "r": -2, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": -2, "tile": "hex-road-m", "rot": 120 },
+    { "q": 1, "r": -2, "tile": "b-hex-paving" },
+    { "q": 2, "r": -2, "tile": "hex-grass", "tint": "sand" },
+    { "q": -4, "r": -1, "tile": "hex-grass", "tint": "sand" },
+    { "q": -3, "r": -1, "tile": "hex-grass", "tint": "sand" },
+    { "q": -2, "r": -1, "tile": "hex-grass", "tint": "sand" },
+    { "q": -1, "r": -1, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": -1, "tile": "hex-road-a", "rot": 120 },
+    { "q": 1, "r": -1, "tile": "b-hex-paving" },
+    { "q": 2, "r": -1, "tile": "b-hex-paving" },
+    { "q": -5, "r": 0, "tile": "hex-grass", "tint": "sand" },
+    { "q": -4, "r": 0, "tile": "hex-road-m", "rot": 180 },
+    { "q": -3, "r": 0, "tile": "hex-road-a" },
+    { "q": -2, "r": 0, "tile": "hex-road-a" },
+    { "q": -1, "r": 0, "tile": "hex-road-a" },
+    { "q": 0, "r": 0, "tile": "hex-road-e", "rot": 120 },
+    { "q": 1, "r": 0, "tile": "b-hex-paving" },
+    { "q": 2, "r": 0, "tile": "b-hex-paving" },
+    { "q": -5, "r": 1, "tile": "hex-grass", "tint": "sand" },
+    { "q": -4, "r": 1, "tile": "hex-grass", "tint": "sand" },
+    { "q": -3, "r": 1, "tile": "hex-grass", "tint": "sand" },
+    { "q": -2, "r": 1, "tile": "hex-grass", "tint": "sand" },
+    { "q": -1, "r": 1, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": 1, "tile": "hex-road-a", "rot": 120 },
+    { "q": 1, "r": 1, "tile": "b-hex-paving" },
+    { "q": 2, "r": 1, "tile": "hex-grass", "tint": "sand" },
+    { "q": -5, "r": 2, "tile": "hex-grass", "tint": "sand", "h": 1 },
+    { "q": -4, "r": 2, "tile": "hex-grass", "tint": "sand" },
+    { "q": -3, "r": 2, "tile": "hex-grass", "tint": "sand" },
+    { "q": -2, "r": 2, "tile": "hex-grass", "tint": "sand" },
+    { "q": -1, "r": 2, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": 2, "tile": "hex-road-a", "rot": 120 },
+    { "q": 1, "r": 2, "tile": "hex-grass", "tint": "sand" },
+    { "q": 2, "r": 2, "tile": "hex-grass", "tint": "sand" },
+    { "q": -5, "r": 3, "tile": "hex-grass", "tint": "sand", "h": 1 },
+    { "q": -4, "r": 3, "tile": "hex-grass", "tint": "sand", "h": 1 },
+    { "q": -3, "r": 3, "tile": "hex-grass", "tint": "sand" },
+    { "q": -2, "r": 3, "tile": "hex-grass", "tint": "sand" },
+    { "q": -1, "r": 3, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": 3, "tile": "hex-road-a", "rot": 120 },
+    { "q": 1, "r": 3, "tile": "hex-grass", "tint": "sand" },
+    { "q": -3, "r": 4, "tile": "hex-grass", "tint": "sand", "h": 1 },
+    { "q": -2, "r": 4, "tile": "hex-grass", "tint": "sand" },
+    { "q": -1, "r": 4, "tile": "hex-grass", "tint": "sand" },
+    { "q": 0, "r": 4, "tile": "hex-road-a", "rot": 120 }
+  ],
+  "objects": [
+    { "model": "w-hq", "q": 0, "r": -3, "rot": 30 },
+    { "model": "w-lamp", "q": 1, "r": -2, "rot": 210, "offset": [0.55, -0.35] },
+    { "model": "w-lamp", "q": -1, "r": -1, "rot": 30, "offset": [-0.25, 0.2] },
+    { "model": "tree-palm-tall", "q": 0, "r": -4, "offset": [-0.2, -0.2] },
+    {
+      "model": "tree-palm",
+      "q": 1,
+      "r": -4,
+      "rot": 120,
+      "offset": [0.2, -0.3]
+    },
+    { "model": "w-tank-tall", "q": 2, "r": -4, "offset": [0.1, -0.1] },
+    { "model": "w-planter", "q": 2, "r": -3, "offset": [0.4, 0.3] },
+    {
+      "model": "tree-palm-bend",
+      "q": 2,
+      "r": -3,
+      "rot": 200,
+      "offset": [-0.25, -0.35]
+    },
+    {
+      "model": "w-containers",
+      "q": -1,
+      "r": -3,
+      "rot": 30,
+      "offset": [-0.1, -0.1]
+    },
+    {
+      "model": "w-blueprint-table",
+      "q": -1,
+      "r": -2,
+      "rot": 30,
+      "offset": [-0.3, -0.2]
+    },
+    {
+      "model": "w-blueprint-table",
+      "q": -1,
+      "r": -2,
+      "rot": 30,
+      "offset": [0.45, 0.35]
+    },
+    { "model": "w-drafting-pavilion", "q": -2, "r": -2 },
+    { "model": "w-silos", "q": -3, "r": -2, "offset": [0, -0.2] },
+    { "model": "w-factory-mist", "q": -4, "r": -1, "offset": [0, -0.1] },
+    { "model": "w-pipes", "q": -3, "r": -1, "offset": [0, -0.45] },
+    {
+      "model": "w-tank-lying",
+      "q": -5,
+      "r": 0,
+      "rot": 90,
+      "offset": [-0.2, 0]
+    },
+    {
+      "model": "w-factory-stone",
+      "q": -4,
+      "r": 1,
+      "rot": 180,
+      "offset": [0, 0.15]
+    },
+    { "model": "w-tank-tall", "q": -5, "r": 1, "offset": [-0.2, 0.1] },
+    { "model": "w-pipes", "q": -3, "r": 1, "offset": [0, 0.5] },
+    { "model": "w-containers", "q": -2, "r": 1, "offset": [0, 0.45] },
+    { "model": "w-lamp", "q": -1, "r": 1, "rot": 210, "offset": [0.25, 0.5] },
+    { "model": "w-tank-tall", "q": -4, "r": 2, "offset": [0, 0.2] },
+    {
+      "model": "w-blueprint-table",
+      "q": -3,
+      "r": 2,
+      "rot": 330,
+      "offset": [0.45, -0.45]
+    },
+    {
+      "model": "a-pipe-stack",
+      "q": -2,
+      "r": 2,
+      "rot": 30,
+      "offset": [0.1, 0.35]
+    },
+    {
+      "model": "rock-sand-b",
+      "q": -5,
+      "r": 2,
+      "rot": 40,
+      "offset": [-0.2, 0.2]
+    },
+    { "model": "cactus-short", "q": -5, "r": 3, "offset": [0.3, -0.2] },
+    {
+      "model": "rock-sand-a",
+      "q": -4,
+      "r": 3,
+      "rot": 100,
+      "offset": [-0.2, 0.3]
+    },
+    {
+      "model": "w-shade-bench",
+      "q": -3,
+      "r": 3,
+      "rot": 330,
+      "offset": [0, -0.2]
+    },
+    { "model": "tree-palm-short", "q": -2, "r": 3, "offset": [-0.1, 0.3] },
+    {
+      "model": "rock-sand-a",
+      "q": -3,
+      "r": 4,
+      "rot": 10,
+      "offset": [0.2, 0.1]
+    },
+    { "model": "tree-palm", "q": -2, "r": 4, "rot": 60, "offset": [0, 0.2] },
+    {
+      "model": "w-monolith",
+      "q": -1,
+      "r": 4,
+      "rot": 30,
+      "offset": [0.15, -0.2]
+    },
+    { "model": "w-lamp", "q": 1, "r": 3, "rot": 210, "offset": [-0.35, -0.2] },
+    { "model": "w-planter", "q": 1, "r": 3, "offset": [0.4, 0.4] },
+    { "model": "w-lamp", "q": -1, "r": 3, "rot": 30, "offset": [0.5, 0.25] },
+    { "model": "fountain-square-detail", "q": 2, "r": 0, "scale": 0.62 },
+    { "model": "tree-palm-tall", "q": 2, "r": -1, "offset": [0.35, -0.25] },
+    {
+      "model": "tree-palm-tall",
+      "q": 2,
+      "r": 1,
+      "rot": 90,
+      "offset": [0.3, 0.25]
+    },
+    { "model": "w-planter", "q": 2, "r": 1, "offset": [-0.45, -0.4] },
+    { "model": "tree-palm", "q": 2, "r": 2, "rot": 30, "offset": [0, 0] },
+    {
+      "model": "w-shade-bench",
+      "q": 1,
+      "r": 2,
+      "rot": 30,
+      "offset": [0.2, 0.2]
+    },
+    { "model": "w-planter", "q": 2, "r": -2, "offset": [0.3, 0.3] },
+    { "model": "tree-palm-bend", "q": 2, "r": -2, "offset": [-0.1, -0.4] },
+    { "model": "w-survey-tripod", "q": -1, "r": 3, "offset": [-0.4, -0.3] }
+  ],
+  "doors": [{ "buildingId": "portal_waco", "q": 0, "r": -2, "radius": 0.9 }],
+  "spawns": {
+    "player": { "q": -1, "r": 2 },
+    "mayor": { "q": 1, "r": -1, "rot": 210 }
+  },
+  "anchors": [{ "id": "to_home", "q": 0, "r": 4 }],
+  "underside": { "depth": 7, "style": "sand", "seed": 21 }
+}

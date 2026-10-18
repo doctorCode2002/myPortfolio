@@ -54,9 +54,10 @@ export function buildBridgeBoxes(
   const vx = -uz;
   const vz = ux;
   const yaw = Math.atan2(ux, uz);
-  // Start and end the deck around the anchors' outer edges (the landing overlaps the hex).
-  const t0 = Math.min(0.45, (hexWidth * 0.2) / len);
-  const t1 = 1 - t0;
+  // The deck runs between the landings, which overlap the anchor hexes past the rim.
+  const t0 = Math.min(0.45, bridge.t0);
+  const t1 = Math.max(0.55, bridge.t1);
+
   const half = bridge.halfWidth + 0.05;
   const boxes: BridgeBox[] = [];
 
@@ -101,6 +102,34 @@ export function buildBridgeBoxes(
   };
 
   const usable = (t1 - t0) * len;
+  // Landings: a full-width slab at each end that reaches back over the rim, so the wide
+  // deck rests on the island instead of ending in the air beside the anchor hex.
+  const landLen = Math.min(hexWidth * 0.45, usable * 0.2);
+  for (const [ta, tb] of [
+    [t0, t0 + landLen / len],
+    [t1 - landLen / len, t1],
+  ] as const) {
+    if (bridge.style === "stone")
+      span(
+        ta,
+        tb,
+        0,
+        -0.14,
+        half * 2 + 0.3,
+        0.3,
+        STONE[2] as [number, number, number]
+      );
+    else
+      span(
+        ta,
+        tb,
+        0,
+        -0.06,
+        half * 2 + 0.2,
+        0.12,
+        WOOD[1] as [number, number, number]
+      );
+  }
   if (bridge.style === "stone") {
     const blockLen = 0.55;
     const n = Math.max(2, Math.round(usable / blockLen));

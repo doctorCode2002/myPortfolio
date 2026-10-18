@@ -4,11 +4,13 @@ import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef, type ReactNode } from "react";
 import * as THREE from "three";
 
+import { sharedUniforms } from "../fx/shared-time";
 import { createWaterfallMaterial } from "../fx/water";
 import type { Point2 } from "../logic/hex";
 import type { WalkCell } from "../logic/walk-grid";
 import { useRuntimeRef } from "../runtime";
 import { buildWaterfallGeometry, createMistTexture } from "./geometry";
+import { assign } from "../fx/assign";
 
 const MIST = 22;
 
@@ -84,6 +86,10 @@ export function Waterfall({
   const updated = useRef(false);
   useFrame(({ clock }) => {
     const rt = rtRef.current;
+    // Heavier mist in the rain.
+    const rain = sharedUniforms.uRain.value;
+    assign(mistMat, "opacity", 0.7 + rain * 0.25);
+    assign(mistMat, "size", 1.1 * (1 + rain * 0.6));
     if (rt.reducedMotion && updated.current) return;
     updated.current = true;
     const t = rt.reducedMotion ? 0 : clock.elapsedTime;

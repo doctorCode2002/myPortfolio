@@ -19,6 +19,8 @@ export const MODELS_BASE_URL = "/game3d/models/";
 
 export interface ModelEntry {
   file: string;
+  /** Short content hash of the file (scripts/3d/hash-models.mjs); versions the URL so it can be cached forever. */
+  hash?: string;
   source: string;
   license: string;
   kind: ModelKind;

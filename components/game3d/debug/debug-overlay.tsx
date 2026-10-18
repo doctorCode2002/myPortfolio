@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode, type RefObject } from "react";
 
+import { AtmosphereDebug } from "../atmosphere/atmosphere-debug";
 import { nearestInteractable, type GameWorld } from "../logic/world-layout";
 import type { Runtime } from "../runtime";
 
@@ -68,6 +69,7 @@ export function DebugOverlay({
       <div>in range {snap.inRange}</div>
       <div>cam {snap.zoom}</div>
       <div>frozen {String(snap.frozen)}</div>
+      <AtmosphereDebug />
       <div className="pointer-events-auto mt-1 flex max-w-[15rem] flex-wrap gap-1">
         {world.islands.map((isl) => (
           <button
