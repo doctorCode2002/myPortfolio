@@ -20,6 +20,7 @@ import {
   subscribeSocialPrefs,
 } from "@/lib/social/prefs";
 import { CHARACTER_COLORS, playerModelFor } from "../assets/characters";
+import { GhostBalloon } from "../balloon/balloon-model";
 import { CharacterModel, type AnimState } from "../entities/character-model";
 import type { Manifest } from "../logic/types";
 import { islandBob, useRuntimeRef, type Runtime } from "../runtime";
@@ -49,11 +50,11 @@ const SELECT_INTERVAL_S = 0.5;
 const GHOST_OPACITY = 0.5;
 const GLOW = new THREE.Color("#bfe3ff");
 
-/** Walk / drive / glide, from the movement system's `rt.move.mode` when present. */
+/** Walk / drive / glide / balloon, from the movement system's `rt.move.mode` when present. */
 function modeOf(rt: Runtime): MoveMode {
   if (rt.car.driving) return "drive";
   const mode = (rt as unknown as { move?: { mode?: unknown } }).move?.mode;
-  return mode === "glide" ? "glide" : "walk";
+  return mode === "glide" || mode === "balloon" ? mode : "walk";
 }
 
 /**
@@ -94,6 +95,16 @@ export function VisitorGhosts({
     char: charId,
   });
   const acc = useRef(0);
+
+  // Dev only: the ghost buffer, for automated checks without a second visitor.
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    const w = window as unknown as { __ghosts?: unknown };
+    w.__ghosts = ghosts;
+    return () => {
+      delete w.__ghosts;
+    };
+  }, []);
 
   useEffect(() => {
     let stop: (() => void) | null = null;
@@ -190,7 +201,8 @@ function createGhostLook(): GhostLook {
     if (seen.has(o)) return;
     seen.add(o);
     const mesh = o as THREE.Mesh;
-    if (!mesh.isMesh) return;
+    // Already translucent (the ghost balloon shares one material).
+    if (!mesh.isMesh || mesh.userData.keepMaterial) return;
     mesh.castShadow = false;
     mesh.material = Array.isArray(mesh.material)
       ? mesh.material.map(ghostify)
@@ -222,6 +234,7 @@ function Ghost({
 }): ReactNode {
   const [char, setChar] = useState(() => ghosts.get(id)?.char ?? "char_0");
   const group = useRef<THREE.Group>(null);
+  const balloon = useRef<THREE.Group>(null);
   const labelRef = useRef<HTMLDivElement>(null);
   const anim = useRef<AnimState>({ anim: "idle", speed: 0 });
   const out = useRef<GhostPose>({ x: 0, y: 0, z: 0, h: 0, speed: 0 });
@@ -255,6 +268,7 @@ function Ghost({
       return;
     }
     if (g.char !== char) setChar(g.char);
+    if (balloon.current) balloon.current.visible = g.mode === "balloon";
     // Pick up meshes as the model streams in (cheap; a few dozen nodes).
     scanIn.current -= dt;
     if (scanIn.current <= 0) {
@@ -268,11 +282,10 @@ function Ghost({
     grp.visible = alpha > 0.01;
     const t = clock.elapsedTime;
     const hover = reducedMotion ? 0 : Math.sin(t * 1.6 + phase) * 0.03;
-    grp.position.set(
-      o.x,
-      o.y + islandBob(g.island, t, reducedMotion) + hover,
-      o.z
-    );
+    // A ballooning visitor floats with their basket (no island bob).
+    const bob =
+      g.mode === "balloon" ? 0 : islandBob(g.island, t, reducedMotion);
+    grp.position.set(o.x, o.y + bob + hover, o.z);
     grp.rotation.y = o.h;
     const a = anim.current;
     a.speed = o.speed;
@@ -299,6 +312,7 @@ function Ghost({
         color={CHARACTER_COLORS[char] ?? "#9fc4ff"}
         state={anim}
       />
+      <GhostBalloon ref={balloon} />
       <Html
         position={[0, 1.55, 0]}
         center
