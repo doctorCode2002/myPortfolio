@@ -57,6 +57,11 @@ class AudioEngine {
   private waterfalls: { panner: PannerNode; gain: GainNode }[] = [];
   private closed = false;
 
+  /** True once close() has been called (the context may still be shutting down). */
+  get isClosed(): boolean {
+    return this.closed;
+  }
+
   constructor() {
     const Ctor =
       window.AudioContext ??
@@ -190,10 +195,14 @@ class AudioEngine {
   }
 
   close(): void {
+    if (this.closed) return;
     this.closed = true;
     const ctx = this.ctx;
+    if (ctx.state === "closed") return;
     this.master.gain.setTargetAtTime(0, ctx.currentTime, 0.15);
-    window.setTimeout(() => void ctx.close().catch(() => undefined), 500);
+    window.setTimeout(() => {
+      if (ctx.state !== "closed") ctx.close().catch(() => undefined);
+    }, 500);
   }
 }
 
@@ -252,7 +261,10 @@ export default function AudioSystem({
     for (const f of IMPACTS) void engine.load(f);
     // Browsers may start the context suspended until a gesture.
     const resume = (): void => {
-      if (engine.ctx.state === "suspended") void engine.ctx.resume();
+      // Closing the context (sound off, leaving /play) rejects a pending resume() with
+      // InvalidStateError; that's expected, so don't let it surface as an unhandled rejection.
+      if (engine.isClosed || engine.ctx.state !== "suspended") return;
+      engine.ctx.resume().catch(() => undefined);
     };
     resume();
     if (process.env.NODE_ENV !== "production")
