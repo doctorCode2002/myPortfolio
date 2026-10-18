@@ -11,10 +11,10 @@
   "licenses": {
     "kaykit-adventurers": "CC0 1.0 (KayKit : Adventurers Character Pack 1.0, Kay Lousberg, LICENSE.txt)",
     "kaykit-hexagon": "CC0 1.0 (KayKit : Medieval Hexagon Pack 1.0, Kay Lousberg, LICENSE.txt)",
-    "kenney": "CC0 1.0 (Kenney castle, fantasy-town, nature, survival, mini-characters; www.kenney.nl, LICENSE.txt)"
+    "kenney": "CC0 1.0 (Kenney castle, fantasy-town, nature, survival, mini-characters, car; www.kenney.nl, LICENSE.txt)"
   },
   "firstLoadBytes": 6674316,
-  "totalBytes": 11104888,
+  "totalBytes": 11156568,
   "models": {
     "hex-grass": {
       "file": "hex-grass.glb",
@@ -5188,6 +5188,24 @@
       "solid": true,
       "lazy": true,
       "bytes": 62644,
+      "banned": false,
+      "reason": ""
+    },
+    "vehicle-car": {
+      "file": "vehicle-car.glb",
+      "source": "kenney-car-kits",
+      "license": "CC0",
+      "kind": "prop",
+      "footprint": [1, 1.71],
+      "footprintUnit": "m",
+      "height": 0.871,
+      "scale": 0.67,
+      "size": [1.005, 0.871, 1.708],
+      "minY": 0,
+      "tags": ["vehicle", "car", "toy"],
+      "solid": true,
+      "lazy": true,
+      "bytes": 51680,
       "banned": false,
       "reason": ""
     }

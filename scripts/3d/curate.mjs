@@ -55,6 +55,7 @@ const PACK_SCALE = {
   "kenney-castle": 1.2,
   "kenney-survival": 1.3, // barrel 0.34 -> 0.44
   "kenney-nature": 1.5, // oak 1.23 -> 1.85, flower 0.29 -> 0.44
+  "kenney-car": 0.67, // car kit sedan 1.5 x 2.55 -> a 1.0 x 1.7 m cartoon car next to a 0.9 m person
 };
 
 const LICENSES = {
@@ -65,6 +66,7 @@ const LICENSES = {
   "kenney-nature": "CC0",
   "kenney-survival": "CC0",
   "kenney-mini-characters": "CC0",
+  "kenney-car-kits": "CC0",
 };
 
 /* ------------------------------------------------------------------------------------------------------------------ */
@@ -817,6 +819,21 @@ for (const g of ["male", "female"]) {
   }
 }
 
+// ---- Vehicles: Kenney car kit (sparse clone of github.com/shorepine/kenney, CC0 per its LICENSE.txt) -------
+// Solid disc wheels only (no spoked wheels that read as a cross). The wheel nodes keep their names (wheel-front-left, ...)
+// so the engine can spin and steer them.
+const KC = "kenney-cars/repo/3d";
+// The car kit's sedan (picked over the toy-car kit's suv and racer): a rounded toy look, solid disc wheels.
+add({
+  name: "vehicle-car",
+  src: `${KC}/car/sedan.glb`,
+  source: "kenney-car-kits",
+  pack: "kenney-car",
+  kind: "prop",
+  tags: ["vehicle", "car", "toy"],
+  lazy: true,
+});
+
 /* ------------------------------------------------------------------------------------------------------------------ */
 /* Pipeline                                                                                                            */
 /* ------------------------------------------------------------------------------------------------------------------ */
@@ -1046,8 +1063,12 @@ async function main() {
   const manifestPath = path.join(OUT_DIR, "manifest.json");
   /** @type {Record<string, any>} */
   let previous = {};
+  /** Manifest fragments (procedural island props) are listed by hand; keep them. */
+  let fragments;
   try {
-    previous = JSON.parse(await fs.readFile(manifestPath, "utf8")).models ?? {};
+    const old = JSON.parse(await fs.readFile(manifestPath, "utf8"));
+    previous = old.models ?? {};
+    fragments = old.fragments;
   } catch {
     previous = {};
   }
@@ -1152,11 +1173,12 @@ async function main() {
       "kaykit-hexagon":
         "CC0 1.0 (KayKit : Medieval Hexagon Pack 1.0, Kay Lousberg, LICENSE.txt)",
       kenney:
-        "CC0 1.0 (Kenney castle, fantasy-town, nature, survival, mini-characters; www.kenney.nl, LICENSE.txt)",
+        "CC0 1.0 (Kenney castle, fantasy-town, nature, survival, mini-characters, car; www.kenney.nl, LICENSE.txt)",
     },
     firstLoadBytes: firstLoad,
     totalBytes: total,
     models,
+    ...(fragments ? { fragments } : {}),
   };
   // Format with the repo's prettier so `prettier --check` stays green after a re-run.
   const prettier = await import("prettier");
