@@ -20,7 +20,11 @@ import {
   setPhoto,
   subscribeMeta,
 } from "@/components/game3d/meta/store";
-import { subscribeDriving, type Runtime } from "@/components/game3d/runtime";
+import {
+  subscribeDriving,
+  subscribeMove,
+  type Runtime,
+} from "@/components/game3d/runtime";
 import { Compass } from "./compass";
 import { Minimap } from "./minimap";
 import { Passport } from "./passport";
@@ -63,6 +67,15 @@ export function MetaHud({
   const driving = useSyncExternalStore(
     (cb) => subscribeDriving(rtRef.current, cb),
     () => rtRef.current.car.driving,
+    () => false
+  );
+  // Gliding, riding or ballooning: no fast travel until back on foot.
+  const flying = useSyncExternalStore(
+    (cb) => subscribeMove(rtRef.current, cb),
+    () => {
+      const m = rtRef.current.move.mode;
+      return m !== "walk" && m !== "drive";
+    },
     () => false
   );
   const { progress, ui, toasts } = snap;
@@ -138,6 +151,7 @@ export function MetaHud({
               touch={touch}
               rtl={rtl}
               driving={driving}
+              flying={flying}
             />
           </div>
           <div className="absolute end-4 top-16 sm:end-6 sm:top-20">

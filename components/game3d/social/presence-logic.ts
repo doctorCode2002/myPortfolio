@@ -6,7 +6,7 @@
 
 import { PRESENCE } from "@/lib/social/config";
 
-export type MoveMode = "walk" | "drive" | "glide";
+export type MoveMode = "walk" | "drive" | "glide" | "balloon";
 
 /** One position update as broadcast to the other visitors (anonymous; no personal data). */
 export type WirePos = {
@@ -59,7 +59,7 @@ export type GhostPose = {
 };
 
 const LIMIT = 5000;
-const MODES: readonly MoveMode[] = ["walk", "drive", "glide"];
+const MODES: readonly MoveMode[] = ["walk", "drive", "glide", "balloon"];
 
 function round2(v: number): number {
   return Math.round(v * 100) / 100;

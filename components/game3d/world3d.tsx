@@ -67,6 +67,11 @@ import { VisitorGhosts } from "./social/visitor-ghosts";
 import { WorkshopLife } from "./workshop/workshop-life";
 import { MetaHud } from "@/components/game/meta-ui/meta-hud";
 import { MetaLayer } from "./meta/meta-layer";
+import { BalloonHud, type BalloonHudLabels } from "./balloon/balloon-hud";
+import {
+  BalloonSystem,
+  type BalloonPromptLabels,
+} from "./balloon/balloon-system";
 import type { FireLabels } from "./meta/fires";
 
 const MOVE_KEYS = new Set([
@@ -208,6 +213,7 @@ function Scene({
   visitorLabel,
   moveLabels,
   metaLabels,
+  balloonLabels,
 }: {
   world: GameWorld;
   manifest: Manifest | null;
@@ -220,6 +226,7 @@ function Scene({
   visitorLabel: string;
   moveLabels: MovementLabels;
   metaLabels: FireLabels;
+  balloonLabels: BalloonPromptLabels;
 }): ReactNode {
   const center = useMemo(() => {
     const n = world.islands.length || 1;
@@ -278,6 +285,13 @@ function Scene({
       <MovementSystem
         world={world}
         labels={moveLabels}
+        touch={touch}
+        reducedMotion={reducedMotion}
+      />
+      <BalloonSystem
+        world={world}
+        manifest={manifest}
+        labels={balloonLabels}
         touch={touch}
         reducedMotion={reducedMotion}
       />
@@ -351,7 +365,13 @@ export function World3D({
   locale: Locale;
 }): ReactNode {
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
-  const touch = useMediaQuery("(pointer: coarse)");
+  const coarse = useMediaQuery("(pointer: coarse)");
+  // Dev only: ?touch=1 forces the touch UI (joystick, touch buttons) for testing on desktop.
+  const touch =
+    coarse ||
+    (process.env.NODE_ENV !== "production" &&
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("touch") === "1");
   const rtRef = useRef<Runtime>(createRuntime(false));
   const [manifest, setManifest] = useState<Manifest | null | undefined>(
     undefined
@@ -430,6 +450,22 @@ export function World3D({
     [dict, locale]
   );
 
+  const balloonLabels = useMemo<BalloonPromptLabels>(
+    () => ({
+      board: dict.play.movement.balloon.board,
+      boardAction: dict.play.movement.balloon.boardAction,
+      tap: dict.play.tap,
+      rtl: isRtl(locale),
+    }),
+    [dict, locale]
+  );
+  const balloonHud = useMemo<BalloonHudLabels>(() => {
+    const names: Record<string, string> = {};
+    const all = dict.world.islands as Record<string, { name?: string }>;
+    for (const [id, v] of Object.entries(all)) if (v?.name) names[id] = v.name;
+    return { ...dict.play.movement.balloon, islands: names };
+  }, [dict]);
+
   // Expose the runtime for automated checks in development.
   useEffect(() => {
     if (process.env.NODE_ENV === "production") return;
@@ -482,6 +518,7 @@ export function World3D({
                   visitorLabel={dict.play.social.visitor}
                   moveLabels={moveLabels}
                   metaLabels={metaLabels}
+                  balloonLabels={balloonLabels}
                 />
               )}
             </Suspense>
@@ -506,6 +543,12 @@ export function World3D({
             : dict.play.movement.glideHint
         }
         landLabel={dict.play.movement.land}
+        touch={touch}
+        rtl={isRtl(locale)}
+      />
+      <BalloonHud
+        rtRef={rtRef}
+        labels={balloonHud}
         touch={touch}
         rtl={isRtl(locale)}
       />

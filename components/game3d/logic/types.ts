@@ -112,8 +112,18 @@ export type IslandZipline = {
   height?: number;
 };
 
-/** Movement features of an island (gliding, jump pads, lookouts, ziplines). */
+/** The hot-air balloon's launch field (where it waits, tethered). */
+export type IslandBalloonField = {
+  id: string;
+  q: number;
+  r: number;
+  /** Basket heading in degrees around +y (0 faces +z). */
+  rot?: number;
+};
+
+/** Movement features of an island (gliding, jump pads, lookouts, ziplines, the balloon). */
 export type IslandMovement = {
+  balloon?: IslandBalloonField;
   launches?: IslandLaunch[];
   lookouts?: IslandLookout[];
   pads?: IslandPad[];

@@ -46,7 +46,11 @@ export function PhotoCamera(): ReactNode {
 
   useLayoutEffect(() => {
     const rt = rtRef.current;
-    const dist = zoomToDistance(rt.camera.zoom);
+    const balloon = rt.move.mode === "balloon";
+    const dist = Math.min(
+      PHOTO_LIMITS.distMax,
+      zoomToDistance(rt.camera.zoom) * (balloon ? 2.2 : 1)
+    );
     if (photoOrbit.fresh) {
       photoOrbit.yaw = rt.camera.yaw;
       photoOrbit.pitch = rt.camera.pitch;
@@ -56,7 +60,7 @@ export function PhotoCamera(): ReactNode {
     cur.current = { ...photoOrbit };
     captured.current = metaRequests.capture;
     const p = rt.player.pos;
-    target.current.set(p.x, p.y + 0.8, p.z);
+    target.current.set(p.x, p.y + (balloon ? 2.6 : 0.8), p.z);
     return () => {
       photoOrbit.fresh = true;
     };
@@ -72,7 +76,8 @@ export function PhotoCamera(): ReactNode {
     c.dist += (photoOrbit.dist - c.dist) * k;
     const p = rt.player.pos;
     const t = target.current;
-    t.set(p.x, p.y + 0.8, p.z);
+    // In the balloon, frame the rig (the basket and the envelope's lower half).
+    t.set(p.x, p.y + (rt.move.mode === "balloon" ? 2.6 : 0.8), p.z);
     const horiz = Math.cos(c.pitch) * c.dist;
     camera.position.set(
       t.x + Math.sin(c.yaw) * horiz,

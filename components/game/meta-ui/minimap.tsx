@@ -33,7 +33,7 @@ const PAD = 6;
 /**
  * The round minimap: island footprints, bridges, lit signal fires, the car and the player
  * (position and heading, updated without React renders). Choose an island to make it the
- * compass target; a lit fire there can be travelled to (not while driving).
+ * compass target; a lit fire there can be travelled to (not while driving or flying).
  */
 export function Minimap({
   rtRef,
@@ -44,6 +44,7 @@ export function Minimap({
   touch,
   rtl,
   driving,
+  flying = false,
 }: {
   rtRef: RefObject<Runtime>;
   world: GameWorld;
@@ -54,6 +55,8 @@ export function Minimap({
   rtl: boolean;
   /** The player is in the car (no fast travel). */
   driving: boolean;
+  /** Gliding, riding or in the balloon (no fast travel either). */
+  flying?: boolean;
 }): ReactNode {
   const t = dict.play.meta;
   const map = useMemo(() => buildMapData(world), [world]);
@@ -134,7 +137,7 @@ export function Minimap({
           <div className="flex flex-wrap gap-1.5">
             <button
               type="button"
-              disabled={!targetLit || driving}
+              disabled={!targetLit || driving || flying}
               onClick={() => requestTravel(target)}
               className="focus-ring bg-accent text-accent-foreground cursor-pointer rounded-full px-2.5 py-1 font-semibold disabled:cursor-default disabled:opacity-40"
               aria-describedby="minimap-travel-why"
@@ -149,12 +152,16 @@ export function Minimap({
               {t.clearTarget}
             </button>
           </div>
-          {(!targetLit || driving) && (
+          {(!targetLit || driving || flying) && (
             <span
               id="minimap-travel-why"
               className="text-muted-foreground text-[11px]"
             >
-              {!targetLit ? t.travelNeedsFire : t.travelNotDriving}
+              {!targetLit
+                ? t.travelNeedsFire
+                : driving
+                  ? t.travelNotDriving
+                  : t.travelNotFlying}
             </span>
           )}
         </div>

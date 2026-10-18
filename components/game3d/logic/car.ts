@@ -587,6 +587,8 @@ export function stepCar(
   return { hits, bump };
 }
 
+const CAR_SOURCE = "vehicle";
+
 /**
  * Plug the runtime state into a (rebuilt) walk world: the break store's broken map, and
  * the parked car as a dynamic obstacle (none while it is being driven).
@@ -597,7 +599,9 @@ export function syncWalkWorld(
   parked: Pick<CarState, "x" | "z" | "heading"> | null
 ): void {
   walk.broken = broken;
-  walk.dynamic = parked ? [carObstacle(parked)] : [];
+  // Other systems' obstacles (the parked balloon) stay.
+  walk.dynamic = walk.dynamic.filter((o) => o.source !== CAR_SOURCE);
+  if (parked) walk.dynamic.push(carObstacle(parked));
 }
 
 /** A box obstacle for the parked car (so the player walks around it). */
@@ -611,7 +615,7 @@ export function carObstacle(
     hx: CAR.width / 2,
     hz: CAR.length / 2,
     rot: s.heading,
-    source: "vehicle",
+    source: CAR_SOURCE,
   };
 }
 

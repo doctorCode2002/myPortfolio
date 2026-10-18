@@ -75,7 +75,8 @@ export type Runtime = {
   /** Camera shake amount (0..1), decays; never set with reduced motion. */
   shake: number;
   /**
-   * The movement mode: walking, driving, gliding, a pad jump or a zipline ride, never two
+   * The movement mode: walking, driving, gliding, a pad jump, a zipline ride or the
+   * hot-air balloon, never two
    * at once. Other systems (fast travel, ghosts) read `move.mode`; change it only with
    * setMoveMode (or setDriving, which keeps it in step).
    */
@@ -92,7 +93,7 @@ export type Runtime = {
   };
 };
 
-export type MoveMode = "walk" | "drive" | "glide" | "jump" | "zip";
+export type MoveMode = "walk" | "drive" | "glide" | "jump" | "zip" | "balloon";
 
 export function createRuntime(reducedMotion: boolean): Runtime {
   return {
@@ -137,6 +138,11 @@ export function setMoveMode(rt: Runtime, mode: MoveMode): void {
   rt.move.cancel = false;
   if (mode !== "glide") rt.move.roll = 0;
   for (const cb of rt.move.listeners) cb();
+}
+
+/** On foot and free to act (fast travel, prompts): walking, not driving or flying. */
+export function onFoot(rt: Runtime): boolean {
+  return rt.move.mode === "walk" && !rt.car.driving;
 }
 
 export function subscribeMove(rt: Runtime, cb: () => void): () => void {
