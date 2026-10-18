@@ -85,7 +85,8 @@ describe("island stories", () => {
     for (const s of STORY_LIST) {
       const mayor = ISLANDS.find((i) => i.id === s.islandId)?.mayor;
       for (const stop of s.tour) {
-        if (mayor?.testimonialId) expect(stop.voice).toBe("narrator");
+        if (mayor?.testimonialId || mayor?.real)
+          expect(stop.voice).toBe("narrator");
         if (stop.voice === "demo") expect(mayor?.demo).toBe(true);
       }
     }

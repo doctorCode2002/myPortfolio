@@ -7,7 +7,11 @@
  * animated workers and dust puffs that components/game3d/workshop renders.
  */
 
-import type { Island3D, IslandObject } from "@/components/game3d/logic/types";
+import type {
+  Island3D,
+  IslandObject,
+  IslandResident,
+} from "@/components/game3d/logic/types";
 import {
   constructionStage,
   IN_PROGRESS,
@@ -16,6 +20,7 @@ import {
   type ConstructionStage,
   type InProgressProject,
 } from "@/lib/content/in-progress";
+import { RESIDENTS } from "@/lib/content/world";
 
 export type WorkshopLot = {
   /** 1-based lot number (lot n hosts the n-th in-progress project). */
@@ -25,6 +30,8 @@ export type WorkshopLot = {
   /** Heading of the house front (degrees), towards the door hex. */
   rot: number;
   door: { q: number; r: number };
+  /** Where the project's owner stands (when the project has an `ownerNpc`). */
+  owner?: { q: number; r: number; rot?: number };
   sign: {
     q: number;
     r: number;
@@ -89,6 +96,7 @@ export function buildWorkshopIsland(
   const onLots = projectsOnLots(projects);
   const objects: IslandObject[] = [...(base.objects ?? [])];
   const doors = [...(base.doors ?? [])];
+  const residents: IslandResident[] = [...(base.residents ?? [])];
   const placements: WorkshopIsland["placements"] = [];
   const workers: WorkshopWorker[] = [];
   const puffs: WorkshopPuff[] = [];
@@ -114,7 +122,7 @@ export function buildWorkshopIsland(
       rot: lot.rot,
     });
     objects.push({
-      model: BILLBOARDS[i % BILLBOARDS.length] as string,
+      model: project.billboard ?? (BILLBOARDS[i % BILLBOARDS.length] as string),
       q: lot.sign.q,
       r: lot.sign.r,
       rot: lot.sign.rot ?? lot.rot,
@@ -122,6 +130,15 @@ export function buildWorkshopIsland(
       ...(lot.sign.offset ? { offset: lot.sign.offset } : {}),
     });
     doors.push({ buildingId, q: lot.door.q, r: lot.door.r, radius: 0.9 });
+    const owner = RESIDENTS.find((x) => x.id === project.ownerNpc);
+    if (owner && lot.owner)
+      residents.push({
+        id: owner.id,
+        q: lot.owner.q,
+        r: lot.owner.r,
+        ...(lot.owner.rot !== undefined ? { rot: lot.owner.rot } : {}),
+        sprite: owner.sprite,
+      });
     placements.push({ lot: lot.lot, projectId: project.id, buildingId });
 
     // A worker at the side of the house, facing it (the house hex is closed to walking).
@@ -151,7 +168,12 @@ export function buildWorkshopIsland(
   });
 
   return {
-    island: { ...base, objects, doors },
+    island: {
+      ...base,
+      objects,
+      doors,
+      ...(residents.length ? { residents } : {}),
+    },
     placements,
     workers,
     puffs,

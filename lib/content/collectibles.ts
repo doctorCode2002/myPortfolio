@@ -31,6 +31,7 @@ export const META_ISLANDS = [
   "saleh",
   "eyad",
   "workshop",
+  "waco",
 ] as const;
 
 export type MetaIslandId = (typeof META_ISLANDS)[number];
@@ -152,6 +153,22 @@ export const SHARDS: readonly ShardSpot[] = [
     offset: [0.5, 0],
     note: "behind the stage",
   },
+  {
+    id: "waco-yard",
+    islandId: "waco",
+    q: -2,
+    r: -1,
+    offset: [0.3, -0.3],
+    note: "in the engineering yard, in front of the drafting pavilion",
+  },
+  {
+    id: "waco-dunes",
+    islandId: "waco",
+    q: -4,
+    r: 3,
+    offset: [0.3, -0.4],
+    note: "out on the dunes past the factories",
+  },
 ];
 
 /** One signal fire per island, beside its arrival point (the bridge from home; home: the plaza). */
@@ -163,6 +180,7 @@ export const SIGNAL_FIRES: Readonly<Record<MetaIslandId, MetaSpot>> = {
   saleh: { islandId: "saleh", q: 5, r: -3, offset: [0, -0.73] },
   eyad: { islandId: "eyad", q: 3, r: 2, offset: [-0.75, 0.02] },
   workshop: { islandId: "workshop", q: 2, r: -4, offset: [0.25, -0.25] },
+  waco: { islandId: "waco", q: -1, r: 4, offset: [-0.5, 0.3] },
 };
 
 /** Walk within this distance of a fire to light it. */

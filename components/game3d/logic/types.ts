@@ -44,6 +44,18 @@ export type IslandDoor = {
 
 export type IslandAnchor = { id: string; q: number; r: number };
 
+/** A talkable NPC besides the mayor (e.g. a project owner at a workshop lot). */
+export type IslandResident = {
+  /** NPC id: its name, title and lines are world.mayors.<id> in the dictionaries. */
+  id: string;
+  q: number;
+  r: number;
+  /** Resting heading in degrees (0 faces +z). */
+  rot?: number;
+  /** Character sheet id for the portrait and the fallback model. */
+  sprite?: string;
+};
+
 /** A drivable vehicle parked on an island (the car spawn). */
 export type IslandVehicle = {
   id: string;
@@ -132,6 +144,8 @@ export type Island3D = {
     mayor?: { q: number; r: number; rot?: number };
   };
   anchors?: IslandAnchor[];
+  /** Extra talkable NPCs (residents) besides the mayor. */
+  residents?: IslandResident[];
   /** Optional drivable vehicles parked on this island. */
   vehicles?: IslandVehicle[];
   underside?: IslandUnderside;

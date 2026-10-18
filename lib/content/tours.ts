@@ -55,6 +55,49 @@ export type IslandStory = {
 };
 
 export const ISLAND_STORIES: Readonly<Record<ProjectId, IslandStory>> = {
+  waco: {
+    islandId: "waco",
+    mayorId: "mayor_waco",
+    route: [
+      { q: 1, r: 0 },
+      { q: 1, r: 1 },
+      { q: 0, r: 2 },
+    ],
+    routeMode: "pingpong",
+    window: {
+      at: { q: 1, r: -3 },
+      offset: [0.2, 0],
+      lift: 2.0,
+      face: { q: 0, r: 0 },
+    },
+    // Wejdan is a real person: every stop is narration, never her words.
+    tour: [
+      {
+        id: "window",
+        kind: "window",
+        stand: { q: 1, r: -2 },
+        voice: "narrator",
+      },
+      {
+        id: "portal",
+        kind: "portal",
+        stand: { q: 0, r: -1 },
+        voice: "narrator",
+      },
+      {
+        id: "yard",
+        kind: "landmark",
+        stand: { q: -3, r: 0 },
+        voice: "narrator",
+      },
+      {
+        id: "pavilion",
+        kind: "landmark",
+        stand: { q: -2, r: -1 },
+        voice: "narrator",
+      },
+    ],
+  },
   khidmty: {
     islandId: "khidmty",
     mayorId: "mayor_khidmty",
@@ -71,14 +114,25 @@ export const ISLAND_STORIES: Readonly<Record<ProjectId, IslandStory>> = {
       lift: 2.35,
       face: { q: 0, r: 1 },
     },
+    // Bahaa is a real person: narration only, never invented words.
     tour: [
-      { id: "window", kind: "window", stand: { q: 0, r: -1 }, voice: "demo" },
-      { id: "portal", kind: "portal", stand: { q: 1, r: -1 }, voice: "demo" },
+      {
+        id: "window",
+        kind: "window",
+        stand: { q: 0, r: -1 },
+        voice: "narrator",
+      },
+      {
+        id: "portal",
+        kind: "portal",
+        stand: { q: 1, r: -1 },
+        voice: "narrator",
+      },
       {
         id: "landmark",
         kind: "landmark",
         stand: { q: 1, r: 0 },
-        voice: "demo",
+        voice: "narrator",
       },
     ],
   },

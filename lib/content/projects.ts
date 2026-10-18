@@ -6,11 +6,7 @@
  */
 
 export type ProjectId =
-  | "khidmty"
-  | "civicmind"
-  | "onyx"
-  | "saleh"
-  | "eyad";
+  "waco" | "khidmty" | "civicmind" | "onyx" | "saleh" | "eyad";
 
 export type Project = {
   id: ProjectId;
@@ -23,6 +19,14 @@ export type Project = {
 };
 
 export const PROJECTS: readonly Project[] = [
+  {
+    id: "waco",
+    href: "https://waco.sa",
+    image: "/assets/projects/waco.webp",
+    ratio: 16 / 9,
+    frameworks: ["Next.js", "Laravel", "Filament"],
+    year: "2026",
+  },
   {
     id: "khidmty",
     href: "https://khidmty.com",

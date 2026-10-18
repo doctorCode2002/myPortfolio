@@ -34,7 +34,9 @@ import {
   type InProgressProject,
 } from "@/lib/content/in-progress";
 import { readManifestFromDisk } from "@/lib/content/manifest3d.node";
-import { BRIDGES, ISLANDS } from "@/lib/content/world";
+import { BRIDGES, ISLANDS, RESIDENTS } from "@/lib/content/world";
+import ar from "@/app/dictionaries/ar.json";
+import en from "@/app/dictionaries/en.json";
 import { getBuildingPanel } from "@/lib/content/world.panels";
 
 import homeJson from "./home.json";
@@ -195,8 +197,62 @@ describe("workshop island", () => {
       bounds: readModelBoundsFromDisk([island], manifest),
     });
     expect(world.interactables.map((i) => i.id).sort()).toEqual(
-      [...WORKSHOP.placements.map((p) => p.buildingId), "mayor_workshop"].sort()
+      [
+        ...WORKSHOP.placements.map((p) => p.buildingId),
+        ...(island.residents ?? []).map((r) => r.id),
+        "mayor_workshop",
+      ].sort()
     );
+  });
+
+  it("puts Teryaq on lot 1 with its green billboard and its owner Anas (narration only)", () => {
+    const teryaq = IN_PROGRESS.find((p) => p.id === "teryaq");
+    expect(teryaq).toBeDefined();
+    expect(teryaq?.demo).toBeFalsy();
+    // Not shared yet: placeholders, never guessed numbers.
+    expect(teryaq?.progress).toBeNull();
+    expect(teryaq?.status).toBeNull();
+    expect(WORKSHOP.placements[0]).toMatchObject({
+      lot: 1,
+      projectId: "teryaq",
+    });
+    const lot1 = source.lots!.find((l) => l.lot === 1)!;
+    expect(
+      island.objects!.some(
+        (o) => o.model === "w-billboard-teryaq" && o.q === lot1.sign.q
+      )
+    ).toBe(true);
+    expect(manifest.models["w-billboard-teryaq"]?.banned).toBeFalsy();
+    const owner = island.residents?.find((r) => r.id === "npc_teryaq_owner");
+    expect(owner).toMatchObject({ q: lot1.owner!.q, r: lot1.owner!.r });
+    const resident = RESIDENTS.find((r) => r.id === "npc_teryaq_owner");
+    expect(resident?.real).toBe(true);
+    expect(resident?.islandId).toBe("workshop");
+    for (const lang of ["en", "ar"] as const) {
+      const panel = getBuildingPanel("progress_teryaq", lang);
+      expect(panel?.kind).toBe("progress");
+      if (panel?.kind !== "progress") continue;
+      expect(panel.project.progress).toBeNull();
+      expect(panel.project.statusLabel.length).toBeGreaterThan(0);
+      const m = (lang === "en" ? en : ar).world.mayors.npc_teryaq_owner;
+      expect(m.name.length).toBeGreaterThan(0);
+      for (const line of m.lines)
+        expect(line).toMatch(/^(Narrator: |الراوي: )/);
+    }
+    const world = buildGameWorld([island], [], mayors, manifest, {
+      bounds: readModelBoundsFromDisk([island], manifest),
+    });
+    const spawn = island.spawns!.player!;
+    const start = cellNodeId("workshop", spawn.q, spawn.r);
+    const near = [
+      { q: owner!.q, r: owner!.r },
+      ...hexNeighbours(owner!.q, owner!.r),
+    ]
+      .map((h) => cellNodeId("workshop", h.q, h.r))
+      .filter((c) => world.nav.nodes.has(c))
+      .map((c) => findNodePath(world.nav, start, c))
+      .find((p) => p !== null);
+    expect(near, "the owner can be walked up to").toBeTruthy();
   });
 
   it("is joined to home by a 9 m bridge of the wide deck, walkable from home", () => {

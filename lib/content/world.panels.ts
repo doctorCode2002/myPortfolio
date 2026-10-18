@@ -115,9 +115,9 @@ export type ProgressProject = {
   id: string;
   name: string;
   pitch: string;
-  /** 0..100 */
-  progress: number;
-  status: InProgressStatus;
+  /** 0..100, or null when not shared yet (no bar). */
+  progress: number | null;
+  status: InProgressStatus | null;
   statusLabel: string;
   href?: string | undefined;
   demo?: boolean | undefined;
@@ -336,7 +336,9 @@ function progressSign(p: InProgressProject, isAr: boolean): string {
   const name = isAr ? p.name.ar : p.name.en;
   const label = getDictionary(isAr ? "ar" : "en").play.buildingPanels
     .inProgress;
-  return `${name} — ${label} ${clampProgress(p.progress)}%`;
+  return p.progress === null
+    ? `${name} — ${label}`
+    : `${name} — ${label} ${clampProgress(p.progress)}%`;
 }
 
 /**
@@ -377,9 +379,9 @@ export function getProgressPanel(
       id: p.id,
       name: isAr ? p.name.ar : p.name.en,
       pitch: isAr ? p.pitch.ar : p.pitch.en,
-      progress: clampProgress(p.progress),
+      progress: p.progress === null ? null : clampProgress(p.progress),
       status: p.status,
-      statusLabel: labels.status[p.status],
+      statusLabel: p.status ? labels.status[p.status] : labels.inProgress,
       href: p.href,
       demo: p.demo,
     },

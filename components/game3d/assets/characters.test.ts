@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { readManifestFromDisk } from "@/lib/content/manifest3d.node";
+
 import type { Manifest } from "../logic/types";
 import {
   mayorModelFor,
@@ -67,5 +69,45 @@ describe("pickCheerClip", () => {
       "interact-right"
     );
     expect(pickCheerClip(["idle", "walk"])).toBeNull();
+  });
+});
+
+describe("real island owners", () => {
+  const real = readManifestFromDisk();
+  it.each([
+    ["mayor_waco", "character-wejdan"],
+    ["mayor_khidmty", "character-bahaa"],
+    ["mayor_saleh", "character-saleh"],
+    ["mayor_eyad", "character-eyad"],
+    ["npc_teryaq_owner", "character-anas"],
+  ])("%s uses %s, a mayor-only character with the KayKit clips", (id, name) => {
+    expect(mayorModelFor(real, id, "char_0")).toBe(name);
+    const m = real.models[name];
+    expect(m?.kind).toBe("character");
+    expect(m?.lazy).toBe(true);
+    expect(m?.tags).toContain("mayor");
+    expect(m?.tags).not.toContain("player");
+    const clips = pickClips(m?.animations ?? []);
+    expect(clips).toEqual({
+      idle: "Idle",
+      walk: "Walking_A",
+      run: "Running_A",
+    });
+    expect(pickCheerClip(m?.animations ?? [])).toBe("Cheer");
+    expect(m?.animations).toContain("Interact");
+  });
+
+  it("never offers them in the character picker", () => {
+    for (const id of [
+      "char_0",
+      "char_1",
+      "char_2",
+      "char_3",
+      "char_4",
+      "char_5",
+    ])
+      expect(playerModelFor(real, id)).not.toMatch(
+        /wejdan|bahaa|saleh|eyad|anas/
+      );
   });
 });

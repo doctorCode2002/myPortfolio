@@ -9,7 +9,7 @@ import {
 } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
-import { ISLANDS } from "@/lib/content/world";
+import { ISLANDS, RESIDENTS } from "@/lib/content/world";
 import { getMayorDialogue } from "@/lib/content/world.selectors";
 import type { Locale } from "@/lib/i18n";
 import { BuildingModal, type BuildingModalData } from "./building-modal";
@@ -164,14 +164,16 @@ export function PlayView({
         offerTour,
       }) => {
         const island = ISLANDS.find((isl) => isl.mayor?.id === npcId);
-        if (island?.mayor) {
+        // Residents (e.g. a project owner at a workshop lot) talk like mayors.
+        const speaker = island?.mayor ?? RESIDENTS.find((r) => r.id === npcId);
+        if (speaker) {
           const mayorDiag = getMayorDialogue(
-            island.mayor,
+            speaker,
             dict as unknown as Record<string, unknown>
           );
           const tours = dict.world.tours;
           // Mayors who are real clients never get invented words: the narrator asks.
-          const narrated = Boolean(island.mayor.testimonialId);
+          const narrated = Boolean(speaker.testimonialId || speaker.real);
           setActiveDialogue({
             title: mayorDiag.name,
             subtitle: mayorDiag.title,

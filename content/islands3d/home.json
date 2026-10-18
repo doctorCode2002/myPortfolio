@@ -3,7 +3,7 @@
   "center": [0, 0],
   "baseY": 0,
   "biome": "meadow",
-  "_note": "Home: the life island. Castle (experience) on the north plateau, academy (education) on the west terrace, forge (stack) on the east terrace, garden pavilion (hobbies), cottage (family), plaza with fountain, statue and notice board (news), pond with two waterfalls off the south rim. Built by scripts in group a. Grown in world v2 with two southern lobes: the south-east one carries a road from the onyx road to the to_workshop anchor (the workshop bridge), the south-west one is a meadow lookout with room for another bridge.",
+  "_note": "Home: the life island. Castle (experience) on the north plateau, academy (education) on the west terrace, forge (stack) on the east terrace, garden pavilion (hobbies), cottage (family), plaza with fountain, statue and notice board (news), pond with two waterfalls off the south rim. Built by scripts in group a. Grown in world v2 with two southern lobes: the south-east one carries a road from the onyx road to the to_workshop anchor (the workshop bridge), the south-west one is a meadow lookout with room for another bridge. A road branches from the eyad road up the north-west slope to the to_waco anchor (the WACO bridge).",
   "hexes": [
     { "q": 2, "r": -8, "tile": "hex-grass", "h": 2 },
     { "q": 3, "r": -8, "tile": "hex-grass", "h": 2 },
@@ -19,7 +19,7 @@
     { "q": 5, "r": -7, "tile": "hex-grass", "h": 2 },
     { "q": 6, "r": -7, "tile": "hex-grass", "h": 2 },
     { "q": 7, "r": -7, "tile": "hex-grass", "h": 2 },
-    { "q": -2, "r": -6, "tile": "hex-grass" },
+    { "q": -2, "r": -6, "tile": "hex-road-b", "rot": 60, "h": 1 },
     { "q": -1, "r": -6, "tile": "hex-grass", "h": 2 },
     { "q": 0, "r": -6, "tile": "hex-grass", "h": 2 },
     { "q": 1, "r": -6, "tile": "hex-grass", "h": 2 },
@@ -29,7 +29,7 @@
     { "q": 5, "r": -6, "tile": "hex-grass", "h": 2 },
     { "q": 6, "r": -6, "tile": "hex-grass", "h": 2 },
     { "q": 7, "r": -6, "tile": "hex-grass" },
-    { "q": -3, "r": -5, "tile": "hex-grass", "h": 1 },
+    { "q": -3, "r": -5, "tile": "hex-road-a", "h": 1, "rot": 60 },
     { "q": -2, "r": -5, "tile": "hex-grass", "h": 1 },
     { "q": -1, "r": -5, "tile": "hex-grass", "h": 2 },
     { "q": 0, "r": -5, "tile": "hex-grass", "h": 2 },
@@ -41,7 +41,7 @@
     { "q": 6, "r": -5, "tile": "hex-grass", "h": 2 },
     { "q": 7, "r": -5, "tile": "hex-grass", "h": 1 },
     { "q": 8, "r": -5, "tile": "hex-grass", "h": 1 },
-    { "q": -4, "r": -4, "tile": "hex-grass", "h": 1 },
+    { "q": -4, "r": -4, "tile": "hex-road-a", "h": 1, "rot": 60 },
     { "q": -3, "r": -4, "tile": "hex-grass", "h": 1 },
     { "q": -2, "r": -4, "tile": "hex-grass", "h": 2 },
     { "q": -1, "r": -4, "tile": "hex-grass", "h": 2 },
@@ -54,7 +54,7 @@
     { "q": 6, "r": -4, "tile": "hex-grass", "h": 1 },
     { "q": 7, "r": -4, "tile": "hex-grass", "h": 1 },
     { "q": 8, "r": -4, "tile": "hex-grass", "h": 1 },
-    { "q": -5, "r": -3, "tile": "hex-road-b", "h": 1, "rot": 120 },
+    { "q": -5, "r": -3, "tile": "hex-road-d", "h": 1 },
     { "q": -4, "r": -3, "tile": "hex-grass", "h": 1 },
     { "q": -3, "r": -3, "tile": "hex-grass", "h": 1 },
     { "q": -2, "r": -3, "tile": "hex-grass", "h": 1 },
@@ -725,29 +725,6 @@
       "offset": [0.4, 0.47]
     },
     {
-      "model": "tree-detailed",
-      "q": -3,
-      "r": -5,
-      "rot": 345,
-      "scale": 1.11,
-      "offset": [-0.25, 0.27]
-    },
-    {
-      "model": "tree-oak",
-      "q": -3,
-      "r": -5,
-      "rot": 165,
-      "scale": 0.88,
-      "offset": [0.18, -0.65]
-    },
-    {
-      "model": "rock-single-a",
-      "q": -3,
-      "r": -5,
-      "rot": 30,
-      "offset": [0.49, -0.51]
-    },
-    {
       "model": "tree-single-a",
       "q": -3,
       "r": -4,
@@ -800,28 +777,6 @@
       "r": 7,
       "rot": 150,
       "offset": [-0.38, -0.6]
-    },
-    {
-      "model": "tree-fat",
-      "q": -2,
-      "r": -6,
-      "rot": 300,
-      "offset": [-0.36, 0.25]
-    },
-    {
-      "model": "tree-single-a",
-      "q": -2,
-      "r": -6,
-      "rot": 90,
-      "scale": 0.98,
-      "offset": [0.01, -0.42]
-    },
-    {
-      "model": "grass-leafs",
-      "q": -2,
-      "r": -6,
-      "rot": 150,
-      "offset": [0.16, 0.61]
     },
     {
       "model": "tree-single-a",
@@ -1603,14 +1558,6 @@
       "offset": [-0.77, -0.24]
     },
     {
-      "model": "rock-single-e",
-      "q": -2,
-      "r": -6,
-      "rot": 210,
-      "scale": 1.17,
-      "offset": [0.39, -0.75]
-    },
-    {
       "model": "rock-single-a",
       "q": -1,
       "r": -3,
@@ -1686,7 +1633,8 @@
     { "id": "to_eyad", "q": -5, "r": -3 },
     { "id": "to_onyx", "q": 3, "r": 5 },
     { "id": "to_saleh", "q": -8, "r": 5 },
-    { "id": "to_workshop", "q": -1, "r": 9 }
+    { "id": "to_workshop", "q": -1, "r": 9 },
+    { "id": "to_waco", "q": -2, "r": -6 }
   ],
   "vehicles": [{ "id": "car", "q": 2, "r": 5, "rot": 240 }],
   "underside": {

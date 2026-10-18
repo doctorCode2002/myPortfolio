@@ -35,7 +35,7 @@ const R = 2 / Math.sqrt(3);
 
 const CASES = [
   { json: salehJson, id: "saleh", plan: [-24.39, 20.72], baseY: -0.5 },
-  { json: eyadJson, id: "eyad", plan: [-29.83, -11.37], baseY: 1.5 },
+  { json: eyadJson, id: "eyad", plan: [-30.69, -4.6], baseY: 1.5 },
 ] as const;
 
 const mayors: Record<string, MayorInfo | undefined> = Object.fromEntries(

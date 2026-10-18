@@ -37,35 +37,37 @@ export function ProgressPanelView({
         {project.pitch}
       </p>
 
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between gap-2 font-mono text-[11px] sm:text-xs">
-          <span id={barId} className="text-muted-foreground">
-            {labels.progressLabel}
-          </span>
-          <span className="text-foreground font-bold tabular-nums">
-            {project.progress}%
-          </span>
-        </div>
-        <div
-          role="progressbar"
-          aria-labelledby={barId}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={project.progress}
-          style={{ boxShadow: PIXEL_TRACK, imageRendering: "pixelated" }}
-          className="bg-muted h-3.5 w-full overflow-hidden sm:h-4"
-        >
+      {project.progress !== null && (
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between gap-2 font-mono text-[11px] sm:text-xs">
+            <span id={barId} className="text-muted-foreground">
+              {labels.progressLabel}
+            </span>
+            <span className="text-foreground font-bold tabular-nums">
+              {project.progress}%
+            </span>
+          </div>
           <div
-            className="bg-accent h-full transition-[width] duration-500 motion-reduce:transition-none"
-            style={{
-              width: `${project.progress}%`,
-              // Hazard stripes along the bar, like the barriers on the site.
-              backgroundImage:
-                "repeating-linear-gradient(135deg, rgba(0,0,0,0.16) 0 6px, transparent 6px 12px)",
-            }}
-          />
+            role="progressbar"
+            aria-labelledby={barId}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={project.progress}
+            style={{ boxShadow: PIXEL_TRACK, imageRendering: "pixelated" }}
+            className="bg-muted h-3.5 w-full overflow-hidden sm:h-4"
+          >
+            <div
+              className="bg-accent h-full transition-[width] duration-500 motion-reduce:transition-none"
+              style={{
+                width: `${project.progress}%`,
+                // Hazard stripes along the bar, like the barriers on the site.
+                backgroundImage:
+                  "repeating-linear-gradient(135deg, rgba(0,0,0,0.16) 0 6px, transparent 6px 12px)",
+              }}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="text-muted-foreground font-mono text-[11px] sm:text-xs">
@@ -73,7 +75,7 @@ export function ProgressPanelView({
         </span>
         <span
           style={{ boxShadow: PIXEL_BADGE }}
-          className={`px-2 py-0.5 font-mono text-[10px] font-bold uppercase ${STATUS_TINT[project.status] ?? "bg-muted"}`}
+          className={`px-2 py-0.5 font-mono text-[10px] font-bold uppercase ${(project.status && STATUS_TINT[project.status]) || "bg-muted"}`}
         >
           {project.statusLabel}
         </span>

@@ -5,7 +5,7 @@
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { PROJECTS } from "@/lib/content/projects";
-import { ISLANDS } from "@/lib/content/world";
+import { ISLANDS, RESIDENTS } from "@/lib/content/world";
 
 type Tours = Dictionary["world"]["tours"];
 
@@ -58,8 +58,11 @@ export function buildStoryLabels(dict: Dictionary): StoryLabels {
     rack: t.rack,
     lines,
     titles,
-    narratedMayors: new Set(
-      ISLANDS.flatMap((i) => (i.mayor?.testimonialId ? [i.mayor.id] : []))
-    ),
+    narratedMayors: new Set([
+      ...ISLANDS.flatMap((i) =>
+        i.mayor?.testimonialId || i.mayor?.real ? [i.mayor.id] : []
+      ),
+      ...RESIDENTS.filter((r) => r.real).map((r) => r.id),
+    ]),
   };
 }

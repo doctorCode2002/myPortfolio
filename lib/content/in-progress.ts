@@ -7,6 +7,8 @@
  * second, and so on, up to WORKSHOP_LOTS). Unused lots show an empty plot with a blank
  * "for sale" sign. The building's look follows `progress` (foundations, frame, walls,
  * scaffolding), and its panel shows the name, the pitch, a progress bar and the status.
+ * A real project whose progress or status the owner hasn't shared yet uses `null`: its
+ * panel then shows "In progress" without a bar (TODO for the owner: fill in the numbers).
  *
  * Text is kept here (English and Arabic) so a new project needs no dictionary edit.
  */
@@ -22,11 +24,20 @@ export type InProgressProject = {
   name: LocalizedText;
   /** One line: what it is. */
   pitch: LocalizedText;
-  /** 0..100. */
-  progress: number;
-  status: InProgressStatus;
+  /** 0..100, or null when the owner hasn't shared it yet (shown without a bar). */
+  progress: number | null;
+  /** null when not shared yet (shown as "In progress"). */
+  status: InProgressStatus | null;
   /** Optional link (a repo or a preview). */
   href?: string;
+  /** Billboard model for the lot (defaults to the coloured "coming soon" boards). */
+  billboard?: string;
+  /**
+   * The real person behind the project, standing at the lot as a talkable NPC (narration
+   * only: lib/content/world.ts RESIDENTS holds their sprite and the dictionaries their
+   * lines under world.mayors.<npcId>).
+   */
+  ownerNpc?: string;
   demo?: boolean;
 };
 
@@ -34,17 +45,18 @@ export type InProgressProject = {
 export const WORKSHOP_LOTS = 6;
 
 export const IN_PROGRESS: readonly InProgressProject[] = [
-  // DEMO: replace with real content
   {
-    id: "demo_alpha",
-    name: { en: "Project Alpha (demo)", ar: "المشروع ألفا (تجريبي)" },
+    id: "teryaq",
+    name: { en: "Teryaq", ar: "ترياق" },
     pitch: {
-      en: "Placeholder entry: a short pitch for a project in progress goes here.",
-      ar: "عنصر تجريبي: يوضع هنا وصف قصير لمشروع قيد العمل.",
+      en: "A bilingual learning platform for medical students: free course videos, study packages, and custom exams and flashcards.",
+      ar: "منصة تعليمية ثنائية اللغة لطلاب الطب: فيديوهات دورات مجانية، وحزم دراسية، واختبارات وبطاقات مراجعة مخصّصة.",
     },
-    progress: 70,
-    status: "testing",
-    demo: true,
+    // TODO(owner): progress and status not shared yet; fill in when known.
+    progress: null,
+    status: null,
+    billboard: "w-billboard-teryaq",
+    ownerNpc: "npc_teryaq_owner",
   },
   // DEMO: replace with real content
   {
@@ -87,7 +99,9 @@ export function projectsOnLots(
 export type ConstructionStage = "foundation" | "frame" | "walls" | "scaffold";
 
 /** How far along the half-built house on a lot looks. */
-export function constructionStage(progress: number): ConstructionStage {
+export function constructionStage(progress: number | null): ConstructionStage {
+  // Unknown progress: show the walls going up (neither just started nor nearly done).
+  if (progress === null) return "walls";
   const p = Math.max(0, Math.min(100, progress));
   if (p < 25) return "foundation";
   if (p < 50) return "frame";

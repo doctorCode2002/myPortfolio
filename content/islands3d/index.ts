@@ -12,6 +12,7 @@ import saleh from "./saleh.json";
 import eyad from "./eyad.json";
 import civicmind from "./civicmind.json";
 import onyx from "./onyx.json";
+import waco from "./waco.json";
 import workshopJson from "./workshop.json";
 import { buildWorkshopIsland, type WorkshopSource } from "./workshop";
 
@@ -27,5 +28,6 @@ export const ISLANDS_3D: readonly Island3D[] = [
   parseIsland3D(eyad, "eyad.json"),
   parseIsland3D(civicmind, "civicmind.json"),
   parseIsland3D(onyx, "onyx.json"),
+  parseIsland3D(waco, "waco.json"),
   WORKSHOP.island,
 ];

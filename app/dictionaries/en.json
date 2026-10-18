@@ -102,6 +102,10 @@
       "eyad": {
         "title": "Eyad Portfolio",
         "description": "A portfolio and services site for a professional designer, built to be updated without a developer in the loop."
+      },
+      "waco": {
+        "title": "WACO",
+        "description": "A trilingual site for an industrial and engineering consultancy in Riyadh: Arabic-first and right-to-left with full English and Chinese, light and dark themes, two structured lead forms, and a Filament admin where the team manages services, projects, partners, the team, the blog, news and testimonials."
       }
     }
   },
@@ -207,7 +211,6 @@
     "bio2": "My work runs from React, Next.js, and Tailwind on the front through Supabase, Convex, and PostgreSQL behind it. What I care about most is the unglamorous half: database schema design, authentication and access control, and the performance details users actually feel.",
     "bio3": "I came to engineering from medicine. I studied it at the Islamic University of Gaza before switching to Computer Systems Engineering at Al-Azhar, and the habits carried over — read carefully, work from evidence, and don't guess when you can check.",
     "bio4": "Alongside client work I teach frontend at Zero to Hero. In April 2026 I joined Palestine AI Week with Palestine TechnoPark and Gaza Sky Geeks, working across two AI product teams — CivicMind, and Bookshelf, a reading app that summarises books and recommends what to read next. I'm currently extending my backend range with Laravel.",
-
     "experienceHeading": "Experience",
     "educationHeading": "Education",
     "skillsHeading": "What I work with",
@@ -216,7 +219,6 @@
     "stackReset": "Reset",
     "showMore": "Show {count} more",
     "showLess": "Show less",
-
     "experience": {
       "instructor": {
         "org": "Zero to Hero",
@@ -239,7 +241,6 @@
         "period": "Nov 2025 – Feb 2026"
       }
     },
-
     "education": {
       "alAzhar": {
         "school": "Al-Azhar University",
@@ -267,7 +268,6 @@
         "period": "Aug 2025"
       }
     },
-
     "skills": {
       "react": "React",
       "next": "Next.js",
@@ -285,7 +285,6 @@
       "prompt": "Prompt Engineering",
       "mentorship": "Technical Mentorship"
     },
-
     "polaroids": {
       "portrait": "Mohammed Ashraf holding a laptop",
       "desk": "A desk with a keyboard, coffee, and an open notebook listing the day's work",
@@ -638,6 +637,10 @@
       "workshop": {
         "name": "Workshop Island",
         "sign": "Under construction — Projects still being built. Walk up to a site to see how far along it is."
+      },
+      "waco": {
+        "name": "WACO Island",
+        "sign": "WACO — Wejdan Abdulhadi Business Solutions, an industrial and engineering consultancy in Riyadh."
       }
     },
     "buildings": {
@@ -684,15 +687,19 @@
       "portal_eyad": {
         "sign": "Eyad Studio Portal — Step through to explore the showcase.",
         "enterPrompt": "Press Enter to open Eyad's studio in a new tab"
+      },
+      "portal_waco": {
+        "sign": "WACO Headquarters — Step through to open the live site.",
+        "enterPrompt": "Press Enter to open WACO in a new tab"
       }
     },
     "mayors": {
       "mayor_khidmty": {
-        "name": "Mayor Khidmty (Demo)",
-        "title": "Services Guildmaster",
+        "name": "Bahaa",
+        "title": "Founder of Khidmty",
         "lines": [
-          "Welcome to Khidmty! We connect verified pros with clients for seamless home maintenance.",
-          "Check out our project portal to see how booking without accounts works!"
+          "Narrator: Khidmty was founded by Bahaa to connect customers with verified electricians, plumbers, carpenters and painters.",
+          "Narrator: Khidmty works in Arabic and English, and booking needs no account. The portal opens the live site."
         ]
       },
       "mayor_civicmind": {
@@ -728,6 +735,22 @@
           "Hard hats on! Everything on this island is still being built.",
           "Each site has a door. Step up to one to see the project and how far along it is."
         ]
+      },
+      "npc_teryaq_owner": {
+        "name": "Anas",
+        "title": "Teryaq project owner",
+        "lines": [
+          "Narrator: Anas is building Teryaq, a learning platform for medical students.",
+          "Narrator: Teryaq is bilingual, Arabic-first with full English. Any signed-in account can watch the course videos for free, and each course sells a study package."
+        ]
+      },
+      "mayor_waco": {
+        "name": "Wejdan Abdulhadi",
+        "title": "Owner of WACO",
+        "lines": [
+          "Narrator: This is WACO, the consultancy of Wejdan Abdulhadi.",
+          "Narrator: WACO is an industrial and engineering consultancy in Riyadh. The headquarters portal opens its live site."
+        ]
       }
     },
     "tours": {
@@ -750,7 +773,7 @@
       "khidmty": {
         "window": "This screen shows the live Khidmty site: verified pros, booked without an account.",
         "portal": "Step up to the portal door and press E to open the project.",
-        "landmark": "Our stalls stand for the trades on Khidmty: electricians, plumbers, carpenters and painters."
+        "landmark": "The stalls here stand for the trades on Khidmty: electricians, plumbers, carpenters and painters."
       },
       "civicmind": {
         "window": "This screen shows CivicMind, where citizens file reports and AI models sort them.",
@@ -771,6 +794,12 @@
         "window": "This screen shows the live site: a portfolio and services site for a designer.",
         "portal": "The portal opens the project. Press E at the door.",
         "landmark": "The garden beds stand for a site built to be updated without a developer in the loop."
+      },
+      "waco": {
+        "window": "This screen shows the live site: Arabic-first, with full English and Chinese, in light and dark themes.",
+        "portal": "The portal opens the project. Press E at the door.",
+        "yard": "The factories, tanks and pipes on this island stand for the industrial and engineering work of the consultancy.",
+        "pavilion": "Behind the site, a Filament admin lets the team manage services, projects, partners, the team, the blog and news."
       }
     },
     "hobbies": {

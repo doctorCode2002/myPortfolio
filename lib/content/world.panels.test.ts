@@ -103,7 +103,7 @@ describe("Building Panels Selector (lib/content/world.panels.ts)", () => {
         // repoUrl is intentionally undefined for client-owned proprietary projects
         if (!panel.project.repoUrl) {
           expect(
-            ["khidmty", "civicmind", "onyx", "saleh", "eyad"].includes(
+            ["waco", "khidmty", "civicmind", "onyx", "saleh", "eyad"].includes(
               panel.project.id
             )
           ).toBe(true);

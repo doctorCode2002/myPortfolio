@@ -354,14 +354,28 @@ describe("Sky-islands world data model", () => {
       );
     });
 
-    it("getMayorDialogue handles non-testimonial mayors with demo dialogue", () => {
+    it("getMayorDialogue gives Khidmty's founder, a real person, narration only", () => {
       const khidmtyMayor = getIsland("khidmty")!.mayor!;
+      expect(khidmtyMayor.real).toBe(true);
+      expect(khidmtyMayor.demo).toBeFalsy();
       const dialogue = getMayorDialogue(khidmtyMayor, enDictionary);
-
-      expect(dialogue.name).toBe("Mayor Khidmty (Demo)");
-      expect(dialogue.title).toBe("Services Guildmaster");
+      expect(dialogue.name).toBe("Bahaa");
+      expect(dialogue.title).toBe("Founder of Khidmty");
       expect(dialogue.quote).toBeUndefined();
-      expect(dialogue.lines[0]).toContain("Welcome to Khidmty!");
+      for (const line of dialogue.lines) expect(line).toMatch(/^Narrator: /);
+
+      const ar = getMayorDialogue(khidmtyMayor, arDictionary);
+      expect(ar.name).toBe("بهاء");
+      expect(ar.title).toBe("مؤسس خدمتي");
+      for (const line of ar.lines) expect(line).toMatch(/^الراوي: /);
+    });
+
+    it("non-testimonial demo mayors still get their demo dialogue", () => {
+      const onyxMayor = getIsland("onyx")!.mayor!;
+      expect(onyxMayor.demo).toBe(true);
+      const dialogue = getMayorDialogue(onyxMayor, enDictionary);
+      expect(dialogue.quote).toBeUndefined();
+      expect(dialogue.lines.length).toBeGreaterThan(0);
     });
 
     it("lists all demo entries so they are easy to find and replace later", () => {
@@ -369,7 +383,6 @@ describe("Sky-islands world data model", () => {
         (i) => i.mayor!.id
       );
       expect(demoMayors).toEqual([
-        "mayor_khidmty",
         "mayor_civicmind",
         "mayor_onyx",
         "mayor_workshop",

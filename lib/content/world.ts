@@ -58,6 +58,8 @@ export type Mayor = {
   sprite: CharacterId;
   /** Link to an existing testimonial when the mayor is a client. */
   testimonialId?: TestimonialId;
+  /** A real person without a testimonial: never given invented words, only narration. */
+  real?: boolean;
   at: Tile;
   demo?: boolean;
 };
@@ -150,6 +152,8 @@ type ProjectIslandConfig = {
   biome: Biome;
   portalAt: Tile;
   mayor: Mayor;
+  /** Only in the 3D world (the legacy 2D engine has no art for it). */
+  only3d?: boolean;
 };
 
 /**
@@ -157,6 +161,19 @@ type ProjectIslandConfig = {
  * requires a corresponding entry here, ensuring exhaustive world island coverage.
  */
 const PROJECT_ISLAND_CONFIGS: Record<ProjectId, ProjectIslandConfig> = {
+  waco: {
+    at: { x: -60, y: -80 },
+    size: "m",
+    biome: "desert",
+    portalAt: { x: 0, y: -2 },
+    only3d: true,
+    mayor: {
+      id: "mayor_waco",
+      sprite: "char_4",
+      real: true, // Wejdan Abdulhadi, WACO's owner: narration only
+      at: { x: 3, y: 1 },
+    },
+  },
   khidmty: {
     at: { x: 0, y: -75 },
     size: "m",
@@ -166,7 +183,7 @@ const PROJECT_ISLAND_CONFIGS: Record<ProjectId, ProjectIslandConfig> = {
       id: "mayor_khidmty",
       sprite: "char_3",
       at: { x: 3, y: 1 },
-      demo: true, // DEMO: replace with real content
+      real: true, // Bahaa, Khidmty's founder: narration only
     },
   },
   civicmind: {
@@ -245,6 +262,23 @@ const WORKSHOP_ISLAND: Island = {
 };
 
 /**
+ * Talkable NPCs besides the mayors (3D world only), placed by their island's content:
+ * the people behind in-progress projects stand at their workshop lot (see the
+ * `ownerNpc` field in lib/content/in-progress.ts). Text: world.mayors.<id>.
+ */
+export type Resident = Mayor & { islandId: IslandId };
+
+export const RESIDENTS: readonly Resident[] = [
+  {
+    id: "npc_teryaq_owner",
+    islandId: "workshop",
+    sprite: "char_3",
+    real: true, // Anas, the owner behind Teryaq: narration only
+    at: { x: 0, y: 0 },
+  },
+];
+
+/**
  * All islands in the sky realm: home life island + one island per project in `PROJECTS`,
  * plus the workshop island for projects still in progress.
  */
@@ -266,6 +300,7 @@ export const ISLANDS: readonly Island[] = [
         },
       ],
       mayor: config.mayor,
+      ...(config.only3d ? { only3d: true } : {}),
     };
   }),
   WORKSHOP_ISLAND,
@@ -281,6 +316,7 @@ export const BRIDGES: readonly Bridge[] = [
   { from: "home", to: "saleh", style: "stone" },
   { from: "home", to: "eyad", style: "rope" },
   { from: "home", to: "workshop", style: "rope" },
+  { from: "home", to: "waco", style: "stone" },
 ] as const;
 
 /**

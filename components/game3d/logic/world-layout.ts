@@ -182,17 +182,26 @@ export function buildGameWorld(
   const npcs = islands.flatMap((island) => {
     const spot = island.spawns?.mayor;
     const mayor = mayors[island.id];
-    return spot && mayor
-      ? [
-          {
-            islandId: island.id,
-            q: spot.q,
-            r: spot.r,
-            id: mayor.id,
-            radius: NPC_RADIUS,
-          },
-        ]
-      : [];
+    return [
+      ...(spot && mayor
+        ? [
+            {
+              islandId: island.id,
+              q: spot.q,
+              r: spot.r,
+              id: mayor.id,
+              radius: NPC_RADIUS,
+            },
+          ]
+        : []),
+      ...(island.residents ?? []).map((res) => ({
+        islandId: island.id,
+        q: res.q,
+        r: res.r,
+        id: res.id,
+        radius: NPC_RADIUS,
+      })),
+    ];
   });
   const walk = buildWalkWorld(islands, links, {
     manifest,
@@ -237,6 +246,21 @@ export function buildGameWorld(
         charSheet: mayor.sprite,
         q: spot.q,
         r: spot.r,
+      });
+    }
+    for (const res of island.residents ?? []) {
+      const p = islandHexToWorld(island, res.q, res.r, size);
+      interactables.push({
+        kind: "npc",
+        id: res.id,
+        islandId: island.id,
+        x: p.x,
+        y: yAt(res.q, res.r),
+        z: p.z,
+        range: hexWidth * 0.95,
+        charSheet: res.sprite ?? "char_0",
+        q: res.q,
+        r: res.r,
       });
     }
   }

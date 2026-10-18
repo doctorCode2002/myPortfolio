@@ -21,7 +21,7 @@ import * as THREE from "three";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { gameEvents } from "@/components/game/engine/events";
 import { ISLANDS_3D } from "@/content/islands3d";
-import { BRIDGES, ISLANDS } from "@/lib/content/world";
+import { BRIDGES, ISLANDS, RESIDENTS } from "@/lib/content/world";
 import { progressSigns } from "@/lib/content/world.panels";
 import { getMayorDialogue } from "@/lib/content/world.selectors";
 import { isRtl, type Locale } from "@/lib/i18n";
@@ -118,6 +118,8 @@ function buildLabels(dict: Dictionary, locale: Locale): PromptLabels {
     if (island.mayor)
       npcNames[island.mayor.id] = getMayorDialogue(island.mayor, raw).name;
   }
+  for (const res of RESIDENTS)
+    npcNames[res.id] = getMayorDialogue(res, raw).name;
   return {
     signs,
     npcNames,
@@ -250,7 +252,9 @@ function Scene({
         .filter((i) => i.kind === "npc")
         .map((npc) => {
           const island = world.islands.find((i) => i.id === npc.islandId);
-          const rot = island?.spawns?.mayor?.rot;
+          const rot =
+            island?.residents?.find((r) => r.id === npc.id)?.rot ??
+            island?.spawns?.mayor?.rot;
           const rest =
             rot !== undefined
               ? (rot * Math.PI) / 180
