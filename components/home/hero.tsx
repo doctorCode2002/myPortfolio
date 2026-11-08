@@ -1,9 +1,9 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { HeroGradient } from "./hero-gradient";
 import { HeroHeadline } from "./hero-headline";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
-import { SceneBackdrop } from "@/components/site/scene-backdrop";
 import Magnet from "@/components/vendor/reactbits/Magnet";
 import { localePath, type Locale } from "@/lib/i18n";
 
@@ -19,12 +19,7 @@ export function HomeHero({
 
   return (
     <section className="relative flex min-h-[100svh] flex-col overflow-hidden">
-      <SceneBackdrop
-        src="/assets/scenes/hero-poster.webp"
-        video="/assets/scenes/hero-loop"
-        position="72% 35%"
-        preload
-      />
+      <HeroGradient />
 
       <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-end px-5 pt-32 pb-14 sm:px-10 sm:pb-16">
         <p className="text-muted-foreground mb-8 flex items-center gap-3 font-mono text-[11px] tracking-[0.22em] uppercase">

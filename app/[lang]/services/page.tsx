@@ -20,7 +20,6 @@ import {
 import { isLocale, localePath, type Locale } from "@/lib/i18n";
 import { absoluteUrl, createMetadata } from "@/lib/metadata";
 import { PageTransition } from "@/components/site/page-transition";
-import { SceneBackdrop } from "@/components/site/scene-backdrop";
 
 export async function generateMetadata({
   params,
@@ -398,12 +397,7 @@ function Pillar({
       aria-labelledby={`${group}-heading`}
       className="border-line scroll-mt-28 border-t py-16 first:border-t-0 first:pt-0 sm:py-24"
     >
-      <header className="relative isolate flex min-h-[clamp(300px,34vw,520px)] flex-wrap items-end justify-between gap-6 overflow-hidden rounded-[28px] p-6 sm:p-10">
-        <SceneBackdrop
-          src={`/assets/scenes/${group}.webp`}
-          position="75% 40%"
-          className="-z-10"
-        />
+      <header className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <p className="text-ember font-mono text-[11px] tracking-[0.22em]">
             {groupNumber(group)}

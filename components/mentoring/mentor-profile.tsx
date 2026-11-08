@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
 import { SectionLabel } from "@/components/about/section-label";
-import { SceneBackdrop } from "@/components/site/scene-backdrop";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { MENTOR_POINT_IDS, MENTOR_STATS } from "@/lib/content/people";
 
@@ -12,16 +11,8 @@ export function MentorProfile({ dict }: { dict: Dictionary }): ReactNode {
   return (
     <section
       aria-labelledby="mentoring-heading"
-      className="relative isolate px-5 pt-32 sm:px-10 sm:pt-44"
+      className="px-5 pt-32 sm:px-10 sm:pt-44"
     >
-      <div className="absolute inset-x-0 top-0 -z-10 h-[min(100svh,860px)]">
-        <SceneBackdrop
-          src="/assets/scenes/mentoring.webp"
-          position="62% 35%"
-          opacity={0.6}
-          preload
-        />
-      </div>
       <div className="mx-auto max-w-[1440px]">
         <p className="text-muted-foreground mb-8 flex items-center gap-3 font-mono text-[11px] tracking-[0.22em] uppercase">
           <span
