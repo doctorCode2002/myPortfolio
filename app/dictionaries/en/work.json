@@ -1,0 +1,87 @@
+{
+  "eyebrow": "Selected work",
+  "headlineA": "Recent",
+  "headlineAccent": "launches",
+  "lead": "Corporate platforms, learning products, marketplaces and storefronts — shipped, live and in use. Each one with the problem it solved and how.",
+  "featured": "Featured",
+  "index": "Index",
+  "filter": {
+    "label": "Filter by service",
+    "all": "All",
+    "countOne": "1 project",
+    "countTwo": "2 projects",
+    "countFew": "{count} projects",
+    "countMany": "{count} projects",
+    "service": "Showing work for {service}",
+    "clear": "Show all"
+  },
+  "columns": {
+    "project": "Project",
+    "category": "Category",
+    "services": "Services",
+    "year": "Year"
+  },
+  "caseStudy": {
+    "open": "Read the case study",
+    "close": "Hide the case study",
+    "role": "Role",
+    "challenge": "Challenge",
+    "approach": "Approach",
+    "outcome": "Outcome",
+    "stack": "Stack"
+  },
+  "empty": {
+    "title": "{group} work is coming soon",
+    "body": "Recent samples are shared privately for now. Ask, and I'll send the ones closest to your project.",
+    "cta": "Ask for samples"
+  },
+  "closing": {
+    "title": "Have a project like these?",
+    "body": "Tell me what you're building. The contact details are right below.",
+    "cta": "Start a project"
+  },
+  "cases": {
+    "waco": {
+      "role": "Design and full-stack development",
+      "challenge": "An industrial and engineering consultancy in Riyadh needed a site that worked first in Arabic, read just as well in English and Chinese, and could be updated by its own team without a developer.",
+      "approach": "An Arabic-first, right-to-left Next.js front end with full English and Chinese, light and dark themes, two structured lead forms, and a Filament admin over Laravel where the team manages services, projects, partners, people, the blog, news and testimonials.",
+      "outcome": "One site in three languages that the WACO team runs themselves: new projects, news and testimonials go live from the admin, with no code changes."
+    },
+    "teryaq": {
+      "role": "Design and full-stack development",
+      "challenge": "Medical students needed one place to study: structured courses, question banks to practise on, and a clear view of their own progress.",
+      "approach": "A Next.js platform with courses, question banks and progress tracking, a full admin panel for the content team, and automatic deploys that check the new release and roll back on their own if it isn't healthy.",
+      "outcome": "A live learning platform the team can grow without touching code, shipping updates safely on every change."
+    },
+    "khidmty": {
+      "role": "Design and full-stack development",
+      "challenge": "Booking a reliable electrician, plumber, carpenter or painter usually means calls, guesswork and a sign-up form before you even see who's available.",
+      "approach": "A bilingual Arabic/English marketplace where every professional is manually verified, and customers can book without creating an account.",
+      "outcome": "A shorter path from need to booking, with trust built in through verification rather than reviews alone."
+    },
+    "civicmind": {
+      "role": "Frontend development, in an AI Week team",
+      "challenge": "Citizen reports reach municipalities unsorted, so someone has to read each one to decide what it is, who handles it and how urgent it is.",
+      "approach": "A civic platform where citizens file reports and trained models classify the category, the responsible department and the urgency.",
+      "outcome": "Reports arrive already sorted and routed, so staff start with the most urgent issues instead of the inbox."
+    },
+    "onyx": {
+      "role": "Design and frontend development",
+      "challenge": "Most storefronts break the browsing rhythm: every product click and cart action feels like a full stop.",
+      "approach": "A storefront built around motion, with product transitions and cart interactions designed to carry the shopper from one step to the next.",
+      "outcome": "Browsing that flows: the motion explains where you are and what just happened, instead of decorating the page."
+    },
+    "saleh": {
+      "role": "Design and frontend development",
+      "challenge": "A graphic designer's portfolio has to show the work, not compete with it.",
+      "approach": "A restrained site where layout, type and motion step back and let each project lead.",
+      "outcome": "A portfolio the work can speak through, built to be fast and easy to browse."
+    },
+    "eyad": {
+      "role": "Design and frontend development",
+      "challenge": "A professional designer needed a portfolio and services site he could keep current himself.",
+      "approach": "A portfolio and services site structured so new work and services can be added without a developer in the loop.",
+      "outcome": "A site that stays up to date because updating it is easy."
+    }
+  }
+}

@@ -1,12 +1,16 @@
+import type { ServiceId } from "./services";
+
 /**
- * Locale-neutral project data. All prose (title, description) lives in the
- * dictionaries keyed by `id` — see app/dictionaries/{en,ar}.json.
+ * Locale-neutral project data. Prose (title, description) lives in the
+ * dictionaries under `projects.items.<id>`; the category label under
+ * `studio.projects.categories.<id>`.
  *
- * Order is the display order; the home page features the first four.
+ * Order is the display order. `featured` projects lead the home page and the
+ * work index at full width.
  */
 
 export type ProjectId =
-  "waco" | "khidmty" | "civicmind" | "onyx" | "saleh" | "eyad";
+  "waco" | "teryaq" | "khidmty" | "civicmind" | "onyx" | "saleh" | "eyad";
 
 export type Project = {
   id: ProjectId;
@@ -15,7 +19,10 @@ export type Project = {
   /** Every screenshot is ~16:9; the card box uses this directly. */
   ratio: number;
   frameworks: readonly string[];
+  /** Services this project demonstrates — drives the Services ↔ Work links. */
+  services: readonly ServiceId[];
   year: string;
+  featured?: boolean;
 };
 
 export const PROJECTS: readonly Project[] = [
@@ -24,8 +31,20 @@ export const PROJECTS: readonly Project[] = [
     href: "https://waco.sa",
     image: "/assets/projects/waco.webp",
     ratio: 16 / 9,
-    frameworks: ["Next.js", "Laravel", "Filament"],
+    frameworks: ["Next.js", "Laravel", "Filament", "GSAP"],
+    services: ["web", "uiux", "animation"],
     year: "2026",
+    featured: true,
+  },
+  {
+    id: "teryaq",
+    href: "https://teryaq-med.com",
+    image: "/assets/projects/teryaq.webp",
+    ratio: 16 / 9,
+    frameworks: ["Next.js", "Drizzle", "PostgreSQL", "Motion"],
+    services: ["web", "uiux"],
+    year: "2026",
+    featured: true,
   },
   {
     id: "khidmty",
@@ -33,6 +52,7 @@ export const PROJECTS: readonly Project[] = [
     image: "/assets/projects/khidmty.webp",
     ratio: 16 / 9,
     frameworks: ["Next.js", "Supabase", "shadcn/ui"],
+    services: ["web", "uiux"],
     year: "2025",
   },
   {
@@ -41,6 +61,7 @@ export const PROJECTS: readonly Project[] = [
     image: "/assets/projects/civicMind.webp",
     ratio: 16 / 9,
     frameworks: ["React", "Tailwind CSS", "GSAP", "Python"],
+    services: ["web", "aiWorkflows"],
     year: "2025",
   },
   {
@@ -49,6 +70,7 @@ export const PROJECTS: readonly Project[] = [
     image: "/assets/projects/onyx.webp",
     ratio: 16 / 9,
     frameworks: ["React", "GSAP", "Motion"],
+    services: ["web", "animation"],
     year: "2025",
   },
   {
@@ -57,6 +79,7 @@ export const PROJECTS: readonly Project[] = [
     image: "/assets/projects/saleh-website-previeew.webp",
     ratio: 16 / 9,
     frameworks: ["React", "Tailwind CSS", "GSAP"],
+    services: ["web", "animation"],
     year: "2025",
   },
   {
@@ -65,6 +88,7 @@ export const PROJECTS: readonly Project[] = [
     image: "/assets/projects/eyadDesinger.webp",
     ratio: 16 / 9,
     frameworks: ["React", "Tailwind CSS", "GSAP"],
+    services: ["web"],
     year: "2024",
   },
 ] as const;

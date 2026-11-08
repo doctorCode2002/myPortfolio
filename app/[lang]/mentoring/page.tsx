@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { getDictionary } from "../dictionaries";
-import { ContactCard } from "@/components/contact/contact-card";
 import { MentorProfile } from "@/components/mentoring/mentor-profile";
 import { StudentReviews } from "@/components/mentoring/student-reviews";
 import { isLocale, type Locale } from "@/lib/i18n";
@@ -39,8 +38,6 @@ export default async function MentoringPage({
     <main id="main-content" className="flex flex-1 flex-col">
       <MentorProfile dict={dict} />
       <StudentReviews dict={dict} />
-      <ContactCard locale={locale} dict={dict} />
-      <div className="h-12 sm:h-16" />
     </main>
   );
 }

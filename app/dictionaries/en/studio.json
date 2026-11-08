@@ -1,0 +1,183 @@
+{
+  "brand": {
+    "name": "Mohammed Ashraf",
+    "role": "Design, code & AI studio",
+    "tagline": "Brands, products and AI that works.",
+    "location": "Remote · Working with the Gulf and worldwide",
+    "availability": "Taking on new projects"
+  },
+  "nav": {
+    "label": "Primary",
+    "home": "Home",
+    "work": "Work",
+    "services": "Services",
+    "about": "About",
+    "mentoring": "Mentoring",
+    "cta": "Start a project",
+    "menu": "Menu",
+    "close": "Close",
+    "skipToContent": "Skip to content"
+  },
+  "motion": {
+    "label": "Motion",
+    "on": "Motion on",
+    "off": "Motion off",
+    "toggle": "Turn animations on or off"
+  },
+  "loader": {
+    "label": "Loading",
+    "status": "Loading the studio",
+    "skip": "Skip intro"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "headlineA": "Let's make",
+    "headlineB": "something",
+    "headlineAccent": "worth",
+    "headlineC": "noticing.",
+    "body": "Tell me what you're building, your timeline and a rough budget. I reply to every message within one working day.",
+    "email": "Email me",
+    "whatsapp": "WhatsApp",
+    "copy": "Copy email",
+    "copied": "Copied",
+    "opensInNewTab": "opens in a new tab"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "social": "Social",
+    "backToTop": "Back to top"
+  },
+  "services": {
+    "groups": {
+      "brand": {
+        "title": "Brand",
+        "outcome": "Identities people remember."
+      },
+      "motion": {
+        "title": "Motion",
+        "outcome": "Pictures that move people."
+      },
+      "product": {
+        "title": "Product",
+        "outcome": "Web and mobile that ship and scale."
+      },
+      "automation": {
+        "title": "Automation",
+        "outcome": "AI that takes work off your plate."
+      }
+    },
+    "items": {
+      "logo": {
+        "title": "Logo Design",
+        "body": "Marks that hold up at 16 pixels and on a billboard, drawn from what the business actually stands for.",
+        "tags": ["Wordmarks", "Symbols", "Monograms"]
+      },
+      "identity": {
+        "title": "Visual Identity",
+        "body": "Type, colour, grid and voice packaged into a system your team can apply without asking.",
+        "tags": ["Guidelines", "Type systems", "Brand kits"]
+      },
+      "aiDesign": {
+        "title": "AI-Assisted Graphic Design",
+        "body": "Campaign visuals, social posts and product imagery, produced with AI and finished by hand so it never looks generated.",
+        "tags": ["Social", "Campaigns", "Product shots"]
+      },
+      "video": {
+        "title": "Video Editing",
+        "body": "Reels, launch films and explainers, with pacing, sound design and colour that keep people watching.",
+        "tags": ["Reels", "Launch films", "Colour"]
+      },
+      "animation": {
+        "title": "Interactive Animation",
+        "body": "GSAP and WebGL motion that explains a product, not motion for its own sake.",
+        "tags": ["GSAP", "WebGL", "Scroll stories"]
+      },
+      "uiux": {
+        "title": "UI/UX Design",
+        "body": "Interfaces designed around how people actually move through them, not around the mockup.",
+        "tags": ["Product design", "Prototypes", "Design systems"]
+      },
+      "web": {
+        "title": "Web Development",
+        "body": "Production Next.js and React apps: typed, accessible and fast on real devices.",
+        "tags": ["Next.js", "React", "TypeScript"]
+      },
+      "mobile": {
+        "title": "Mobile Development",
+        "body": "Cross-platform iOS and Android apps that share one codebase and still feel native.",
+        "tags": ["React Native", "Expo", "iOS · Android"]
+      },
+      "aiWorkflows": {
+        "title": "AI Workflows & Automation",
+        "body": "Agents and automations that take over the repetitive work: intake, reports, content, support and follow-ups.",
+        "tags": ["Agents", "n8n · Zapier", "LLM pipelines"]
+      }
+    }
+  },
+  "workflow": {
+    "eyebrow": "AI workflows",
+    "title": "Work that runs itself",
+    "body": "An example automation: a lead fills in your contact form at 2 a.m. By the time you wake up it is qualified, answered, and on your calendar.",
+    "kinds": {
+      "trigger": "Trigger",
+      "action": "Action",
+      "ai": "AI",
+      "output": "Output"
+    },
+    "steps": {
+      "form": {
+        "label": "New lead",
+        "detail": "Website form submitted"
+      },
+      "enrich": {
+        "label": "Enrich",
+        "detail": "Company, size and budget looked up"
+      },
+      "qualify": {
+        "label": "Qualify",
+        "detail": "An LLM scores the fit against your criteria"
+      },
+      "draft": {
+        "label": "Draft reply",
+        "detail": "A personal reply in your tone of voice"
+      },
+      "crm": {
+        "label": "CRM + calendar",
+        "detail": "Deal created, call slot offered"
+      },
+      "report": {
+        "label": "Morning brief",
+        "detail": "Summary sent to Slack at 8:00"
+      }
+    },
+    "stats": {
+      "response": {
+        "value": "Minutes",
+        "label": "from enquiry to first reply, instead of hours"
+      },
+      "manual": {
+        "value": "0",
+        "label": "copy-paste steps left for your team"
+      },
+      "always": {
+        "value": "24/7",
+        "label": "running while you sleep"
+      }
+    },
+    "note": "Illustrative workflow. Every automation is scoped and measured against your current process before and after.",
+    "replay": "Rebuild"
+  },
+  "projects": {
+    "visit": "Visit site",
+    "opensInNewTab": "opens in a new tab",
+    "categories": {
+      "waco": "Corporate site + admin",
+      "teryaq": "EdTech platform",
+      "khidmty": "Marketplace",
+      "civicmind": "AI platform",
+      "onyx": "E-commerce",
+      "saleh": "Portfolio",
+      "eyad": "Portfolio"
+    }
+  }
+}

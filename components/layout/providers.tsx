@@ -1,21 +1,10 @@
 "use client";
 
-import { ReducedMotionProvider } from "@/lib/motion";
-import { SmoothScroll } from "@/components/layout/smooth-scroll";
-import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
 
+import { SmoothScroll } from "@/components/layout/smooth-scroll";
+
+/** Obsidian is a single dark theme, so there is no theme provider. */
 export function Providers({ children }: { children: ReactNode }): ReactNode {
-  return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <ReducedMotionProvider>
-        <SmoothScroll>{children}</SmoothScroll>
-      </ReducedMotionProvider>
-    </ThemeProvider>
-  );
+  return <SmoothScroll>{children}</SmoothScroll>;
 }

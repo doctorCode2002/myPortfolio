@@ -9,11 +9,7 @@
 
 /* ---------------------------------------------------------------- experience */
 
-export type ExperienceId =
-  | "instructor"
-  | "freelance"
-  | "aiWeek"
-  | "zeroToHero";
+export type ExperienceId = "instructor" | "freelance" | "aiWeek" | "zeroToHero";
 
 export type ExperienceEntry = {
   id: ExperienceId;
@@ -41,11 +37,7 @@ export const EXPERIENCE: readonly ExperienceEntry[] = [
 /* ---------------------------------------------------------------- education */
 
 export type EducationId =
-  | "alAzhar"
-  | "iug"
-  | "aiPython"
-  | "metaFrontend"
-  | "dsa";
+  "alAzhar" | "iug" | "aiPython" | "metaFrontend" | "dsa";
 
 export type EducationEntry = {
   id: EducationId;
@@ -102,28 +94,89 @@ export type StackChip = {
  * request — see scripts note in README.
  */
 export const STACK_CHIPS: readonly StackChip[] = [
-  { id: "react", label: "React", bg: "#0f7a8a", fg: "#ffffff", icon: "/icons/react.svg" },
-  { id: "next", label: "Next.js", bg: "#1f1f1f", fg: "#ffffff", icon: "/icons/nextdotjs.svg" },
-  { id: "javascript", label: "JavaScript", bg: "#7d6c00", fg: "#ffffff", icon: "/icons/javascript.svg" },
-  { id: "tailwind", label: "Tailwind CSS", bg: "#16759e", fg: "#ffffff", icon: "/icons/tailwindcss.svg" },
-  { id: "supabase", label: "Supabase", bg: "#2c7a52", fg: "#ffffff", icon: "/icons/supabase.svg" },
-  { id: "convex", label: "Convex", bg: "#5b2d8f", fg: "#ffffff", icon: "/icons/convex.svg" },
-  { id: "postgres", label: "PostgreSQL", bg: "#2f5d7c", fg: "#ffffff", icon: "/icons/postgresql.svg" },
-  { id: "gsap", label: "GSAP", bg: "#0a7d33", fg: "#ffffff", icon: "/icons/gsap.svg" },
-  { id: "git", label: "Git", bg: "#c04628", fg: "#ffffff", icon: "/icons/git.svg" },
-  { id: "github", label: "GitHub", bg: "#181717", fg: "#ffffff", icon: "/icons/github.svg" },
-  { id: "figma", label: "Figma", bg: "#1f1f1f", fg: "#ffffff", icon: "/icons/figma.svg" },
+  {
+    id: "react",
+    label: "React",
+    bg: "#0f7a8a",
+    fg: "#ffffff",
+    icon: "/icons/react.svg",
+  },
+  {
+    id: "next",
+    label: "Next.js",
+    bg: "#1f1f1f",
+    fg: "#ffffff",
+    icon: "/icons/nextdotjs.svg",
+  },
+  {
+    id: "javascript",
+    label: "JavaScript",
+    bg: "#7d6c00",
+    fg: "#ffffff",
+    icon: "/icons/javascript.svg",
+  },
+  {
+    id: "tailwind",
+    label: "Tailwind CSS",
+    bg: "#16759e",
+    fg: "#ffffff",
+    icon: "/icons/tailwindcss.svg",
+  },
+  {
+    id: "supabase",
+    label: "Supabase",
+    bg: "#2c7a52",
+    fg: "#ffffff",
+    icon: "/icons/supabase.svg",
+  },
+  {
+    id: "convex",
+    label: "Convex",
+    bg: "#5b2d8f",
+    fg: "#ffffff",
+    icon: "/icons/convex.svg",
+  },
+  {
+    id: "postgres",
+    label: "PostgreSQL",
+    bg: "#2f5d7c",
+    fg: "#ffffff",
+    icon: "/icons/postgresql.svg",
+  },
+  {
+    id: "gsap",
+    label: "GSAP",
+    bg: "#0a7d33",
+    fg: "#ffffff",
+    icon: "/icons/gsap.svg",
+  },
+  {
+    id: "git",
+    label: "Git",
+    bg: "#c04628",
+    fg: "#ffffff",
+    icon: "/icons/git.svg",
+  },
+  {
+    id: "github",
+    label: "GitHub",
+    bg: "#181717",
+    fg: "#ffffff",
+    icon: "/icons/github.svg",
+  },
+  {
+    id: "figma",
+    label: "Figma",
+    bg: "#1f1f1f",
+    fg: "#ffffff",
+    icon: "/icons/figma.svg",
+  },
 ] as const;
 
 /* ---------------------------------------------------------------- polaroids */
 
 export type PolaroidId =
-  | "portrait"
-  | "desk"
-  | "glasses"
-  | "skills"
-  | "medtech"
-  | "monogram";
+  "portrait" | "desk" | "glasses" | "skills" | "medtech" | "monogram";
 
 export type Polaroid = {
   id: PolaroidId;

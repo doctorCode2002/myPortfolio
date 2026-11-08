@@ -1,0 +1,77 @@
+{
+  "labels": {
+    "about": "About",
+    "disciplines": "What I do",
+    "story": "Story",
+    "approach": "How I work",
+    "experience": "Experience",
+    "education": "Education",
+    "toolkit": "Toolkit",
+    "skills": "Skills",
+    "stack": "Stack",
+    "words": "Kind words",
+    "next": "Next"
+  },
+  "hero": {
+    "headlineA": "One person.",
+    "headlineB": "No hand-offs.",
+    "intro": "I'm Mohammed Ashraf, a designer and full-stack developer running a one-person design, code and AI studio. I take a project from the first mark to the last automation, so nothing gets lost between an agency, a freelancer and a developer.",
+    "portraitAlt": "Mohammed Ashraf holding a laptop",
+    "facts": {
+      "based": {
+        "label": "Works",
+        "value": "Remotely, across time zones"
+      },
+      "since": {
+        "label": "Shipping since",
+        "value": "2023"
+      },
+      "languages": {
+        "label": "Languages",
+        "value": "Arabic · English"
+      },
+      "clients": {
+        "label": "Clients",
+        "value": "The Gulf and worldwide"
+      }
+    }
+  },
+  "disciplines": {
+    "title": "Four disciplines,",
+    "titleAccent": "one standard.",
+    "cta": "See every service"
+  },
+  "story": {
+    "title": "From medicine",
+    "titleAccent": "to making things."
+  },
+  "approach": {
+    "title": "Why work with",
+    "titleAccent": "one person",
+    "items": {
+      "contact": {
+        "title": "One point of contact",
+        "body": "You talk to the person doing the work. No account managers, no briefs lost in translation."
+      },
+      "craft": {
+        "title": "Design and code in one head",
+        "body": "The identity, the interface and the code are decided together, so what you approve is what ships."
+      },
+      "evidence": {
+        "title": "Evidence over guesswork",
+        "body": "Scope, timelines and AI results are measured, written down and checked, not promised."
+      }
+    }
+  },
+  "cta": {
+    "cv": "Download CV",
+    "services": "Explore services",
+    "contact": "Start a project"
+  },
+  "mentoring": {
+    "label": "Mentoring",
+    "pointsLabel": "What the program covers",
+    "reviewsLabel": "Students",
+    "cta": "Ask about mentoring"
+  }
+}

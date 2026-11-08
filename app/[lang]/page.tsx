@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { getDictionary } from "./dictionaries";
-import { ContactCard } from "@/components/contact/contact-card";
-import { Hero } from "@/components/hero/hero";
-import { Services } from "@/components/home/services";
-import { Testimonials } from "@/components/home/testimonials";
-import { Projects } from "@/components/projects/projects";
+import { HomeHero } from "@/components/home/hero";
+import { ServicesMarquee } from "@/components/home/marquee";
+import { ServicePillars } from "@/components/home/pillars";
+import { SelectedWork } from "@/components/home/selected-work";
+import { HomeTeasers } from "@/components/home/teasers";
+import { HomeTestimonials } from "@/components/home/testimonials";
+import { HomeWorkflow } from "@/components/home/workflow";
+import { SERVICE_IDS } from "@/lib/content/services";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { createMetadata } from "@/lib/metadata";
 
@@ -28,6 +31,11 @@ export async function generateMetadata({
   });
 }
 
+/**
+ * Home, work-first: hero → marquee → selected work → four service pillars →
+ * AI workflow (swarm) → testimonials → About / Mentoring. The contact close
+ * and footer come from the root layout.
+ */
 export default async function HomePage({
   params,
 }: {
@@ -36,15 +44,19 @@ export default async function HomePage({
   const { lang } = await params;
   const locale: Locale = isLocale(lang) ? lang : "en";
   const dict = await getDictionary(locale);
+  const serviceTitles = SERVICE_IDS.map(
+    (id) => dict.studio.services.items[id].title
+  );
 
   return (
-    <main id="main-content" className="flex flex-1 flex-col">
-      <Hero locale={locale} dict={dict} />
-      <Services dict={dict} />
-      <Projects locale={locale} dict={dict} featured />
-      <Testimonials dict={dict} />
-      <ContactCard locale={locale} dict={dict} />
-      <div className="h-12 sm:h-16" />
+    <main id="main-content" className="flex flex-1 flex-col overflow-x-clip">
+      <HomeHero locale={locale} dict={dict} />
+      <ServicesMarquee items={serviceTitles} />
+      <SelectedWork locale={locale} dict={dict} />
+      <ServicePillars locale={locale} dict={dict} />
+      <HomeWorkflow dict={dict} />
+      <HomeTestimonials dict={dict} />
+      <HomeTeasers locale={locale} dict={dict} />
     </main>
   );
 }
