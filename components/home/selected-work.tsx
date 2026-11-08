@@ -48,7 +48,7 @@ function WorkCard({
         className="flex h-full flex-col p-3 sm:p-4"
       >
         <div
-          className={`bg-surface-2 relative w-full overflow-hidden rounded-[16px] ${big ? "aspect-[16/11]" : "aspect-[16/10]"}`}
+          className={`bg-surface-2 relative aspect-video w-full overflow-hidden rounded-[16px]`}
         >
           <Image
             src={p.image}
@@ -59,7 +59,7 @@ function WorkCard({
                 ? "(min-width: 1024px) 50vw, 100vw"
                 : "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
             }
-            className="object-cover object-top transition-transform duration-[1200ms] ease-[cubic-bezier(.2,.7,.1,1)] group-hover:scale-[1.04]"
+            className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(.2,.7,.1,1)] group-hover:scale-[1.04]"
           />
         </div>
         <div className="flex flex-1 flex-col px-2 pt-5 pb-2 sm:px-3">
