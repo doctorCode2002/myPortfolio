@@ -1,7 +1,7 @@
-import Image from "next/image";
 import type { ReactNode } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { MonogramPanel } from "@/components/site/monogram-panel";
 
 const FACT_ORDER = ["based", "since", "languages", "clients"] as const;
 
@@ -40,36 +40,12 @@ export function AboutHero({ dict }: { dict: Dictionary }): ReactNode {
           </p>
         </div>
 
-        <figure className="relative lg:col-span-5">
-          {/* The cut-out stands on the section itself: an ember glow behind
-              the shoulders separates the black shirt from the black page, a
-              1px light rim traces the silhouette, and the feet fade out. */}
-          <div className="relative mx-auto aspect-[1106/1400] w-full max-w-[440px] lg:ms-auto lg:me-0">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-[-12%] top-[6%] bottom-[18%] rounded-full opacity-60 blur-3xl"
-              style={{
-                background:
-                  "radial-gradient(closest-side, var(--ember), transparent)",
-              }}
-            />
-            <Image
-              src="/portrait-cutout.webp"
-              alt={a.hero.portraitAlt}
-              fill
-              preload
-              sizes="(min-width: 1024px) 30vw, (min-width: 640px) 440px, 90vw"
-              className="object-contain object-bottom [filter:drop-shadow(0_0_1px_rgb(237_232_224/0.45))_drop-shadow(0_30px_60px_rgb(0_0_0/0.6))]"
-            />
-            <div
-              aria-hidden="true"
-              className="from-background pointer-events-none absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t to-transparent"
-            />
-            <figcaption className="text-foreground/70 absolute start-0 bottom-2 font-mono text-[10.5px] tracking-[0.2em] uppercase">
-              {dict.studio.brand.name}
-            </figcaption>
-          </div>
-        </figure>
+        <div className="lg:col-span-5">
+          <MonogramPanel
+            caption={dict.studio.brand.name}
+            className="aspect-[4/5] w-full rounded-[28px] border sm:max-w-[460px] lg:ms-auto"
+          />
+        </div>
       </div>
 
       <dl className="border-line mx-auto mt-16 grid max-w-[1440px] grid-cols-2 border-t lg:grid-cols-4">

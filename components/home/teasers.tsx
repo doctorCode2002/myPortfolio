@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { localePath, type Locale } from "@/lib/i18n";
+import { MonogramPanel } from "@/components/site/monogram-panel";
 
 function Arrow(): ReactNode {
   return (
@@ -34,21 +34,7 @@ export function HomeTeasers({
     >
       <div className="mx-auto grid max-w-[1440px] gap-4 lg:grid-cols-12">
         <article className="border-line bg-surface grid overflow-hidden rounded-[28px] border sm:grid-cols-5 lg:col-span-8">
-          <div
-            className="relative aspect-[4/5] overflow-hidden sm:col-span-2 sm:aspect-auto"
-            style={{
-              background:
-                "radial-gradient(70% 55% at 50% 55%, rgb(255 90 31 / 0.35), transparent 70%)",
-            }}
-          >
-            <Image
-              src="/portrait-cutout.webp"
-              alt={a.portraitAlt}
-              fill
-              sizes="(min-width: 1024px) 26vw, (min-width: 640px) 40vw, 100vw"
-              className="object-contain object-bottom pt-6 [filter:drop-shadow(0_0_1px_rgb(237_232_224/0.45))]"
-            />
-          </div>
+          <MonogramPanel className="aspect-[4/5] sm:col-span-2 sm:aspect-auto" />
           <div className="flex flex-col justify-between gap-10 p-7 sm:col-span-3 sm:p-10">
             <p className="text-muted-foreground font-mono text-[11px] tracking-[0.22em] uppercase">
               (05) {a.eyebrow}

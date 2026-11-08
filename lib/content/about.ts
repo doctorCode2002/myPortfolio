@@ -175,8 +175,7 @@ export const STACK_CHIPS: readonly StackChip[] = [
 
 /* ---------------------------------------------------------------- polaroids */
 
-export type PolaroidId =
-  "portrait" | "desk" | "glasses" | "skills" | "medtech" | "monogram";
+export type PolaroidId = "desk" | "glasses" | "skills" | "medtech" | "monogram";
 
 export type Polaroid = {
   id: PolaroidId;
@@ -186,13 +185,13 @@ export type Polaroid = {
 };
 
 /**
- * Reuses the bento imagery from the previous site. `medtech` earns its place
+ * Reuses the bento imagery from the previous site, minus any photo of the
+ * owner (none are shown anywhere on the site). `medtech` earns its place
  * because the medicine-to-engineering switch is part of the story on this page.
  * The stethoscope/patient-records shot from the same set is deliberately left
  * out: it reads as clinical practice, which the CV does not claim.
  */
 export const POLAROIDS: readonly Polaroid[] = [
-  { id: "portrait", src: "/assets/bentoGrid/center.webp", rotate: -8 },
   { id: "desk", src: "/assets/bentoGrid/left-center.webp", rotate: 6 },
   { id: "glasses", src: "/assets/bentoGrid/top-center.webp", rotate: -4 },
   { id: "skills", src: "/assets/bentoGrid/top-left.webp", rotate: 7 },
