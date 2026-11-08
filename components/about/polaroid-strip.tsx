@@ -67,9 +67,9 @@ function PolaroidCard({
         ease: EASE,
       }}
       style={{ x: tx, y: ty, rotate: photo.rotate }}
-      className="relative aspect-[3/4] w-[clamp(6rem,11vw,9rem)] shrink-0 overflow-hidden rounded-2xl border-6 border-neutral-300/50 bg-white p-1.5 dark:border-white/15 dark:bg-neutral-900"
+      className="border-line bg-surface-2 relative aspect-[3/4] w-[clamp(6rem,11vw,9rem)] shrink-0 overflow-hidden rounded-2xl border p-1.5 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.8)]"
     >
-      <div className="relative h-full w-full overflow-hidden rounded-xl bg-muted">
+      <div className="bg-surface relative h-full w-full overflow-hidden rounded-xl">
         <Image
           src={photo.src}
           alt={alt}

@@ -1,0 +1,212 @@
+{
+  "eyebrow": "Services",
+  "headlineA": "Design, code and AI,",
+  "headlineB": "from mark to shipped product.",
+  "intro": "Nine disciplines in four pillars. AI isn't a tenth service bolted on: it's how I work across all of them, to research faster, explore more directions and automate the parts nobody should do by hand.",
+  "oneTeam": {
+    "title": "One person, no hand-offs",
+    "body": "This is an independent studio run by me, Mohammed. The person who draws your logo also builds your site and wires up your automations, so nothing gets lost between agencies and you always know who is accountable."
+  },
+  "pillarNav": "Service pillars",
+  "labels": {
+    "deliverables": "What you get",
+    "timeline": "Typical timeline",
+    "relatedWork": "Related work",
+    "from": "From",
+    "noWork": "Case study in progress"
+  },
+  "items": {
+    "logo": {
+      "deliverables": [
+        "Discovery questionnaire and short call",
+        "Two to three distinct concepts",
+        "Final mark in colour, mono and reversed",
+        "SVG, PNG and PDF files for print and screen"
+      ],
+      "timeline": "1–2 weeks"
+    },
+    "identity": {
+      "deliverables": [
+        "Logo system with spacing and misuse rules",
+        "Colour palette and type pairing",
+        "Brand guidelines document",
+        "Social, stationery and presentation templates"
+      ],
+      "timeline": "3–5 weeks"
+    },
+    "aiDesign": {
+      "deliverables": [
+        "Art direction matched to your brand",
+        "Campaign and social post sets",
+        "Product and lifestyle imagery, retouched by hand",
+        "Editable source files and export sizes per platform"
+      ],
+      "timeline": "From a few days per set"
+    },
+    "video": {
+      "deliverables": [
+        "Edit, pacing and story structure",
+        "Sound design and music licensing guidance",
+        "Colour grading",
+        "Cuts for Reels, Shorts, TikTok and widescreen"
+      ],
+      "timeline": "2–10 days per video"
+    },
+    "animation": {
+      "deliverables": [
+        "Motion concept and storyboard",
+        "Scroll and interaction animations (GSAP, WebGL)",
+        "Reduced-motion fallbacks built in",
+        "Performance budget so it stays smooth on phones"
+      ],
+      "timeline": "1–3 weeks"
+    },
+    "uiux": {
+      "deliverables": [
+        "User flows and wireframes",
+        "High-fidelity screens for desktop and mobile",
+        "Clickable prototype",
+        "Component library ready for development"
+      ],
+      "timeline": "2–5 weeks"
+    },
+    "web": {
+      "deliverables": [
+        "Next.js site or web app, typed end to end",
+        "CMS or admin panel your team can edit",
+        "Arabic and English with proper right-to-left layout",
+        "SEO, analytics and Core Web Vitals checked before launch"
+      ],
+      "timeline": "3–10 weeks"
+    },
+    "mobile": {
+      "deliverables": [
+        "iOS and Android app from one codebase",
+        "Push notifications, auth and payments as needed",
+        "App Store and Google Play submission",
+        "Crash reporting and update pipeline"
+      ],
+      "timeline": "6–14 weeks"
+    },
+    "aiWorkflows": {
+      "deliverables": [
+        "Audit of where your team loses time",
+        "Automations and AI agents (n8n, Zapier, custom code)",
+        "Integrations with your CRM, inbox, sheets and chat",
+        "Before-and-after measurement and a handover guide"
+      ],
+      "timeline": "1–4 weeks per workflow"
+    }
+  },
+  "trust": {
+    "title": "Automation you can trust",
+    "points": {
+      "baseline": {
+        "title": "Measured, not promised",
+        "body": "I record how long the work takes today before building anything, then measure again after launch. You see the real difference, not a projection."
+      },
+      "human": {
+        "title": "Humans stay in the loop",
+        "body": "Decisions that need judgment, like pricing, approvals or anything a client reads, keep a person in the chain. The machine handles the copying, sorting and chasing."
+      },
+      "data": {
+        "title": "Your data stays yours",
+        "body": "Automations run on accounts you own, with only the access they need. Nothing is used to train third-party models, and you get every credential at handover."
+      },
+      "person": {
+        "title": "A person replies, not a bot",
+        "body": "When you message me, you get me. The automations I build for you can be just as honest about when a human takes over."
+      }
+    }
+  },
+  "process": {
+    "eyebrow": "How we work",
+    "title": "Four steps, no surprises",
+    "steps": {
+      "call": {
+        "title": "Intro call",
+        "body": "Thirty minutes to understand the goal, the audience and what success looks like. No pitch deck."
+      },
+      "scope": {
+        "title": "Scope and quote",
+        "body": "A written scope with deliverables, timeline and a fixed price, so you know exactly what you're getting."
+      },
+      "build": {
+        "title": "Design and build",
+        "body": "Work in short rounds with previews you can click through, and feedback folded in as we go."
+      },
+      "launch": {
+        "title": "Launch and handover",
+        "body": "Everything shipped, documented and handed over: files, access and a walkthrough for your team."
+      }
+    }
+  },
+  "engagement": {
+    "eyebrow": "Engagement",
+    "title": "Two ways to work together",
+    "types": {
+      "project": {
+        "title": "Fixed-scope project",
+        "body": "A defined outcome, like a new identity, a website or an automation, with a fixed price and timeline agreed upfront.",
+        "bestFor": "Best for launches, rebrands and new products"
+      },
+      "retainer": {
+        "title": "Monthly retainer",
+        "body": "A set amount of design, development or automation work each month, prioritised with you as needs change.",
+        "bestFor": "Best for ongoing content, iteration and support"
+      }
+    },
+    "pricingNote": "Pricing is quoted per scope after a short call. Every project is different, and a fixed written quote beats a vague range."
+  },
+  "notDo": {
+    "eyebrow": "Good to know",
+    "title": "What I don't do",
+    "items": [
+      "Resell stock templates as custom work",
+      "Buy followers, reviews or fake engagement",
+      "Pass AI output off as finished without a human edit",
+      "Start without a clear decision-maker on your side",
+      "Take on more projects than I can personally deliver"
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Questions clients ask",
+    "items": [
+      {
+        "q": "How much does a project cost?",
+        "a": "It depends on scope, so I quote each project after a short call. You get a fixed written price before any work starts, and it doesn't change unless the scope does."
+      },
+      {
+        "q": "How long does it take?",
+        "a": "Each service above lists a typical timeline. Your exact dates go into the written scope, and I tell you early if anything is at risk."
+      },
+      {
+        "q": "How many revisions are included?",
+        "a": "Design work includes two structured rounds of revisions per stage. Development includes fixes for anything that doesn't match the agreed scope."
+      },
+      {
+        "q": "Do you work with clients in Saudi Arabia and the Gulf?",
+        "a": "Yes. Most of my clients are in the Gulf, and I work remotely across your time zone. Calls happen on Google Meet, Zoom or WhatsApp, whichever you prefer."
+      },
+      {
+        "q": "Can you work in Arabic and English?",
+        "a": "Yes. I write, design and build in both, including proper right-to-left layouts, Arabic typography and bilingual content management."
+      },
+      {
+        "q": "What happens to my data in AI workflows?",
+        "a": "Automations run on accounts you own, with the minimum access needed. Sensitive data isn't sent to tools that train on it, and you receive every login and API key at handover."
+      },
+      {
+        "q": "Do I own the final files and code?",
+        "a": "Yes. Once the project is paid, you own the designs, source files and code outright."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Not sure which service you need?",
+    "body": "Describe the problem instead. I'll tell you honestly what would help, and what wouldn't.",
+    "button": "Start a project"
+  },
+  "breadcrumbHome": "Home"
+}

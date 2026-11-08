@@ -1,19 +1,19 @@
 import type { Metadata, Viewport } from "next";
 import {
-  Fraunces,
   Geist,
   Geist_Mono,
-  IBM_Plex_Sans_Arabic,
-  Noto_Kufi_Arabic,
+  Instrument_Serif,
+  Inter_Tight,
 } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { getDictionary } from "./dictionaries";
-import { Nav } from "@/components/layout/nav";
-import { HideOnPlay } from "@/components/layout/hide-on-play";
-import { PageBackdrop } from "@/components/layout/page-backdrop";
 import { Providers } from "@/components/layout/providers";
 import { SkipToContent } from "@/components/layout/skip-to-content";
+import { Grain } from "@/components/site/grain";
+import { HEAD_SCRIPT, IntroLoader } from "@/components/site/intro-loader";
+import { SiteFooter } from "@/components/site/site-footer";
+import { SiteHeader } from "@/components/site/site-header";
 import { HTML_LANG, LOCALES, dirFor, isLocale, type Locale } from "@/lib/i18n";
 import { createMetadata, profileJsonLd } from "@/lib/metadata";
 import "../globals.css";
@@ -29,46 +29,31 @@ const geistSans = Geist({
   subsets: ["latin"],
   display: "swap",
 });
-
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
 });
-
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const instrument = Instrument_Serif({
+  variable: "--font-instrument",
   subsets: ["latin"],
-  axes: ["opsz", "SOFT"],
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
+});
+const interTight = Inter_Tight({
+  variable: "--font-inter-tight",
+  subsets: ["latin"],
   display: "swap",
 });
 
-const plexArabic = IBM_Plex_Sans_Arabic({
-  variable: "--font-plex-arabic",
-  subsets: ["arabic", "latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const kufiArabic = Noto_Kufi_Arabic({
-  variable: "--font-kufi-arabic",
-  subsets: ["arabic"],
-  display: "swap",
-});
-
-const FONT_VARS = [
-  geistSans.variable,
-  geistMono.variable,
-  fraunces.variable,
-  plexArabic.variable,
-  kufiArabic.variable,
-].join(" ");
+const FONT_VARS = [geistSans, geistMono, instrument, interTight]
+  .map((f) => f.variable)
+  .join(" ");
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f2e9" },
-    { media: "(prefers-color-scheme: dark)", color: "#14110f" },
-  ],
+  themeColor: "#0b0b0c",
+  colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -112,6 +97,8 @@ export default async function LocaleLayout({
   // to narrow the type, not to handle a reachable case.
   const locale: Locale = isLocale(lang) ? lang : "en";
   const dict = await getDictionary(locale);
+  const s = dict.studio;
+  const introWords = Object.values(s.services.groups).map((g) => g.title);
 
   return (
     <html
@@ -120,48 +107,33 @@ export default async function LocaleLayout({
       suppressHydrationWarning
       className={FONT_VARS}
     >
+      <head>
+        {/* Motion preference + whether the intro plays, decided before first paint. */}
+        <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
+      </head>
       <body className="bg-background text-foreground min-h-screen font-sans antialiased">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: profileJsonLd(locale) }}
+          dangerouslySetInnerHTML={{
+            __html: profileJsonLd(
+              locale,
+              Object.values(s.services.items).map((i) => i.title)
+            ),
+          }}
         />
         <Providers>
-          {/* Play mode is full-screen: no site frame, backdrop or nav there. */}
-          <HideOnPlay>
-            <div className="site-frame site-frame--top" aria-hidden="true" />
-            <div className="site-frame site-frame--left" aria-hidden="true" />
-            <div className="site-frame site-frame--right" aria-hidden="true" />
-            <CornerGlyph className="site-corner site-corner--top-left" />
-            <CornerGlyph className="site-corner site-corner--top-right" />
-          </HideOnPlay>
-
-          <SkipToContent label={dict.nav.skipToContent} />
-          <HideOnPlay>
-            <PageBackdrop />
-            <Nav locale={locale} labels={dict.nav} />
-          </HideOnPlay>
+          <SkipToContent label={s.nav.skipToContent} />
+          <IntroLoader
+            labels={s.loader}
+            words={introWords}
+            name={s.brand.name}
+          />
+          <SiteHeader locale={locale} studio={s} />
           {children}
+          <SiteFooter studio={s} />
+          <Grain />
         </Providers>
       </body>
     </html>
-  );
-}
-
-function CornerGlyph({ className }: { className: string }): ReactNode {
-  return (
-    <svg
-      className={className}
-      width="50"
-      height="50"
-      viewBox="0 0 50 50"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M5.50871e-06 0C-0.00788227 37.3001 8.99616 50.0116 50 50H5.50871e-06V0Z"
-        fill="currentColor"
-      />
-    </svg>
   );
 }

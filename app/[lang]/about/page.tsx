@@ -2,15 +2,20 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { getDictionary } from "../dictionaries";
+import { AboutCta } from "@/components/about/about-cta";
+import { AboutHero } from "@/components/about/about-hero";
+import { Approach } from "@/components/about/approach";
+import { Disciplines } from "@/components/about/disciplines";
 import { Education } from "@/components/about/education";
 import { Experience } from "@/components/about/experience";
-import { PolaroidStrip } from "@/components/about/polaroid-strip";
+import { SectionLabel } from "@/components/about/section-label";
 import { Skills } from "@/components/about/skills";
 import { Stack } from "@/components/about/stack";
-import { ContactCard } from "@/components/contact/contact-card";
-import { FadeIn } from "@/components/ui/motion-primitives";
+import { Story } from "@/components/about/story";
+import { AboutTestimonials } from "@/components/about/testimonials";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { createMetadata } from "@/lib/metadata";
+import { PageTransition } from "@/components/site/page-transition";
 
 export async function generateMetadata({
   params,
@@ -38,46 +43,51 @@ export default async function AboutPage({
   const { lang } = await params;
   const locale: Locale = isLocale(lang) ? lang : "en";
   const dict = await getDictionary(locale);
+  const a = dict.aboutStudio;
 
   return (
-    <main id="main-content" className="flex flex-1 flex-col">
-      <section className="mx-auto w-full max-w-312 pt-40 sm:pt-56">
-        <PolaroidStrip dict={dict} />
-      </section>
+    <PageTransition>
+      <main id="main-content" className="flex flex-1 flex-col">
+        <AboutHero dict={dict} />
+        <Disciplines dict={dict} locale={locale} />
+        <Story dict={dict} />
+        <Approach dict={dict} />
 
-      <section className="mx-auto w-full max-w-160 px-6 pt-20 pb-16 sm:px-10 sm:pt-28 sm:pb-24">
-        <FadeIn delay={0.5}>
-          <div className="rounded-4xl border border-foreground/10 bg-muted/40 p-8 sm:p-12">
-            <h1 className="font-serif text-[1.75rem] font-medium text-foreground sm:text-[2rem]">
-              {dict.aboutPage.greeting}{" "}
-              <span className="border-b border-accent/50 pb-0.5">
-                {dict.aboutPage.name}
-              </span>
-              .
-            </h1>
-            <div className="mt-8 space-y-6 text-[17px] leading-[1.7] text-muted-foreground sm:text-[18px]">
-              <p>{dict.aboutPage.bio1}</p>
-              <p>{dict.aboutPage.bio2}</p>
-              <p>{dict.aboutPage.bio3}</p>
-              <p>{dict.aboutPage.bio4}</p>
+        <section
+          aria-label={a.labels.experience}
+          className="px-5 pt-28 sm:px-10 sm:pt-40"
+        >
+          <div className="mx-auto grid max-w-[1440px] gap-8 lg:grid-cols-12">
+            <div className="lg:col-span-3">
+              <SectionLabel index={5}>
+                {a.labels.experience} / {a.labels.education}
+              </SectionLabel>
+            </div>
+            <div className="grid gap-16 lg:col-span-9 xl:grid-cols-2 xl:gap-12">
+              <Experience dict={dict} />
+              <Education dict={dict} />
             </div>
           </div>
-        </FadeIn>
-      </section>
+        </section>
 
-      <section className="mx-auto w-full max-w-160 px-6 pb-20 sm:px-10 sm:pb-28">
-        <FadeIn delay={0.1}>
-          <div className="flex flex-col gap-10">
-            <Experience dict={dict} />
-            <Education dict={dict} />
-            <Skills dict={dict} />
-            <Stack dict={dict} />
+        <section
+          aria-label={a.labels.toolkit}
+          className="px-5 pt-28 sm:px-10 sm:pt-40"
+        >
+          <div className="mx-auto grid max-w-[1440px] gap-8 lg:grid-cols-12">
+            <div className="lg:col-span-3">
+              <SectionLabel index={6}>{a.labels.toolkit}</SectionLabel>
+            </div>
+            <div className="grid gap-16 lg:col-span-9 xl:grid-cols-2 xl:gap-12">
+              <Skills dict={dict} />
+              <Stack dict={dict} />
+            </div>
           </div>
-        </FadeIn>
-      </section>
+        </section>
 
-      <ContactCard locale={locale} dict={dict} />
-      <div className="h-12 sm:h-16" />
-    </main>
+        <AboutTestimonials dict={dict} index={7} />
+        <AboutCta dict={dict} locale={locale} />
+      </main>
+    </PageTransition>
   );
 }

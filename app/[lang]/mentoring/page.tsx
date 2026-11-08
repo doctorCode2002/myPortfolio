@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { getDictionary } from "../dictionaries";
-import { ContactCard } from "@/components/contact/contact-card";
 import { MentorProfile } from "@/components/mentoring/mentor-profile";
 import { StudentReviews } from "@/components/mentoring/student-reviews";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { createMetadata } from "@/lib/metadata";
+import { PageTransition } from "@/components/site/page-transition";
 
 export async function generateMetadata({
   params,
@@ -36,11 +36,11 @@ export default async function MentoringPage({
   const dict = await getDictionary(locale);
 
   return (
-    <main id="main-content" className="flex flex-1 flex-col">
-      <MentorProfile dict={dict} />
-      <StudentReviews dict={dict} />
-      <ContactCard locale={locale} dict={dict} />
-      <div className="h-12 sm:h-16" />
-    </main>
+    <PageTransition>
+      <main id="main-content" className="flex flex-1 flex-col">
+        <MentorProfile dict={dict} />
+        <StudentReviews dict={dict} />
+      </main>
+    </PageTransition>
   );
 }

@@ -6,9 +6,9 @@ import { absoluteUrl } from "@/lib/metadata";
 const ROUTES = [
   { path: "/", priority: 1 },
   { path: "/projects", priority: 0.9 },
+  { path: "/services", priority: 0.9 },
   { path: "/about", priority: 0.8 },
   { path: "/mentoring", priority: 0.8 },
-  { path: "/play", priority: 0.7 },
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {

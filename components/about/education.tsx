@@ -1,60 +1,39 @@
 import type { ReactNode } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
-import { EDUCATION, type EducationEntry } from "@/lib/content/about";
+import { EDUCATION } from "@/lib/content/about";
 
-const ROW_HEIGHT = 64;
-
+/** Degrees first, then certificates — same index layout as Experience. */
 export function Education({ dict }: { dict: Dictionary }): ReactNode {
+  const b = dict.aboutPage;
   return (
-    <div className="flex flex-col gap-3">
-      <h2 className="text-[15px] font-semibold text-foreground">
-        {dict.aboutPage.educationHeading}
-      </h2>
-      <div className="rounded-4xl border border-foreground/10 bg-muted/50 p-2 sm:p-4">
-        <ul className="flex flex-col gap-2">
-          {EDUCATION.map((entry) => (
-            <EducationRow key={entry.id} entry={entry} dict={dict} />
-          ))}
-        </ul>
-      </div>
+    <div>
+      <h3 className="font-display text-[40px] leading-none italic">
+        {b.educationHeading}
+      </h3>
+      <ul className="border-line mt-8 border-t">
+        {EDUCATION.map((e) => {
+          const c = b.education[e.id];
+          return (
+            <li
+              key={e.id}
+              className="border-line grid gap-1 border-b py-5 sm:grid-cols-[10rem_1fr] sm:gap-6"
+            >
+              <span className="text-muted-foreground font-mono text-[11px] tracking-[0.14em] uppercase sm:pt-1.5">
+                {c.period}
+              </span>
+              <div>
+                <p className="font-heading text-[20px] font-medium tracking-[-0.01em]">
+                  {c.qualification}
+                </p>
+                <p className="text-foreground/60 mt-1 text-[15px]">
+                  {c.school}
+                </p>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </div>
-  );
-}
-
-function EducationRow({
-  entry,
-  dict,
-}: {
-  entry: EducationEntry;
-  dict: Dictionary;
-}): ReactNode {
-  const copy = dict.aboutPage.education[entry.id];
-
-  return (
-    <li
-      className="flex items-center gap-4 rounded-3xl border border-foreground/10 bg-background p-2"
-      style={{ minHeight: ROW_HEIGHT }}
-    >
-      <span
-        className="inline-flex h-12 w-12 shrink-0 items-center justify-center border border-foreground/15 text-[18px] font-semibold text-muted-foreground"
-        aria-hidden="true"
-        style={{ borderRadius: 14 }}
-      >
-        {copy.school.charAt(0)}
-      </span>
-      <div className="flex min-w-0 flex-col">
-        <span className="text-[17px] font-semibold text-foreground sm:text-[18px]">
-          {copy.school}
-        </span>
-        <span className="mt-0.5 text-[14px] text-muted-foreground sm:text-[15px]">
-          {copy.qualification}
-          <span className="mx-2 text-foreground/25" aria-hidden="true">
-            •
-          </span>
-          <span>{copy.period}</span>
-        </span>
-      </div>
-    </li>
   );
 }

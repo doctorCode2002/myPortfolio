@@ -43,8 +43,16 @@ export function Stack({ dict }: { dict: Dictionary }): ReactNode {
       const Matter = await import("matter-js");
       if (cancelled) return;
 
-      const { Engine, Runner, World, Bodies, Body, Mouse, MouseConstraint, Events } =
-        Matter;
+      const {
+        Engine,
+        Runner,
+        World,
+        Bodies,
+        Body,
+        Mouse,
+        MouseConstraint,
+        Events,
+      } = Matter;
 
       const dims = (Array.from(measure.children) as HTMLElement[]).map((el) => {
         const r = el.getBoundingClientRect();
@@ -110,12 +118,19 @@ export function Stack({ dict }: { dict: Dictionary }): ReactNode {
       };
       if (wheelTarget.mousewheel) {
         wheelTarget.removeEventListener("wheel", wheelTarget.mousewheel);
-        wheelTarget.removeEventListener("DOMMouseScroll", wheelTarget.mousewheel);
+        wheelTarget.removeEventListener(
+          "DOMMouseScroll",
+          wheelTarget.mousewheel
+        );
       }
 
       const mouseConstraint = MouseConstraint.create(engine, {
         mouse,
-        constraint: { stiffness: 0.2, damping: 0.2, render: { visible: false } },
+        constraint: {
+          stiffness: 0.2,
+          damping: 0.2,
+          render: { visible: false },
+        },
       });
       World.add(world, mouseConstraint);
 
@@ -180,20 +195,20 @@ export function Stack({ dict }: { dict: Dictionary }): ReactNode {
   }, [resetKey, reduced]);
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-baseline gap-3">
-        <h2 className="text-[15px] font-semibold text-foreground">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <h3 className="font-display text-[40px] leading-none italic">
           {dict.aboutPage.stackHeading}
-        </h2>
+        </h3>
         {!reduced && (
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-muted-foreground font-mono text-[11px] tracking-[0.16em] uppercase">
             {dict.aboutPage.stackHint}
           </p>
         )}
       </div>
 
       {reduced ? (
-        <div className="rounded-4xl border border-foreground/10 bg-muted/50 p-4">
+        <div className="border-line bg-surface rounded-[24px] border p-4">
           <ul className="flex flex-wrap gap-2">
             {STACK_CHIPS.map((chip) => (
               <li key={chip.id}>
@@ -203,14 +218,18 @@ export function Stack({ dict }: { dict: Dictionary }): ReactNode {
           </ul>
         </div>
       ) : (
-        <div className="relative h-40 overflow-hidden rounded-4xl border border-foreground/10 bg-muted/50 sm:h-64">
+        <div className="border-line bg-surface relative h-56 overflow-hidden rounded-[24px] border sm:h-72">
           <button
             type="button"
             onClick={() => setResetKey((k) => k + 1)}
             aria-label={dict.aboutPage.stackReset}
-            className="focus-ring absolute end-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-foreground/10 bg-background text-muted-foreground transition-colors hover:border-accent/40 hover:text-accent"
+            className="border-line bg-background text-muted-foreground hover:border-ember hover:text-ember absolute end-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors"
           >
-            <RotateCcw className="h-4 w-4" strokeWidth={2.25} aria-hidden="true" />
+            <RotateCcw
+              className="h-4 w-4"
+              strokeWidth={2.25}
+              aria-hidden="true"
+            />
           </button>
 
           {/* Off-screen copy measured once to size the physics bodies. */}
@@ -252,15 +271,11 @@ function ChipPill({ chip }: { chip: StackChip }): ReactNode {
   return (
     <div
       dir="ltr"
-      className="inline-flex items-center gap-2 p-1 pe-2 text-[15px] font-medium sm:text-[16px] dark:ring-1 dark:ring-white/15"
-      style={{
-        backgroundColor: chip.bg,
-        color: chip.fg,
-        borderRadius: `${CHIP_RADIUS}px`,
-      }}
+      className="border-line bg-surface-2 text-foreground inline-flex items-center gap-2 border p-1 pe-3 text-[15px] font-medium sm:text-[16px]"
+      style={{ borderRadius: `${CHIP_RADIUS}px` }}
     >
       <span
-        className="inline-flex h-8 w-8 items-center justify-center bg-white/95"
+        className="bg-foreground inline-flex h-8 w-8 items-center justify-center"
         style={{ borderRadius: `${ICON_RADIUS}px` }}
         aria-hidden="true"
       >

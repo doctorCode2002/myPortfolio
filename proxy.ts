@@ -16,7 +16,10 @@ function pickLocale(header: string | null): Locale {
       const [tag, ...params] = part.trim().split(";");
       const qParam = params.find((p) => p.trim().startsWith("q="));
       const q = qParam ? Number.parseFloat(qParam.split("=")[1] ?? "1") : 1;
-      return { tag: (tag ?? "").trim().toLowerCase(), q: Number.isNaN(q) ? 0 : q };
+      return {
+        tag: (tag ?? "").trim().toLowerCase(),
+        q: Number.isNaN(q) ? 0 : q,
+      };
     })
     .filter((entry) => entry.tag !== "" && entry.q > 0)
     .sort((a, b) => b.q - a.q);
@@ -34,6 +37,14 @@ export function proxy(request: NextRequest): NextResponse | undefined {
 
   const first = pathname.split("/")[1];
   if (first !== undefined && isLocale(first)) return undefined;
+
+  // The Arabic version was retired: send old /ar/... links (bookmarks, search
+  // results) permanently to the same page in English.
+  if (first === "ar") {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${DEFAULT_LOCALE}${pathname.slice(3)}`;
+    return NextResponse.redirect(url, 308);
+  }
 
   const locale = pickLocale(request.headers.get("accept-language"));
   const url = request.nextUrl.clone();

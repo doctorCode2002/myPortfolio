@@ -1,31 +1,39 @@
 import type { Locale } from "@/lib/i18n";
 
 /**
- * Dynamic imports so only the requested locale's strings are pulled into the
- * server render. Both files must have identical key shapes — `Dictionary` is
- * derived from the English file, so a missing or renamed key in ar.json is a
- * type error rather than an `undefined` on the page.
+ * One dictionary per locale, assembled from:
+ *   ../dictionaries/<locale>.json          legacy keys (meta, about, mentoring, projects…)
+ *   ../dictionaries/<locale>/studio.json   shared Obsidian chrome + service catalogue
+ *   ../dictionaries/<locale>/<page>.json   page-specific copy (home, services, work, about)
+ *
+ * Split by page so each page's copy can change without touching the others.
+ * `Dictionary` is derived from the English files.
  */
-const dictionaries = {
-  en: () => import("../dictionaries/en.json").then((m) => m.default),
-  ar: () => import("../dictionaries/ar.json").then((m) => m.default),
-} as const;
 
-export type Dictionary = Awaited<ReturnType<(typeof dictionaries)["en"]>>;
-
-export async function getDictionary(locale: Locale): Promise<Dictionary> {
-  return dictionaries[locale]();
+async function loadEn() {
+  const [base, studio, home, services, work, about] = await Promise.all([
+    import("../dictionaries/en.json"),
+    import("../dictionaries/en/studio.json"),
+    import("../dictionaries/en/home.json"),
+    import("../dictionaries/en/services.json"),
+    import("../dictionaries/en/work.json"),
+    import("../dictionaries/en/about.json"),
+  ]);
+  return {
+    ...base.default,
+    studio: studio.default,
+    home: home.default,
+    servicesPage: services.default,
+    workPage: work.default,
+    aboutStudio: about.default,
+  };
 }
 
-/**
- * Arabic is currently switched off in lib/i18n.ts, so `Locale` no longer
- * includes it and nothing routes here. This exists to keep ar.json's shape
- * checked against en.json — the `Promise<Dictionary>` return type makes a
- * missing or renamed Arabic key a type error, so the translations can't rot
- * while they're dormant. Delete it only if you drop Arabic for good.
- */
-export async function getArabicDictionary(): Promise<Dictionary> {
-  return dictionaries.ar();
+export type Dictionary = Awaited<ReturnType<typeof loadEn>>;
+
+export async function getDictionary(locale: Locale): Promise<Dictionary> {
+  void locale; // English is the only locale.
+  return loadEn();
 }
 
 /** Fill `{name}` placeholders in a dictionary string. */

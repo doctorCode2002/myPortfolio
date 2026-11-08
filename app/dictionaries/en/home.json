@@ -1,0 +1,46 @@
+{
+  "hero": {
+    "eyebrow": "Design, code & AI studio",
+    "headlineA": "Brands, products",
+    "headlineB": "and AI that works.",
+    "intro": "I design identities, cut videos, build web and mobile products, and wire AI into the work that slows your team down. One person end to end — no hand-offs between agencies.",
+    "ctaPrimary": "Start a project",
+    "ctaSecondary": "See the work"
+  },
+  "marquee": {
+    "label": "Services"
+  },
+  "work": {
+    "eyebrow": "Selected work",
+    "title": "Recent",
+    "titleAccent": "launches",
+    "body": "Corporate platforms, learning products, marketplaces and storefronts — shipped and in use.",
+    "all": "All work",
+    "visit": "Visit"
+  },
+  "pillars": {
+    "eyebrow": "Services",
+    "title": "Nine disciplines,",
+    "titleAccent": "one standard.",
+    "body": "Grouped by the outcome you're after. AI runs through all four — as a tool for better work, not a gimmick.",
+    "explore": "Explore"
+  },
+  "testimonials": {
+    "eyebrow": "Kind words",
+    "title": "What clients say"
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "One person,",
+    "titleAccent": "the whole job.",
+    "body": "I'm Mohammed — a designer and full-stack developer who also teaches frontend. You talk to the person doing the work, from the first sketch to the last deploy.",
+    "cta": "More about me",
+    "portraitAlt": "Portrait of Mohammed Ashraf"
+  },
+  "mentoring": {
+    "eyebrow": "Mentoring",
+    "title": "I also teach what I build.",
+    "body": "A 40-hour frontend program, one-to-one code reviews, and AI-assisted development workflows for students and junior developers.",
+    "cta": "See mentoring"
+  }
+}

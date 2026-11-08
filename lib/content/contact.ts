@@ -2,6 +2,19 @@ export const EMAIL = "mohammeda.abutaleb@gmail.com";
 
 export const CV_PATH = "/assets/CV.pdf";
 
+/**
+ * WhatsApp number in international format, digits only (e.g. "9665XXXXXXXX").
+ * Gulf clients strongly prefer WhatsApp for first contact; the button renders
+ * only when this is set, so it is safe to leave null until the number is known.
+ * TODO(owner): fill in.
+ */
+export const WHATSAPP_NUMBER: string | null = null;
+
+export function whatsappHref(number: string, text?: string): string {
+  const q = text ? `?text=${encodeURIComponent(text)}` : "";
+  return `https://wa.me/${number}${q}`;
+}
+
 export type SocialId = "linkedin" | "github" | "instagram";
 
 export type Social = {
@@ -32,7 +45,7 @@ export const SOCIALS: readonly Social[] = [
 /** Structured-data identity, mirrored from the previous site's src/lib/site.js. */
 export const PERSON = {
   name: "Mohammed Ashraf",
-  jobTitle: "Full-Stack Developer",
+  jobTitle: "Designer & Full-Stack Developer",
   sameAs: SOCIALS.map((s) => s.href),
   knowsAbout: [
     "React",
@@ -41,6 +54,11 @@ export const PERSON = {
     "Tailwind CSS",
     "GSAP",
     "Supabase",
+    "Logo design",
+    "Visual identity",
+    "Video editing",
+    "Mobile development",
+    "AI automation",
   ],
 } as const;
 

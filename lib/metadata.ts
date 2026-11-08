@@ -10,22 +10,14 @@ export const siteConfig = {
   keywords: {
     en: [
       "Mohammed Ashraf",
-      "full-stack developer",
-      "frontend instructor",
-      "React developer",
-      "Next.js",
-      "Tailwind CSS",
-      "GSAP",
-      "portfolio",
-    ],
-    ar: [
-      "محمد أشرف",
-      "مطور ويب متكامل",
-      "مدرب واجهات أمامية",
-      "مطور React",
-      "Next.js",
-      "تطوير مواقع",
-      "برمجة",
+      "logo design",
+      "visual identity",
+      "video editing",
+      "web development",
+      "mobile app development",
+      "UI/UX design",
+      "AI automation",
+      "Next.js developer",
     ],
   },
 } as const;
@@ -93,6 +85,12 @@ export function createMetadata({
     },
     manifest: "/site.webmanifest",
     formatDetection: { telephone: false },
+    // Google Search Console "HTML tag" verification. Set the token from
+    // Search Console as GOOGLE_SITE_VERIFICATION in Vercel; with no token the
+    // tag is omitted (DNS verification needs no code at all).
+    ...(process.env.GOOGLE_SITE_VERIFICATION
+      ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+      : {}),
     robots: noIndex
       ? { index: false, follow: false }
       : {
@@ -109,20 +107,53 @@ export function createMetadata({
   };
 }
 
-/** ProfilePage structured data, ported from the previous site's root layout. */
-export function profileJsonLd(locale: Locale): string {
+/**
+ * Site-wide structured data: a ProfilePage about the Person, plus the
+ * Organization (the studio) and the services it offers. Organization rather
+ * than ProfessionalService/LocalBusiness, which require a published street
+ * address. Service names come from the dictionary so each locale is localized.
+ */
+export function profileJsonLd(
+  locale: Locale,
+  services: readonly string[] = []
+): string {
+  const url = absoluteUrl(locale);
+  const person = {
+    "@type": "Person",
+    "@id": `${siteConfig.url}/#person`,
+    name: PERSON.name,
+    jobTitle: PERSON.jobTitle,
+    url,
+    sameAs: [...PERSON.sameAs],
+    knowsAbout: [...PERSON.knowsAbout],
+  };
   const data = {
     "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    inLanguage: locale,
-    mainEntity: {
-      "@type": "Person",
-      name: PERSON.name,
-      jobTitle: PERSON.jobTitle,
-      url: absoluteUrl(locale),
-      sameAs: [...PERSON.sameAs],
-      knowsAbout: [...PERSON.knowsAbout],
-    },
+    "@graph": [
+      {
+        "@type": "ProfilePage",
+        inLanguage: locale,
+        url,
+        mainEntity: { "@id": person["@id"] },
+      },
+      person,
+      {
+        "@type": "Organization",
+        "@id": `${siteConfig.url}/#studio`,
+        name: PERSON.name,
+        url,
+        founder: { "@id": person["@id"] },
+        areaServed: ["SA", "AE", "KW", "QA", "BH", "OM", "Worldwide"],
+        makesOffer: services.map((name) => ({
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name,
+            provider: { "@id": `${siteConfig.url}/#studio` },
+          },
+        })),
+      },
+    ],
   };
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }

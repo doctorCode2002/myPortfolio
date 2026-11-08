@@ -4,12 +4,7 @@
  * rating and identity live here.
  */
 
-export type TestimonialId =
-  | "ahmad"
-  | "sara"
-  | "saleh"
-  | "omar"
-  | "eyad";
+export type TestimonialId = "ahmad" | "sara" | "saleh" | "omar" | "eyad";
 
 export type Testimonial = {
   id: TestimonialId;
@@ -25,13 +20,7 @@ export const TESTIMONIALS: readonly Testimonial[] = [
 ] as const;
 
 export type StudentReviewId =
-  | "nour"
-  | "shahd"
-  | "tayma"
-  | "saja"
-  | "tasneemM"
-  | "tasneemB"
-  | "nourAldin";
+  "nour" | "shahd" | "tayma" | "saja" | "tasneemM" | "tasneemB" | "nourAldin";
 
 export type StudentReview = {
   id: StudentReviewId;
