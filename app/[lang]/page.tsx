@@ -12,6 +12,7 @@ import { HomeWorkflow } from "@/components/home/workflow";
 import { SERVICE_IDS } from "@/lib/content/services";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { createMetadata } from "@/lib/metadata";
+import { PageTransition } from "@/components/site/page-transition";
 
 export async function generateMetadata({
   params,
@@ -49,14 +50,16 @@ export default async function HomePage({
   );
 
   return (
-    <main id="main-content" className="flex flex-1 flex-col overflow-x-clip">
-      <HomeHero locale={locale} dict={dict} />
-      <ServicesMarquee items={serviceTitles} />
-      <SelectedWork locale={locale} dict={dict} />
-      <ServicePillars locale={locale} dict={dict} />
-      <HomeWorkflow dict={dict} />
-      <HomeTestimonials dict={dict} />
-      <HomeTeasers locale={locale} dict={dict} />
-    </main>
+    <PageTransition>
+      <main id="main-content" className="flex flex-1 flex-col overflow-x-clip">
+        <HomeHero locale={locale} dict={dict} />
+        <ServicesMarquee items={serviceTitles} />
+        <SelectedWork locale={locale} dict={dict} />
+        <ServicePillars locale={locale} dict={dict} />
+        <HomeWorkflow dict={dict} />
+        <HomeTestimonials dict={dict} />
+        <HomeTeasers locale={locale} dict={dict} />
+      </main>
+    </PageTransition>
   );
 }

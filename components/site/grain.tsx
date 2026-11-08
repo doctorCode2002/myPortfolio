@@ -11,7 +11,7 @@ export function Grain(): ReactNode {
   return (
     <Noise
       fixed
-      opacity={0.055}
+      opacity={0.028}
       blendMode="overlay"
       fps={allowed ? 18 : 0}
       contrast={0.6}

@@ -151,11 +151,50 @@ html[data-intro] {
   inset-inline-start: 1rem;
 }
 
-/* Native view transitions between routes (React <ViewTransition>). */
+/* ---------------------------------------------------------------- page transitions
+   React <ViewTransition> (components/site/page-transition.tsx) tags page
+   content with the `page` class. The old page lifts out fast with a slight
+   blur; the new one waits for it, then rises in. The root and the header
+   don't animate, so the header is a fixed anchor while the content changes. */
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 260ms;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation: none;
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 10;
+}
+
+::view-transition-old(.page) {
+  animation: 180ms cubic-bezier(0.4, 0, 1, 1) both page-out;
+}
+
+::view-transition-new(.page) {
+  animation: 520ms cubic-bezier(0.2, 0.7, 0.1, 1) 140ms both page-in;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(28px);
+  }
+}
+
+html[data-motion="off"]::view-transition-group(*),
+html[data-motion="off"]::view-transition-old(*),
+html[data-motion="off"]::view-transition-new(*) {
+  animation: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -164,4 +203,59 @@ html[data-intro] {
   ::view-transition-new(*) {
     animation-duration: 0s !important;
   }
+}
+
+/* ---------------------------------------------------------------- scrollbar
+   Thin obsidian track with a warm-grey pill thumb that turns ember on hover
+   or drag. Applies to the page and every inner scroller (menu, filters). */
+
+html {
+  scrollbar-color: rgb(237 232 224 / 0.22) transparent;
+  scrollbar-width: thin;
+}
+
+@supports selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-color: auto;
+    scrollbar-width: auto;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(237 232 224 / 0.18);
+    background-clip: padding-box;
+    border: 3px solid transparent;
+    border-radius: 999px;
+    min-height: 48px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(255 90 31 / 0.85);
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: var(--ember);
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+/* Hidden-scrollbar utility for horizontal rails (chips, marquees). */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

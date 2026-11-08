@@ -115,6 +115,7 @@ export function SiteHeader({
     <>
       <header
         onFocusCapture={() => setHidden(false)}
+        style={{ viewTransitionName: "site-header" }}
         className={`fixed inset-x-0 top-0 z-[90] transition-[transform,background-color,border-color] duration-500 ease-[cubic-bezier(.2,.7,.1,1)] ${
           hidden && !open ? "-translate-y-full" : "translate-y-0"
         } ${scrolled ? "border-line bg-background/70 border-b backdrop-blur-xl" : "border-b border-transparent"}`}

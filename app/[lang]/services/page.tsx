@@ -19,6 +19,8 @@ import {
 } from "@/lib/content/services";
 import { isLocale, localePath, type Locale } from "@/lib/i18n";
 import { absoluteUrl, createMetadata } from "@/lib/metadata";
+import { PageTransition } from "@/components/site/page-transition";
+import { SceneBackdrop } from "@/components/site/scene-backdrop";
 
 export async function generateMetadata({
   params,
@@ -113,235 +115,237 @@ export default async function ServicesPage({
   }));
 
   return (
-    <main id="main-content" className="flex flex-1 flex-col">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: servicesJsonLd(locale, dict) }}
-      />
+    <PageTransition>
+      <main id="main-content" className="flex flex-1 flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: servicesJsonLd(locale, dict) }}
+        />
 
-      {/* ------------------------------------------------------------ hero */}
-      <section className="px-5 pt-36 pb-20 sm:px-10 sm:pt-44 sm:pb-28">
-        <div className="mx-auto max-w-[1440px]">
-          <p className="text-muted-foreground font-mono text-[11px] tracking-[0.22em] uppercase">
-            {t.eyebrow}
-          </p>
-          <h1 className="font-display mt-6 text-[clamp(3rem,9vw,9rem)] leading-[0.9] tracking-[-0.035em]">
-            {t.headlineA}
-            <br />
-            <span className="text-foreground/85 italic">{t.headlineB}</span>
-          </h1>
-
-          <div className="border-line mt-14 grid gap-10 border-t pt-8 lg:grid-cols-12 lg:gap-8">
-            <p className="text-foreground/70 max-w-[56ch] text-[17px] leading-[1.6] lg:col-span-6">
-              {t.intro}
+        {/* ------------------------------------------------------------ hero */}
+        <section className="px-5 pt-36 pb-20 sm:px-10 sm:pt-44 sm:pb-28">
+          <div className="mx-auto max-w-[1440px]">
+            <p className="text-muted-foreground font-mono text-[11px] tracking-[0.22em] uppercase">
+              {t.eyebrow}
             </p>
-            <div className="lg:col-span-5 lg:col-start-8">
-              <h2 className="font-heading text-[20px] font-medium tracking-[-0.01em]">
-                <span
-                  className="bg-ember me-3 inline-block size-1.5 -translate-y-1 rounded-full"
-                  aria-hidden="true"
-                />
-                {t.oneTeam.title}
-              </h2>
-              <p className="text-muted-foreground mt-3 text-[15px] leading-[1.65]">
-                {t.oneTeam.body}
+            <h1 className="font-display mt-6 text-[clamp(3rem,9vw,9rem)] leading-[0.9] tracking-[-0.035em]">
+              {t.headlineA}
+              <br />
+              <span className="text-foreground/85 italic">{t.headlineB}</span>
+            </h1>
+
+            <div className="border-line mt-14 grid gap-10 border-t pt-8 lg:grid-cols-12 lg:gap-8">
+              <p className="text-foreground/70 max-w-[56ch] text-[17px] leading-[1.6] lg:col-span-6">
+                {t.intro}
               </p>
-            </div>
-          </div>
-
-          {/* Pillar index — the quick way in on small screens. */}
-          <nav aria-label={t.pillarNav} className="mt-14 lg:hidden">
-            <ul className="border-line bg-line grid grid-cols-2 gap-px overflow-hidden rounded-2xl border">
-              {pillars.map((p) => (
-                <li key={p.id}>
-                  <a
-                    href={`#${p.id}`}
-                    className="bg-background hover:bg-surface flex h-full flex-col gap-2 p-5 transition-colors"
-                  >
-                    <span className="text-ember font-mono text-[10px] tracking-[0.2em]">
-                      {p.number}
-                    </span>
-                    <span className="font-display text-[28px] leading-none">
-                      {p.title}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-      </section>
-
-      {/* --------------------------------------------------------- pillars */}
-      <div className="px-5 sm:px-10">
-        <div className="mx-auto grid max-w-[1440px] gap-10 lg:grid-cols-12 lg:gap-8">
-          <aside className="hidden lg:col-span-3 lg:block">
-            <PillarNav label={t.pillarNav} items={pillars} />
-          </aside>
-
-          <div className="lg:col-span-9">
-            {SERVICE_GROUPS.map((g) => (
-              <Pillar key={g} group={g} dict={dict} locale={locale} />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* --------------------------------------------------------- process */}
-      <section
-        aria-labelledby="process-heading"
-        className="px-5 pt-28 sm:px-10 sm:pt-40"
-      >
-        <div className="mx-auto max-w-[1440px]">
-          <SectionHead
-            eyebrow={t.process.eyebrow}
-            id="process-heading"
-            title={t.process.title}
-          />
-          <ol className="border-line bg-line mt-14 grid gap-px overflow-hidden rounded-[24px] border sm:grid-cols-2 lg:grid-cols-4">
-            {PROCESS_STEPS.map((k, i) => (
-              <li key={k} className="bg-background flex flex-col p-7 sm:p-8">
-                <span className="font-display text-ember text-[64px] leading-none">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="font-heading mt-10 text-[20px] font-medium tracking-[-0.01em]">
-                  {t.process.steps[k].title}
-                </h3>
-                <p className="text-muted-foreground mt-3 text-[15px] leading-[1.6]">
-                  {t.process.steps[k].body}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------ engagement */}
-      <section
-        aria-labelledby="engagement-heading"
-        className="px-5 pt-28 sm:px-10 sm:pt-40"
-      >
-        <div className="mx-auto max-w-[1440px]">
-          <SectionHead
-            eyebrow={t.engagement.eyebrow}
-            id="engagement-heading"
-            title={t.engagement.title}
-          />
-          <div className="mt-14 grid gap-4 md:grid-cols-2">
-            {ENGAGEMENTS.map((k) => {
-              const e = t.engagement.types[k];
-              const price = formatPriceFrom(ENGAGEMENT_PRICE_FROM[k], locale);
-              return (
-                <article
-                  key={k}
-                  className="border-line bg-surface flex flex-col rounded-[24px] border p-7 sm:p-10"
-                >
-                  <h3 className="font-display text-[clamp(2.2rem,4vw,3.25rem)] leading-none tracking-[-0.02em]">
-                    {e.title}
-                  </h3>
-                  <p className="text-foreground/70 mt-5 max-w-[48ch] text-[16px] leading-[1.6]">
-                    {e.body}
-                  </p>
-                  <p className="text-muted-foreground mt-auto pt-10 font-mono text-[11px] tracking-[0.16em] uppercase">
-                    {e.bestFor}
-                  </p>
-                  {price ? (
-                    <p className="text-ember mt-3 font-mono text-[13px]">
-                      {t.labels.from} {price}
-                    </p>
-                  ) : null}
-                </article>
-              );
-            })}
-          </div>
-          <p className="text-muted-foreground mt-6 max-w-[70ch] text-[15px] leading-[1.6]">
-            {t.engagement.pricingNote}
-          </p>
-        </div>
-      </section>
-
-      {/* ---------------------------------------------------- not do + FAQ */}
-      <section className="px-5 pt-28 sm:px-10 sm:pt-40">
-        <div className="mx-auto grid max-w-[1440px] gap-16 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-4">
-            <SectionHead
-              eyebrow={t.notDo.eyebrow}
-              id="notdo-heading"
-              title={t.notDo.title}
-              small
-            />
-            <ul
-              aria-labelledby="notdo-heading"
-              className="border-line mt-10 flex flex-col border-t"
-            >
-              {t.notDo.items.map((item) => (
-                <li
-                  key={item}
-                  className="border-line text-foreground/75 flex gap-4 border-b py-4 text-[15px] leading-[1.55]"
-                >
+              <div className="lg:col-span-5 lg:col-start-8">
+                <h2 className="font-heading text-[20px] font-medium tracking-[-0.01em]">
                   <span
-                    className="bg-ember mt-[0.55em] h-px w-3 shrink-0"
+                    className="bg-ember me-3 inline-block size-1.5 -translate-y-1 rounded-full"
                     aria-hidden="true"
                   />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
+                  {t.oneTeam.title}
+                </h2>
+                <p className="text-muted-foreground mt-3 text-[15px] leading-[1.65]">
+                  {t.oneTeam.body}
+                </p>
+              </div>
+            </div>
 
-          <div className="lg:col-span-7 lg:col-start-6">
-            <SectionHead
-              eyebrow={t.faq.eyebrow}
-              id="faq-heading"
-              title={t.faq.title}
-              small
-            />
-            <div className="border-line mt-10 border-t">
-              {t.faq.items.map((f) => (
-                <details key={f.q} className="group border-line border-b">
-                  <summary className="hover:text-ember flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-[18px] font-medium tracking-[-0.01em] transition-colors [&::-webkit-details-marker]:hidden">
-                    <span className="font-heading">{f.q}</span>
-                    <span
-                      aria-hidden="true"
-                      className="relative size-4 shrink-0 before:absolute before:inset-x-0 before:top-1/2 before:h-px before:bg-current after:absolute after:inset-y-0 after:left-1/2 after:w-px after:bg-current after:transition-transform group-open:after:scale-y-0"
-                    />
-                  </summary>
-                  <p className="text-muted-foreground max-w-[62ch] pb-7 text-[16px] leading-[1.65]">
-                    {f.a}
-                  </p>
-                </details>
+            {/* Pillar index — the quick way in on small screens. */}
+            <nav aria-label={t.pillarNav} className="mt-14 lg:hidden">
+              <ul className="border-line bg-line grid grid-cols-2 gap-px overflow-hidden rounded-2xl border">
+                {pillars.map((p) => (
+                  <li key={p.id}>
+                    <a
+                      href={`#${p.id}`}
+                      className="bg-background hover:bg-surface flex h-full flex-col gap-2 p-5 transition-colors"
+                    >
+                      <span className="text-ember font-mono text-[10px] tracking-[0.2em]">
+                        {p.number}
+                      </span>
+                      <span className="font-display text-[28px] leading-none">
+                        {p.title}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </section>
+
+        {/* --------------------------------------------------------- pillars */}
+        <div className="px-5 sm:px-10">
+          <div className="mx-auto grid max-w-[1440px] gap-10 lg:grid-cols-12 lg:gap-8">
+            <aside className="hidden lg:col-span-3 lg:block">
+              <PillarNav label={t.pillarNav} items={pillars} />
+            </aside>
+
+            <div className="lg:col-span-9">
+              {SERVICE_GROUPS.map((g) => (
+                <Pillar key={g} group={g} dict={dict} locale={locale} />
               ))}
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ------------------------------------------------------------- CTA */}
-      <section className="px-5 py-28 sm:px-10 sm:py-40">
-        <div className="border-line bg-surface mx-auto flex max-w-[1440px] flex-col items-start gap-8 rounded-[28px] border p-8 sm:p-14 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <h2 className="font-display text-[clamp(2.4rem,5.5vw,4.75rem)] leading-[0.95] tracking-[-0.03em]">
-              {t.cta.title}
-            </h2>
-            <p className="text-foreground/65 mt-5 max-w-[48ch] text-[16px] leading-[1.6]">
-              {t.cta.body}
+        {/* --------------------------------------------------------- process */}
+        <section
+          aria-labelledby="process-heading"
+          className="px-5 pt-28 sm:px-10 sm:pt-40"
+        >
+          <div className="mx-auto max-w-[1440px]">
+            <SectionHead
+              eyebrow={t.process.eyebrow}
+              id="process-heading"
+              title={t.process.title}
+            />
+            <ol className="border-line bg-line mt-14 grid gap-px overflow-hidden rounded-[24px] border sm:grid-cols-2 lg:grid-cols-4">
+              {PROCESS_STEPS.map((k, i) => (
+                <li key={k} className="bg-background flex flex-col p-7 sm:p-8">
+                  <span className="font-display text-ember text-[64px] leading-none">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="font-heading mt-10 text-[20px] font-medium tracking-[-0.01em]">
+                    {t.process.steps[k].title}
+                  </h3>
+                  <p className="text-muted-foreground mt-3 text-[15px] leading-[1.6]">
+                    {t.process.steps[k].body}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* ------------------------------------------------------ engagement */}
+        <section
+          aria-labelledby="engagement-heading"
+          className="px-5 pt-28 sm:px-10 sm:pt-40"
+        >
+          <div className="mx-auto max-w-[1440px]">
+            <SectionHead
+              eyebrow={t.engagement.eyebrow}
+              id="engagement-heading"
+              title={t.engagement.title}
+            />
+            <div className="mt-14 grid gap-4 md:grid-cols-2">
+              {ENGAGEMENTS.map((k) => {
+                const e = t.engagement.types[k];
+                const price = formatPriceFrom(ENGAGEMENT_PRICE_FROM[k], locale);
+                return (
+                  <article
+                    key={k}
+                    className="border-line bg-surface flex flex-col rounded-[24px] border p-7 sm:p-10"
+                  >
+                    <h3 className="font-display text-[clamp(2.2rem,4vw,3.25rem)] leading-none tracking-[-0.02em]">
+                      {e.title}
+                    </h3>
+                    <p className="text-foreground/70 mt-5 max-w-[48ch] text-[16px] leading-[1.6]">
+                      {e.body}
+                    </p>
+                    <p className="text-muted-foreground mt-auto pt-10 font-mono text-[11px] tracking-[0.16em] uppercase">
+                      {e.bestFor}
+                    </p>
+                    {price ? (
+                      <p className="text-ember mt-3 font-mono text-[13px]">
+                        {t.labels.from} {price}
+                      </p>
+                    ) : null}
+                  </article>
+                );
+              })}
+            </div>
+            <p className="text-muted-foreground mt-6 max-w-[70ch] text-[15px] leading-[1.6]">
+              {t.engagement.pricingNote}
             </p>
           </div>
-          <a
-            href="#contact"
-            className="group bg-ember text-ember-foreground hover:bg-foreground inline-flex shrink-0 items-center gap-3 rounded-full px-7 py-4 text-[15px] font-medium transition-colors"
-          >
-            {t.cta.button}
-            <span
-              aria-hidden="true"
-              className="transition-transform group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1"
+        </section>
+
+        {/* ---------------------------------------------------- not do + FAQ */}
+        <section className="px-5 pt-28 sm:px-10 sm:pt-40">
+          <div className="mx-auto grid max-w-[1440px] gap-16 lg:grid-cols-12 lg:gap-8">
+            <div className="lg:col-span-4">
+              <SectionHead
+                eyebrow={t.notDo.eyebrow}
+                id="notdo-heading"
+                title={t.notDo.title}
+                small
+              />
+              <ul
+                aria-labelledby="notdo-heading"
+                className="border-line mt-10 flex flex-col border-t"
+              >
+                {t.notDo.items.map((item) => (
+                  <li
+                    key={item}
+                    className="border-line text-foreground/75 flex gap-4 border-b py-4 text-[15px] leading-[1.55]"
+                  >
+                    <span
+                      className="bg-ember mt-[0.55em] h-px w-3 shrink-0"
+                      aria-hidden="true"
+                    />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="lg:col-span-7 lg:col-start-6">
+              <SectionHead
+                eyebrow={t.faq.eyebrow}
+                id="faq-heading"
+                title={t.faq.title}
+                small
+              />
+              <div className="border-line mt-10 border-t">
+                {t.faq.items.map((f) => (
+                  <details key={f.q} className="group border-line border-b">
+                    <summary className="hover:text-ember flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-[18px] font-medium tracking-[-0.01em] transition-colors [&::-webkit-details-marker]:hidden">
+                      <span className="font-heading">{f.q}</span>
+                      <span
+                        aria-hidden="true"
+                        className="relative size-4 shrink-0 before:absolute before:inset-x-0 before:top-1/2 before:h-px before:bg-current after:absolute after:inset-y-0 after:left-1/2 after:w-px after:bg-current after:transition-transform group-open:after:scale-y-0"
+                      />
+                    </summary>
+                    <p className="text-muted-foreground max-w-[62ch] pb-7 text-[16px] leading-[1.65]">
+                      {f.a}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ------------------------------------------------------------- CTA */}
+        <section className="px-5 py-28 sm:px-10 sm:py-40">
+          <div className="border-line bg-surface mx-auto flex max-w-[1440px] flex-col items-start gap-8 rounded-[28px] border p-8 sm:p-14 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h2 className="font-display text-[clamp(2.4rem,5.5vw,4.75rem)] leading-[0.95] tracking-[-0.03em]">
+                {t.cta.title}
+              </h2>
+              <p className="text-foreground/65 mt-5 max-w-[48ch] text-[16px] leading-[1.6]">
+                {t.cta.body}
+              </p>
+            </div>
+            <a
+              href="#contact"
+              className="group bg-ember text-ember-foreground hover:bg-foreground inline-flex shrink-0 items-center gap-3 rounded-full px-7 py-4 text-[15px] font-medium transition-colors"
             >
-              →
-            </span>
-          </a>
-        </div>
-      </section>
-    </main>
+              {t.cta.button}
+              <span
+                aria-hidden="true"
+                className="transition-transform group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1"
+              >
+                →
+              </span>
+            </a>
+          </div>
+        </section>
+      </main>
+    </PageTransition>
   );
 }
 
@@ -394,7 +398,12 @@ function Pillar({
       aria-labelledby={`${group}-heading`}
       className="border-line scroll-mt-28 border-t py-16 first:border-t-0 first:pt-0 sm:py-24"
     >
-      <header className="flex flex-wrap items-end justify-between gap-6">
+      <header className="relative isolate flex min-h-[clamp(300px,34vw,520px)] flex-wrap items-end justify-between gap-6 overflow-hidden rounded-[28px] p-6 sm:p-10">
+        <SceneBackdrop
+          src={`/assets/scenes/${group}.webp`}
+          position="75% 40%"
+          className="-z-10"
+        />
         <div>
           <p className="text-ember font-mono text-[11px] tracking-[0.22em]">
             {groupNumber(group)}
