@@ -85,6 +85,12 @@ export function createMetadata({
     },
     manifest: "/site.webmanifest",
     formatDetection: { telephone: false },
+    // Google Search Console "HTML tag" verification. Set the token from
+    // Search Console as GOOGLE_SITE_VERIFICATION in Vercel; with no token the
+    // tag is omitted (DNS verification needs no code at all).
+    ...(process.env.GOOGLE_SITE_VERIFICATION
+      ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+      : {}),
     robots: noIndex
       ? { index: false, follow: false }
       : {
