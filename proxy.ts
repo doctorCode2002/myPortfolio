@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, LOCALES, type Locale } from "@/lib/i18n";
 
 /**
  * Parse an Accept-Language header and return the best supported locale.
@@ -50,7 +50,10 @@ export function proxy(request: NextRequest): NextResponse | undefined {
   const url = request.nextUrl.clone();
   url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
 
-  return NextResponse.redirect(url);
+  // With a single locale the target never changes, so redirect permanently
+  // and search engines treat /en as the canonical home. With several locales
+  // the target depends on Accept-Language, so keep it temporary.
+  return NextResponse.redirect(url, LOCALES.length > 1 ? 307 : 308);
 }
 
 export const config = {
